@@ -172,27 +172,26 @@ async function partStrategy() {
   const next = SHORT_VERSION ? {} : NEXT_CHOICES;
 
   setProgress(SHORT_VERSION ? 1 : 0);
-  answers.moment = await ask("The moment", STRATEGY.moment(answers.state), ["I'm there"]);
+  answers.moment = await ask("The moment", await phraseGuide("moment", answers, "Recall a specific time you felt the state you chose. Can you tell me about that moment?"), ["I'm there"]);
   await say("The moment", "Good. Stay there for a moment. See what you saw. Hear what you heard.", 2500);
 
   if (SHORT_VERSION) setProgress(2);
-  answers.steps.push(await askStep("The first trigger", STRATEGY.firstTrigger(answers.state), first));
+  answers.steps.push(await askStep("The first trigger", await phraseGuide("first_trigger", answers, "In that moment, what first sparked the feeling: something you saw, heard or felt?"), first));
   showPath();
 
   if (SHORT_VERSION) setProgress(3);
-  answers.steps.push(await askStep("The next step", STRATEGY.nextStep, next));
+  answers.steps.push(await askStep("The next step", await phraseGuide("next_step", answers, STRATEGY.nextStep), next));
   showPath();
 
   // Write the sequence down in order. The order matters as much as the parts.
-  const [a, b] = answers.steps;
   if (SHORT_VERSION) {
     // Read it back as a statement, not a question, to keep it to 4 questions.
-    await say("Your sequence", `So first, ${toYou(a.text)}. Then, ${toYou(b.text)}.`, 1500);
+    await say("Your sequence", await phraseGuide("sequence", answers, "You noticed a first trigger, followed by another step. Those are the two steps we’ll return to."), 1500);
     return;
   }
   const order = await askChoice(
     "1 · Your sequence",
-    `So first, ${toYou(a.text)}. Then, ${toYou(b.text)}. Is that the right order?`,
+    await phraseGuide("sequence_confirm", answers, "Think about your first trigger and the step that followed. Is that the right order?"),
     ["Yes", "Swap them"],
   );
   if (order === "Swap them") {
@@ -207,7 +206,7 @@ async function partDetails() {
   await say("2 · The details", "Now let's look closer at each step. Not what it's about, just how it is.");
   for (const [i, step] of answers.steps.entries()) {
     const group = DETAIL_GROUP[step.kind];
-    await say(`2 · Step ${i + 1}`, `Step ${i + 1}: ${toYou(step.text)}. Let's look at the ${GROUP_NAME[group]}.`, 400);
+    await say(`2 · Step ${i + 1}`, await phraseGuide("step_intro", answers, `Bring step ${i + 1} to mind. Let’s look at the ${GROUP_NAME[group]}.`, i), 400);
     step.details = await askDetails(`2 · Step ${i + 1} · ${GROUP_NAME[group]}`, group);
   }
 }

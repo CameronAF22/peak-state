@@ -41,7 +41,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "db5afbb4d051a40989e4009bb9d413e4dc30034ed350b76f3868b42f94fe7122",
+      "sha256": "b2171daf1e62abc9cdb0b970102b5883c5d5065511924d6cc7fcdad04046e711",
       "decisions": [
         "D-coord-008",
         "D-coord-018"
@@ -60,6 +60,14 @@
       "decisions": [
         "D-coord-004",
         "D-coord-016"
+      ]
+    },
+    {
+      "path": "docs/ai-guide.md",
+      "sha256": "5abe486f0c1e0d06c89cce4a2a8d9ab1293a00680bf4577ed292e095de521fb3",
+      "decisions": [
+        "D-coord-019",
+        "D-coord-020"
       ]
     },
     {
@@ -248,11 +256,20 @@
       ]
     },
     {
+      "path": "test/backend/guide_ai.py",
+      "sha256": "97f4abe8a3763d1652dd4f87befbb50741733ee574f7a6f56240d4d5fa189fca",
+      "decisions": [
+        "D-coord-019",
+        "D-coord-020"
+      ]
+    },
+    {
       "path": "test/backend/main.py",
-      "sha256": "191ab14db1debf39f13d011d0ab4af96c1b8a96ce0ea7d189f569093868b00a6",
+      "sha256": "7589107ff15d1349d97f662b9932965a2d935ae6911b10266811faf692c7590f",
       "decisions": [
         "D-coord-015",
-        "D-coord-017"
+        "D-coord-017",
+        "D-coord-019"
       ]
     },
     {
@@ -263,6 +280,13 @@
       ]
     },
     {
+      "path": "test/backend/test_guide_ai.py",
+      "sha256": "d7ce4def716ca2f596641d862bb69796d77e73829baf0c2aeaf71321385a552a",
+      "decisions": [
+        "D-coord-019"
+      ]
+    },
+    {
       "path": "test/backend/users.json",
       "sha256": "8cf68f30c0d726851b231b6450a1ae5902604381e525833891b1029d2d019e6a",
       "decisions": [
@@ -270,41 +294,55 @@
       ]
     },
     {
-      "path": "test/frontend/action.html",
-      "sha256": "93d3d6d3867811dd4300e9d9785fd33e9aaec945c5df8c46677f6e119607c529",
+      "path": "test/frontend/guide.js",
+      "sha256": "901ddafbdcf354733dfd2e45f1ea7e6741e8b3287f7fcd9721f8a8dbd353e0e0",
       "decisions": [
-        "D-coord-015"
+        "D-coord-019",
+        "D-coord-020"
       ]
     },
     {
-      "path": "test/frontend/app.js",
-      "sha256": "953014455dd49a6ea0764d746eff054c55f9c1adbf0d9d522e118ee9b867a162",
+      "path": "test/frontend/home.html",
+      "sha256": "1af157a02c8bd3dff57e83be35c100a3c969f41f5f28d7bf43f4d20ee3f7d374",
       "decisions": [
-        "D-coord-015",
-        "D-coord-017"
+        "D-coord-021"
       ]
     },
     {
-      "path": "test/frontend/index.html",
-      "sha256": "d50bac581d0ebea53213aaec937d99ca7baa2e59caad09c72f4207ddfb234944",
+      "path": "test/frontend/home.js",
+      "sha256": "c144067e77997aa90a06cfb13cc58ed974d23892d9c5cb84b243e1c1bf55d91b",
       "decisions": [
-        "D-coord-015",
-        "D-coord-017"
+        "D-coord-019",
+        "D-coord-020"
       ]
     },
     {
       "path": "test/frontend/onboarding.html",
-      "sha256": "6152c4cb1f62dfccc296d43fa603944cb8b05f54b8c0937db46bc8d9154de727",
+      "sha256": "2fb616ea9d649f03713d9364a83d23f1c06aefea66469fef56cb5b40d176d828",
       "decisions": [
         "D-coord-015"
       ]
     },
     {
+      "path": "test/frontend/onboarding.js",
+      "sha256": "c95eb5caf126b7b70a0be01062fbfdbc0f058000cee2c1752dd0c961cab76ff9",
+      "decisions": [
+        "D-coord-019"
+      ]
+    },
+    {
       "path": "test/frontend/styles.css",
-      "sha256": "7ff29ad2a469b15cc68b6574c5458f92f336a84766e9e35e13fde06c43bbc3bf",
+      "sha256": "7211e2285b019c47278473555ced3e13e614d0cb9725b96f3b7e33feff10aad1",
       "decisions": [
         "D-coord-015",
         "D-coord-017"
+      ]
+    },
+    {
+      "path": "test/frontend/test-guide.cjs",
+      "sha256": "a97c4dfe34563b15e6c2d4f6d66d75e28ba2a1a72ee004d829f0f68606b02303",
+      "decisions": [
+        "D-coord-020"
       ]
     },
     {

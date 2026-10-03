@@ -4,7 +4,7 @@
   "url": null,
   "lane": "coord",
   "branch": "codex/synthetic-calming-workflow",
-  "purpose": "Add the user-requested offline synthetic calming workflow lab and Oura import research",
+  "purpose": "Use OpenAI to naturally phrase the user-requested follow-up questions and guidance in the test app",
   "startedAt": "2026-10-03T17:42:18Z",
-  "lastSeenAt": "2026-10-03T18:07:00Z"
+  "lastSeenAt": "2026-10-03T18:49:30Z"
 }

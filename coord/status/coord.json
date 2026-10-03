@@ -4,15 +4,15 @@
   "health": "green",
   "phase": "review",
   "progress": 100,
-  "summary": "Synthetic calming lab and Oura REST research complete; 31 workflow tests and 14 coordination tests pass.",
+  "summary": "OpenAI guide phrasing implemented with bounded context, scripted fallback and cancellation guards; seven backend and six frontend tests pass.",
   "now": [
-    "Preparing the user-requested PR"
+    "Updating the requested prototype PR"
   ],
   "next": [
-    "Review and integrate the isolated lab when ready"
+    "Configure OPENAI_API_KEY to verify live wording quality"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T18:07:00Z",
+  "updatedAt": "2026-10-03T18:48:24Z",
   "session": {
     "id": "codex-01a10169-c218-77b3-9532-75e07c5cb774",
     "url": null,

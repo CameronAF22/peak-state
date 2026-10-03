@@ -5,6 +5,10 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from typing import Literal
+from starlette.concurrency import run_in_threadpool
+
+from guide_ai import phrase
 
 FRONTEND = Path(__file__).resolve().parent.parent / "frontend"
 USERS_FILE = Path(__file__).resolve().parent / "users.json"
@@ -17,6 +21,29 @@ app.mount("/assets", StaticFiles(directory=FRONTEND), name="assets")
 class AuthBody(BaseModel):
     username: str = Field(min_length=1, max_length=64)
     password: str = Field(min_length=1, max_length=128)
+
+
+class GuideStep(BaseModel):
+    kind: Literal["saw", "heard", "said", "felt"]
+    text: str = Field(max_length=6000)
+
+
+class GuideContext(BaseModel):
+    state: str = Field(default="", max_length=200)
+    moment: str = Field(default="", max_length=6000)
+    steps: list[GuideStep] = Field(default_factory=list, max_length=8)
+    step_index: int = Field(default=0, ge=0, le=7)
+
+
+class GuideBody(BaseModel):
+    goal: Literal["moment", "first_trigger", "next_step", "sequence", "sequence_confirm",
+                  "step_intro", "recall_moment", "recall_step", "check_in"]
+    context: GuideContext
+
+
+@app.post("/api/guide/phrase")
+async def guide_phrase(body: GuideBody) -> dict[str, str]:
+    return await run_in_threadpool(phrase, body.goal, body.context.model_dump())
 
 
 def load_users() -> dict[str, str]:
@@ -80,4 +107,3 @@ async def me(username: str) -> dict[str, str]:
     if name not in users:
         raise HTTPException(status_code=404, detail="User not found")
     return {"username": name}
-

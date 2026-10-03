@@ -288,6 +288,36 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 
 **Produces:** `test/synthetic_lab/`, `docs/oura-import-plan.md`, `docs/synthetic-workflow.md`, `README.md`, `.gitignore`
 
+### D-coord-019 · Use OpenAI for grounded guide wording while keeping the scripted flow
+
+`accepted` · technical · 2026-10-03 · session `codex-01a10169-c218-77b3-9532-75e07c5cb774` · branch `codex/synthetic-calming-workflow` · accepted by OpenAI Codex
+
+**Decision.** Add a server-side OpenAI Responses phrasing endpoint with bounded structured context and fixed conversational goals. Rewrite follow-up questions and recalled cues naturally rather than interpolating whole answers; retain raw profile answers, question order, choices and session limits. Use concise scripted fallbacks when credentials or model output are unavailable.
+
+**Context.** The user asked to use OpenAI to fit answers into subsequent questions naturally. The current test app uses toYou plus literal full-answer interpolation. This extends the user-requested prototype in the coord-owned test app.
+
+**Produces:** `test/backend/guide_ai.py`, `test/backend/main.py`, `test/backend/test_guide_ai.py`, `test/frontend/guide.js`, `test/frontend/onboarding.js`, `test/frontend/home.js`, `docs/ai-guide.md`
+
+### D-coord-020 · Verify guide wording integration and cancellation
+
+`accepted` · technical · 2026-10-03 · session `codex-01a10169-c218-77b3-9532-75e07c5cb774` · branch `codex/synthetic-calming-workflow` · accepted by OpenAI Codex
+
+**Decision.** Add frontend regressions for grounded follow-up context, raw-answer preservation, fallbacks, stopped preparations and cancellation during a spoken question. Preserve complete-return wording for the existing Yes/A little/Not yet check-in semantics.
+
+**Context.** Review found a pre-existing ask-after-stop race and highlighted that closer must not be interpreted as a full return. These tests verify the user-requested OpenAI wording integration without real credentials.
+
+**Produces:** `test/frontend/test-guide.cjs`, `test/frontend/guide.js`, `test/frontend/home.js`, `test/backend/guide_ai.py`, `docs/ai-guide.md`
+
+### D-coord-021 · Integrate the existing dashboard view with the AI guide
+
+`accepted` · technical · 2026-10-03 · session `codex-01a10169-c218-77b3-9532-75e07c5cb774` · branch `codex/synthetic-calming-workflow` · accepted by OpenAI Codex
+
+**Decision.** Retain the dashboard HTML introduced on main as the host for saved-state guided sessions. The view is unchanged; this records its existing production path for coordination validation as the AI wording integration connects to its home.js controller.
+
+**Context.** After integrating main e3269da, validation reports test/frontend/home.html has no producing decision. The user-requested guide wording builds on this existing dashboard; register the artifact without changing its UI.
+
+**Produces:** `test/frontend/home.html`
+
 ## Proposed, awaiting acceptance
 
 None.
@@ -307,9 +337,10 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `.gitignore` | `7b734bb44610` | D-coord-008, D-coord-014, D-coord-018 |
 | `CLAUDE.md` | `c156fe12fbec` | D-coord-001 |
 | `LICENSE` | `66934fca6625` | D-coord-008 |
-| `README.md` | `db5afbb4d051` | D-coord-008, D-coord-018 |
+| `README.md` | `b2171daf1e62` | D-coord-008, D-coord-018 |
 | `coord/README.md` | `6b4acf0bc3df` | D-coord-001 |
 | `coord/lanes.json` | `a231397884d9` | D-coord-004, D-coord-016 |
+| `docs/ai-guide.md` | `5abe486f0c1e` | D-coord-019, D-coord-020 |
 | `docs/architecture.md` | `7a8ff3f2a3d2` | D-coord-008 |
 | `docs/hackathon/elicitation-playbook.md` | `431ef8310673` | D-coord-011, D-coord-012 |
 | `docs/hackathon/lanes/contracts.md` | `659077ebfecd` | D-coord-004, D-coord-009, D-coord-011 |
@@ -334,14 +365,18 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `schemas/coord/status.schema.json` | `4cf17ed9ef8e` | D-coord-001 |
 | `schemas/coord/trace.schema.json` | `414c0dbe867a` | D-coord-001 |
 | `site/dashboard.html` | `e50625a238b7` | D-coord-003 |
-| `test/backend/main.py` | `191ab14db1de` | D-coord-015, D-coord-017 |
+| `test/backend/guide_ai.py` | `97f4abe8a376` | D-coord-019, D-coord-020 |
+| `test/backend/main.py` | `7589107ff15d` | D-coord-015, D-coord-017, D-coord-019 |
 | `test/backend/requirements.txt` | `0ab58a941f97` | D-coord-015 |
+| `test/backend/test_guide_ai.py` | `d7ce4def716c` | D-coord-019 |
 | `test/backend/users.json` | `8cf68f30c0d7` | D-coord-017 |
-| `test/frontend/action.html` | `93d3d6d38678` | D-coord-015 |
-| `test/frontend/app.js` | `953014455dd4` | D-coord-015, D-coord-017 |
-| `test/frontend/index.html` | `d50bac581d0e` | D-coord-015, D-coord-017 |
-| `test/frontend/onboarding.html` | `6152c4cb1f62` | D-coord-015 |
-| `test/frontend/styles.css` | `7ff29ad2a469` | D-coord-015, D-coord-017 |
+| `test/frontend/guide.js` | `901ddafbdcf3` | D-coord-019, D-coord-020 |
+| `test/frontend/home.html` | `1af157a02c8b` | D-coord-021 |
+| `test/frontend/home.js` | `c144067e7799` | D-coord-019, D-coord-020 |
+| `test/frontend/onboarding.html` | `2fb616ea9d64` | D-coord-015 |
+| `test/frontend/onboarding.js` | `c95eb5caf126` | D-coord-019 |
+| `test/frontend/styles.css` | `7211e2285b01` | D-coord-015, D-coord-017 |
+| `test/frontend/test-guide.cjs` | `a97c4dfe3456` | D-coord-020 |
 | `test/synthetic_lab/examples/calming-profile.json` | `b721a9499870` | D-coord-018 |
 | `test/synthetic_lab/examples/synthetic/declined.json` | `310d754a5a28` | D-coord-018 |
 | `test/synthetic_lab/examples/synthetic/hr_only.json` | `036930d834b0` | D-coord-018 |

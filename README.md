@@ -37,6 +37,8 @@ A filled example profile lives at [examples/sample-profile.json](examples/sample
 
 The Ring 4 REST integration investigation and proposed import sequence are in [docs/oura-import-plan.md](docs/oura-import-plan.md), checked against Oura's current documentation on October 3, 2026.
 
+The separate test app uses server-side OpenAI wording to fit prior answers naturally into follow-up questions and saved-state guidance. Setup and offline fallback behavior are in [docs/ai-guide.md](docs/ai-guide.md).
+
 ## Synthetic calming workflow lab
 
 The isolated [workflow lab](docs/synthetic-workflow.md) runs without API keys. It includes nine generated HR/HRV scenarios, configurable percentage triggers, acceptance-gated calming suggestions, a recovery check-in, and explicit helpfulness feedback. The components use local rules; there are no live Oura or LLM calls. Its synthetic intraday HRV stream is not an Oura API capability.

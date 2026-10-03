@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-020",
+  "lane": "coord",
+  "title": "Verify guide wording integration and cancellation",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Review found a pre-existing ask-after-stop race and highlighted that closer must not be interpreted as a full return. These tests verify the user-requested OpenAI wording integration without real credentials.",
+  "decision": "Add frontend regressions for grounded follow-up context, raw-answer preservation, fallbacks, stopped preparations and cancellation during a spoken question. Preserve complete-return wording for the existing Yes/A little/Not yet check-in semantics.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "test/frontend/test-guide.cjs",
+    "test/frontend/guide.js",
+    "test/frontend/home.js",
+    "test/backend/guide_ai.py",
+    "docs/ai-guide.md"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "OpenAI Codex",
+  "session": {
+    "id": "codex-01a10169-c218-77b3-9532-75e07c5cb774",
+    "url": null,
+    "branch": "codex/synthetic-calming-workflow"
+  },
+  "createdAt": "2026-10-03T18:44:50Z",
+  "acceptedAt": "2026-10-03T18:44:50Z",
+  "acceptedBy": "OpenAI Codex"
+}

@@ -4,7 +4,7 @@
 // when they say yes, or after MAX_ROUNDS rounds, so it never goes on forever.
 //
 // Uses guide.js (load it first) for speaking, listening and asking.
-// Later: an AI can write the guidance words. Only part 2 (buildRound) would change.
+// OpenAI phrases recalled cues on the backend; session order and limits remain scripted.
 
 // ---------- 1. Settings ----------
 const MAX_ROUNDS = 3; // at most this many rounds, then the session ends
@@ -43,12 +43,10 @@ function detailSentence(key, value) {
   return DETAIL_WORDS[key]?.[value] || "";
 }
 
-// "I saw the crowd" → "See the crowd."
-function stepSentence(step) {
-  const you = toYou(step.text);
-  const rest = you.replace(/^(you )?(saw|see|heard|hear|felt|feel|said|say)( to yourself)?\s+/i, "");
-  if (step.kind === "said") return `Say to yourself: ${step.text.replace(/[.!]+$/, "")}.`;
-  return `${STEP_WORD[step.kind]} ${rest}.`;
+// Recall each saved step with natural wording.
+async function stepSentence(step, profile, index) {
+  return phraseGuide("recall_step", profile,
+    `Return to step ${index + 1} of your saved sequence, in whatever way feels comfortable.`, index);
 }
 
 // The details of one step to use: the drivers first (they matter most), then up to 2 others.
@@ -63,19 +61,23 @@ function detailsFor(step, s, round) {
 }
 
 // All the lines for one round. Each line is { text, pause }.
-function buildRound(s, round, stressed) {
+async function buildRound(s, round, stressed, stillRunning = () => true) {
   const lines = [];
   if (round === 1) {
     lines.push({ text: stressed ? "I hear you're feeling stressed. That's okay. Let's slow down together." : `Let's take you back to feeling ${s.state}.`, pause: 1500 });
     lines.push({ text: "Find a comfortable position. Let your shoulders drop. Breathe in slowly… and breathe out, even slower.", pause: 4000 });
-    const own = s.moment && s.moment !== "I'm there" ? toYou(s.moment) : "";
-    const moment = own ? `Go back to that time: ${own.charAt(0).toLowerCase() + own.slice(1)}.` : `Go back to that time when you were totally ${s.state}.`;
-    lines.push({ text: `${moment} Step into it.`, pause: STEP_PAUSE });
+    const moment = await phraseGuide("recall_moment", s,
+      "Recall the moment you saved earlier. Take your time and notice what you remember.");
+    if (!stillRunning()) return [];
+    lines.push({ text: moment, pause: STEP_PAUSE });
   } else {
     lines.push({ text: "Let's go through it once more, a little slower. Breathe out.", pause: 3000 });
   }
-  for (const step of s.steps) {
-    lines.push({ text: stepSentence(step), pause: STEP_PAUSE });
+  for (const [index, step] of s.steps.entries()) {
+    if (!stillRunning()) return [];
+    const sentence = await stepSentence(step, s, index);
+    if (!stillRunning()) return [];
+    lines.push({ text: sentence, pause: STEP_PAUSE });
     for (const sentence of detailsFor(step, s, round)) lines.push({ text: sentence, pause: DETAIL_PAUSE });
   }
   lines.push({ text: "Stay here with it. Breathe.", pause: 5000 });
@@ -105,14 +107,19 @@ async function runSession(stateName, stressed) {
   let round = 1;
   for (; round <= MAX_ROUNDS; round++) {
     // Guide through the person's own steps.
-    for (const line of buildRound(s, round, stressed)) {
+    show(`Round ${round} of ${MAX_ROUNDS}`, "Preparing your guide…");
+    const lines = await buildRound(s, round, stressed, stillRunning);
+    if (!stillRunning()) return;
+    for (const line of lines) {
       if (!stillRunning()) return;
       await say(`Round ${round} of ${MAX_ROUNDS}`, line.text, line.pause);
     }
     if (!stillRunning()) return;
 
     // Check in: are they back in the state?
-    const reply = await askChoice("Check-in", `Are you ${s.state} now?`, CHECK_IN_CHOICES);
+    const checkIn = await phraseGuide("check_in", s, "Do you feel back in the state you chose now?");
+    if (!stillRunning()) return;
+    const reply = await askChoice("Check-in", checkIn, CHECK_IN_CHOICES);
     if (!stillRunning()) return;
     hideAnswerTools();
 
@@ -159,6 +166,7 @@ async function runStressed() {
 // Stop everything and go back to the home view.
 function endSession() {
   sessionId++;
+  cancelGuidePhrasing();
   waiting = null;
   stopSpeaking();
   hideAnswerTools();
