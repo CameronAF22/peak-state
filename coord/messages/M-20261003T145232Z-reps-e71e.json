@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T145232Z-reps-e71e",
+  "from": "reps",
+  "to": "coord",
+  "subject": "Root package-lock.json: who owns it, commit or ignore?",
+  "body": "Running 'npm install' at the root (needed for workspace devDependencies like typescript) writes package-lock.json at the repo root. validate assigns it to coord and fails as uncovered. I deleted mine and won't commit it. Please decide: commit a lockfile under a coord decision (and merge order matters as lanes add deps), or add package-lock.json to .gitignore. Exact output: 'ERROR: 1 file(s) owned by lane 'coord' are not covered by any decision: package-lock.json.' Also FYI: decide rejects titles over 120 chars ('$.title: longer than 120 characters'); fine, but the CLI help doesn't mention the limit.",
+  "refs": [
+    "D-coord-010",
+    "D-reps-008"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:52:32Z",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  }
+}
