@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-015",
+  "lane": "coord",
+  "title": "test/ sandbox app scaffold",
+  "status": "accepted",
+  "type": "technical",
+  "context": "User-requested local experiment outside main app lanes.",
+  "decision": "Add test/ with FastAPI backend serving vanilla JS: home with Login and Action buttons, blank onboarding and action pages.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "test/backend/main.py",
+    "test/backend/requirements.txt",
+    "test/frontend/index.html",
+    "test/frontend/onboarding.html",
+    "test/frontend/action.html",
+    "test/frontend/app.js",
+    "test/frontend/styles.css"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "local-vikas",
+    "url": null,
+    "branch": "claude/project-thread-c4ldi5"
+  },
+  "createdAt": "2026-10-03T16:28:16Z",
+  "acceptedAt": "2026-10-03T16:28:16Z",
+  "acceptedBy": "claude"
+}

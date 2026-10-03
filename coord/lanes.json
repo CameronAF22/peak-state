@@ -38,7 +38,8 @@
         "schemas/coord/",
         "package.json",
         "package-lock.json",
-        "tsconfig.base.json"
+        "tsconfig.base.json",
+        "test/"
       ],
       "deliverables": [
         "Coordination protocol, hooks and CI that make decisions and status mandatory",
