@@ -6,7 +6,7 @@ import type { OnboardingEvent, ProfileV2, SensoryModality, StateId } from "@peak
 // ── question bank (onboarding/script/) ──────────────────────────────────────
 
 /** Built-in states offered on the first screen. Testing always answers one of these. */
-export type PresetState = "content" | "destressed";
+export type PresetState = "content" | "excited";
 
 /** Where in the flow a question sits. */
 export type QuestionKind =

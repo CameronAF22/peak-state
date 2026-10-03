@@ -1,6 +1,6 @@
 # @peak-state/onboarding · question harness
 
-Pick a state (**Content** or **Destressed**, or type your own). Then answer Robbins' strategy questions one at a time until you are fully in the state. Any question left unanswered for 5 seconds shows exactly two suggested phrasings. The confirmed strategy is saved as a contracts Profile v2, and **▶ Run my strategy** plays it back in one click.
+Pick a state (**Content** or **Excited**, or type your own). Then answer Robbins' strategy questions one at a time until you are fully in the state. Any question left unanswered for 5 seconds shows exactly two suggested phrasings. The confirmed strategy is saved as a contracts Profile v2, and **▶ Run my strategy** plays it back in one click.
 
 Peak State is a performance and state-recall tool. It is not therapy, diagnosis or a crisis service. If you are in distress, stop and reach out to someone you trust or local emergency services.
 
@@ -69,7 +69,7 @@ Microphone and speech start on your first click on the page, because browsers re
 ```bash
 npm test -w @peak-state/onboarding            # unit tests (node:test), incl. test/unit/playback.test.ts
 npm run typecheck -w @peak-state/onboarding
-npm run test:visual -w @peak-state/onboarding # Playwright: the full flow for content and destressed, screenshots
+npm run test:visual -w @peak-state/onboarding # Playwright: the full flow for content and excited, screenshots
 ```
 
 The visual test writes `onboarding/test/e2e/report/`, with one screenshot per checkpoint below for each state. Don't edit files under `onboarding/` while it runs: the Vite dev server reloads the page on every change, and the reload restarts the conversation.
@@ -80,7 +80,7 @@ Run `npm run harness -w @peak-state/onboarding`, open the printed URL, and check
 
 | # | Do | You should see |
 |---|---|---|
-| 1 | Open the page | "What state do you want to choose?" with Content and Destressed buttons |
+| 1 | Open the page | "What state do you want to choose?" with Content and Excited buttons |
 | 2 | Click Content | The guide asks you to step into a time you felt content |
 | 3 | Answer "I'm there" | "What was the very first thing that caused you to feel content?" |
 | 4 | Wait 5 seconds without typing | Exactly two suggested phrasings appear under the question |
@@ -90,7 +90,7 @@ Run `npm run harness -w @peak-state/onboarding`, open the printed URL, and check
 | 8 | Pick the anchor and confirm the playback | "Strategy saved" card listing your steps in order, with a Download button |
 | 9 | Reload the page | The saved strategy is still there |
 | 10 | Click **Run my strategy** | Rate 0 to 10, then each step lights up in order while it is spoken, ending on the anchor; rate again; the run appears in the log |
-| 11 | Repeat with Destressed | The same, with destressed wording and suggestions |
+| 11 | Repeat with Excited | The same, with excited wording and suggestions |
 
 Tapping a suggestion puts its text in the answer box so you can edit it. Double-click the suggestion, or press its **Use ↵**, to send it straight away.
 

@@ -1,4 +1,4 @@
-// Visual test of the question harness: the 11 checkpoints of the plan, for "content" and for "destressed".
+// Visual test of the question harness: the 11 checkpoints of the plan, for "content" and for "excited".
 // Driven by window.__harness.snapshot().question.kind, so it follows whatever path the engine takes.
 // Each checkpoint saves a full-page screenshot (copied to test/e2e/report/screens/ by screens-reporter.ts)
 // and attaches it to the html report.
@@ -26,7 +26,7 @@ const HINT_DELAY = 5000;
 const BEFORE_HINT_CHECK = 3800;
 const MAX_ITERATIONS = 80;
 
-const TARGET_STEPS: Record<PresetState, number> = { content: 2, destressed: 3 };
+const TARGET_STEPS: Record<PresetState, number> = { content: 2, excited: 3 };
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -115,7 +115,7 @@ function readRuns(page: Page): Promise<RepSession[]> {
   return page.evaluate((k) => JSON.parse(localStorage.getItem(k) ?? "[]") as RepSession[], RUNS_KEY);
 }
 
-for (const state of ["content", "destressed"] as const) {
+for (const state of ["content", "excited"] as const) {
   test(`question harness: ${state}`, async ({ page }, testInfo) => {
     const target = TARGET_STEPS[state];
     const cp = new Checkpoints(page, testInfo, state);
@@ -134,7 +134,7 @@ for (const state of ["content", "destressed"] as const) {
     expect(s.question?.kind).toBe("choose-state");
     await expect(page.getByTestId("question")).toHaveText(/what state/i);
     await expect(page.locator('[data-testid="choice"][data-value="content"]')).toBeVisible();
-    await expect(page.locator('[data-testid="choice"][data-value="destressed"]')).toBeVisible();
+    await expect(page.locator('[data-testid="choice"][data-value="excited"]')).toBeVisible();
     await expect(page.getByTestId("suggestion")).toHaveCount(0);
     await cp.shot(1, "choose-state");
 

@@ -25,17 +25,20 @@ export function isGoodRep(r: RepSession): boolean {
   return r.kind === "full" && r.arm === "cue" && r.endedBy === "completed" && r.anchorPaired && typeof r.intensityAfter === "number" && r.intensityAfter >= GOOD_REP_MIN;
 }
 
-function day(iso: string): number {
-  return Math.floor(Date.parse(iso) / 86_400_000);
+/** The local calendar day of a moment (so a run at 11 pm and one at 8 am the next morning are consecutive days). */
+function day(iso: string | number): number {
+  const d = new Date(iso);
+  return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86_400_000);
 }
 
-export function summarize(runs: readonly RepSession[], stateId: StateId): ProgressSummary {
+export function summarize(runs: readonly RepSession[], stateId: StateId, now: number = Date.now()): ProgressSummary {
   const mine = runs.filter((r) => r.stateId === stateId).slice().sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt));
   const completed = mine.filter((r) => r.endedBy === "completed" && r.arm === "cue");
   const trend = completed.map((r) => r.intensityAfter).filter((n): n is number => typeof n === "number");
   const days = [...new Set(completed.map((r) => day(r.startedAt)).filter(Number.isFinite))].sort((a, b) => b - a);
-  let dayStreak = days.length ? 1 : 0;
-  for (let i = 1; i < days.length && days[i - 1] - days[i] === 1; i++) dayStreak++;
+  // A streak is still alive if the latest run was today or yesterday; a run of days that ended earlier is not a streak.
+  let dayStreak = days.length && day(now) - days[0] <= 1 ? 1 : 0;
+  for (let i = 1; dayStreak > 0 && i < days.length && days[i - 1] - days[i] === 1; i++) dayStreak++;
   return {
     stateId,
     timesChosen: completed.length,

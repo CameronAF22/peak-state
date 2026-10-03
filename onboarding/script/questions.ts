@@ -22,7 +22,7 @@ export interface StateRef {
 
 export const PRESET_STATES: readonly { value: PresetState; label: string }[] = [
   { value: "content", label: "Content" },
-  { value: "destressed", label: "Destressed" },
+  { value: "excited", label: "Excited" },
 ];
 
 /** Testing assumes this state when nothing else is chosen. */
@@ -164,7 +164,7 @@ export interface StateSuggestions {
   submodality: Record<SensoryModality, Record<string, Pair>>;
 }
 
-export const CHOOSE_STATE_SUGGESTIONS: Pair = ["Content, settled and easy", "Destressed, like the weight is off"];
+export const CHOOSE_STATE_SUGGESTIONS: Pair = ["Content, settled and easy", "Excited, like something great is about to happen"];
 
 export const SUGGESTIONS: Record<SuggestionSetKey, StateSuggestions> = {
   content: {
@@ -201,37 +201,37 @@ export const SUGGESTIONS: Record<SuggestionSetKey, StateSuggestions> = {
       },
     },
   },
-  destressed: {
-    memory: ["Walking out of the office on a Friday, phone off", "The first evening of a holiday, bags still packed"],
-    firstStep: ["I felt the cool air on my face as I stepped outside", "I heard the rain start on the window"],
+  excited: {
+    memory: ["The night before a trip I'd waited all year for", "Walking out on stage just before the crowd went quiet"],
+    firstStep: ["I saw the lights come up and the crowd turn toward me", "I heard the opening beat of my favourite song"],
     nextSteps: [
-      ["I said to myself, it's all handled", "I saw the to-do list fade out"],
-      ["I felt my jaw unclench and my breath slow down", "I heard a quiet voice say, you can stop now"],
-      ["I pictured a wide, empty beach", "I felt the tightness in my chest let go"],
-      ["I told myself, one thing at a time", "I felt my shoulders sink down"],
-      ["I saw the room go soft and still", "I heard my own breathing, slow and even"],
+      ["I said to myself, here we go", "I felt my heart pick up, in a good way"],
+      ["I felt a buzz run up through my chest", "I pictured the moment it all comes together"],
+      ["I heard people cheering", "I felt myself grin and couldn't stop"],
+      ["I told myself, this is going to be amazing", "I felt my whole body light up"],
+      ["I saw everything sharp and bright", "I felt like I could run for miles"],
     ],
-    modality: ["More like a feeling, somewhere in my body", "More like something I heard myself say"],
+    modality: ["More like a feeling, buzzing in my body", "More like something I saw, bright and clear"],
     fullyIn: ["Yes, fully {state} right there", "No, there was a next thing"],
-    anchor: ["The very first one, that's the fastest", "The last one, where it all let go"],
+    anchor: ["The very first one, that's the fastest", "The last one, when it all lit up"],
     confirm: ["Yes, that's right", "No, the order's a bit different"],
     submodality: {
       visual: {
-        location: ["It's all around me, like I'm standing in it", "It's right in front of me, in the center"],
-        size: ["It's bigger than life, wide open", "Small, like a photo"],
-        distance: ["Far away, in the distance", "About arm's length away"],
-        brightness: ["Normal light, nothing special", "Bright and clear, like a sunny day"],
-        perspective: ["I see it from my own eyes", "I can see myself in it, from the outside"],
+        location: ["It's right in front of me, big and central", "It's all around me, like I'm inside it"],
+        size: ["Bigger than life", "Life-size, like I'm really there"],
+        distance: ["Close, right up near me", "A little way off, like a stage"],
+        brightness: ["Really bright, almost glowing", "Normal light, nothing special"],
+        perspective: ["Through my own eyes, I'm in it", "I can see myself, from a little outside"],
       },
       auditory: {
-        source: ["My own voice, slow and kind", "The rain on the window"],
-        volume: ["Soft and quiet", "Loud and clear"],
-        location: ["All around me", "Behind me, a little"],
+        source: ["The crowd, all cheering", "My own voice saying, let's go"],
+        volume: ["Loud and full", "Normal, like a conversation"],
+        location: ["All around me", "In front of me"],
       },
       kinesthetic: {
-        bodyLocation: ["My shoulders, they drop down", "My whole body, all over"],
-        intensity: ["A strong 8", "About a 5, medium"],
-        movement: ["It's moving, like a wave washing down", "Still and steady"],
+        bodyLocation: ["In my chest, buzzing", "All through my arms and legs"],
+        intensity: ["A strong 9", "About a 7 and rising"],
+        movement: ["It's moving, rising up through me", "It's still, just humming there"],
       },
     },
   },
@@ -456,7 +456,7 @@ export function buildQuestion(ctx: QuestionContext): Question {
 /** Every question the bank can produce, for each suggestion set and step up to maxSteps. Used by tests and the harness. */
 export function everyQuestion(maxSteps = 6): Question[] {
   const out: Question[] = [buildQuestion({ kind: "choose-state" })];
-  const keys: SuggestionSetKey[] = ["content", "destressed", "generic"];
+  const keys: SuggestionSetKey[] = ["content", "excited", "generic"];
   const modalities: SensoryModality[] = ["visual", "auditory", "kinesthetic"];
   for (const key of keys) {
     const state: StateRef = { key, phrase: key === "generic" ? "calm before a pitch" : key };

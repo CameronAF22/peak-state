@@ -11,7 +11,7 @@ import {
   readInterpretBody,
 } from "../../src/voice/interpret.ts";
 
-const ctx = { question: "What state do you want to choose?", choices: ["Content", "Destressed"], expects: "choice" as const };
+const ctx = { question: "What state do you want to choose?", choices: ["Content", "Excited"], expects: "choice" as const };
 
 test("interpret helpers: fillers, trailing off, echo share", () => {
   assert.equal(isFillerOnly("um, uh... hmm"), true);

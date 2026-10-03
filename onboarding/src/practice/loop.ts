@@ -246,6 +246,17 @@ function normal(v: string): string {
   return v.toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9' ]+/g, " ").replace(/\s+/g, " ").trim();
 }
 
+const STOP_WORDS = new Set(["the", "a", "an", "and", "of", "at", "in", "on", "it", "was", "is", "my", "i", "to", "with", "that", "this", "there"]);
+
+/** The same thing in other words: most of the saved answer's meaningful words come back ("the lake, early" ≈ "the lake at sunrise early"). */
+function sameWords(text: string, saved: string): boolean {
+  const key = (v: string) => normal(v).split(/\s+/).filter((w) => w && !STOP_WORDS.has(w));
+  const was = key(saved);
+  if (was.length < 2) return false;
+  const now = new Set(key(text));
+  return was.filter((w) => now.has(w)).length / was.length >= 0.75;
+}
+
 /** What the answer to a strategy question says: the same, a new value, or unclear. */
 export function readQuestionAnswer(step: Step, field: string, answer: Answer): Read {
   const current = readField(step, field);
@@ -266,7 +277,7 @@ export function readQuestionAnswer(step: Step, field: string, answer: Answer): R
     }
     const { saysSame, rest } = clauses(text);
     const now = typeof current === "string" ? normal(current) : "";
-    if (now && normal(text).includes(now)) return { kind: "same" };
+    if (now && (normal(text).includes(now) || sameWords(text, now))) return { kind: "same" };
     if ((saysSame || SAME.test(text)) && !NOT_SAME.test(text)) return SHIFT.test(rest) ? { kind: "unclear" } : { kind: "same" };
     if (!attr) return { kind: "change", to: text };
     const v = parseSubmodality(step.modality as Exclude<Step["modality"], "other">, attr, text, answer.choiceValue);

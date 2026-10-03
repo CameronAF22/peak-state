@@ -302,6 +302,24 @@ test("gpt-live: speak asks the line through instructions.append, verbatim, and f
   v.stop();
 });
 
+test("gpt-live: once the whole line has been heard, the line finishes soon after the voice goes quiet", async () => {
+  const { pcs, deps, clock } = setup();
+  const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, deps);
+  await v.start();
+  const ch = pcs[0]!.channel!;
+  const text = "Can you remember a specific time when you felt totally content? Step back into it."; // ≈ 7.5 s estimate
+  let resolved = false;
+  const p = v.speak(text).then(() => (resolved = true));
+  ch.emit({ type: "session.output_transcript.delta", delta: text });
+  clock.advance(1100);
+  await tick();
+  assert.equal(resolved, false);
+  clock.advance(100);
+  await p;
+  assert.equal(resolved, true, "1.2 s after the last word, not after the full estimate");
+  v.stop();
+});
+
 test("gpt-live: speak still finishes if no output transcript arrives", async () => {
   const { deps, clock } = setup();
   const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, deps);
@@ -326,7 +344,7 @@ async function asked(opts: { interpret?: (ctx: any, heard: string) => Promise<an
     {
       apiKey: "",
       model: "gpt-live-1",
-      answerContext: () => ({ question: "What state do you want to choose?", choices: ["Content", "Destressed"], expects: opts.expects ?? "choice" }),
+      answerContext: () => ({ question: "What state do you want to choose?", choices: ["Content", "Excited"], expects: opts.expects ?? "choice" }),
       interpret: async (ctx, heard) => {
         seen.push({ ctx, heard });
         return interpret(ctx, heard);
@@ -357,7 +375,7 @@ test("gpt-live: GPT-Live delegates when the answer is done → interpreter clean
   ch.emit({ type: "session.delegation.created", delegation: { id: "item_1", type: "delegation", target: "client" } });
   await flush();
   assert.equal(seen.at(-1)!.heard, "Um, con tent");
-  assert.deepEqual(seen.at(-1)!.ctx.choices, ["Content", "Destressed"]);
+  assert.deepEqual(seen.at(-1)!.ctx.choices, ["Content", "Excited"]);
   assert.deepEqual(heard.at(-1), ["clean:Um, con tent", true]);
 
   void v.speak("Can you remember a time?");
@@ -446,7 +464,7 @@ test("gpt-live: the guide's echo while it speaks is dropped; a real barge-in is 
 
 test("gpt-live: an answer with no next question releases the delegation after a moment", async () => {
   const { ch, clock, v } = await asked();
-  ch.emit({ type: "session.input_transcript.delta", delta: "Destressed" });
+  ch.emit({ type: "session.input_transcript.delta", delta: "Excited" });
   ch.emit({ type: "session.delegation.created", delegation: { id: "item_5" } });
   await flush();
   ch.sent.length = 0;
