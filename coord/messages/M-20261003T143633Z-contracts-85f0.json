@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143633Z-contracts-85f0",
+  "from": "contracts",
+  "to": "human",
+  "subject": "Profile v2 replanned for one state; three questions",
+  "body": "Profile v2 now follows D-coord-011/012 (proposed as D-contracts-005, D-contracts-006). 1) Stage demo: pre-fill contrast and drivers from a rehearsal, marked prefilled:true? Plan: yes. 2) Allow smell and taste steps in the MVP schema (no submodality keys, free text only)? Plan: yes. 3) Profiles and rep logs stay browser-only, with a JSON export? Plan: yes. Please accept or reject D-contracts-005/006 once the lanes have replied.",
+  "refs": [
+    "D-contracts-005",
+    "D-contracts-006"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:36:33Z",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  }
+}

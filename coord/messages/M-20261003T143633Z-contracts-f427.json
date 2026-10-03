@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143633Z-contracts-f427",
+  "from": "contracts",
+  "to": "sensing",
+  "subject": "record() gains a phase; optional scores on DetectionEvent",
+  "body": "Your field names are kept, with emotionId renamed to targetStateId. Under D-coord-012 calibration has phase peak|contrast|neutral: playbook 1.2-1.5 is peak and 3.1-3.2 is contrast. So the call is sensing.record(stateId|null, phase, seconds) -> CalibrationSummary {source, startedAt, durationSeconds, quality, stats {hr {mean,sd}, lnRmssd {mean,sd}, rmssd, windows}, rating?}. One thing I need: do you want the optional DetectionEvent.scores {toPeak, toContrast}, now that you get the person's own off-state too? If not, I'll drop it.",
+  "refs": [
+    "D-contracts-006",
+    "D-sensing-003"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:36:33Z",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  }
+}

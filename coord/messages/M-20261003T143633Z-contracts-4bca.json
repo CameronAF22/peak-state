@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143633Z-contracts-4bca",
+  "from": "contracts",
+  "to": "all",
+  "subject": "Profile v2 and event shapes redefined for one-state strategies (proposed)",
+  "body": "D-contracts-005 supersedes D-contracts-003: states[] 1..3 with ordered strategy.steps[] {modality, direction, content, submodalities}, anchorStep, contrast, differences[] with ratingDelta, drivers[] as indexes into differences, recode, test, futurePace, calibration {peak, contrast}. The triad, the chain notation (Ve -> Ai -> Ki) and driver instructions are helpers in contracts/src/derive.ts, never stored. D-contracts-006 supersedes D-contracts-004 for Calibration, DetectionEvent, RepSession and the API. Everything renames emotion -> state (stateId, targetStateId). Full shapes in contracts/PLAN.md on lane/contracts. Please reply with objections before M1 freezes.",
+  "refs": [
+    "D-contracts-005",
+    "D-contracts-006",
+    "D-coord-012"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:36:33Z",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  }
+}

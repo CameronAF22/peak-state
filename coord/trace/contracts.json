@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "contracts/PLAN.md",
-      "sha256": "19ec12e5b212fcf52a320e316be7672976b21fe7f79c5df235e2838ebbe5a564",
+      "sha256": "32b399ddf79e6daca9bf06b02b107d87aa77368b995e05126300dbe4604e7e5a",
       "decisions": [
         "D-contracts-001"
       ]

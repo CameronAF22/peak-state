@@ -46,36 +46,40 @@ Own every shape the lanes exchange: the three-emotion profile, calibration, sign
 
 ## Proposed, awaiting acceptance
 
-### D-contracts-003 · Profile v2 first cut: exactly three emotions with triad strategy, optional anchor, leverage and calibration summary
+### D-contracts-005 · Profile v2: 1 to 3 person-chosen states with ordered strategy steps, submodalities, contrast, differences and drivers
 
 `proposed` · contract · 2026-10-03 · [session](https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp) · branch `lane/contracts`
 
-**Decision.** schemas/profile.v2.schema.json, schemaVersion 2: profileId, displayName?, emotions (exactly 3, unique slug ids), createdAt, confirmedAt (null = draft). Emotion: id, label, words, leverage?, strategy.{physiology,focus,language} each {action, cue, status: confirmed|draft|empty}, anchor? {kind: sound|gesture|word, value}, calibration? {calibrationId, recordedAt, source, durationSeconds, hrMean, hrSd, rmssd}. Full shape in contracts/PLAN.md.
+**Decision.** schemas/profile.v2.schema.json, schemaVersion 2: profileId, displayName?, createdAt, confirmedAt (null = draft), neutral? CalibrationSummary, states[] (1..3, unique slug ids). State: id, label, words, memoryCue?, leverage?, strategy {steps[] {modality visual|auditory|kinesthetic|olfactory|gustatory, direction external|internal, content, submodalities {core, extended?, other?} with fixed keys per modality, anchorDetail? scene|song|body}, fullyInAt, confirmed}, anchorStep, contrast {label, submodalities per modality, prefilled}, differences[] {modality, attribute, peak, contrast, ratingDelta}, drivers[] (1..3 indexes into differences), recode, test {before, after}, futurePace {situation}, calibration {peak, contrast}. Unreached sections are null. The physiology/focus/language triad, the step-chain notation and driver instructions are derived in contracts/src/derive.ts, never stored. validateProfile() adds the index checks JSON Schema cannot. Full shape in contracts/PLAN.md.
 
-**Context.** MVP plan and contracts brief. Onboarding fills it, sensing reads calibration, reps reads strategy and anchor. Needs onboarding and reps to confirm the fields are fillable and sufficient.
+**Context.** D-coord-011 makes the MVP one person-chosen state elicited by the voice playbook; D-coord-012 makes a strategy an ordered list of steps with submodalities and the triad a derived view. Field list follows the playbook's 'What this feeds downstream' table plus M0 asks: leverage (reps, onboarding), calibration summary per state plus neutral (sensing, onboarding).
 
 **Alternatives considered.**
 
-- Allow 1 to 3 emotions while drafting
-- Keep calibration only in separate Calibration records
+- Keep the triad slots and attach steps to them (loses order, rejected by D-coord-012)
+- Free-text submodalities with no fixed keys (peak vs contrast comparison in 3.4 becomes guesswork)
+- drivers[] as copies of the differences (duplicates data; indexes keep one source)
 
-**Produces:** `schemas/profile.v2.schema.json`, `contracts/fixtures/profile.demo.json`, `contracts/fixtures/profile.draft.json`  
-**Depends on:** D-coord-005
+**Produces:** `schemas/profile.v2.schema.json`, `contracts/fixtures/profile.demo.json`, `contracts/fixtures/profile.three-states.json`, `contracts/fixtures/profile.draft.json`, `contracts/src/derive.ts`  
+**Depends on:** D-coord-011, D-coord-012, D-contracts-002  
+**Supersedes:** D-contracts-003
 
-### D-contracts-004 · Event shapes first cut: Calibration, SignalFrame, DetectionEvent, RepSession, and the module API
+### D-contracts-006 · Event shapes and module API: calibration phases, targetStateId, rep steps by strategy index
 
 `proposed` · contract · 2026-10-03 · [session](https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp) · branch `lane/contracts`
 
-**Decision.** As in contracts/PLAN.md. Stream times are epoch ms integers, persisted times ISO 8601. SignalFrame {t, source, hr, rr[], quality, scenarioStep?}. DetectionEvent {id, t, kind: drift|manual, emotionId, confidence, window {seconds, hrMean, rmssd, hrDelta, rmssdDelta, z}, gate {consecutiveWindows, required, refractorySeconds, sham}}. RepSession {id, profileId, emotionId, trigger {kind: detection|manual|practice, detectionId?}, mode: full|anchor-only, arm: cue|sham, steps[], intensityBefore, intensityAfter, recoverySeconds, endedBy: completed|skipped|safety-stop}. API: onboarding.run(host), sensing.start(profile, onEvent, onFrame?), sensing.record(emotionId, seconds), reps.run(profile, emotionId, trigger, host), reps.progress(sessions).
+**Decision.** Calibration {phase peak|contrast|neutral, stateId, source, startedAt, durationSeconds, frameCount, quality, stats {hr {mean,sd}, lnRmssd {mean,sd}, rmssd, windows}, rating?}. SignalFrame {t epoch ms, source, hr, rr[], quality, scenarioStep?}. DetectionEvent {id, t, kind drift|manual, targetStateId, confidence, window {startT,endT,hr,rmssd,quality}, gate {consecutive, refractoryMs, sham}, scores? {toPeak, toContrast}}. RepSession {id, profileId, stateId, repIndex, kind full|anchor-only, trigger {kind detection|manual|practice|onboarding, detectionId?}, arm cue|sham, startedAt, endedAt, steps[] {kind rate|anchor|strategy-step|leverage|peak, strategyStepIndex?, driverIndexes?, plannedMs, startedAt, endedAt, delivered}, intensityBefore, intensityAfter, recoverySeconds, recoveryCensored, anchorPaired, signalSource, scriptHash, endedBy completed|skipped|user-stop|safety-stop|timeout}. API per D-experience-003: onboarding.run(props) -> OnboardingResult (confirmed profile or stopped with reason), sensing.start(profile, onEvent, onFrame?) -> {stop, triggerManual}, sensing.record(stateId|null, phase, seconds) -> CalibrationSummary, reps.run(profile, stateId, trigger, props) -> {session, stop}, reps.progress(sessions).
 
-**Context.** MVP plan first cut, extended with what sensing, reps and onboarding briefs say they provide (record, progress) and the installed test (anchor-only). Window stats and step kinds need sensing and reps to confirm.
+**Context.** D-coord-012: reps replay the person's own step order; calibration windows come from playbook 1.2-1.5 (peak) and 3.1-3.2 (contrast). Folds in M0 asks: sensing's field names (D-sensing-003), reps' session fields and stop handle, onboarding's stopped result, experience's module slots (D-experience-003).
 
-**Produces:** `schemas/calibration.schema.json`, `schemas/signal-frame.schema.json`, `schemas/detection-event.schema.json`, `schemas/rep-session.schema.json`, `contracts/fixtures/`, `contracts/API.md`  
-**Depends on:** D-coord-005, D-coord-007
+**Produces:** `schemas/calibration.schema.json`, `schemas/signal-frame.schema.json`, `schemas/detection-event.schema.json`, `schemas/rep-session.schema.json`, `contracts/fixtures/`, `contracts/API.md`, `contracts/src/api.ts`  
+**Depends on:** D-coord-012, D-contracts-002, D-experience-003, D-sensing-003, D-reps-003, D-reps-004  
+**Supersedes:** D-contracts-004
 
 ## Superseded and rejected
 
-None.
+- D-contracts-003 · Profile v2 first cut: exactly three emotions with triad strategy, optional anchor, leverage and calibration summary · `superseded` (superseded by D-contracts-005)
+- D-contracts-004 · Event shapes first cut: Calibration, SignalFrame, DetectionEvent, RepSession, and the module API · `superseded` (superseded by D-contracts-006)
 
 ## Decisions from other lanes that cover files here
 
@@ -87,7 +91,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 
 | File | sha256 | Decisions |
 |---|---|---|
-| `contracts/PLAN.md` | `19ec12e5b212` | D-contracts-001 |
+| `contracts/PLAN.md` | `32b399ddf79e` | D-contracts-001 |
 | `examples/sample-profile.json` | `291e50b2e629` | D-coord-008 |
 | `examples/sample-strategies.json` | `2e568daa55ce` | D-coord-008 |
 | `schemas/anchor-update.schema.json` | `aebf1af9180b` | D-coord-008 |
