@@ -17,7 +17,7 @@
 |---|---|
 | M1 | `onboarding/PLAN.md` and the voice script for `docs/hackathon/elicitation-playbook.md`: one person-chosen state. Elicit the strategy in order, then core submodalities per step, then the contrast and drivers, then recode, test and future pace. The script is built so it can run up to three times in the next version. |
 | M2 | A module that turns a transcript (scripted for the demo) into a Profile v2, validated against `contracts/`. Include a fixture conversation. |
-| M3 | Live conversation: a text chat with an LLM behind it, with optional browser speech. Calibration step: about 20 seconds of recall per emotion while sensing records. |
+| M3 | Live voice conversation: speech in and out as the primary surface, with a live transcript and typed and scripted fallbacks (provider per D-onboarding-007). Calibration runs inside the playbook: sensing records the peak window during sections 1.2 to 1.5 and the contrast window during 3.1 to 3.2. |
 | M4 | The playback screen copy, and the safety stop wired into every prompt |
 
 ## Interfaces

@@ -3,16 +3,17 @@
   "lane": "coord",
   "health": "green",
   "phase": "M1",
-  "progress": 8,
-  "summary": "Lanes revising plans for the one-state voice playbook; reps and sensing done, sensing brief fixed",
+  "progress": 10,
+  "summary": "All five lanes replanned for the one-state voice playbook; proposed shapes D-contracts-005/006 await acceptance; waiting for go",
   "now": [
-    "Collect revised plans from contracts, onboarding, experience"
+    "Brief fixes from lane feedback"
   ],
   "next": [
-    "Wait for go to start M1 builds"
+    "Accept contract shapes once lanes confirm",
+    "Start M1 on go"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:36:40Z",
+  "updatedAt": "2026-10-03T14:37:08Z",
   "session": {
     "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
     "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
