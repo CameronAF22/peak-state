@@ -19,7 +19,8 @@
     "worker:deploy": "npm run build:harness && wrangler d1 migrations apply peak-state --remote && wrangler deploy"
   },
   "dependencies": {
-    "@peak-state/contracts": "0.1.0"
+    "@peak-state/contracts": "0.1.0",
+    "@peak-state/reps": "0.1.0"
   },
   "devDependencies": {
     "@playwright/test": "1.56.1",

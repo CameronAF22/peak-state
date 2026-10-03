@@ -152,20 +152,25 @@ Install each state as measurable reps: a short rep script per emotion (anchor, p
 - D-reps-002 · Rep script: anchor, physiology, focus, language, peak, rate; 32 s default within 20 to 40 s · `superseded` (superseded by D-reps-005)
 - D-reps-007 · Rep script wording and timing rules · `superseded` (superseded by D-reps-010)
 
+## Decisions from other lanes that cover files here
+
+- D-onboarding-023 · Integration: harness is the live app, reps on contracts, app shell at /demo, sensing plan only (`onboarding`)
+
 ## Produced artifacts
 
 Every file this lane owns, the first 12 hex digits of its SHA-256 at build time, and the decisions that cover it.
 
 | File | sha256 | Decisions |
 |---|---|---|
-| `reps/PLAN.md` | `07a44f7e2daf` | D-reps-001, D-reps-002, D-reps-003, D-reps-004, D-reps-005, D-reps-006 |
-| `reps/package.json` | `adb774053dde` | D-reps-008 |
-| `reps/src/index.ts` | `684d28ad1663` | D-reps-007, D-reps-010 |
-| `reps/src/script.ts` | `0a1cc9034cd3` | D-reps-007, D-reps-010 |
-| `reps/src/session.ts` | `8f1b954ea292` | D-reps-007, D-reps-010 |
-| `reps/src/shapes.ts` | `f363d74787f7` | D-reps-007, D-reps-009, D-reps-010 |
-| `reps/src/wording.ts` | `90102d454f1f` | D-reps-007, D-reps-010 |
-| `reps/test/fixtures/profile.demo.json` | `b9204798149f` | D-reps-008, D-reps-009 |
-| `reps/test/script.test.ts` | `d461c6058ee7` | D-reps-008 |
-| `reps/test/session.test.ts` | `c5663ecc3b3b` | D-reps-008 |
-| `reps/tsconfig.json` | `4967fc7a3d54` | D-reps-008 |
+| `reps/PLAN.md` | `07a44f7e2daf` | D-onboarding-023, D-reps-001, D-reps-002, D-reps-003, D-reps-004, D-reps-005, D-reps-006 |
+| `reps/package.json` | `49e87c00e69a` | D-onboarding-023, D-reps-008 |
+| `reps/src/index.ts` | `ce8552eedc60` | D-onboarding-023, D-reps-007, D-reps-010 |
+| `reps/src/progress.ts` | `161fcfb2e330` | D-onboarding-023, D-reps-007, D-reps-010 |
+| `reps/src/script.ts` | `d53fe0bea0dd` | D-onboarding-023, D-reps-007, D-reps-010 |
+| `reps/src/session.ts` | `3ddc336b54e4` | D-onboarding-023, D-reps-007, D-reps-010 |
+| `reps/src/shapes.ts` | `5914569edda9` | D-onboarding-023, D-reps-007, D-reps-009, D-reps-010 |
+| `reps/src/wording.ts` | `032aae724b76` | D-onboarding-023, D-reps-007, D-reps-010 |
+| `reps/test/progress.test.ts` | `f02dd14082d7` | D-onboarding-023, D-reps-008 |
+| `reps/test/script.test.ts` | `8f2fc200021f` | D-onboarding-023, D-reps-008 |
+| `reps/test/session.test.ts` | `44e5c89175d0` | D-onboarding-023, D-reps-008 |
+| `reps/tsconfig.json` | `4967fc7a3d54` | D-onboarding-023, D-reps-008 |

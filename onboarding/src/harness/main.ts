@@ -9,6 +9,7 @@ import { createEngine } from "../engine/index.ts";
 import { appendRun, clearStrategy, DEFAULT_PAUSE_MS, runsFor, runStrategy, toSecondPerson } from "../playback/index.ts";
 import { createPracticeLoop, type PracticeLoop, type PracticeSnapshot } from "../practice/loop.ts";
 import { reminderLine, summarize } from "../progress/index.ts";
+import { conditioning, type Conditioning } from "@peak-state/reps";
 import { loadRecord, newRecord, saveRecord, type StrategyRecord } from "../store/index.ts";
 import { createApi, pushRecord, syncAll, type ServerInfo } from "../sync/index.ts";
 import type { Answer, EngineSnapshot, VoiceAdapter, VoiceKind, VoiceStatus } from "../types.ts";
@@ -277,12 +278,20 @@ function renderSavedMode(): void {
   const chain = chainFromProfile(saved.profile, st.stateId);
   const runs = runsFor(saved.profile.profileId, st.stateId);
   const reminder = reminderLine(summarize(runs, st.stateId), toSecondPerson(st.label));
+  const cond = conditioning(runs, st.stateId);
   if (practice) practiceView.render(practice.snapshot(), steps, reminder);
   mount(
     mainCol,
     renderSavedCard(
-      { saved, stateLabel: st.label, chain, steps, running, practicing: practiceOpen(), reminder: runs.length ? reminder : null, revision: saved.revision },
-      { run: () => void run(), practice: startPractice, download, newStrategy },
+      { saved, stateLabel: st.label, chain, steps, running, practicing: practiceOpen(), reminder: runs.length ? reminder : null, revision: saved.revision, conditioning: conditioningLine(cond), anchorTest: cond.nextStep === "anchor-test" && saved.profile.states.find((x) => x.id === st.stateId)?.anchorStep != null },
+      {
+        run: () => void run(),
+        imOff: () => void run({ trigger: { kind: "manual" } }),
+        anchorTest: () => void run({ kind: "anchor-only", trigger: { kind: "manual" } }),
+        practice: startPractice,
+        download,
+        newStrategy,
+      },
     ),
     practice ? practiceView.el : null,
     panel?.el ?? null,
@@ -338,7 +347,14 @@ function practiceStep(): number | null {
   return p && p.phase === "recall" && p.recallAt !== null ? (p.recallOrder[p.recallAt] ?? null) : null;
 }
 
-async function run(): Promise<void> {
+/** Where conditioning stands (D-reps-003), in one line. */
+function conditioningLine(c: Conditioning): string {
+  if (c.installed) return "Installed: the anchor alone brings it back.";
+  if (c.nextStep === "anchor-test") return `${c.goodReps} good reps. Next, test the anchor on its own.`;
+  return `${c.goodReps} of ${c.goodRepsNeeded} good reps toward installing it.`;
+}
+
+async function run(mode: { trigger?: RepSession["trigger"]; kind?: RepSession["kind"] } = {}): Promise<void> {
   const st = savedState();
   if (running || practiceOpen() || !saved || !st) return;
   practice = null;
@@ -379,7 +395,7 @@ async function run(): Promise<void> {
           await voice.speak(text).catch(() => {});
         },
       },
-      { pauseMs, repIndex: runsFor(profile.profileId, st.stateId).length, shouldStop: () => stopRequested },
+      { pauseMs, repIndex: runsFor(profile.profileId, st.stateId).length, shouldStop: () => stopRequested, ...mode },
     );
     appendRun(session);
     void pushRuns([session]);

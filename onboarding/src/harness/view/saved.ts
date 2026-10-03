@@ -11,6 +11,10 @@ export interface SavedHandlers {
   run(): void;
   /** The practice loop (D-onboarding-015). */
   practice?(): void;
+  /** "I'm off": a rep right now, logged with a manual trigger (D-onboarding-023). */
+  imOff?(): void;
+  /** The anchor on its own: the installed test (D-reps-003). */
+  anchorTest?(): void;
   download(): void;
   newStrategy(): void;
 }
@@ -27,6 +31,10 @@ export interface SavedModel {
   reminder?: string | null;
   /** Revision of the saved strategy, shown once it has changed. */
   revision?: number;
+  /** Where conditioning stands: good reps, anchor test, installed (reps.conditioning). */
+  conditioning?: string | null;
+  /** The anchor-only test is due. */
+  anchorTest?: boolean;
 }
 
 function when(iso: string): string {
@@ -80,7 +88,14 @@ export function renderSavedCard(m: SavedModel, handlers: SavedHandlers): HTMLEle
       handlers.practice
         ? h("button", { class: "practice-btn", type: "button", "data-testid": "practice", disabled: busy, onclick: () => handlers.practice?.() }, "Practice: recall, rate, adjust")
         : null,
+      handlers.imOff
+        ? h("button", { class: "practice-btn", type: "button", "data-testid": "im-off", disabled: busy, onclick: () => handlers.imOff?.() }, "I'm off: bring it back now")
+        : null,
+      m.anchorTest && handlers.anchorTest
+        ? h("button", { class: "practice-btn", type: "button", "data-testid": "anchor-test", disabled: busy, onclick: () => handlers.anchorTest?.() }, "Test the anchor on its own")
+        : null,
     ),
+    m.conditioning ? h("p", { class: `practice-reminder${fade}`, "data-testid": "conditioning" }, m.conditioning) : null,
     h(
       "div",
       { class: `quiet-row${fade}` },
@@ -103,7 +118,7 @@ export function renderRunLog(runs: RepSession[]): HTMLElement {
       return h(
         "li",
         { class: "run-entry", "data-testid": "run-entry", "data-ended-by": r.endedBy },
-        h("span", {}, practice ? `run ${r.repIndex + 1} · practice` : `run ${r.repIndex + 1}`),
+        h("span", {}, `run ${r.repIndex + 1}${practice ? " · practice" : r.kind === "anchor-only" ? " · anchor test" : r.trigger.kind === "manual" ? " · I'm off" : ""}`),
         h("span", { class: `delta${up ? " up" : ""}` }, practice ? `${after}/10` : `${before} → ${after}`),
         h("span", { class: "when" }, r.endedBy === "completed" ? when(r.startedAt) : `${when(r.startedAt)} · stopped`),
       );

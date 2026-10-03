@@ -6,6 +6,7 @@
       "path": "reps/PLAN.md",
       "sha256": "07a44f7e2dafd63aaac31fd5a2b5837af3d7ec88dde5c2785b67eee98ed7674c",
       "decisions": [
+        "D-onboarding-023",
         "D-reps-001",
         "D-reps-002",
         "D-reps-003",
@@ -16,39 +17,53 @@
     },
     {
       "path": "reps/package.json",
-      "sha256": "adb774053dde16f6c9db35b194a1cba8bb013f5b50caaf7de4c6e68920ca6769",
+      "sha256": "49e87c00e69a219738b8983dea115bfb348a8b54bd0de334db906fe373fff75f",
       "decisions": [
+        "D-onboarding-023",
         "D-reps-008"
       ]
     },
     {
       "path": "reps/src/index.ts",
-      "sha256": "684d28ad16632dd091362bda48aece05657bf8002fd182f8ee7d2f291fecb6e8",
+      "sha256": "ce8552eedc60a2ed01eb2587893e3b31d27180ec29e52fd9312ee0f15eb70196",
       "decisions": [
+        "D-onboarding-023",
+        "D-reps-007",
+        "D-reps-010"
+      ]
+    },
+    {
+      "path": "reps/src/progress.ts",
+      "sha256": "161fcfb2e3303e562e1d54ad782802f5092ff32f79ccfee2fbe16c2d8162ba29",
+      "decisions": [
+        "D-onboarding-023",
         "D-reps-007",
         "D-reps-010"
       ]
     },
     {
       "path": "reps/src/script.ts",
-      "sha256": "0a1cc9034cd36915d2c98e00b3374f31e877015f4cb91246d3214fef179a119a",
+      "sha256": "d53fe0bea0dd809626f60f0fd43d2e77519ce749d1b104cd1989d163a20fbfa8",
       "decisions": [
+        "D-onboarding-023",
         "D-reps-007",
         "D-reps-010"
       ]
     },
     {
       "path": "reps/src/session.ts",
-      "sha256": "8f1b954ea2921a890b90e8eb9b90f364722d35b62277b409ebdffc7ec53707ad",
+      "sha256": "3ddc336b54e4cb65dd48392649b14b8d77274babb58af2c6e4039273f78fe1b1",
       "decisions": [
+        "D-onboarding-023",
         "D-reps-007",
         "D-reps-010"
       ]
     },
     {
       "path": "reps/src/shapes.ts",
-      "sha256": "f363d74787f77f40a1ed5f11613307a765cc00092cdd3778e5a232003976bec9",
+      "sha256": "5914569edda91f9e9550f48667183d531fc2599893e66e888b10e39b1e4ed5fb",
       "decisions": [
+        "D-onboarding-023",
         "D-reps-007",
         "D-reps-009",
         "D-reps-010"
@@ -56,31 +71,34 @@
     },
     {
       "path": "reps/src/wording.ts",
-      "sha256": "90102d454f1f251f45db28aa50f88b196acfd6fc017e48905d8b013a8994c9a1",
+      "sha256": "032aae724b76395fae54574280b249541d74a68af6b5cf0d87f3744bd1ccc227",
       "decisions": [
+        "D-onboarding-023",
         "D-reps-007",
         "D-reps-010"
       ]
     },
     {
-      "path": "reps/test/fixtures/profile.demo.json",
-      "sha256": "b9204798149f2f2b43e7cc5a146b1076daea7bf453c029c51b71b6b00e740411",
+      "path": "reps/test/progress.test.ts",
+      "sha256": "f02dd14082d7e4317778e677fa79e6c86aae53d227d5a71a7b6633ea76cd9911",
       "decisions": [
-        "D-reps-008",
-        "D-reps-009"
+        "D-onboarding-023",
+        "D-reps-008"
       ]
     },
     {
       "path": "reps/test/script.test.ts",
-      "sha256": "d461c6058ee701179bc08678aee9794a90aebb4a793bf4adec0b514aaf3f28ff",
+      "sha256": "8f2fc200021f080c6bbb068bd56384bff0c6b111e222e9a5374e46704a8f6ec6",
       "decisions": [
+        "D-onboarding-023",
         "D-reps-008"
       ]
     },
     {
       "path": "reps/test/session.test.ts",
-      "sha256": "c5663ecc3b3b9b5d1b7e2ca6e377e59246acbcf685ad9dbdcc924f85cd3246c6",
+      "sha256": "44e5c89175d00787b5946efd9f89a4e8f70fa3350a4dc318bc314a8569289369",
       "decisions": [
+        "D-onboarding-023",
         "D-reps-008"
       ]
     },
@@ -88,6 +106,7 @@
       "path": "reps/tsconfig.json",
       "sha256": "4967fc7a3d54ed93ff3016cd04102beeeb55b1b941fc6d344659c1854ecf2ac8",
       "decisions": [
+        "D-onboarding-023",
         "D-reps-008"
       ]
     }

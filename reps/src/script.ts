@@ -2,6 +2,8 @@
 // A full rep replays the person's own step chain in order, speaks the drivers
 // that belong to each step, and pairs the anchor step at the peak.
 
+import { driversForStep as resolvedDriversForStep, getState, repSteps } from "@peak-state/contracts";
+
 import type { ProfileV2, RepKind, RepStepKind, State } from "./shapes.ts";
 import {
   allCoreDetails,
@@ -32,8 +34,10 @@ export interface ScriptStep {
   plannedMs: number;
   /** Untimed steps sit outside the 20 to 40 s budget. */
   timed: boolean;
-  strategyStepIndex?: number;
-  driverIndexes?: number[];
+  /** Index into strategy.steps, as in RepStep. */
+  stepIndex?: number;
+  /** Indexes into the state's differences spoken in this step, as in RepStep. */
+  driversSpoken?: number[];
 }
 
 export interface RepScript {
@@ -55,11 +59,12 @@ export class ScriptError extends Error {}
 
 export function findState(profile: ProfileV2, stateId: string): State {
   if (profile.confirmedAt === null) throw new ScriptError("profile is a draft (confirmedAt is null)");
-  const state = profile.states.find((s) => s.id === stateId);
+  const state = getState(profile, stateId);
   if (!state) throw new ScriptError(`no state '${stateId}' in profile ${profile.profileId}`);
   const n = state.strategy.steps.length;
   if (n === 0) throw new ScriptError(`state '${stateId}' has no strategy steps`);
-  if (!Number.isInteger(state.strategy.fullyInAt) || state.strategy.fullyInAt < 0 || state.strategy.fullyInAt >= n) {
+  const { fullyInAt } = state.strategy;
+  if (fullyInAt !== null && (!Number.isInteger(fullyInAt) || fullyInAt < 0 || fullyInAt >= n)) {
     throw new ScriptError(`state '${stateId}': fullyInAt ${state.strategy.fullyInAt} is not a step index`);
   }
   if (state.anchorStep !== null && (state.anchorStep < 0 || state.anchorStep >= n)) {
@@ -68,10 +73,9 @@ export function findState(profile: ProfileV2, stateId: string): State {
   return state;
 }
 
-/** Drivers (indexes into differences) whose modality matches the step, in drivers order. */
+/** The drivers that belong to one strategy step (Difference.stepIndex), as difference indexes, largest ratingDelta first. */
 export function driversForStep(state: State, stepIndex: number): number[] {
-  const step = state.strategy.steps[stepIndex];
-  return state.drivers.filter((d) => state.differences[d]?.modality === step.modality);
+  return resolvedDriversForStep(state, stepIndex).map((d) => d.differenceIndex);
 }
 
 export function speechMs(text: string): number {
@@ -94,8 +98,8 @@ function strategyStepDraft(state: State, i: number, topDriverOnly: boolean): Dra
     kind: "strategy-step",
     text,
     timed: true,
-    strategyStepIndex: i,
-    ...(drivers.length > 0 ? { driverIndexes: drivers } : {}),
+    stepIndex: i,
+    ...(drivers.length > 0 ? { driversSpoken: drivers } : {}),
     floorMs: speechMs(text) + TIMING.pauseMs + repeat,
   };
 }
@@ -109,7 +113,7 @@ function anchorText(state: State, anchor: number): { text: string; drivers: numb
 
 function fullDrafts(state: State, topDriverOnly: boolean): Draft[] {
   const drafts: Draft[] = [];
-  for (let i = 0; i <= state.strategy.fullyInAt; i++) drafts.push(strategyStepDraft(state, i, topDriverOnly));
+  for (const i of repSteps(state)) drafts.push(strategyStepDraft(state, i, topDriverOnly));
   if (state.leverage && state.leverage.trim()) {
     const text = state.leverage.trim().replace(/([^.!?])$/, "$1.");
     drafts.push({ kind: "leverage", text, timed: true, floorMs: speechMs(text) + TIMING.pauseMs });
@@ -118,11 +122,11 @@ function fullDrafts(state: State, topDriverOnly: boolean): Draft[] {
     const { text: body, drivers } = anchorText(state, state.anchorStep);
     const text = `${peakLead} ${body}`;
     drafts.push({
-      kind: "peak",
+      kind: "anchor-peak",
       text,
       timed: true,
-      strategyStepIndex: state.anchorStep,
-      ...(drivers.length > 0 ? { driverIndexes: drivers } : {}),
+      stepIndex: state.anchorStep,
+      ...(drivers.length > 0 ? { driversSpoken: drivers } : {}),
       floorMs: speechMs(text) + TIMING.pauseMs,
     });
   }
@@ -169,15 +173,15 @@ export function buildScript(profile: ProfileV2, stateId: string, kind: RepKind =
       kind: "anchor",
       text,
       timed: true,
-      strategyStepIndex: state.anchorStep,
-      ...(drivers.length > 0 ? { driverIndexes: drivers } : {}),
+      stepIndex: state.anchorStep,
+      ...(drivers.length > 0 ? { driversSpoken: drivers } : {}),
       plannedMs: roundUp(speechMs(text) + TIMING.pauseMs) + TIMING.anchorOnlySilenceMs,
     };
     return finish(profile, state, kind, [before, anchor, after]);
   }
 
   const target = clamp(options.targetMs ?? TIMING.defaultTotalMs, TIMING.minTotalMs, TIMING.maxTotalMs);
-  const longChain = state.strategy.fullyInAt + 1 >= TIMING.topDriverOnlyFromSteps;
+  const longChain = repSteps(state).length >= TIMING.topDriverOnlyFromSteps;
   let drafts = fullDrafts(state, longChain);
   if (!longChain && sum(drafts.map((d) => d.floorMs)) > TIMING.maxTotalMs) drafts = fullDrafts(state, true);
 

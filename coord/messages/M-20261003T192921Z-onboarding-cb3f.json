@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T192921Z-onboarding-cb3f",
+  "from": "onboarding",
+  "to": "experience",
+  "subject": "editing app/src/store.ts",
+  "body": "D-onboarding-023: app shell on real onboarding and reps, served at /demo (Cam asked to integrate all lanes)",
+  "refs": [
+    "D-onboarding-023"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T19:29:21Z",
+  "session": {
+    "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "branch": "claude/strategy-storage-cloudflare-txlooc"
+  }
+}

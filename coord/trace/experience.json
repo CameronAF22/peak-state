@@ -7,7 +7,8 @@
       "sha256": "9d5e1067b46bd05019d872b161a082a2f0601a77a34a1a60ee97509daa251e59",
       "decisions": [
         "D-experience-001",
-        "D-experience-004"
+        "D-experience-004",
+        "D-onboarding-023"
       ]
     },
     {
@@ -15,15 +16,17 @@
       "sha256": "a7c6393570608f0543680ed2b0dfc7267b6608be3f8de8e41f3e599b1dcd7558",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/package.json",
-      "sha256": "c79c87d5b9e2efed61d742303b0e07b1ca8599232f4eee71db2bea3a349bb596",
+      "sha256": "52c0b4db163af69400057ea5418849fbf90ed28833358ba4de50a24866c99ecd",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
@@ -31,7 +34,8 @@
       "sha256": "c17e1308a39f1793a48e8730a1541bb300daeec7937db499f90ce8ebea517d9a",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
@@ -39,7 +43,8 @@
       "sha256": "3eefa96c55e21a9034407d8faa3f42c79025ceaad6a61fdcc6843784ae493bd0",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
@@ -47,64 +52,54 @@
       "sha256": "7741958ac223adef92edbbdd84568ad91135f8678af819aea2dafe976973cb8f",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/components/StepChain.tsx",
-      "sha256": "b8b5efc5e8664f5334f7fd3c28cb43b9e8b66303d5050c1d68d431b17b45bd52",
+      "sha256": "834db21aae12c5d4cd5b42a5ba0fc6f8ed43a1b5831dca57acf3cc3f47f4beb0",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/components/TraceChart.tsx",
-      "sha256": "9f362df61665bee594f0ea6b76d4160a58ba58e5edffc3332ab8d62699476ef6",
+      "sha256": "4d46b8a97365ce232fc75bd5ea58d34c1aefc0dfa72e9e06f8e287aae16f32df",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/contracts.ts",
-      "sha256": "45aabee9cc948935720fc7f87f5846289c24ea8c6869d57d918b439e74f5e6b3",
+      "sha256": "b253963c35137cf32c84fa2f0c93961051e69c92657f8753f931a40c5b6ff5f7",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/fixtures.ts",
-      "sha256": "edde6106ddbf53de8b2520b74b88d273586f761cb85cc998be01910f946f87c3",
+      "sha256": "413693ef77e27986fcd669b14cb20dfa2030fef0c49a0357d56bf048df477616",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
-      ]
-    },
-    {
-      "path": "app/src/fixtures/profile.demo.json",
-      "sha256": "4c2af28c5595ab808ae5e5c883ed2d9964f15ff50d86646f397bf51487574182",
-      "decisions": [
-        "D-experience-002",
-        "D-experience-006"
-      ]
-    },
-    {
-      "path": "app/src/fixtures/rep-log.demo.json",
-      "sha256": "c19d4eb7b141b4e650666df156752c2b66d01def2145fb18cdea97455e690a05",
-      "decisions": [
-        "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/host.ts",
-      "sha256": "407a921f15fdd90de8711378b34635a0bb131a731cff76056533575c9b28667a",
+      "sha256": "c9e832083d933ae74563e4d276db5a0fa84cd999bb1b0800fb01f9cd16731f9d",
       "decisions": [
         "D-experience-002",
         "D-experience-005",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
@@ -112,16 +107,45 @@
       "sha256": "a6bcae9c4f04d6ff36406b2966379834342b41b08b83ba7bd0334712d6cf87f0",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/modules.ts",
-      "sha256": "0f87bd16abc63395884b803624830835a794d50264147ef6aa5faa6d31e1fcad",
+      "sha256": "d7ed1b0fd3c4bf628b69826ef2eb60515c233a0669dc599dafef116cf3503b46",
       "decisions": [
         "D-experience-002",
         "D-experience-003",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/onboardView.ts",
+      "sha256": "381cb5b5bc23df6526682eb5f308a1478df492725822b27d4a5da5ee659f08e5",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/real/onboarding.ts",
+      "sha256": "e4a6e3dcaf5a7c9e49cdac7d6758dbf4897122681293ff6ffa04eefdba1e2789",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/real/reps.ts",
+      "sha256": "bc8cf434192a93334298c29a3c217ef13fde45c7260bda991658d4c50d72c3c6",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
@@ -130,7 +154,8 @@
       "decisions": [
         "D-experience-002",
         "D-experience-005",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
@@ -139,92 +164,118 @@
       "decisions": [
         "D-experience-002",
         "D-experience-005",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/screens/Onboard.tsx",
-      "sha256": "69535f796196f44b81e3219ab3c9857a10bd797e84abdd47030595bbc9345d7c",
+      "sha256": "f165ee4d673392cc321ada17202d220b107fb3a28c8bc22696c069a4558bb162",
       "decisions": [
         "D-experience-002",
         "D-experience-005",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/screens/Progress.tsx",
-      "sha256": "fed8e45cb1658338fe6f80bdc9534df4123e869ebef8a106596b74fa864d1d3f",
+      "sha256": "1c72cd9934a049153db097d40d98dfa2466b64234db96cc505a9df719cb423ca",
       "decisions": [
         "D-experience-002",
         "D-experience-005",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/screens/Rep.tsx",
-      "sha256": "aa9febe01d5c2e6c006c64baadd2678d4addfdf60a3823a02bf8cb63415fa7b0",
+      "sha256": "1549c80889b81d1cef92cdc760841c5034f8b2855bb71ee9ff6c570c00ad4c5e",
       "decisions": [
         "D-experience-002",
         "D-experience-005",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/slots.ts",
+      "sha256": "c9f011e367a0228258de688de9e113c549f6cd1ba6aeee4f064b6c2977961587",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/store.ts",
+      "sha256": "eee162f3a53bc2151e37689493c2f374427daa6ba7786ba8258a06fedf9a5fe4",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/stubs/onboarding.ts",
-      "sha256": "2953a0595d6d76aa4f31e7ead555ba225dfe212c864905cc8c35b9d75043e97c",
+      "sha256": "be039b80edb29404f8d2cca3d699c5fb6e9e74f487a9265d83af6d1521dfffef",
       "decisions": [
         "D-experience-002",
         "D-experience-003",
-        "D-experience-006"
-      ]
-    },
-    {
-      "path": "app/src/stubs/reps.ts",
-      "sha256": "5c2db22c2d0c1be0b771fa75b6c77673cc1e3db37a9e9fee63dfc28dc2ea2bc0",
-      "decisions": [
-        "D-experience-002",
-        "D-experience-003",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/stubs/sensing.ts",
-      "sha256": "f63f7980bb49521ffa1199f88b351180c65c6c82e92b3d9100942011312922b9",
+      "sha256": "e2000ffd156c2874c4c31a095ce18d4057b9604977753fd06a9b5c4dfa06c61b",
       "decisions": [
         "D-experience-002",
         "D-experience-003",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/src/styles.css",
-      "sha256": "ed18e06d9d91380110f125d997efc0751b7860b8e2c8493db379f0ce8f8a1cde",
+      "sha256": "46063af0303ccf43c5ac520ecd876b32ec10c61b73f2965e763d1d8f3c50420b",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/test/stubs.test.ts",
       "sha256": "4d4851bb061f8d130bd956602d18e5d08a1180b6637262fd7eb3964960540e0b",
       "decisions": [
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/tsconfig.json",
-      "sha256": "1faee1ba432848ff1360d59aa91290546ce0b09bfbedaa8ef8c7425b98abc7da",
+      "sha256": "ab0aef619214a1598e47e32c14c671d12b3323e03f7c09abfc76a6430101a2c4",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
       ]
     },
     {
       "path": "app/vite.config.ts",
-      "sha256": "45727a89aa6671aac3bdd10dcc7d233a357d7ec04d140c1e8063a9d30b7ca58c",
+      "sha256": "26f57b21778a2ce3d0994d63e16dde30fb5c010bb6eee278950f591ca3bfcca3",
       "decisions": [
         "D-experience-002",
-        "D-experience-006"
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/vitest.config.ts",
+      "sha256": "16f2aa794638e1a1594d968fd5fb8b083d287f86af288b24357b0894bf06ba9a",
+      "decisions": [
+        "D-onboarding-023"
       ]
     }
   ]
