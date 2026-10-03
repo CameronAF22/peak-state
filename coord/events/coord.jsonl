@@ -15,3 +15,4 @@
 {"ts": "2026-10-03T14:00:12Z", "lane": "coord", "kind": "message", "ref": "M-20261003T140012Z-coord-a24d", "summary": "to human: Which device runs the demo?", "session": "session_01QVbLwShgFGPq3zbXjnSGBK"}
 {"ts": "2026-10-03T14:00:12Z", "lane": "coord", "kind": "message", "ref": "M-20261003T140012Z-coord-a2a4", "summary": "to all: Kickoff: run the M0 checklist in your brief, then stop", "session": "session_01QVbLwShgFGPq3zbXjnSGBK"}
 {"ts": "2026-10-03T14:00:12Z", "lane": "coord", "kind": "status", "ref": "green", "summary": "Protocol, hooks, CI and dashboard built; spawning lane sessions to verify M0", "session": "session_01QVbLwShgFGPq3zbXjnSGBK"}
+{"ts": "2026-10-03T14:03:13Z", "lane": "coord", "kind": "status", "ref": "green", "summary": "Setup merged-ready (PR #2), dashboard live as Artifact, five lane sessions running their M0 checks", "session": "session_01QVbLwShgFGPq3zbXjnSGBK"}

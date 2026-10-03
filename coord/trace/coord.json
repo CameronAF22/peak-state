@@ -53,7 +53,7 @@
     },
     {
       "path": "coord/lanes.json",
-      "sha256": "d9b7965d5e5801e79602d6e4fa03e57b600bc3cc797ab808b70f60ae93376a78",
+      "sha256": "4c072d2d976802b80f0d94a93b726c7dd0981a3fe44c790a9f6416e4317dbfa3",
       "decisions": [
         "D-coord-004"
       ]
@@ -160,7 +160,7 @@
     },
     {
       "path": "schemas/coord/lanes.schema.json",
-      "sha256": "7f09c8c89d4bb5507e146fa5585e97d452c2ec4bb3acb4b1a0d1ee69c5d72f53",
+      "sha256": "8f8f79c17e9f81667422e5fd089f60988f14838b48b7e7608f33c8ed14f03fb3",
       "decisions": [
         "D-coord-001"
       ]
@@ -202,7 +202,7 @@
     },
     {
       "path": "site/dashboard.html",
-      "sha256": "a6792cf0268b730ebf15bbebe48a5dde1f1eaaab04075fb69ddbd75113f23eaa",
+      "sha256": "e50625a238b7ecde694c761b8ed84eb93e30df575c30c3a7c47dcec1e1e9fa41",
       "decisions": [
         "D-coord-003"
       ]

@@ -3,19 +3,18 @@
   "lane": "coord",
   "health": "green",
   "phase": "M0",
-  "progress": 60,
-  "summary": "Protocol, hooks, CI and dashboard built; spawning lane sessions to verify M0",
+  "progress": 75,
+  "summary": "Setup merged-ready (PR #2), dashboard live as Artifact, five lane sessions running their M0 checks",
   "now": [
-    "Validate hooks locally",
-    "Open the setup PR"
+    "Waiting for lane M0 reports"
   ],
   "next": [
-    "Start one session per lane",
-    "Publish the dashboard Artifact",
-    "Merge setup to main and turn on Pages"
+    "Review lane plans and route answers",
+    "Merge setup PR, turn on Pages",
+    "Republish dashboard Artifact"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:00:12Z",
+  "updatedAt": "2026-10-03T14:03:13Z",
   "session": {
     "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
     "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",

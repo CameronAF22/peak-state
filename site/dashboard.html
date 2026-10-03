@@ -146,7 +146,8 @@ td.mono { white-space: nowrap; }
 @media (max-width: 900px) {
   .boardgrid { grid-template-columns: minmax(0, 1fr); }
   aside.attention { position: static; }
-  .gates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gate { padding: 7px 8px; }
+  .gate .gname { display: none; }
   details.dec summary { grid-template-columns: minmax(0, 1fr) auto; }
   details.dec summary .mono:first-child { grid-column: 1 / -1; }
   .ev { grid-template-columns: 60px minmax(0, 1fr); }
@@ -268,7 +269,7 @@ td.mono { white-space: nowrap; }
       }).length;
       var pct = lanes.length ? Math.round((reached / lanes.length) * 100) : 0;
       var node = el("div", { class: "gate" + (pct === 100 ? " done" : ""), title: reached + " of " + lanes.length + " lanes past " + g.id }, [
-        el("b", { text: g.id }), el("small", { text: g.name + " · " + reached + "/" + lanes.length }),
+        el("b", { text: g.id }), el("small", null, [el("span", { class: "gname", text: g.name + " · " }), reached + "/" + lanes.length]),
         el("div", { class: "meter" }, [el("i", { style: "width:" + pct + "%" })])
       ]);
       box.appendChild(node);
@@ -533,8 +534,15 @@ td.mono { white-space: nowrap; }
   function poll() {
     if (!window.fetch) return;
     fetch("data.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (data) { if (data) accept(data, "live"); })
-      .catch(function () { /* stay on the last good data */ });
+      .then(function (data) { if (data) accept(data, "live"); else noData(); })
+      .catch(noData);
+  }
+  function noData() {
+    if (state.data) return; // keep showing the last good data
+    document.getElementById("freshText").textContent = "No board data yet";
+    var notice = document.getElementById("notice");
+    notice.hidden = false;
+    notice.textContent = "data.json could not be loaded. The coord workflow publishes it to the coord-dashboard branch after each push; locally, run python3 tools/coord.py site --out <dir> --fragment.";
   }
   if (window.__PEAK_DATA__) accept(window.__PEAK_DATA__, "snapshot");
   poll();

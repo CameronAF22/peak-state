@@ -197,7 +197,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `LICENSE` | `66934fca6625` | D-coord-008 |
 | `README.md` | `009ec0f47d26` | D-coord-008 |
 | `coord/README.md` | `6b4acf0bc3df` | D-coord-001 |
-| `coord/lanes.json` | `d9b7965d5e58` | D-coord-004 |
+| `coord/lanes.json` | `4c072d2d9768` | D-coord-004 |
 | `docs/architecture.md` | `7a8ff3f2a3d2` | D-coord-008 |
 | `docs/hackathon/lanes/contracts.md` | `e64a79d089f8` | D-coord-004, D-coord-009 |
 | `docs/hackathon/lanes/coord.md` | `5caaf5d27508` | D-coord-004, D-coord-009 |
@@ -211,12 +211,12 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/plan.md` | `d6259d0a40d3` | D-coord-008 |
 | `schemas/coord/decision.schema.json` | `3b0135d23761` | D-coord-001 |
 | `schemas/coord/event.schema.json` | `ecf3bcd28523` | D-coord-001 |
-| `schemas/coord/lanes.schema.json` | `7f09c8c89d4b` | D-coord-001 |
+| `schemas/coord/lanes.schema.json` | `8f8f79c17e9f` | D-coord-001 |
 | `schemas/coord/message.schema.json` | `081648618d10` | D-coord-001 |
 | `schemas/coord/session-ref.schema.json` | `872ace2b49e3` | D-coord-001 |
 | `schemas/coord/session.schema.json` | `1d9dd63a3f6e` | D-coord-001 |
 | `schemas/coord/status.schema.json` | `4cf17ed9ef8e` | D-coord-001 |
 | `schemas/coord/trace.schema.json` | `414c0dbe867a` | D-coord-001 |
-| `site/dashboard.html` | `a6792cf0268b` | D-coord-003 |
+| `site/dashboard.html` | `e50625a238b7` | D-coord-003 |
 | `tools/coord.py` | `9e4d7f2693e8` | D-coord-001 |
 | `tools/test_coord.py` | `85097658aaa9` | D-coord-001 |
