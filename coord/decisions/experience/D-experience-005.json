@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-experience-005",
+  "lane": "experience",
+  "title": "ModuleHost and headless onboarding events: the app renders the voice onboarding screen",
+  "status": "proposed",
+  "type": "contract",
+  "context": "Contracts asked what ModuleHost looks like. Onboarding asked who renders the conversation. The voice-first screen (step chain plus checklists) is the demo's centrepiece and has to share the app shell, the safety footer and the demo clock.",
+  "decision": "The app hands modules a ModuleHost {el?, speech {speak, listen, muted}, clock {now, speed}, onSafetyStop(reason)}. The app owns the speech adapter and the clock, so the demo can mute, fast-forward or script in one place. Onboarding is headless: it emits guideTurn, userTurn (interim/final), stateNamed, stepCaptured, submodalityCaptured, contrastCaptured, driverFound, anchorStepMarked, testRated, confirmed and stopped. The app renders the transcript, step chain and checklists from these events. Onboarding may keep a default view for its own testing. Shapes go in contracts/API.md.",
+  "alternatives": [
+    "Onboarding mounts its own full screen via mount(el): the app cannot drive demo timing or keep the shell consistent",
+    "ModuleHost as only {el, speak?, onSafetyStop}: no shared clock for a deterministic demo"
+  ],
+  "consequences": "",
+  "produces": [
+    "app/src/host.ts",
+    "app/src/screens/"
+  ],
+  "dependsOn": [
+    "D-experience-003",
+    "D-coord-012"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  },
+  "createdAt": "2026-10-03T14:35:37Z"
+}

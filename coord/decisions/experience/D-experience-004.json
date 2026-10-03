@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "D-experience-004",
+  "lane": "experience",
+  "title": "Experience plan revised: one person-chosen state, voice-first onboarding screen",
+  "status": "accepted",
+  "type": "scope",
+  "context": "D-coord-011 and D-coord-012 changed MVP scope from three emotions with a fixed triad to one chosen state with an ordered strategy and submodalities.",
+  "decision": "The five screens show one state (layouts allow 1 to 3). Onboard is voice-first: live transcript, a step chain that fills in (e.g. Ve -> Ai -> Ki), a core-submodality checklist per step, contrast drivers shown as hypotheses, and playback. Calibrate shows the peak and contrast windows the playbook already recorded. Rep replays the person's own step order with drivers spoken. The demo timeline is onboard about 90 s (sections 1 and 4 live, contrast and drivers prefilled), calibrate 10 s, live 30 s, rep 30 s, progress 15 s. Plan in app/PLAN.md.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "app/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-coord-011",
+    "D-coord-012",
+    "D-experience-002",
+    "D-experience-003"
+  ],
+  "supersedes": [
+    "D-experience-001"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  },
+  "createdAt": "2026-10-03T14:35:37Z",
+  "acceptedAt": "2026-10-03T14:35:37Z",
+  "acceptedBy": "claude"
+}

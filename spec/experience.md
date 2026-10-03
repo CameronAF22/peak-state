@@ -16,17 +16,6 @@ Own what a judge touches: the web app that runs onboarding, calibration, live de
 
 ## Decisions in force
 
-### D-experience-001 · Experience lane kickoff: five-screen app on fixture stubs, then real modules
-
-`accepted` · scope · 2026-10-03 · [session](https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U) · branch `lane/experience` · accepted by claude
-
-**Decision.** Build the app as five screens (onboard, calibrate, live, rep, progress) in a linear flow with a demo-mode jump. Run end to end on fixture stubs of every module from M1, then swap in real onboarding, sensing and reps per module behind a stub/real switch. Demo runs from a pinned simulator scenario plus a seeded rep log, offline. Plan in app/PLAN.md.
-
-**Context.** M0 gate. contracts/ does not exist yet; build against mvp.md first-cut shapes behind one adapter and switch when contracts publishes.
-
-**Produces:** `app/PLAN.md`  
-**Depends on:** D-coord-005, D-coord-006, D-coord-009
-
 ### D-experience-002 · App stack: Vite + React + TypeScript, static, offline once loaded
 
 `accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U) · branch `lane/experience` · accepted by claude
@@ -43,11 +32,9 @@ Own what a judge touches: the web app that runs onboarding, calibration, live de
 **Produces:** `app/package.json`, `app/tsconfig.json`, `app/vite.config.ts`, `app/index.html`, `app/src/`, `app/public/`  
 **Depends on:** D-coord-006
 
-## Proposed, awaiting acceptance
-
 ### D-experience-003 · Module slots: headless functions or mount(el, props), framework-agnostic, one entry per lane
 
-`proposed` · contract · 2026-10-03 · [session](https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U) · branch `lane/experience`
+`accepted` · contract · 2026-10-03 · [session](https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U) · branch `lane/experience` · accepted by claude
 
 **Decision.** Each module (onboarding, sensing, reps) exports from one entry point (proposed: <lane>/src/index.ts) the API in contracts/API.md. A module that has UI exposes mount(el: HTMLElement, props) -> unmount(), with no React dependency required. Otherwise it is headless (functions plus callbacks). The app wraps either kind in a slot, and keeps a fixture stub implementing the same interface, chosen per module with ?<module>=stub|real.
 
@@ -61,9 +48,39 @@ Own what a judge touches: the web app that runs onboarding, calibration, live de
 **Produces:** `app/src/modules.ts`, `app/src/stubs/`  
 **Depends on:** D-experience-001, D-coord-006
 
+### D-experience-004 · Experience plan revised: one person-chosen state, voice-first onboarding screen
+
+`accepted` · scope · 2026-10-03 · [session](https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U) · branch `lane/experience` · accepted by claude
+
+**Decision.** The five screens show one state (layouts allow 1 to 3). Onboard is voice-first: live transcript, a step chain that fills in (e.g. Ve -> Ai -> Ki), a core-submodality checklist per step, contrast drivers shown as hypotheses, and playback. Calibrate shows the peak and contrast windows the playbook already recorded. Rep replays the person's own step order with drivers spoken. The demo timeline is onboard about 90 s (sections 1 and 4 live, contrast and drivers prefilled), calibrate 10 s, live 30 s, rep 30 s, progress 15 s. Plan in app/PLAN.md.
+
+**Context.** D-coord-011 and D-coord-012 changed MVP scope from three emotions with a fixed triad to one chosen state with an ordered strategy and submodalities.
+
+**Produces:** `app/PLAN.md`  
+**Depends on:** D-coord-011, D-coord-012, D-experience-002, D-experience-003  
+**Supersedes:** D-experience-001
+
+## Proposed, awaiting acceptance
+
+### D-experience-005 · ModuleHost and headless onboarding events: the app renders the voice onboarding screen
+
+`proposed` · contract · 2026-10-03 · [session](https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U) · branch `lane/experience`
+
+**Decision.** The app hands modules a ModuleHost {el?, speech {speak, listen, muted}, clock {now, speed}, onSafetyStop(reason)}. The app owns the speech adapter and the clock, so the demo can mute, fast-forward or script in one place. Onboarding is headless: it emits guideTurn, userTurn (interim/final), stateNamed, stepCaptured, submodalityCaptured, contrastCaptured, driverFound, anchorStepMarked, testRated, confirmed and stopped. The app renders the transcript, step chain and checklists from these events. Onboarding may keep a default view for its own testing. Shapes go in contracts/API.md.
+
+**Context.** Contracts asked what ModuleHost looks like. Onboarding asked who renders the conversation. The voice-first screen (step chain plus checklists) is the demo's centrepiece and has to share the app shell, the safety footer and the demo clock.
+
+**Alternatives considered.**
+
+- Onboarding mounts its own full screen via mount(el): the app cannot drive demo timing or keep the shell consistent
+- ModuleHost as only {el, speak?, onSafetyStop}: no shared clock for a deterministic demo
+
+**Produces:** `app/src/host.ts`, `app/src/screens/`  
+**Depends on:** D-experience-003, D-coord-012
+
 ## Superseded and rejected
 
-None.
+- D-experience-001 · Experience lane kickoff: five-screen app on fixture stubs, then real modules · `superseded` (superseded by D-experience-004)
 
 ## Produced artifacts
 
@@ -71,4 +88,4 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 
 | File | sha256 | Decisions |
 |---|---|---|
-| `app/PLAN.md` | `900b98a67afb` | D-experience-001 |
+| `app/PLAN.md` | `aa8980399d0e` | D-experience-001, D-experience-004 |

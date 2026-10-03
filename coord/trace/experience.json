@@ -4,9 +4,10 @@
   "files": [
     {
       "path": "app/PLAN.md",
-      "sha256": "900b98a67afb6dc1d2cb8027d474fac9edd83cd787a8673d8aa60d393c22f8b6",
+      "sha256": "aa8980399d0edd39cfbebb673ef6739f5ee425a9f7971b4540400e04ef8c84fc",
       "decisions": [
-        "D-experience-001"
+        "D-experience-001",
+        "D-experience-004"
       ]
     }
   ]
