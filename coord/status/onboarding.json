@@ -3,16 +3,16 @@
   "lane": "onboarding",
   "health": "green",
   "phase": "M0",
-  "progress": 80,
-  "summary": "Question harness MVP built (D-onboarding-012): engine, voice (typed, browser, GPT live), harness page, one-click playback; 42 unit tests and the Playwright visual test pass for content and destressed",
+  "progress": 85,
+  "summary": "Question harness MVP on PR #23 (CI green): visual test passes for content and destressed; OpenAI key confirmed valid and gpt-live-1 exists",
   "now": [
-    "Pushing and updating PR #23"
+    "Waiting for Cam to allow a session on their device to test GPT live voice"
   ],
   "next": [
-    "Cam tests by hand; wire GPT live with a real key; contrast and drivers later"
+    "Live voice round trip on Cam's device; fix anything it finds"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T15:49:24Z",
+  "updatedAt": "2026-10-03T17:04:50Z",
   "session": {
     "id": "session_01AUPD3DWvpWuBX5tGm9JxwU",
     "url": "https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU",
