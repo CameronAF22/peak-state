@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "D-sensing-005",
+  "lane": "sensing",
+  "title": "Detector: two-anchor baseline from playbook peak and contrast windows, same gate",
+  "status": "accepted",
+  "type": "technical",
+  "context": "D-coord-011/012 changed scope to one person-chosen state elicited by voice, and calibration now comes from the playbook itself. A contrast window gives the person's own off-state, so the detector measures movement toward it instead of any movement away from a neutral baseline. Risk: recalled states may barely move HR, hence the separability check and fallback.",
+  "decision": "Calibration has two anchors per state: peak (recorded during playbook 1.2 to 1.5) and contrast (3.1 to 3.2). Each stores mean and SD of HR and ln RMSSD over 20 s windows (10 s hop during calibration so short phases still give several windows). Live drift = position of each window on the axis from peak to contrast, per feature, normalised by the pooled SD and weighted by how well that feature separated the two anchors; confidence = logistic of the weighted position, 0 at peak, about 0.8 at contrast. If neither feature separates peak from contrast by at least 0.5 pooled SD, calibration is marked not separable and the detector falls back to one-sided z-distance from peak only (calibrationMode on-only). With no calibration at all it uses a generic resting prior and says so. Gate unchanged from D-sensing-003: 20 s window, 5 s hop, threshold 0.8 on 3 consecutive windows, quality ok, refractory 60 s demo or 10 min research, seeded sham 0.25 configurable to 0 or pinned per trial, manual never sham. Simulator scenario labels gain peak and contrast so calibration runs on the simulator too. Detector targets one stateId (MVP has one; shapes allow 1 to 3).",
+  "alternatives": [
+    "Keep on-state versus neutral: ignores the free off-state the playbook records",
+    "Train a classifier on the two windows: far too little data, not explainable on screen"
+  ],
+  "consequences": "",
+  "produces": [
+    "sensing/src/baseline.ts",
+    "sensing/src/detector.ts",
+    "sensing/src/gate.ts",
+    "sensing/test/",
+    "sensing/scenarios/"
+  ],
+  "dependsOn": [
+    "D-coord-011",
+    "D-coord-012",
+    "D-reps-004"
+  ],
+  "supersedes": [
+    "D-sensing-003"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_01VAT2w9TTWLQAeoV81MAgwd",
+    "url": "https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd",
+    "branch": "lane/sensing"
+  },
+  "createdAt": "2026-10-03T14:35:05Z",
+  "acceptedAt": "2026-10-03T14:35:05Z",
+  "acceptedBy": "claude"
+}

@@ -43,23 +43,6 @@ Get signals in and decide when to fire a rep: a deterministic simulator for the 
 **Produces:** `sensing/scenarios/`, `sensing/src/simulator.ts`, `sensing/src/prng.ts`  
 **Depends on:** D-coord-007
 
-### D-sensing-003 · Detector: personal drift score with a 3-window gate, refractory and seeded sham
-
-`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd) · branch `lane/sensing` · accepted by claude
-
-**Decision.** Windows of 20 s with a 5 s hop. Per window compute mean HR and RMSSD from RR. Drift score = distance from the person's calibrated on-state for the target emotion (z-scores of HR and ln RMSSD against calibration mean and SD, combined and squashed to 0..1 as confidence). Gate opens when confidence > threshold (default 0.8) on 3 consecutive windows AND signal quality ok AND not inside the refractory period. Refractory defaults to 60 s in demo mode (10 min in the research design; configurable). On each gate opening, a seeded PRNG assigns sham with rate 0.25 and sets DetectionEvent.gate.sham; reps withholds the cue on sham. Manual triggers bypass the gate and are never sham. False fires per minute are counted on baseline segments and reported.
-
-**Context.** Gate design in docs/on-aim-closed-loop.html (P > threshold x 3, refractory, sham 0.25). The demo is about 3 minutes, so a 10-minute refractory would allow only one fire. No universal BPM or HRV cutoff (docs/oura-constraints.md); everything is relative to the person.
-
-**Alternatives considered.**
-
-- Fixed population HR threshold: rejected, no universal cutoff
-- Random sham per call with Math.random: rejected, breaks determinism
-- reps decides sham: rejected, the gate owns the trial log and DetectionEvent already carries gate.sham
-
-**Produces:** `sensing/src/baseline.ts`, `sensing/src/detector.ts`, `sensing/src/gate.ts`, `sensing/test/`  
-**Depends on:** D-coord-007
-
 ### D-sensing-004 · One SignalSource interface for simulator, BLE strap and manual
 
 `accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd) · branch `lane/sensing` · accepted by claude
@@ -71,13 +54,55 @@ Get signals in and decide when to fire a rep: a deterministic simulator for the 
 **Produces:** `sensing/src/source.ts`, `sensing/src/adapters/`, `docs/trigger-flow.md`  
 **Depends on:** D-coord-007
 
+### D-sensing-005 · Detector: two-anchor baseline from playbook peak and contrast windows, same gate
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd) · branch `lane/sensing` · accepted by claude
+
+**Decision.** Calibration has two anchors per state: peak (recorded during playbook 1.2 to 1.5) and contrast (3.1 to 3.2). Each stores mean and SD of HR and ln RMSSD over 20 s windows (10 s hop during calibration so short phases still give several windows). Live drift = position of each window on the axis from peak to contrast, per feature, normalised by the pooled SD and weighted by how well that feature separated the two anchors; confidence = logistic of the weighted position, 0 at peak, about 0.8 at contrast. If neither feature separates peak from contrast by at least 0.5 pooled SD, calibration is marked not separable and the detector falls back to one-sided z-distance from peak only (calibrationMode on-only). With no calibration at all it uses a generic resting prior and says so. Gate unchanged from D-sensing-003: 20 s window, 5 s hop, threshold 0.8 on 3 consecutive windows, quality ok, refractory 60 s demo or 10 min research, seeded sham 0.25 configurable to 0 or pinned per trial, manual never sham. Simulator scenario labels gain peak and contrast so calibration runs on the simulator too. Detector targets one stateId (MVP has one; shapes allow 1 to 3).
+
+**Context.** D-coord-011/012 changed scope to one person-chosen state elicited by voice, and calibration now comes from the playbook itself. A contrast window gives the person's own off-state, so the detector measures movement toward it instead of any movement away from a neutral baseline. Risk: recalled states may barely move HR, hence the separability check and fallback.
+
+**Alternatives considered.**
+
+- Keep on-state versus neutral: ignores the free off-state the playbook records
+- Train a classifier on the two windows: far too little data, not explainable on screen
+
+**Produces:** `sensing/src/baseline.ts`, `sensing/src/detector.ts`, `sensing/src/gate.ts`, `sensing/test/`, `sensing/scenarios/`  
+**Depends on:** D-coord-011, D-coord-012, D-reps-004  
+**Supersedes:** D-sensing-003
+
+### D-sensing-007 · Recovery signal for reps: onRecovered per detection
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd) · branch `lane/sensing` · accepted by claude
+
+**Decision.** After each drift DetectionEvent (cue or sham), sensing watches the windows and calls onRecovered({detectionId, t, recoverySeconds, source, censored}) when confidence stays below 0.4 for 2 consecutive windows, or censored=true at 180 s. Manual detections get the same watch. reps writes recoverySeconds from it, so cue and sham trials are measured the same way.
+
+**Context.** reps asked for a recovery signal per detection within a 180 s window (D-reps-004). Recovery is defined against the same peak/contrast axis as detection.
+
+**Produces:** `sensing/src/recovery.ts`  
+**Depends on:** D-reps-004
+
 ## Proposed, awaiting acceptance
 
-None.
+### D-sensing-006 · Calibration API follows playbook phases: begin and end instead of fixed seconds
+
+`proposed` · contract · 2026-10-03 · [session](https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd) · branch `lane/sensing`
+
+**Decision.** sensing.calibration.begin(stateId, phase: peak|contrast) returns a handle; handle.end() resolves to a CalibrationSummary {stateId, phase, source, hr {mean, sd}, lnRmssd {mean, sd}, windows, seconds, quality, speechExcludedSeconds, recordedAt}; handle.mark(kind: speech-start|speech-end) lets onboarding tell sensing when the person or guide is speaking so those seconds are excluded (talking changes breathing and so RMSSD). sensing.record(stateId, seconds, phase) stays as a fixed-length convenience. Fewer than 2 usable windows gives quality low and the summary is used as a prior only. Separability (peak versus contrast) is computed by sensing and returned on the second summary.
+
+**Context.** The playbook phases are voice-paced, so their length is not known in advance; a fixed record(20) no longer fits. Both calibration phases are spoken, while live detection is mostly silent, so speech segments must be excludable. Needs onboarding (calls it, sends speech marks) and contracts (owns the CalibrationSummary shape) to agree.
+
+**Alternatives considered.**
+
+- Keep record(seconds): onboarding would have to guess phase length
+- Ignore speech: peak and contrast RMSSD would mostly measure talking
+
+**Produces:** `sensing/src/calibration.ts`  
+**Depends on:** D-coord-012, D-onboarding-004, D-contracts-004
 
 ## Superseded and rejected
 
-None.
+- D-sensing-003 · Detector: personal drift score with a 3-window gate, refractory and seeded sham · `superseded` (superseded by D-sensing-005)
 
 ## Decisions from other lanes that cover files here
 
@@ -91,4 +116,4 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 |---|---|---|
 | `docs/oura-constraints.md` | `fe13e0a9d24b` | D-coord-008 |
 | `docs/trigger-flow.md` | `4ab4f10fb9ea` | D-coord-008, D-sensing-004 |
-| `sensing/PLAN.md` | `ee911a7d44f1` | D-sensing-001 |
+| `sensing/PLAN.md` | `9803422b3715` | D-sensing-001 |

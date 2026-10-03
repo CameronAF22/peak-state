@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-sensing-006",
+  "lane": "sensing",
+  "title": "Calibration API follows playbook phases: begin and end instead of fixed seconds",
+  "status": "proposed",
+  "type": "contract",
+  "context": "The playbook phases are voice-paced, so their length is not known in advance; a fixed record(20) no longer fits. Both calibration phases are spoken, while live detection is mostly silent, so speech segments must be excludable. Needs onboarding (calls it, sends speech marks) and contracts (owns the CalibrationSummary shape) to agree.",
+  "decision": "sensing.calibration.begin(stateId, phase: peak|contrast) returns a handle; handle.end() resolves to a CalibrationSummary {stateId, phase, source, hr {mean, sd}, lnRmssd {mean, sd}, windows, seconds, quality, speechExcludedSeconds, recordedAt}; handle.mark(kind: speech-start|speech-end) lets onboarding tell sensing when the person or guide is speaking so those seconds are excluded (talking changes breathing and so RMSSD). sensing.record(stateId, seconds, phase) stays as a fixed-length convenience. Fewer than 2 usable windows gives quality low and the summary is used as a prior only. Separability (peak versus contrast) is computed by sensing and returned on the second summary.",
+  "alternatives": [
+    "Keep record(seconds): onboarding would have to guess phase length",
+    "Ignore speech: peak and contrast RMSSD would mostly measure talking"
+  ],
+  "consequences": "",
+  "produces": [
+    "sensing/src/calibration.ts"
+  ],
+  "dependsOn": [
+    "D-coord-012",
+    "D-onboarding-004",
+    "D-contracts-004"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01VAT2w9TTWLQAeoV81MAgwd",
+    "url": "https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd",
+    "branch": "lane/sensing"
+  },
+  "createdAt": "2026-10-03T14:35:05Z"
+}
