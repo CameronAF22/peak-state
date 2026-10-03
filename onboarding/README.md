@@ -83,3 +83,11 @@ Run `npm run harness -w @peak-state/onboarding`, open the printed URL, and check
 | 11 | Repeat with Destressed | The same, with destressed wording and suggestions |
 
 Tapping a suggestion puts its text in the answer box so you can edit it. Double-click the suggestion, or press its **Use ↵**, to send it straight away.
+
+## Practice, accounts and going online
+
+After the first session, **Practice** runs the second-iteration loop (D-onboarding-015): recall by questions with the
+person's saved answers, a spoken 0 to 10 rating, one strategy question, and "Okay, let's try again." when an answer
+changes. Each change is a new strategy revision with a change log (D-onboarding-014), every run is counted in the
+"you've chosen to feel …" reminder (D-onboarding-016), and with an account (email plus invite code) the strategy and
+runs sync to a Cloudflare Worker with D1 (D-onboarding-017). Running and deploying it: [DEPLOY.md](DEPLOY.md).

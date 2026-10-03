@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-016",
+  "lane": "onboarding",
+  "title": "Rep ownership and progress reminders: times chosen, good reps, closeness trend, streak",
+  "status": "accepted",
+  "type": "product",
+  "context": "Cam: track ownership of reps and progress, and remind people how many times they chose to feel good by using the sequence.",
+  "decision": "Every run belongs to the signed-in account (or the browser when signed out) and is counted in onboarding/src/progress/: timesChosen = completed runs of any kind (first-session playback and practice tries), goodReps per D-reps-003 (full, cue, completed, anchorPaired, intensityAfter >= 7), latest and best closeness, the intensityAfter trend, and days practised in a row. The reminder line ('You've chosen to feel content 12 times. 5 of those took you to 7 or higher.') is shown and spoken when practice starts and when it ends. The Worker computes the same summary from synced reps at GET /api/progress. This is a harness view, not a replacement for reps.progress() and its StateProgress; when the reps package merges, the good-rep count should come from it.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/src/progress/",
+    "onboarding/test/unit/progress.test.ts"
+  ],
+  "dependsOn": [
+    "D-reps-003",
+    "D-contracts-007"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "branch": "claude/strategy-storage-cloudflare-txlooc"
+  },
+  "createdAt": "2026-10-03T17:52:31Z",
+  "acceptedAt": "2026-10-03T17:52:31Z",
+  "acceptedBy": "claude"
+}

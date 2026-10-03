@@ -3,19 +3,21 @@
   "lane": "onboarding",
   "health": "green",
   "phase": "M0",
-  "progress": 85,
-  "summary": "Question harness MVP on PR #23 (CI green). Added local setup and GPT live debugging guide; hooks now explain when run outside the repo folder",
+  "progress": 90,
+  "summary": "Practice loop, strategy revisions, rep reminders and a Cloudflare Worker (D1, invite-code accounts, short-lived GPT live keys) built on top of PR #23; 66 unit tests, visual and online browser tests pass under wrangler dev",
   "now": [
-    "Waiting for Cam to test GPT live locally"
+    "Review agents probing the loop, API and safety copy"
   ],
   "next": [
-    "Fix whatever the live GPT test turns up"
+    "Fix findings, open draft PR, deploy when Cam connects Cloudflare"
   ],
-  "blockers": [],
-  "updatedAt": "2026-10-03T17:30:59Z",
+  "blockers": [
+    "Deploy needs Cam's Cloudflare access and the OpenAI key as a Worker secret"
+  ],
+  "updatedAt": "2026-10-03T18:06:16Z",
   "session": {
-    "id": "session_01AUPD3DWvpWuBX5tGm9JxwU",
-    "url": "https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU",
-    "branch": "claude/project-thread-c4ldi5"
+    "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "branch": "claude/strategy-storage-cloudflare-txlooc"
   }
 }

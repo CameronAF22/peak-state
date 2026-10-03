@@ -25,6 +25,8 @@ export const DEFAULT_TRANSCRIBE_MODEL = "gpt-4o-transcribe";
 export type GptLiveVoiceConfig = GptLiveConfig & {
   /** Model for input audio transcription. Default "gpt-4o-transcribe". */
   transcribeModel?: string;
+  /** Fetches a short-lived key when apiKey is empty (the server's /api/realtime/token). */
+  getApiKey?: () => Promise<string>;
   /** Milliseconds to wait for the data channel to open. Default 20000. */
   connectTimeoutMs?: number;
 };
@@ -341,7 +343,20 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     const mine = ++session;
     const stale = () => mine !== session;
 
-    if (!config.apiKey?.trim()) {
+    // A typed key wins; otherwise ask the server for a short-lived one (D-onboarding-017).
+    let apiKey = config.apiKey?.trim() ?? "";
+    if (!apiKey && config.getApiKey) {
+      try {
+        apiKey = (await config.getApiKey()).trim();
+      } catch (err) {
+        if (stale()) return;
+        const detail = `Could not get a GPT live key from the server (${(err as Error)?.message ?? err}).`;
+        fail(detail);
+        throw new Error(detail);
+      }
+      if (stale()) return;
+    }
+    if (!apiKey) {
       const detail = "GPT live needs an OpenAI API key. Add one in voice settings, or use browser or typed voice.";
       fail(detail);
       throw new Error(detail);
@@ -457,7 +472,7 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
         res = await fetchFn(url, {
           method: "POST",
           body: offer.sdp ?? "",
-          headers: { Authorization: `Bearer ${config.apiKey.trim()}`, "Content-Type": "application/sdp" },
+          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/sdp" },
         });
       } catch (err) {
         throw new Error(`Could not reach OpenAI Realtime (${(err as Error)?.message ?? err}).`);

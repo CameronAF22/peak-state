@@ -17,6 +17,27 @@
       ]
     },
     {
+      "path": "onboarding/.dev.vars.example",
+      "sha256": "9972ceaf741943423b4a5b99bc47ec036d01ff0fff4e7130007e90096bf1bc50",
+      "decisions": [
+        "D-onboarding-017"
+      ]
+    },
+    {
+      "path": "onboarding/.gitignore",
+      "sha256": "e080f460d184e63402513475cbac3fba94843af0284fb9e74c47c72341722bd4",
+      "decisions": [
+        "D-onboarding-018"
+      ]
+    },
+    {
+      "path": "onboarding/DEPLOY.md",
+      "sha256": "97063d713a390d5e8586e307ba53915e2d1ba675e9339f03503b4959680ce6ef",
+      "decisions": [
+        "D-onboarding-017"
+      ]
+    },
+    {
       "path": "onboarding/PLAN.md",
       "sha256": "7913904371a4b00080c0195c0300ff6664e688c7dbe58f12d52af3a31c28017a",
       "decisions": [
@@ -26,14 +47,14 @@
     },
     {
       "path": "onboarding/README.md",
-      "sha256": "406602332f4f4ac8adf9bbb2a5afced5de859ec8bde832fb6b9080230deebaa2",
+      "sha256": "375a56d82a77c5ad2b8a811c9894434f98202d226812c070f8b20d96c3e3cb19",
       "decisions": [
         "D-onboarding-012"
       ]
     },
     {
       "path": "onboarding/harness/index.html",
-      "sha256": "cc518dcc3b32b25882c09b358de2a8b598b8be244b1485470674f5c72071ffd1",
+      "sha256": "43399b706f074c16b815b1e74bb1ea5b0d01936446ee6bb010de0ada94a52cca",
       "decisions": [
         "D-onboarding-012"
       ]
@@ -47,14 +68,21 @@
     },
     {
       "path": "onboarding/harness/styles.css",
-      "sha256": "f63761742d57d9630861ac4b27751215c579077787bc9f3ba4626b9b264273a9",
+      "sha256": "4c303396ae9502a752c92c1dae306ae15bd2ff21eda7465d465fff8d5b71105e",
       "decisions": [
         "D-onboarding-012"
       ]
     },
     {
+      "path": "onboarding/migrations/0001_init.sql",
+      "sha256": "c5cf68e010daf5a5764617cb9a1d69679d11798109a15224898d191d3b95501e",
+      "decisions": [
+        "D-onboarding-017"
+      ]
+    },
+    {
       "path": "onboarding/package.json",
-      "sha256": "8335546eb5098806b81bb049de115f9e6844635f536525cdf8d9b65beeca26b1",
+      "sha256": "0b60c5d2362d1e84378634eb663208ef0fd9dd5d68007053825bc07e304c256a",
       "decisions": [
         "D-onboarding-012"
       ]
@@ -113,9 +141,17 @@
     },
     {
       "path": "onboarding/src/harness/main.ts",
-      "sha256": "1836efe499953ddabb51c75ec800a189331412cda9ab827e85d500d11f3e955e",
+      "sha256": "9dfa4b57a5ee671c6d432b5c5e740416c8dcf573264acf1f07452a871e40c03f",
       "decisions": [
         "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/harness/view/account.ts",
+      "sha256": "99aee18b4ddb520629a97b12c4324a53a50c6e941be2e322c25f36d4b26a597c",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-017"
       ]
     },
     {
@@ -123,6 +159,14 @@
       "sha256": "9f8bddc8c0f4f8b493dec0516f5276729ca6b93b04a32af8683077596036e0b1",
       "decisions": [
         "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/harness/view/practice.ts",
+      "sha256": "d0f156446a10a57bd560963bb27cfa6581ca17ef8baabb85b577a35335a73501",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-015"
       ]
     },
     {
@@ -134,7 +178,7 @@
     },
     {
       "path": "onboarding/src/harness/view/saved.ts",
-      "sha256": "52146f44c1d18586f14fc038ad474fc576db2e144c293bddd427fbbf347221db",
+      "sha256": "e3d2a9054bc1b98be62e4532ef013662e1978aa1e0660e62ac0819f4d6e451b8",
       "decisions": [
         "D-onboarding-012"
       ]
@@ -189,6 +233,46 @@
       ]
     },
     {
+      "path": "onboarding/src/practice/loop.ts",
+      "sha256": "9c0de055acd6ebf6c6413fd815df7a11eda4d40ff5cb3c65b67e39d496a2f656",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-015"
+      ]
+    },
+    {
+      "path": "onboarding/src/practice/rating.ts",
+      "sha256": "b5b686cfbe4f35e68fedc7704d56d26d9fe04e9af4fed9d09ff75007729e7cf1",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-015"
+      ]
+    },
+    {
+      "path": "onboarding/src/progress/index.ts",
+      "sha256": "cf7e4cfeecde445ce920e2c509864255dd2e7e2f49d5e9ccf82d3bdbadfb2b82",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-016"
+      ]
+    },
+    {
+      "path": "onboarding/src/store/index.ts",
+      "sha256": "9f37d719a480a41a6123c336bd7785b5e914e75fe071931f307d1a03a99fa05d",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/src/sync/index.ts",
+      "sha256": "aceb4c93f32591ca909e06e126e72be2f900934b5116dface162f84a15c48cfa",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-017"
+      ]
+    },
+    {
       "path": "onboarding/src/types.ts",
       "sha256": "f227fc9cc173f457c10a94d9fc701ae71f1f8f891a3a9ce96b2c7d1de8e4e5fa",
       "decisions": [
@@ -211,14 +295,14 @@
     },
     {
       "path": "onboarding/src/voice/gpt-live.ts",
-      "sha256": "c8d1d374d047523defe53cedda103ee845417e30160f86a1c5e5e35b4683e787",
+      "sha256": "25fc290509c2ea62a2a5209bc664e81672acb60b07c46a4b55050a02231bb072",
       "decisions": [
         "D-onboarding-012"
       ]
     },
     {
       "path": "onboarding/src/voice/index.ts",
-      "sha256": "a7c0a26f432864aaaacfb02f458baa1a326464fbb0e0f015dfa32a857a5c309d",
+      "sha256": "a636f6bd0ca2a9fb71664123790eda159558c242bc2ecbd5f5a205b5d34a5c1f",
       "decisions": [
         "D-onboarding-012"
       ]
@@ -245,10 +329,26 @@
       ]
     },
     {
+      "path": "onboarding/test/e2e/online.spec.ts",
+      "sha256": "f5ff63bd7afa907662b2471fc29a18e9ac71b45b55b233fa6387ac9a10095268",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-018"
+      ]
+    },
+    {
       "path": "onboarding/test/e2e/screens-reporter.ts",
       "sha256": "dd1e91a8a298223380d65638a2ec2441b1a0395c241346c0206f7ba7447a974c",
       "decisions": [
         "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/test/unit/d1.ts",
+      "sha256": "3a68c1d164b909e8a0519e1cace9d967b4b3c23c95917a82764ddde8c9efa999",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-018"
       ]
     },
     {
@@ -266,10 +366,42 @@
       ]
     },
     {
+      "path": "onboarding/test/unit/practice.test.ts",
+      "sha256": "adf598d8cb69f4317ba9a1d123c61b1c97c671e72f011fae731cfd26f9979846",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-015"
+      ]
+    },
+    {
+      "path": "onboarding/test/unit/progress.test.ts",
+      "sha256": "0c905e6b11115fb9b717a7eeaf7b2bc9fdd3a4f7687c714424eb2a5b161b0a5a",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-016"
+      ]
+    },
+    {
       "path": "onboarding/test/unit/script.test.ts",
       "sha256": "473cf39343e894b0a74102c652601b7c366e52ed09f740db453d27157f5b4997",
       "decisions": [
         "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/test/unit/store.test.ts",
+      "sha256": "bc8f3258f70d4b54a63011ac73a182652c84a0bfe17e31fcc6e23fa7b399f007",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/test/unit/sync.test.ts",
+      "sha256": "5fb3e0b1940515c842c29d5997fa7c70b272f52497c9fabcfedc5c7e3e622d1e",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-017"
       ]
     },
     {
@@ -280,8 +412,16 @@
       ]
     },
     {
+      "path": "onboarding/test/unit/worker.test.ts",
+      "sha256": "568ae8bbddd5259a970bf5a3c59f5f952cacfc9ae840b2809dcbf3be4342579a",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-017"
+      ]
+    },
+    {
       "path": "onboarding/tsconfig.json",
-      "sha256": "1afb58c64c91a473fdd1e8727ce99da6cb1adcb6d9f35c89c5844e920923a9c5",
+      "sha256": "20b7c5aaec949b1d8a431902dcbfb0f93927c5aa967624e1a41d68a6fb7e9c73",
       "decisions": [
         "D-onboarding-012"
       ]
@@ -291,6 +431,27 @@
       "sha256": "f5643cec1115338253a645ddaca365611bb6d85eba696f3ae0737089e34882db",
       "decisions": [
         "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/worker/api.ts",
+      "sha256": "9bc07267930242361ecb69c52937c01ddd3bacb8ee1e726c97060d1c119fca06",
+      "decisions": [
+        "D-onboarding-017"
+      ]
+    },
+    {
+      "path": "onboarding/worker/index.ts",
+      "sha256": "a9411ea26eb2ccd39c1b6e8b9f3f922774cb724a4bc775c90bb4d63d6fcfa18a",
+      "decisions": [
+        "D-onboarding-017"
+      ]
+    },
+    {
+      "path": "onboarding/wrangler.jsonc",
+      "sha256": "d0760025731b82e4b1f5bcc04736bc11e021143d02b391cddc8362305d7eeb55",
+      "decisions": [
+        "D-onboarding-017"
       ]
     },
     {

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-015",
+  "lane": "onboarding",
+  "title": "Practice loop: recall by questions, voice rating, one strategy question, let's try again",
+  "status": "accepted",
+  "type": "product",
+  "context": "Cam's second-iteration flow. Keeps the UI to one button and one panel so the visual design thread's restyle combines.",
+  "decision": "After the first session, 'Practice' runs a deterministic loop (onboarding/src/practice/): (1) recall, one question per saved step in order up to fullyInAt then the anchor, each carrying the person's own saved answer ('What do you see first? Last time: ...'); any answer or Next moves on; (2) 'How close did you get to feeling <state>, from 0 to 10?', answered by voice (digits, number words, 'about a seven', '7 out of 10') or the pad; (3) one strategy question about one saved core detail, anchor step first, then the other steps, cycling attributes per try; keep, a vocabulary choice, or free words parsed with the engine's parseSubmodality; (4) a changed answer writes a new strategy revision, the guide says 'Okay, let's try again.' and the loop restarts at recall; the same answer ends the session. Max 3 tries a session. Each try is logged as a RepSession (kind full, trigger practice, arm cue, intensityBefore null, intensityAfter the rating, anchorPaired true when the anchor line was reached). Every answer passes screenAnswer; a stop ends the session with endedBy safety-stop. The first-session 'Run my strategy' playback is unchanged.",
+  "alternatives": [
+    "Re-run the full question harness each time (rejected: Cam wants only recall, rating and one question)",
+    "Let a model pick the strategy question (rejected: the engine stays deterministic per D-onboarding-012)"
+  ],
+  "consequences": "",
+  "produces": [
+    "onboarding/src/practice/",
+    "onboarding/src/harness/view/practice.ts",
+    "onboarding/test/unit/practice.test.ts"
+  ],
+  "dependsOn": [
+    "D-onboarding-012"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "branch": "claude/strategy-storage-cloudflare-txlooc"
+  },
+  "createdAt": "2026-10-03T17:52:31Z",
+  "acceptedAt": "2026-10-03T17:52:31Z",
+  "acceptedBy": "claude"
+}

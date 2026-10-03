@@ -1,0 +1,405 @@
+// The Peak State API (D-onboarding-017): invite-code accounts, strategy revisions, the rep log, progress, and
+// short-lived GPT live keys. Runs in a Cloudflare Worker; the storage is any D1-shaped database, so tests use SQLite.
+// Ajv cannot compile schemas inside Workers, so shapes are checked here by hand; the page validates with contracts.
+
+import type { RepSession } from "@peak-state/contracts";
+import { summarize } from "../src/progress/index.ts";
+
+// ── the D1 subset this file uses ────────────────────────────────────────────
+
+export interface Statement {
+  bind(...values: unknown[]): Statement;
+  first<T = Record<string, unknown>>(): Promise<T | null>;
+  all<T = Record<string, unknown>>(): Promise<{ results: T[] }>;
+  run(): Promise<unknown>;
+}
+
+export interface Database {
+  prepare(sql: string): Statement;
+  batch(statements: Statement[]): Promise<unknown[]>;
+}
+
+export interface Env {
+  DB: Database;
+  /** Worker secret. Account creation and sign-in need it. */
+  INVITE_CODE?: string;
+  /** Worker secret. The real OpenAI key; only short-lived keys leave the Worker. */
+  OPENAI_API_KEY?: string;
+}
+
+export interface ApiDeps {
+  now?: () => number;
+  /** Outbound fetch for OpenAI. Injected in tests. */
+  fetch?: typeof fetch;
+  randomBytes?: (n: number) => Uint8Array;
+}
+
+export const SESSION_DAYS = 90;
+export const MAX_FAILED_CODES_PER_DAY = 20;
+export const MAX_VOICE_KEYS_PER_DAY = 40;
+export const MAX_BODY_BYTES = 512 * 1024;
+export const REALTIME_SECRETS_URL = "https://api.openai.com/v1/realtime/client_secrets";
+export const DEFAULT_REALTIME_MODEL = "gpt-realtime";
+
+const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
+const ID = /^[A-Za-z0-9_.:-]{1,128}$/;
+const STATE_ID = /^[a-z][a-z0-9-]{0,31}$/;
+const MODEL = /^[a-z0-9][a-z0-9.-]{0,63}$/;
+
+class HttpError extends Error {
+  readonly status: number;
+  readonly extra: Record<string, unknown>;
+  constructor(status: number, message: string, extra: Record<string, unknown> = {}) {
+    super(message);
+    this.status = status;
+    this.extra = extra;
+  }
+}
+
+function json(body: unknown, status = 200, headers: Record<string, string> = {}): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", ...headers },
+  });
+}
+
+async function readBody(req: Request): Promise<Record<string, unknown>> {
+  const len = Number(req.headers.get("content-length") ?? "0");
+  if (len > MAX_BODY_BYTES) throw new HttpError(413, "Request is too large.");
+  const text = await req.text();
+  if (text.length > MAX_BODY_BYTES) throw new HttpError(413, "Request is too large.");
+  try {
+    const v = text ? JSON.parse(text) : {};
+    if (!v || typeof v !== "object" || Array.isArray(v)) throw new Error("not an object");
+    return v as Record<string, unknown>;
+  } catch {
+    throw new HttpError(400, "Body must be a JSON object.");
+  }
+}
+
+// ── crypto helpers ──────────────────────────────────────────────────────────
+
+function hex(bytes: ArrayBuffer | Uint8Array): string {
+  return [...new Uint8Array(bytes)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function sha256(text: string): Promise<string> {
+  return hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)));
+}
+
+/** Compares two secrets by their digests, so the time taken does not depend on where they differ. */
+async function sameSecret(a: string, b: string): Promise<boolean> {
+  const [x, y] = await Promise.all([sha256(a), sha256(b)]);
+  let diff = 0;
+  for (let i = 0; i < x.length; i++) diff |= x.charCodeAt(i) ^ y.charCodeAt(i);
+  return diff === 0;
+}
+
+function base64url(bytes: Uint8Array): string {
+  let s = "";
+  for (const b of bytes) s += String.fromCharCode(b);
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+// ── the handler ─────────────────────────────────────────────────────────────
+
+export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promise<Response> {
+  const now = deps.now ?? Date.now;
+  const doFetch = deps.fetch ?? fetch;
+  const random = deps.randomBytes ?? ((n: number) => crypto.getRandomValues(new Uint8Array(n)));
+  const db = env.DB;
+  const iso = (ms = now()): string => new Date(ms).toISOString();
+  const today = (): string => iso().slice(0, 10);
+
+  async function bump(key: string): Promise<number> {
+    const day = today();
+    await db.prepare("INSERT INTO counters (key, day, count) VALUES (?, ?, 1) ON CONFLICT(key, day) DO UPDATE SET count = count + 1").bind(key, day).run();
+    const row = await db.prepare("SELECT count FROM counters WHERE key = ? AND day = ?").bind(key, day).first<{ count: number }>();
+    return row?.count ?? 0;
+  }
+
+  async function countToday(key: string): Promise<number> {
+    const row = await db.prepare("SELECT count FROM counters WHERE key = ? AND day = ?").bind(key, today()).first<{ count: number }>();
+    return row?.count ?? 0;
+  }
+
+  async function checkCode(req: Request, code: unknown): Promise<void> {
+    const client = `code:${req.headers.get("cf-connecting-ip") ?? "local"}`;
+    if ((await countToday(client)) >= MAX_FAILED_CODES_PER_DAY) throw new HttpError(429, "Too many wrong codes today. Try again tomorrow.");
+    const expected = env.INVITE_CODE ?? "";
+    if (!expected) throw new HttpError(503, "Accounts are not set up on this server yet.");
+    if (typeof code !== "string" || !(await sameSecret(code.trim(), expected))) {
+      await bump(client);
+      throw new HttpError(403, "That code is not right.");
+    }
+  }
+
+  function readEmail(v: unknown): string {
+    const email = typeof v === "string" ? v.trim().toLowerCase() : "";
+    if (!EMAIL.test(email)) throw new HttpError(400, "Enter a valid email address.");
+    return email;
+  }
+
+  async function newSession(accountId: string): Promise<string> {
+    const token = base64url(random(32));
+    const created = now();
+    await db
+      .prepare("INSERT INTO sessions (token_hash, account_id, created_at, expires_at) VALUES (?, ?, ?, ?)")
+      .bind(await sha256(token), accountId, iso(created), iso(created + SESSION_DAYS * 86_400_000))
+      .run();
+    return token;
+  }
+
+  async function account(req: Request): Promise<{ id: string; email: string; tokenHash: string }> {
+    const auth = req.headers.get("authorization") ?? "";
+    const m = /^Bearer\s+([A-Za-z0-9_-]{20,200})$/.exec(auth);
+    if (!m) throw new HttpError(401, "Sign in first.");
+    const tokenHash = await sha256(m[1]);
+    const row = await db
+      .prepare("SELECT a.id AS id, a.email AS email, s.expires_at AS expires_at FROM sessions s JOIN accounts a ON a.id = s.account_id WHERE s.token_hash = ?")
+      .bind(tokenHash)
+      .first<{ id: string; email: string; expires_at: string }>();
+    if (!row || Date.parse(row.expires_at) <= now()) throw new HttpError(401, "Your session has ended. Sign in again.");
+    return { id: row.id, email: row.email, tokenHash };
+  }
+
+  // ── accounts ──
+
+  async function createAccount(req: Request): Promise<Response> {
+    const body = await readBody(req);
+    await checkCode(req, body.code);
+    const email = readEmail(body.email);
+    const existing = await db.prepare("SELECT id FROM accounts WHERE email = ?").bind(email).first<{ id: string }>();
+    if (existing) throw new HttpError(409, "There is already an account for that email. Sign in instead.");
+    const id = `acct_${base64url(random(12))}`;
+    await db.prepare("INSERT INTO accounts (id, email, created_at) VALUES (?, ?, ?)").bind(id, email, iso()).run();
+    return json({ email, token: await newSession(id) }, 201);
+  }
+
+  async function signIn(req: Request): Promise<Response> {
+    const body = await readBody(req);
+    await checkCode(req, body.code);
+    const email = readEmail(body.email);
+    const row = await db.prepare("SELECT id FROM accounts WHERE email = ?").bind(email).first<{ id: string }>();
+    if (!row) throw new HttpError(404, "No account for that email yet. Create one.");
+    return json({ email, token: await newSession(row.id) });
+  }
+
+  async function signOut(req: Request): Promise<Response> {
+    const me = await account(req);
+    await db.prepare("DELETE FROM sessions WHERE token_hash = ?").bind(me.tokenHash).run();
+    return json({ ok: true });
+  }
+
+  // ── strategy ──
+
+  interface Row {
+    profile_id: string;
+    revision: number;
+    saved_at: string;
+    profile_json: string;
+  }
+
+  async function latest(accountId: string): Promise<Row | null> {
+    return db
+      .prepare("SELECT profile_id, revision, saved_at, profile_json FROM strategies WHERE account_id = ? ORDER BY saved_at DESC, revision DESC LIMIT 1")
+      .bind(accountId)
+      .first<Row>();
+  }
+
+  async function recordFrom(accountId: string, row: Row): Promise<Record<string, unknown>> {
+    const changes = await db
+      .prepare("SELECT change_json FROM strategy_changes WHERE account_id = ? AND profile_id = ? AND revision <= ? ORDER BY revision")
+      .bind(accountId, row.profile_id, row.revision)
+      .all<{ change_json: string }>();
+    return {
+      profile: JSON.parse(row.profile_json),
+      revision: row.revision,
+      savedAt: row.saved_at,
+      changes: changes.results.map((c) => JSON.parse(c.change_json)),
+    };
+  }
+
+  async function getStrategy(req: Request): Promise<Response> {
+    const me = await account(req);
+    const row = await latest(me.id);
+    return json({ record: row ? await recordFrom(me.id, row) : null });
+  }
+
+  function checkRecord(v: unknown): { profileId: string; revision: number; savedAt: string; profile: Record<string, unknown>; changes: Record<string, unknown>[] } {
+    const r = v as Record<string, unknown> | null;
+    const profile = r?.profile as Record<string, unknown> | undefined;
+    if (!r || !profile || typeof profile !== "object") throw new HttpError(400, "record.profile is missing.");
+    if (profile.schemaVersion !== 2 || typeof profile.profileId !== "string" || !ID.test(profile.profileId)) throw new HttpError(400, "record.profile is not a Profile v2.");
+    const states = profile.states;
+    if (!Array.isArray(states) || states.length < 1 || states.length > 3) throw new HttpError(400, "record.profile.states must hold 1 to 3 states.");
+    for (const s of states as Record<string, unknown>[]) {
+      if (!s || typeof s.id !== "string" || !STATE_ID.test(s.id) || !s.strategy || !Array.isArray((s.strategy as { steps?: unknown }).steps)) {
+        throw new HttpError(400, "record.profile.states has a state without an id or strategy.");
+      }
+    }
+    if (!profile.confirmedAt) throw new HttpError(400, "Only a confirmed strategy can be saved.");
+    const revision = r.revision;
+    if (!Number.isInteger(revision) || (revision as number) < 1) throw new HttpError(400, "record.revision must be a whole number from 1.");
+    const savedAt = typeof r.savedAt === "string" && !Number.isNaN(Date.parse(r.savedAt)) ? r.savedAt : null;
+    if (!savedAt) throw new HttpError(400, "record.savedAt must be a date-time.");
+    const changes = Array.isArray(r.changes) ? (r.changes as Record<string, unknown>[]) : [];
+    if (changes.length > 1000) throw new HttpError(400, "record.changes is too long.");
+    for (const c of changes) {
+      if (!c || !Number.isInteger(c.revision) || typeof c.field !== "string" || !Number.isInteger(c.stepIndex)) throw new HttpError(400, "record.changes has a malformed change.");
+    }
+    return { profileId: profile.profileId, revision: revision as number, savedAt, profile, changes };
+  }
+
+  async function putStrategy(req: Request): Promise<Response> {
+    const me = await account(req);
+    const body = await readBody(req);
+    const rec = checkRecord(body.record);
+    const current = await latest(me.id);
+    if (current && current.profile_id === rec.profileId && rec.revision <= current.revision) {
+      return json({ error: "The server has a newer or equal revision of this strategy.", record: await recordFrom(me.id, current) }, 409);
+    }
+    const stmts: Statement[] = [
+      db
+        .prepare("INSERT OR REPLACE INTO strategies (account_id, profile_id, revision, saved_at, profile_json) VALUES (?, ?, ?, ?, ?)")
+        .bind(me.id, rec.profileId, rec.revision, rec.savedAt, JSON.stringify(rec.profile)),
+    ];
+    for (const c of rec.changes) {
+      stmts.push(
+        db.prepare("INSERT OR IGNORE INTO strategy_changes (account_id, profile_id, revision, change_json) VALUES (?, ?, ?, ?)").bind(me.id, rec.profileId, c.revision, JSON.stringify(c)),
+      );
+    }
+    await db.batch(stmts);
+    const row = await latest(me.id);
+    return json({ record: row ? await recordFrom(me.id, row) : null });
+  }
+
+  // ── reps and progress ──
+
+  function checkRep(v: unknown): RepSession {
+    const r = v as Partial<RepSession> | null;
+    if (!r || r.schemaVersion !== 1 || typeof r.id !== "string" || !ID.test(r.id)) throw new HttpError(400, "A rep is missing its id.");
+    if (typeof r.profileId !== "string" || typeof r.stateId !== "string" || !STATE_ID.test(r.stateId)) throw new HttpError(400, `Rep ${r.id} has no profile or state.`);
+    if (typeof r.startedAt !== "string" || Number.isNaN(Date.parse(r.startedAt))) throw new HttpError(400, `Rep ${r.id} has no start time.`);
+    if (!Array.isArray(r.steps) || typeof r.endedBy !== "string") throw new HttpError(400, `Rep ${r.id} has no steps or end.`);
+    if (r.intensityAfter !== null && r.intensityAfter !== undefined && !(Number.isInteger(r.intensityAfter) && r.intensityAfter >= 0 && r.intensityAfter <= 10)) {
+      throw new HttpError(400, `Rep ${r.id} has a rating outside 0 to 10.`);
+    }
+    return r as RepSession;
+  }
+
+  async function postReps(req: Request): Promise<Response> {
+    const me = await account(req);
+    const body = await readBody(req);
+    const reps = body.reps;
+    if (!Array.isArray(reps) || reps.length > 500) throw new HttpError(400, "reps must be a list of at most 500 runs.");
+    const checked = reps.map(checkRep);
+    if (checked.length) {
+      await db.batch(
+        checked.map((r) =>
+          db
+            .prepare("INSERT OR IGNORE INTO reps (account_id, id, profile_id, state_id, started_at, ended_by, intensity_after, rep_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+            .bind(me.id, r.id, r.profileId, r.stateId, r.startedAt, r.endedBy, r.intensityAfter ?? null, JSON.stringify(r)),
+        ),
+      );
+    }
+    return json({ stored: checked.length });
+  }
+
+  async function listReps(accountId: string, stateId: string | null): Promise<RepSession[]> {
+    const q = stateId
+      ? db.prepare("SELECT rep_json FROM reps WHERE account_id = ? AND state_id = ? ORDER BY started_at").bind(accountId, stateId)
+      : db.prepare("SELECT rep_json FROM reps WHERE account_id = ? ORDER BY started_at").bind(accountId);
+    const rows = await q.all<{ rep_json: string }>();
+    return rows.results.map((r) => JSON.parse(r.rep_json) as RepSession);
+  }
+
+  async function getReps(req: Request, url: URL): Promise<Response> {
+    const me = await account(req);
+    const state = url.searchParams.get("state");
+    if (state !== null && !STATE_ID.test(state)) throw new HttpError(400, "state is not a state id.");
+    return json({ reps: await listReps(me.id, state) });
+  }
+
+  async function getProgress(req: Request, url: URL): Promise<Response> {
+    const me = await account(req);
+    const state = url.searchParams.get("state") ?? "";
+    if (!STATE_ID.test(state)) throw new HttpError(400, "state is required.");
+    return json({ progress: summarize(await listReps(me.id, state), state) });
+  }
+
+  // ── short-lived GPT live keys ──
+
+  async function realtimeToken(req: Request): Promise<Response> {
+    const me = await account(req);
+    if (!env.OPENAI_API_KEY) throw new HttpError(503, "GPT live is not set up on this server.");
+    const body = await readBody(req);
+    const model = typeof body.model === "string" && MODEL.test(body.model.trim()) ? body.model.trim() : DEFAULT_REALTIME_MODEL;
+    const key = `voice:${me.id}`;
+    if ((await countToday(key)) >= MAX_VOICE_KEYS_PER_DAY) throw new HttpError(429, "That's the voice limit for today. Use browser or typed voice.");
+    await bump(key);
+    let res: Response;
+    try {
+      res = await doFetch(REALTIME_SECRETS_URL, {
+        method: "POST",
+        headers: { authorization: `Bearer ${env.OPENAI_API_KEY}`, "content-type": "application/json" },
+        body: JSON.stringify({ expires_after: { anchor: "created_at", seconds: 120 }, session: { type: "realtime", model } }),
+      });
+    } catch {
+      throw new HttpError(502, "Could not reach OpenAI.");
+    }
+    const text = await res.text();
+    if (!res.ok) throw new HttpError(502, `OpenAI refused the voice key (${res.status}).`);
+    let parsed: { value?: unknown; expires_at?: unknown; client_secret?: { value?: unknown; expires_at?: unknown } };
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      throw new HttpError(502, "OpenAI sent an unreadable voice key.");
+    }
+    const value = parsed.value ?? parsed.client_secret?.value;
+    const expiresAt = parsed.expires_at ?? parsed.client_secret?.expires_at ?? null;
+    if (typeof value !== "string" || !value) throw new HttpError(502, "OpenAI sent no voice key.");
+    return json({ value, expiresAt, model });
+  }
+
+  // ── routing ──
+
+  return async function handle(req: Request): Promise<Response> {
+    const url = new URL(req.url);
+    const route = `${req.method} ${url.pathname.replace(/\/+$/, "")}`;
+    try {
+      switch (route) {
+        case "GET /api/health":
+          return json({ ok: true, accounts: Boolean(env.INVITE_CODE), voice: Boolean(env.OPENAI_API_KEY) });
+        case "POST /api/accounts":
+          return await createAccount(req);
+        case "POST /api/sessions":
+          return await signIn(req);
+        case "DELETE /api/sessions":
+          return await signOut(req);
+        case "GET /api/me": {
+          const me = await account(req);
+          return json({ email: me.email });
+        }
+        case "GET /api/strategy":
+          return await getStrategy(req);
+        case "PUT /api/strategy":
+          return await putStrategy(req);
+        case "GET /api/reps":
+          return await getReps(req, url);
+        case "POST /api/reps":
+          return await postReps(req);
+        case "GET /api/progress":
+          return await getProgress(req, url);
+        case "POST /api/realtime/token":
+          return await realtimeToken(req);
+        default:
+          return json({ error: "Not found." }, 404);
+      }
+    } catch (err) {
+      if (err instanceof HttpError) return json({ error: err.message, ...err.extra }, err.status);
+      console.error("api error", route, err);
+      return json({ error: "Something went wrong on the server." }, 500);
+    }
+  };
+}
