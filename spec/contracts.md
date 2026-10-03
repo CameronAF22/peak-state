@@ -75,14 +75,37 @@ Own every shape the lanes exchange: the three-emotion profile, calibration, sign
 
 ## Proposed, awaiting acceptance
 
-None.
+### D-contracts-003 · Profile v2 first cut: exactly three emotions with triad strategy, optional anchor, leverage and calibration summary
+
+`proposed` · contract · 2026-10-03 · [session](https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp) · branch `lane/contracts`
+
+**Decision.** schemas/profile.v2.schema.json, schemaVersion 2: profileId, displayName?, emotions (exactly 3, unique slug ids), createdAt, confirmedAt (null = draft). Emotion: id, label, words, leverage?, strategy.{physiology,focus,language} each {action, cue, status: confirmed|draft|empty}, anchor? {kind: sound|gesture|word, value}, calibration? {calibrationId, recordedAt, source, durationSeconds, hrMean, hrSd, rmssd}. Full shape in contracts/PLAN.md.
+
+**Context.** MVP plan and contracts brief. Onboarding fills it, sensing reads calibration, reps reads strategy and anchor. Needs onboarding and reps to confirm the fields are fillable and sufficient.
+
+**Alternatives considered.**
+
+- Allow 1 to 3 emotions while drafting
+- Keep calibration only in separate Calibration records
+
+**Produces:** `schemas/profile.v2.schema.json`, `contracts/fixtures/profile.demo.json`, `contracts/fixtures/profile.draft.json`  
+**Depends on:** D-coord-005
+
+### D-contracts-004 · Event shapes first cut: Calibration, SignalFrame, DetectionEvent, RepSession, and the module API
+
+`proposed` · contract · 2026-10-03 · [session](https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp) · branch `lane/contracts`
+
+**Decision.** As in contracts/PLAN.md. Stream times are epoch ms integers, persisted times ISO 8601. SignalFrame {t, source, hr, rr[], quality, scenarioStep?}. DetectionEvent {id, t, kind: drift|manual, emotionId, confidence, window {seconds, hrMean, rmssd, hrDelta, rmssdDelta, z}, gate {consecutiveWindows, required, refractorySeconds, sham}}. RepSession {id, profileId, emotionId, trigger {kind: detection|manual|practice, detectionId?}, mode: full|anchor-only, arm: cue|sham, steps[], intensityBefore, intensityAfter, recoverySeconds, endedBy: completed|skipped|safety-stop}. API: onboarding.run(host), sensing.start(profile, onEvent, onFrame?), sensing.record(emotionId, seconds), reps.run(profile, emotionId, trigger, host), reps.progress(sessions).
+
+**Context.** MVP plan first cut, extended with what sensing, reps and onboarding briefs say they provide (record, progress) and the installed test (anchor-only). Window stats and step kinds need sensing and reps to confirm.
+
+**Produces:** `schemas/calibration.schema.json`, `schemas/signal-frame.schema.json`, `schemas/detection-event.schema.json`, `schemas/rep-session.schema.json`, `contracts/fixtures/`, `contracts/API.md`  
+**Depends on:** D-coord-005, D-coord-007
 
 ## Superseded and rejected
 
-- D-contracts-003 · Profile v2 first cut: exactly three emotions with triad strategy, optional anchor, leverage and calibration summary · `superseded` (superseded by D-contracts-005)
-- D-contracts-004 · Event shapes first cut: Calibration, SignalFrame, DetectionEvent, RepSession, and the module API · `superseded` (superseded by D-contracts-006)
-- D-contracts-005 · Profile v2: 1 to 3 person-chosen states with ordered strategy steps, submodalities, contrast, differences and drivers · `superseded` (superseded by D-contracts-008)
-- D-contracts-006 · Event shapes and module API: calibration phases, targetStateId, rep steps by strategy index · `superseded` (superseded by D-contracts-007)
+- D-contracts-005 · Profile v2: 1 to 3 person-chosen states with ordered strategy steps, submodalities, contrast, differences and drivers · `rejected` (superseded by D-contracts-008)
+- D-contracts-006 · Event shapes and module API: calibration phases, targetStateId, rep steps by strategy index · `rejected` (superseded by D-contracts-007)
 
 ## Decisions from other lanes that cover files here
 
@@ -94,51 +117,55 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 
 | File | sha256 | Decisions |
 |---|---|---|
-| `contracts/PLAN.md` | `32b399ddf79e` | D-contracts-001 |
-| `contracts/fixtures/_generate.py` | `0eabbdf3c463` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `contracts/fixtures/calibration.contrast.json` | `7072731be7dd` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `contracts/fixtures/calibration.peak.json` | `df2eab59baa5` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `contracts/fixtures/detection.drift.json` | `4b5d1f5bd35b` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `contracts/fixtures/detection.manual.json` | `1de2b29711ba` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `contracts/fixtures/frames.drift.json` | `4d33afb5f3f1` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `contracts/fixtures/invalid/profile.anchor-out-of-range.json` | `4b4340578d4d` | D-contracts-004, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/invalid/profile.confirmed-with-unconfirmed-strategy.json` | `bfb64dd2afb5` | D-contracts-004, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/invalid/profile.driver-names-no-difference.json` | `a679c2ce3bdf` | D-contracts-004, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/invalid/profile.duplicate-state-ids.json` | `d726779e6602` | D-contracts-004, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/invalid/profile.four-states.json` | `dd946ceb9bdc` | D-contracts-004, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/invalid/profile.off-vocabulary-value.json` | `e62180dadbe6` | D-contracts-004, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/invalid/profile.unknown-attribute.json` | `d800d9311cbf` | D-contracts-004, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/invalid/profile.zero-states.json` | `429042be4347` | D-contracts-004, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/invalid/rep-session.sham-with-strategy-step.json` | `dcd2d183e096` | D-contracts-004, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/invalid/rep-session.step-past-strategy.json` | `6818cfe478f7` | D-contracts-004, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/onboarding.events.demo.json` | `f3583852ffe9` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `contracts/fixtures/profile.demo.json` | `2d2003ada5cd` | D-contracts-003, D-contracts-004, D-contracts-005, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/profile.draft.json` | `cbb7bc0e2b00` | D-contracts-003, D-contracts-004, D-contracts-005, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/profile.three-states.json` | `5a955d9d9e99` | D-contracts-004, D-contracts-005, D-contracts-006, D-contracts-007, D-contracts-008 |
-| `contracts/fixtures/rep-log.demo.json` | `80ef53757a86` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `contracts/fixtures/rep-session.anchor-only.json` | `d65545a15464` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `contracts/fixtures/rep-session.full.json` | `1f75904e87d4` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `contracts/fixtures/rep-session.sham.json` | `b2aeaf340106` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `contracts/package.json` | `b7e7879a5f48` | D-contracts-002 |
-| `contracts/src/api.ts` | `f3c63c45d882` | D-contracts-002, D-contracts-006, D-contracts-007 |
-| `contracts/src/derive.ts` | `7ff5365f0f9c` | D-contracts-002, D-contracts-005, D-contracts-008 |
-| `contracts/src/index.ts` | `a847608f8de1` | D-contracts-002, D-contracts-007 |
+| `contracts/API.md` | `026189222d43` | D-contracts-004, D-contracts-007 |
+| `contracts/PLAN.md` | `45c1a02bcf35` | D-contracts-001 |
+| `contracts/README.md` | `bcdecde9ddf7` | D-contracts-007 |
+| `contracts/fixtures/_generate.py` | `2bcee434ff27` | D-contracts-004, D-contracts-007 |
+| `contracts/fixtures/calibration.contrast.json` | `7072731be7dd` | D-contracts-004, D-contracts-007 |
+| `contracts/fixtures/calibration.peak.json` | `df2eab59baa5` | D-contracts-004, D-contracts-007 |
+| `contracts/fixtures/detection.drift.json` | `4b5d1f5bd35b` | D-contracts-004, D-contracts-007 |
+| `contracts/fixtures/detection.manual.json` | `1de2b29711ba` | D-contracts-004, D-contracts-007 |
+| `contracts/fixtures/frames.drift.json` | `4d33afb5f3f1` | D-contracts-004, D-contracts-007 |
+| `contracts/fixtures/invalid/profile.anchor-out-of-range.json` | `4b4340578d4d` | D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/invalid/profile.confirmed-with-unconfirmed-strategy.json` | `bfb64dd2afb5` | D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/invalid/profile.driver-names-no-difference.json` | `a679c2ce3bdf` | D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/invalid/profile.duplicate-state-ids.json` | `d726779e6602` | D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/invalid/profile.four-states.json` | `dd946ceb9bdc` | D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/invalid/profile.off-vocabulary-value.json` | `e62180dadbe6` | D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/invalid/profile.unknown-attribute.json` | `d800d9311cbf` | D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/invalid/profile.zero-states.json` | `429042be4347` | D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/invalid/rep-session.sham-with-strategy-step.json` | `dcd2d183e096` | D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/invalid/rep-session.step-past-strategy.json` | `6818cfe478f7` | D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/onboarding.events.demo.json` | `f3583852ffe9` | D-contracts-004, D-contracts-007 |
+| `contracts/fixtures/profile.demo.json` | `2d2003ada5cd` | D-contracts-003, D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/profile.draft.json` | `cbb7bc0e2b00` | D-contracts-003, D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/profile.three-states.json` | `5a955d9d9e99` | D-contracts-004, D-contracts-007, D-contracts-008 |
+| `contracts/fixtures/rep-log.demo.json` | `80ef53757a86` | D-contracts-004, D-contracts-007 |
+| `contracts/fixtures/rep-session.anchor-only.json` | `d65545a15464` | D-contracts-004, D-contracts-007 |
+| `contracts/fixtures/rep-session.full.json` | `1f75904e87d4` | D-contracts-004, D-contracts-007 |
+| `contracts/fixtures/rep-session.sham.json` | `b2aeaf340106` | D-contracts-004, D-contracts-007 |
+| `contracts/package.json` | `f96f620437ea` | D-contracts-002 |
+| `contracts/src/api.ts` | `f3c63c45d882` | D-contracts-002, D-contracts-007 |
+| `contracts/src/derive.ts` | `7ff5365f0f9c` | D-contracts-002, D-contracts-008 |
+| `contracts/src/fixtures.ts` | `be4e622b938e` | D-contracts-002 |
+| `contracts/src/index.ts` | `c585a9156f11` | D-contracts-002, D-contracts-007 |
 | `contracts/src/onboarding.ts` | `70cb50b92893` | D-contracts-002, D-contracts-007 |
 | `contracts/src/profile.ts` | `96ff6639d985` | D-contracts-002, D-contracts-008 |
 | `contracts/src/reps.ts` | `4d425f507313` | D-contracts-002, D-contracts-007 |
 | `contracts/src/signals.ts` | `1d5dcb39a100` | D-contracts-002, D-contracts-007 |
 | `contracts/src/validate.ts` | `865044ce7a46` | D-contracts-002, D-contracts-008 |
+| `contracts/test/contracts.test.ts` | `3c183f8a3ba3` | D-contracts-002 |
 | `contracts/tsconfig.json` | `c9a4d61e1f4f` | D-contracts-002 |
 | `examples/sample-profile.json` | `291e50b2e629` | D-coord-008 |
 | `examples/sample-strategies.json` | `2e568daa55ce` | D-coord-008 |
 | `schemas/anchor-update.schema.json` | `aebf1af9180b` | D-coord-008 |
-| `schemas/calibration.schema.json` | `09fef0851bbf` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `schemas/detection-event.schema.json` | `a7d8f129fb44` | D-contracts-004, D-contracts-006, D-contracts-007 |
+| `schemas/calibration.schema.json` | `09fef0851bbf` | D-contracts-004, D-contracts-007 |
+| `schemas/detection-event.schema.json` | `a7d8f129fb44` | D-contracts-004, D-contracts-007 |
 | `schemas/intervention-offer.schema.json` | `c7532e6f1b96` | D-coord-008 |
 | `schemas/onboarding-event.schema.json` | `5c520bd1c847` | D-contracts-007 |
 | `schemas/peak-strategies.schema.json` | `9926246d2c4c` | D-coord-008 |
-| `schemas/profile.v2.schema.json` | `bba1f4bbdc4b` | D-contracts-003, D-contracts-005, D-contracts-008 |
-| `schemas/rep-session.schema.json` | `8e4e248bd0a9` | D-contracts-004, D-contracts-006, D-contracts-007 |
-| `schemas/signal-frame.schema.json` | `746b14c63acb` | D-contracts-004, D-contracts-006, D-contracts-007 |
+| `schemas/profile.v2.schema.json` | `bba1f4bbdc4b` | D-contracts-003, D-contracts-008 |
+| `schemas/rep-session.schema.json` | `8e4e248bd0a9` | D-contracts-004, D-contracts-007 |
+| `schemas/signal-frame.schema.json` | `746b14c63acb` | D-contracts-004, D-contracts-007 |
 | `schemas/user-state-profile.schema.json` | `a33d13d344de` | D-coord-008 |
 | `schemas/voice-session.schema.json` | `ae7e8687cc36` | D-coord-008 |

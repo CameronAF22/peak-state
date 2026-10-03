@@ -10,7 +10,7 @@
     "./schemas/*": "../schemas/*"
   },
   "scripts": {
-    "test": "node --test --disable-warning=ExperimentalWarning test/",
+    "test": "node --test --disable-warning=ExperimentalWarning \"test/**/*.test.ts\"",
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {

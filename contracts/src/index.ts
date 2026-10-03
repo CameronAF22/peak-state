@@ -7,3 +7,4 @@ export * from "./onboarding.ts";
 export * from "./api.ts";
 export * from "./derive.ts";
 export * from "./validate.ts";
+export * from "./fixtures.ts";

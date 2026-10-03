@@ -3,18 +3,32 @@
   "lane": "contracts",
   "files": [
     {
+      "path": "contracts/API.md",
+      "sha256": "026189222d430c13d73391d0b4e7a9d8e9c2179a465df7fdf1058853860f591d",
+      "decisions": [
+        "D-contracts-004",
+        "D-contracts-007"
+      ]
+    },
+    {
       "path": "contracts/PLAN.md",
-      "sha256": "32b399ddf79e6daca9bf06b02b107d87aa77368b995e05126300dbe4604e7e5a",
+      "sha256": "45c1a02bcf35aba0b2914fc68ecae1b9599f07016e24d5f59411e5e606b03645",
       "decisions": [
         "D-contracts-001"
       ]
     },
     {
+      "path": "contracts/README.md",
+      "sha256": "bcdecde9ddf7094a5e55d81feedf2c88bfa262eed3502c61248c1907198ff3a5",
+      "decisions": [
+        "D-contracts-007"
+      ]
+    },
+    {
       "path": "contracts/fixtures/_generate.py",
-      "sha256": "0eabbdf3c463c5c8199fd0e90af71bf919343ef07173030b72f468b13fa18c25",
+      "sha256": "2bcee434ff27058b282041975f66d648f14f9ad3c3444fc2d26702bfead3ce2b",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -23,7 +37,6 @@
       "sha256": "7072731be7ddfcff752a3289f1756068da0e50b5ffd0429bd02cd5f224def2b8",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -32,7 +45,6 @@
       "sha256": "df2eab59baa5fc54fe680c14cd507c3cb5d9ce653d81d2130cfc38bc4fa2ba35",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -41,7 +53,6 @@
       "sha256": "4b5d1f5bd35b4276120ea795507cfa63a463762049bf3d3d809e9364fd5970b9",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -50,7 +61,6 @@
       "sha256": "1de2b29711bad2d85a8d355ec556c45bca5076d34582421320b2e72ec7103773",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -59,7 +69,6 @@
       "sha256": "4d33afb5f3f1c1854a5830252416a21184499f52545ea7cb6bf670bb1a0b9254",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -68,7 +77,6 @@
       "sha256": "4b4340578d4dccd7e860a41579384223b2343d345e8d82ed9ec9130cc8235b11",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -78,7 +86,6 @@
       "sha256": "bfb64dd2afb57434cd9e4f3eb5c48c917ca422caf7af58b634b874a92c6d9563",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -88,7 +95,6 @@
       "sha256": "a679c2ce3bdff9c8f80f791309fe8d658aa53156b7b2b794d72819f5c0cdd162",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -98,7 +104,6 @@
       "sha256": "d726779e660200c25ac5cddba4a07b049202ffb8e34b2d6220bdb693e468d4d0",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -108,7 +113,6 @@
       "sha256": "dd946ceb9bdc5d46487e8dad7f07537c1985543c01cdfad8080935d665c4fe70",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -118,7 +122,6 @@
       "sha256": "e62180dadbe68ed671240d159276b41f074bedab77a6acb37a43f6eb64140849",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -128,7 +131,6 @@
       "sha256": "d800d9311cbf7d1895e3712cb83a77b327643ab08eabdf7ebe2838f4243f0b99",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -138,7 +140,6 @@
       "sha256": "429042be4347f022a67390dc86d9767f82b12d45e0f02ce90d67bf13f06c8bf5",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -148,7 +149,6 @@
       "sha256": "dcd2d183e096e5f29a8f18c55998bd1322d3bafdcb9c7ecb377f8e176c2b7585",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -158,7 +158,6 @@
       "sha256": "6818cfe478f77d2491c77b5e8e6cda435f0aff0902b1d7283fdc66a3278583ab",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -168,7 +167,6 @@
       "sha256": "f3583852ffe9a97bf3213aca2a99857d6146d5ad1e6259f38456e0d4e1d8a0b0",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -178,8 +176,6 @@
       "decisions": [
         "D-contracts-003",
         "D-contracts-004",
-        "D-contracts-005",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -190,8 +186,6 @@
       "decisions": [
         "D-contracts-003",
         "D-contracts-004",
-        "D-contracts-005",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -201,8 +195,6 @@
       "sha256": "5a955d9d9e99cd47aa50b3e812cb32586a34e2e081d422f22765516c11ab5184",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-005",
-        "D-contracts-006",
         "D-contracts-007",
         "D-contracts-008"
       ]
@@ -212,7 +204,6 @@
       "sha256": "80ef53757a860f9487f37199ac7859556ba5b2d39d9e67228330b22a5f3efad6",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -221,7 +212,6 @@
       "sha256": "d65545a154644f083ddca447ebc0017423b3a1346a28f428e3f8fc1b15e5d263",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -230,7 +220,6 @@
       "sha256": "1f75904e87d49b5faaf6d5a1a63ecf205c31628a615ce86764df092edb7308b3",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -239,13 +228,12 @@
       "sha256": "b2aeaf3401065b69e5e7db5758797a2fa4bac3efa03d505a5ebac269539d6726",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
     {
       "path": "contracts/package.json",
-      "sha256": "b7e7879a5f4891a63f42658ffa5ad2eee5949978a98647d120f6a24fc9fe450d",
+      "sha256": "f96f620437ea2a9617eef901c3a6e3abe034f31de125e485bb169f1af7fa7f30",
       "decisions": [
         "D-contracts-002"
       ]
@@ -255,7 +243,6 @@
       "sha256": "f3c63c45d882fe07e923f0ed852f08e8a927e011c3d37d442cd5af4eff17c973",
       "decisions": [
         "D-contracts-002",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -264,13 +251,19 @@
       "sha256": "7ff5365f0f9c59831dff77cdd22aef554b22ea45703f8cf4dba74e02f9aba00a",
       "decisions": [
         "D-contracts-002",
-        "D-contracts-005",
         "D-contracts-008"
       ]
     },
     {
+      "path": "contracts/src/fixtures.ts",
+      "sha256": "be4e622b938e26707b62e26376eac26ec6b362e83ea1f883f3e5b19b908f0125",
+      "decisions": [
+        "D-contracts-002"
+      ]
+    },
+    {
       "path": "contracts/src/index.ts",
-      "sha256": "a847608f8de1d14782ed9ad5fa6784d4e21ec39128d30d2506e68c87d0488afb",
+      "sha256": "c585a9156f1130d1cebc175375e0257c650ae6a016e807988865c396c6e6e0a7",
       "decisions": [
         "D-contracts-002",
         "D-contracts-007"
@@ -317,6 +310,13 @@
       ]
     },
     {
+      "path": "contracts/test/contracts.test.ts",
+      "sha256": "3c183f8a3ba3cb529b3898bc2a3a3b8c691d13571616a2bc071ccc39ee05bddf",
+      "decisions": [
+        "D-contracts-002"
+      ]
+    },
+    {
       "path": "contracts/tsconfig.json",
       "sha256": "c9a4d61e1f4fcf9462f25fc57904801a39d84dddb693830883c7b9ca446185a9",
       "decisions": [
@@ -349,7 +349,6 @@
       "sha256": "09fef0851bbf466b827cc8c938b6ad5b733d0ad81e70ea71967a3bd049e54532",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -358,7 +357,6 @@
       "sha256": "a7d8f129fb44ea5f0aeffcd1e8d1b8f64e55595a6afa612ca10d58d52b0177b5",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -388,7 +386,6 @@
       "sha256": "bba1f4bbdc4b95c0c61bc8916a1d8e16e9ea3856af1950eaef3cd8d814f2d6d1",
       "decisions": [
         "D-contracts-003",
-        "D-contracts-005",
         "D-contracts-008"
       ]
     },
@@ -397,7 +394,6 @@
       "sha256": "8e4e248bd0a9778be267b6129e2044209fe391794e4473f4d19e39730da0bd94",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },
@@ -406,7 +402,6 @@
       "sha256": "746b14c63acb0f2addf5f65245b6e1acc338992b7164030ba64696882e18c496",
       "decisions": [
         "D-contracts-004",
-        "D-contracts-006",
         "D-contracts-007"
       ]
     },

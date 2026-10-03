@@ -3,16 +3,16 @@
   "lane": "contracts",
   "health": "green",
   "phase": "M1",
-  "progress": 45,
-  "summary": "M1: schemas, types, derive helpers, validators and fixtures pushed; tests and API.md next",
+  "progress": 90,
+  "summary": "M1 built: 6 schemas, TS types, validators, derive helpers, 13 fixtures + 10 invalid, API.md; 9 tests and tsc green",
   "now": [
-    "Writing contract tests and contracts/API.md"
+    "PR to main open; waiting for lanes to import and confirm D-contracts-007/008"
   ],
   "next": [
-    "npm test green, API.md, message lanes, open PR"
+    "Fix whatever lanes hit while importing; close M1 when onboarding, sensing, reps and experience acknowledge"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:55:07Z",
+  "updatedAt": "2026-10-03T14:57:25Z",
   "session": {
     "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
     "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
