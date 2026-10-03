@@ -1,0 +1,139 @@
+{
+  "scenario": "hr_only",
+  "description": "Heart-rate signal without HRV readings",
+  "synthetic": true,
+  "profile": {
+    "profile_id": "demo-person",
+    "display_name": "Demo person",
+    "synthetic": true,
+    "baseline": {
+      "hr": {
+        "value": 62,
+        "unit": "bpm",
+        "context": "awake",
+        "sample_count": 60
+      },
+      "hrv": {
+        "value": 52,
+        "unit": "ms",
+        "context": "synthetic_intraday",
+        "sample_count": 60
+      }
+    },
+    "preferences": [
+      "funny_video",
+      "meditation_music",
+      "breathing"
+    ],
+    "blocked_kinds": [],
+    "paused": false,
+    "feedback": []
+  },
+  "inputs": [
+    {
+      "type": "sample",
+      "observed_at": "2026-10-03T14:00:00+00:00",
+      "received_at": "2026-10-03T14:00:30+00:00",
+      "hr_bpm": 62,
+      "hrv_ms": null,
+      "source": "awake",
+      "hrv_context": "synthetic_intraday",
+      "activity": "rest",
+      "quality": "good",
+      "available": true,
+      "provenance": "synthetic"
+    },
+    {
+      "type": "sample",
+      "observed_at": "2026-10-03T14:05:00+00:00",
+      "received_at": "2026-10-03T14:05:30+00:00",
+      "hr_bpm": 63,
+      "hrv_ms": null,
+      "source": "awake",
+      "hrv_context": "synthetic_intraday",
+      "activity": "rest",
+      "quality": "good",
+      "available": true,
+      "provenance": "synthetic"
+    },
+    {
+      "type": "sample",
+      "observed_at": "2026-10-03T14:10:00+00:00",
+      "received_at": "2026-10-03T14:10:30+00:00",
+      "hr_bpm": 81,
+      "hrv_ms": null,
+      "source": "awake",
+      "hrv_context": "synthetic_intraday",
+      "activity": "rest",
+      "quality": "good",
+      "available": true,
+      "provenance": "synthetic"
+    },
+    {
+      "type": "sample",
+      "observed_at": "2026-10-03T14:15:00+00:00",
+      "received_at": "2026-10-03T14:15:30+00:00",
+      "hr_bpm": 83,
+      "hrv_ms": null,
+      "source": "awake",
+      "hrv_context": "synthetic_intraday",
+      "activity": "rest",
+      "quality": "good",
+      "available": true,
+      "provenance": "synthetic"
+    },
+    {
+      "type": "action",
+      "received_at": "2026-10-03T14:16:00+00:00",
+      "action": "accept",
+      "provenance": "simulated_user"
+    },
+    {
+      "type": "sample",
+      "observed_at": "2026-10-03T14:20:00+00:00",
+      "received_at": "2026-10-03T14:20:30+00:00",
+      "hr_bpm": 75,
+      "hrv_ms": null,
+      "source": "awake",
+      "hrv_context": "synthetic_intraday",
+      "activity": "rest",
+      "quality": "good",
+      "available": true,
+      "provenance": "synthetic"
+    },
+    {
+      "type": "sample",
+      "observed_at": "2026-10-03T14:25:00+00:00",
+      "received_at": "2026-10-03T14:25:30+00:00",
+      "hr_bpm": 65,
+      "hrv_ms": null,
+      "source": "awake",
+      "hrv_context": "synthetic_intraday",
+      "activity": "rest",
+      "quality": "good",
+      "available": true,
+      "provenance": "synthetic"
+    },
+    {
+      "type": "sample",
+      "observed_at": "2026-10-03T14:30:00+00:00",
+      "received_at": "2026-10-03T14:30:30+00:00",
+      "hr_bpm": 63,
+      "hrv_ms": null,
+      "source": "awake",
+      "hrv_context": "synthetic_intraday",
+      "activity": "rest",
+      "quality": "good",
+      "available": true,
+      "provenance": "synthetic"
+    },
+    {
+      "type": "action",
+      "received_at": "2026-10-03T14:31:00+00:00",
+      "action": "feedback",
+      "helpful": true,
+      "feels_calmer": true,
+      "provenance": "simulated_user"
+    }
+  ]
+}

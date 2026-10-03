@@ -31,7 +31,7 @@
     },
     {
       "path": "app/src/App.tsx",
-      "sha256": "c17e1308a39f1793a48e8730a1541bb300daeec7937db499f90ce8ebea517d9a",
+      "sha256": "35ff0dbc55fb1f6a8ad86df92f23e47ec8d9600d1ccb36043b047dfb6f36878f",
       "decisions": [
         "D-experience-002",
         "D-experience-006",
@@ -150,7 +150,7 @@
     },
     {
       "path": "app/src/screens/Calibrate.tsx",
-      "sha256": "45ef7fc16a7436736ff2b604c8d3145a4f96a42f5ede011ddb453e1e862f69b7",
+      "sha256": "6cdb2040b70e04fb75ad0a6cde1f48ffcd7fc8b95897da5b125707a7e2273620",
       "decisions": [
         "D-experience-002",
         "D-experience-005",
@@ -160,7 +160,7 @@
     },
     {
       "path": "app/src/screens/Live.tsx",
-      "sha256": "9c37c7bfa9adbb71f83e19dec89826e3734f4e6cd8f3992d07ab180f8bec47aa",
+      "sha256": "11ec47c7fb0af5f5845993c0d85393b4b2277e3d56f8d655d6cb1520e38ef9a9",
       "decisions": [
         "D-experience-002",
         "D-experience-005",
@@ -180,7 +180,7 @@
     },
     {
       "path": "app/src/screens/Progress.tsx",
-      "sha256": "1c72cd9934a049153db097d40d98dfa2466b64234db96cc505a9df719cb423ca",
+      "sha256": "dc4347aa659fc7b31265408a229c5b1dfe5f88631d9be32871ac0c986cf6f345",
       "decisions": [
         "D-experience-002",
         "D-experience-005",
@@ -246,8 +246,16 @@
       ]
     },
     {
+      "path": "app/test/real.test.ts",
+      "sha256": "bf919aa73628637a16401c50af793b98792500f5e008ea11747d10808574ba1f",
+      "decisions": [
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
       "path": "app/test/stubs.test.ts",
-      "sha256": "4d4851bb061f8d130bd956602d18e5d08a1180b6637262fd7eb3964960540e0b",
+      "sha256": "ad6670c1bf683b0ba1f818e9eec083ad84e3986f3ee8575b1e356a60ac3b3b9e",
       "decisions": [
         "D-experience-006",
         "D-onboarding-023"

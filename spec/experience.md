@@ -111,7 +111,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `app/PLAN.md` | `9d5e1067b46b` | D-experience-001, D-experience-004, D-onboarding-023 |
 | `app/index.html` | `a7c639357060` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/package.json` | `52c0b4db163a` | D-experience-002, D-experience-006, D-onboarding-023 |
-| `app/src/App.tsx` | `c17e1308a39f` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/App.tsx` | `35ff0dbc55fb` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/src/components/RatingPad.tsx` | `3eefa96c55e2` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/src/components/SafetyFooter.tsx` | `7741958ac223` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/src/components/StepChain.tsx` | `834db21aae12` | D-experience-002, D-experience-006, D-onboarding-023 |
@@ -124,17 +124,18 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `app/src/onboardView.ts` | `381cb5b5bc23` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/src/real/onboarding.ts` | `e4a6e3dcaf5a` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/src/real/reps.ts` | `bc8cf434192a` | D-experience-002, D-experience-006, D-onboarding-023 |
-| `app/src/screens/Calibrate.tsx` | `45ef7fc16a74` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
-| `app/src/screens/Live.tsx` | `9c37c7bfa9ad` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
+| `app/src/screens/Calibrate.tsx` | `6cdb2040b70e` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
+| `app/src/screens/Live.tsx` | `11ec47c7fb0a` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
 | `app/src/screens/Onboard.tsx` | `f165ee4d6733` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
-| `app/src/screens/Progress.tsx` | `1c72cd9934a0` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
+| `app/src/screens/Progress.tsx` | `dc4347aa659f` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
 | `app/src/screens/Rep.tsx` | `1549c80889b8` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
 | `app/src/slots.ts` | `c9f011e367a0` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/src/store.ts` | `eee162f3a53b` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/src/stubs/onboarding.ts` | `be039b80edb2` | D-experience-002, D-experience-003, D-experience-006, D-onboarding-023 |
 | `app/src/stubs/sensing.ts` | `e2000ffd156c` | D-experience-002, D-experience-003, D-experience-006, D-onboarding-023 |
 | `app/src/styles.css` | `46063af0303c` | D-experience-002, D-experience-006, D-onboarding-023 |
-| `app/test/stubs.test.ts` | `4d4851bb061f` | D-experience-006, D-onboarding-023 |
+| `app/test/real.test.ts` | `bf919aa73628` | D-experience-006, D-onboarding-023 |
+| `app/test/stubs.test.ts` | `ad6670c1bf68` | D-experience-006, D-onboarding-023 |
 | `app/tsconfig.json` | `ab0aef619214` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/vite.config.ts` | `26f57b21778a` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/vitest.config.ts` | `16f2aa794638` | D-onboarding-023 |
