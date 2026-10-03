@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#040507" />
+    <title>Peak State · Orb</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app" id="app">
+      <div class="sky" id="sky" aria-hidden="false"></div>
+      <p class="caption" id="caption" data-testid="caption" aria-live="polite"></p>
+      <main class="stage" id="stage" aria-live="polite"></main>
+      <footer class="foot">
+        <nav class="nav" id="nav" aria-label="Navigation"></nav>
+        <p class="safety" data-testid="safety-note">Peak State is for recalling good states, not for therapy. If things feel heavy, talk to someone you trust.</p>
+        <div class="voice" id="voice"></div>
+      </footer>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
