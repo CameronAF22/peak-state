@@ -3,19 +3,19 @@
   "lane": "coord",
   "health": "green",
   "phase": "M1",
-  "progress": 25,
-  "summary": "contracts M1 shipped (D-contracts-007/008 accepted, PR #21); reps and experience M1 shells built; onboarding and sensing waiting for a person's go in their sessions",
+  "progress": 100,
+  "summary": "test/ home auth with JSON user store and localStorage session",
   "now": [
-    "Lockfile rule and decide self-reference fix"
+    "Auth UI and API shipped"
   ],
   "next": [
-    "Merge M1 PRs in dependency order once lanes confirm imports"
+    "Integrate onboarding flow when ready"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:58:43Z",
+  "updatedAt": "2026-10-03T16:35:40Z",
   "session": {
-    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
-    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
-    "branch": "claude/awesome-wright-ciik1f"
+    "id": "local-vikas",
+    "url": null,
+    "branch": "claude/project-thread-c4ldi5"
   }
 }

@@ -25,6 +25,48 @@ h1 {
   margin: 0 0 2rem;
 }
 
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+  margin-bottom: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  color: #a8b8cc;
+}
+
+.field input {
+  padding: 0.65rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #3d4f66;
+  border-radius: 8px;
+  background: #121a26;
+  color: inherit;
+}
+
+.field input:focus {
+  outline: 2px solid #4a7cc9;
+  outline-offset: 1px;
+}
+
+.auth-status {
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
+  color: #8fd4a8;
+}
+
+.auth-error {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: #f5a8a8;
+}
+
 .actions {
   display: flex;
   flex-direction: column;
@@ -43,6 +85,15 @@ button {
 
 button:hover {
   background: #243044;
+}
+
+button.secondary {
+  background: transparent;
+  border-color: #4a5568;
+}
+
+button.secondary:hover {
+  background: #1a2332;
 }
 
 a {

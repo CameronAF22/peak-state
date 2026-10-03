@@ -233,9 +233,10 @@
     },
     {
       "path": "test/backend/main.py",
-      "sha256": "d8642072aa0ae240d0bf5b4ef3f8624f719f122f92eac6dd7e55249b6835d65f",
+      "sha256": "191ab14db1debf39f13d011d0ab4af96c1b8a96ce0ea7d189f569093868b00a6",
       "decisions": [
-        "D-coord-015"
+        "D-coord-015",
+        "D-coord-017"
       ]
     },
     {
@@ -246,38 +247,48 @@
       ]
     },
     {
+      "path": "test/backend/users.json",
+      "sha256": "8cf68f30c0d726851b231b6450a1ae5902604381e525833891b1029d2d019e6a",
+      "decisions": [
+        "D-coord-017"
+      ]
+    },
+    {
       "path": "test/frontend/action.html",
-      "sha256": "77e055f1d03c916caa78c0c64be474089a97d3f6d79e51ca2c956558cd721761",
+      "sha256": "93d3d6d3867811dd4300e9d9785fd33e9aaec945c5df8c46677f6e119607c529",
       "decisions": [
         "D-coord-015"
       ]
     },
     {
       "path": "test/frontend/app.js",
-      "sha256": "519d18c20ff2009b145f9733404a0389edf02a7acc18e65e6977e49a59dfcb42",
+      "sha256": "953014455dd49a6ea0764d746eff054c55f9c1adbf0d9d522e118ee9b867a162",
       "decisions": [
-        "D-coord-015"
+        "D-coord-015",
+        "D-coord-017"
       ]
     },
     {
       "path": "test/frontend/index.html",
-      "sha256": "06797bb84a74c36d2ec80cc9537b6736cb3fadd0520198ad0d1e3c7d08f0e33a",
+      "sha256": "d50bac581d0ebea53213aaec937d99ca7baa2e59caad09c72f4207ddfb234944",
       "decisions": [
-        "D-coord-015"
+        "D-coord-015",
+        "D-coord-017"
       ]
     },
     {
       "path": "test/frontend/onboarding.html",
-      "sha256": "3f24e932222b62ab491bf3f528e1504c612e7ebaafacaf470fb26af74b1a5b95",
+      "sha256": "6152c4cb1f62dfccc296d43fa603944cb8b05f54b8c0937db46bc8d9154de727",
       "decisions": [
         "D-coord-015"
       ]
     },
     {
       "path": "test/frontend/styles.css",
-      "sha256": "49193780c1f5ca77e53a31fdbeb277a77211070895c4021dfa7d5bbc9290a661",
+      "sha256": "7ff29ad2a469b15cc68b6574c5458f92f336a84766e9e35e13fde06c43bbc3bf",
       "decisions": [
-        "D-coord-015"
+        "D-coord-015",
+        "D-coord-017"
       ]
     },
     {

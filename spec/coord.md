@@ -268,6 +268,16 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 **Produces:** `coord/lanes.json`  
 **Depends on:** D-coord-015
 
+### D-coord-017 · test app JSON auth
+
+`accepted` · technical · 2026-10-03 · session `local-vikas` · branch `claude/project-thread-c4ldi5` · accepted by claude
+
+**Decision.** Add username/password login and register against a JSON user store; persist session in localStorage for the hackathon sandbox.
+
+**Context.** User requested MVP auth on test/ home page.
+
+**Produces:** `test/backend/main.py`, `test/backend/users.json`, `test/frontend/index.html`, `test/frontend/app.js`, `test/frontend/styles.css`
+
 ## Proposed, awaiting acceptance
 
 None.
@@ -312,13 +322,14 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `schemas/coord/status.schema.json` | `4cf17ed9ef8e` | D-coord-001 |
 | `schemas/coord/trace.schema.json` | `414c0dbe867a` | D-coord-001 |
 | `site/dashboard.html` | `e50625a238b7` | D-coord-003 |
-| `test/backend/main.py` | `d8642072aa0a` | D-coord-015 |
+| `test/backend/main.py` | `191ab14db1de` | D-coord-015, D-coord-017 |
 | `test/backend/requirements.txt` | `0ab58a941f97` | D-coord-015 |
-| `test/frontend/action.html` | `77e055f1d03c` | D-coord-015 |
-| `test/frontend/app.js` | `519d18c20ff2` | D-coord-015 |
-| `test/frontend/index.html` | `06797bb84a74` | D-coord-015 |
-| `test/frontend/onboarding.html` | `3f24e932222b` | D-coord-015 |
-| `test/frontend/styles.css` | `49193780c1f5` | D-coord-015 |
+| `test/backend/users.json` | `8cf68f30c0d7` | D-coord-017 |
+| `test/frontend/action.html` | `93d3d6d38678` | D-coord-015 |
+| `test/frontend/app.js` | `953014455dd4` | D-coord-015, D-coord-017 |
+| `test/frontend/index.html` | `d50bac581d0e` | D-coord-015, D-coord-017 |
+| `test/frontend/onboarding.html` | `6152c4cb1f62` | D-coord-015 |
+| `test/frontend/styles.css` | `7ff29ad2a469` | D-coord-015, D-coord-017 |
 | `tools/coord.py` | `de72727efde0` | D-coord-001 |
 | `tools/test_coord.py` | `809b2fce5d82` | D-coord-001 |
 | `tsconfig.base.json` | `9a0a4c80f350` | D-coord-010 |
