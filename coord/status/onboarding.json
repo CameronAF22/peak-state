@@ -3,16 +3,16 @@
   "lane": "onboarding",
   "health": "green",
   "phase": "M0",
-  "progress": 94,
-  "summary": "Demo live: harness (Horizon) at / with GPT live as the set voice and sign-in on first tap; designs at /design/. gpt-live-1 via /api/live/session (D-onboarding-025/026).",
+  "progress": 95,
+  "summary": "Merged to main (#29): gpt-live-1 voice via /api/live/session, harness (Horizon) at / with GPT live as the set voice, designs at /design/. Deployed to peak-state.cameron-982.workers.dev.",
   "now": [
-    "Pushing integration/all and merging into main"
+    "Cameron testing the live demo"
   ],
   "next": [
-    "Cameron demos; tune live voice timing from real sessions"
+    "Tune live voice timing from real sessions; rotate the OpenAI key after the demo"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T19:41:13Z",
+  "updatedAt": "2026-10-03T19:45:31Z",
   "session": {
     "id": "32d60a9b-b6fa-430d-8874-8454b73678f3",
     "url": null,
