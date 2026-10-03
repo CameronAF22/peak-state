@@ -2,19 +2,18 @@
   "schemaVersion": 1,
   "lane": "coord",
   "health": "green",
-  "phase": "M0",
-  "progress": 80,
-  "summary": "Setup PR #2 open; lane sessions checking in (experience, sensing, contracts pushed); root npm workspace added",
+  "phase": "M1",
+  "progress": 0,
+  "summary": "M0 passed: all six lanes claimed, guard verified, plans and kickoff decisions pushed, CI green. Waiting on a person for go and the human-inbox answers.",
   "now": [
-    "Collect lane M0 reports"
-  ],
-  "next": [
-    "Answer lane asks",
-    "Merge setup PR, turn on Pages",
     "Republish dashboard Artifact"
   ],
+  "next": [
+    "Merge setup PR #2, then lane PRs in dependency order",
+    "Record human answers as decisions"
+  ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:04:39Z",
+  "updatedAt": "2026-10-03T14:05:27Z",
   "session": {
     "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
     "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
