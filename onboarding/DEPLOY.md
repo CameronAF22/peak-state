@@ -34,8 +34,8 @@ npm run worker:deploy                      # builds, applies migrations remotely
 
 The app is then at `https://peak-state.<your-subdomain>.workers.dev`.
 
-Pages (D-onboarding-024): `/` is the Horizon design with GPT live as the set voice (first tap asks for an email and the
-invite code), `/harness/` is the full harness with practice and accounts, and `/design/` lists the three designs.
+Pages (D-onboarding-026): `/` is the harness in the Horizon design with GPT live as the set voice (signed out, the first
+tap opens sign-in with an email and the invite code), and `/design/` lists the three standalone design prototypes.
 
 ### Or from the Cloudflare dashboard (Workers Builds)
 
@@ -65,6 +65,6 @@ Secret. New migrations still need `npx wrangler d1 migrations apply peak-state -
 | `GET /api/strategy`, `PUT /api/strategy` | The strategy record; an older revision gets 409 and the server copy |
 | `GET /api/reps`, `POST /api/reps` | The run log (contracts RepSession), idempotent by id |
 | `GET /api/progress?state=` | Times chosen, good reps, trend, day streak |
-| `POST /api/live/session` | `{session, sdp}`: starts a GPT live (gpt-live-1) WebRTC session with the server's key and returns the SDP answer; 40 a day per account (D-onboarding-020) |
+| `POST /api/live/session` | `{session, sdp}`: starts a GPT live (gpt-live-1) WebRTC session with the server's key and returns the SDP answer; 40 a day per account (D-onboarding-025) |
 
 Limits: 20 wrong invite codes per client per day; sessions last 90 days.

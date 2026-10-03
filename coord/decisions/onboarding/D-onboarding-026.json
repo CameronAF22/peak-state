@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-026",
+  "lane": "onboarding",
+  "title": "Harness page (Horizon style) is the demo front page with GPT live as the set voice",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Cameron: make the horizon view the main view and just have GPT live as the set mode for the live demo. D-onboarding-024 served the standalone Horizon prototype at /, written before main adopted Horizon in the harness page.",
+  "decision": "Main's harness page already uses the Horizon design with accounts and practice (D-onboarding-021), so it stays at / and the standalone prototypes stay at /design/. The harness defaults to GPT live with no voice menu (status only); ?voice=typed|browser restores the full menu for tests and as a fallback. On the Worker the first tap opens the existing account popover when signed out (opened after the tap so its outside-tap close does not fire), and signing in or creating the account starts the live voice. The account's session token goes to /api/live/session.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/src/harness/main.ts",
+    "onboarding/src/harness/view/voice.ts",
+    "onboarding/package.json",
+    "onboarding/test/e2e/online.spec.ts",
+    "onboarding/DEPLOY.md"
+  ],
+  "dependsOn": [
+    "D-onboarding-021",
+    "D-onboarding-025"
+  ],
+  "supersedes": [
+    "D-onboarding-024"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "32d60a9b-b6fa-430d-8874-8454b73678f3",
+    "url": null,
+    "branch": "integration/all"
+  },
+  "createdAt": "2026-10-03T19:40:57Z",
+  "acceptedAt": "2026-10-03T19:40:57Z",
+  "acceptedBy": "claude"
+}

@@ -28,7 +28,7 @@ Pick a voice in the header. A dot next to it shows the voice's status. Typing al
 
 - **Typed**: nothing is spoken. During playback, each line stays on screen while its step card glows.
 - **Browser voice**: uses the Web Speech API (speechSynthesis and SpeechRecognition), so it needs Chrome or Edge. The guide speaks each question. Partial transcripts show live in the answer box, and a final transcript is sent as your answer. During a run, you can say a number to rate.
-- **GPT live**: OpenAI's GPT-Live voice (`gpt-live-1`) over WebRTC (D-onboarding-020). GPT-Live sessions must be created server-side with the project key, so the page posts its WebRTC offer to `/api/live/session`. That route is served by the harness dev server (`harness/live-proxy.ts`), which adds the key and calls `POST https://api.openai.com/v1/live/sessions`. Start the harness with the key in its environment:
+- **GPT live**: OpenAI's GPT-Live voice (`gpt-live-1`) over WebRTC (D-onboarding-025). GPT-Live sessions must be created server-side with the project key, so the page posts its WebRTC offer to `/api/live/session`. That route is served by the harness dev server (`harness/live-proxy.ts`), which adds the key and calls `POST https://api.openai.com/v1/live/sessions`. Start the harness with the key in its environment:
 
   ```bash
   OPENAI_API_KEY=sk-… npm run harness -w @peak-state/onboarding

@@ -14,10 +14,12 @@ import { loadRecord, newRecord, saveRecord, type StrategyRecord } from "../store
 import { createApi, pushRecord, syncAll, type ServerInfo } from "../sync/index.ts";
 import type { Answer, EngineSnapshot, VoiceAdapter, VoiceKind, VoiceStatus } from "../types.ts";
 import { createVoice, loadVoiceSettings, saveVoiceSettings, type VoiceSettings } from "../voice/index.ts";
+import { splitWords, wordTimeline } from "../voice/words.ts";
 import { createHintTimer, hintDelayFromUrl } from "./hints.ts";
 import { createAccountControls } from "./view/account.ts";
 import { h, mount } from "./view/dom.ts";
 import { createPracticeView } from "./view/practice.ts";
+import { attachSpokenVoice } from "./view/spoken.ts";
 import { createQuestionView } from "./view/question.ts";
 import { createPlaybackPanel, renderRunLog, renderSavedCard, type PlaybackPanel } from "./view/saved.ts";
 import { chainFromProfile, renderSteps, stepViewsFromProfile } from "./view/steps.ts";
@@ -61,9 +63,12 @@ let mode: Mode = saved ? "saved" : "elicit";
 
 // ── voice ───────────────────────────────────────────────────────────────────
 
-let settings: VoiceSettings = loadVoiceSettings();
+// GPT live is the set voice for the live demo (D-onboarding-026); ?voice=typed|browser picks another one, with the full
+// menu, for tests and as a fallback.
+let settings: VoiceSettings = { ...loadVoiceSettings(), kind: "gpt-live" };
 const urlVoice = params.get("voice");
 if (urlVoice && (KINDS as string[]).includes(urlVoice)) settings = { ...settings, kind: urlVoice as VoiceKind };
+const voiceFixed = !urlVoice && settings.kind === "gpt-live";
 
 let voice: VoiceAdapter = createVoice("typed");
 let voiceUnsubs: (() => void)[] = [];
@@ -73,7 +78,7 @@ const controls = createVoiceControls(voiceRoot, settings, (next) => {
   settings = next;
   saveVoiceSettings(settings);
   void switchVoice(true);
-});
+}, voiceFixed);
 
 function setStatus(s: VoiceStatus): void {
   controls.setStatus(s);
@@ -90,10 +95,10 @@ async function switchVoice(start: boolean): Promise<void> {
   voice = createVoice(
     settings.kind,
     settings.kind === "gpt-live"
-      ? { apiKey: settings.apiKey ?? "", model: settings.model, debug: debugLive, headers: serverVoice() ? () => api.authHeaders() : undefined }
+      ? { apiKey: settings.apiKey ?? "", model: settings.model, debug: debugLive, headers: () => api.authHeaders() }
       : undefined,
   );
-  voiceUnsubs.push(voice.onStatus(setStatus), voice.onTranscript(onTranscript));
+  voiceUnsubs.push(voice.onStatus(setStatus), voice.onTranscript(onTranscript), attachSpokenVoice(voice));
   voiceStarted = false;
   if (!start && settings.kind !== "typed") {
     setStatus({ kind: settings.kind, state: "idle", detail: "Click anywhere on the page to start the voice" });
@@ -106,7 +111,7 @@ async function switchVoice(start: boolean): Promise<void> {
   } catch (err) {
     setStatus({ kind: settings.kind, state: "error", detail: err instanceof Error ? err.message : String(err) });
     if (settings.kind === "gpt-live" && !settings.apiKey) {
-      if (server?.voice && !api.account()) account?.open();
+      if (server?.voice && !api.account()) setTimeout(() => account?.open(), 0);
       else if (/API key/.test(String(err))) controls.openSettings();
     }
     return;
@@ -295,7 +300,7 @@ function renderSavedMode(): void {
     chain,
     steps,
     fullyInAt: saved.profile.states[0].strategy.fullyInAt,
-    activeStep,
+    activeStep: activeStep ?? practiceStep(),
   });
 }
 
@@ -328,10 +333,16 @@ function newStrategy(): void {
   apply(engine.reset());
 }
 
-/** How long to leave a line on screen when nothing is spoken (typed voice). */
+/** How long to leave a line on screen when nothing is spoken (typed voice): the paced word estimate, so the
+ *  spoken-word highlight reaches the last word before the line moves on. */
 function readingMs(text: string): number {
-  const words = text.split(/\s+/).filter(Boolean).length;
-  return Math.min(6000, Math.max(1200, words * 280));
+  return Math.min(12_000, Math.max(1200, wordTimeline(splitWords(text)).total + 400));
+}
+
+/** The step the practice loop is recalling, lit on the horizon. */
+function practiceStep(): number | null {
+  const p = practice?.snapshot();
+  return p && p.phase === "recall" && p.recallAt !== null ? (p.recallOrder[p.recallAt] ?? null) : null;
 }
 
 async function run(): Promise<void> {
@@ -484,8 +495,13 @@ let server: ServerInfo | null = null;
 let syncing = false;
 let syncNote: string | null = null;
 
-function serverVoice(): boolean {
-  return Boolean(server?.voice && api.account());
+/** GPT live on the Worker needs a signed-in account; the first tap opens sign-in instead of failing. */
+function needsSignIn(): boolean {
+  return settings.kind === "gpt-live" && !settings.apiKey && Boolean(server?.voice) && !api.account();
+}
+
+function startLiveAfterSignIn(): void {
+  if (settings.kind === "gpt-live") void switchVoice(true);
 }
 
 const account = accountRoot
@@ -493,10 +509,12 @@ const account = accountRoot
       async create(email, code) {
         await api.createAccount(email, code);
         await sync();
+        startLiveAfterSignIn();
       },
       async signIn(email, code) {
         await api.signIn(email, code);
         await sync();
+        startLiveAfterSignIn();
       },
       async signOut() {
         await api.signOut().catch(() => {});
@@ -600,7 +618,12 @@ if (settings.kind !== "typed") {
     if ((e.target as Element | null)?.closest?.("#voice-root")) return; // the voice controls handle themselves
     window.removeEventListener("pointerdown", startOnGesture, true);
     window.removeEventListener("keydown", startOnGesture, true);
-    if (!voiceStarted) void switchVoice(true);
+    if (voiceStarted) return;
+    if (needsSignIn()) {
+      setStatus({ kind: settings.kind, state: "idle", detail: "Sign in to start the live voice" });
+      // After this tap: the sign-in popover closes on taps outside it, and this tap is one.
+      setTimeout(() => account?.open(), 0);
+    } else void switchVoice(true);
   };
   window.addEventListener("pointerdown", startOnGesture, true);
   window.addEventListener("keydown", startOnGesture, true);

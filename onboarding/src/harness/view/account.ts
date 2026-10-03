@@ -1,5 +1,6 @@
-// Header account control (D-onboarding-017): hidden without a server; otherwise a Sign in button that opens an
-// email + invite code form (create an account, or sign in on another device), or the signed-in email and Sign out.
+// Corner account control (D-onboarding-017, Horizon style D-onboarding-021): hidden without a server; otherwise a quiet
+// "sign in" that opens a small email + invite code panel (create an account, or sign in on another device), or the
+// signed-in email with "sign out".
 
 import { h, mount } from "./dom.ts";
 
@@ -39,7 +40,7 @@ export function createAccountControls(root: HTMLElement, handlers: AccountHandle
   const popover = h(
     "form",
     {
-      class: "popover",
+      class: "panel",
       id: "account-form",
       "data-testid": "account-form",
       role: "dialog",
@@ -50,16 +51,16 @@ export function createAccountControls(root: HTMLElement, handlers: AccountHandle
         void submit("signIn");
       },
     },
-    h("h2", {}, "Save your strategy to an account"),
+    h("h2", { class: "panel-title" }, "Keep your strategy in an account"),
     h("label", { class: "field", for: "account-email" }, "Email", email),
     h("label", { class: "field", for: "account-code" }, "Invite code", code),
-    h("p", { class: "note" }, "New here? Create an account with the invite code. On another device, sign in with the same email and code."),
+    h("p", { class: "note" }, "New here? Create an account with your invite code. On another device, sign in with the same email and code."),
     error,
     h(
       "div",
       { class: "row" },
-      h("button", { class: "btn ghost", type: "submit", "data-testid": "account-sign-in" }, "Sign in"),
-      h("button", { class: "btn primary", type: "button", "data-testid": "account-create", onclick: () => void submit("create") }, "Create account"),
+      h("button", { class: "quiet", type: "submit", "data-testid": "account-sign-in" }, "sign in"),
+      h("button", { class: "pill", type: "button", "data-testid": "account-create", onclick: () => void submit("create") }, "create account"),
     ),
   );
 
@@ -86,10 +87,14 @@ export function createAccountControls(root: HTMLElement, handlers: AccountHandle
         mount(
           root,
           h("span", { class: "status", "data-testid": "account-status", "data-state": state.syncing ? "connecting" : "ready", title: state.note ?? "Saved to your account" }, h("span", { class: "dot" }), state.email, state.syncing ? h("span", { class: "visually-hidden" }, " (syncing)") : null),
-          h("button", { class: "btn ghost", type: "button", "data-testid": "account-sign-out", onclick: () => void handlers.signOut() }, "Sign out"),
+          h("button", { class: "quiet", type: "button", "data-testid": "account-sign-out", onclick: () => void handlers.signOut() }, "sign out"),
         );
       } else {
-        mount(root, h("button", { class: "btn", type: "button", "data-testid": "account-open", "aria-controls": "account-form", "aria-haspopup": "dialog", onclick: open }, "Sign in"), popover);
+        mount(
+          root,
+          h("button", { class: "quiet", type: "button", "data-testid": "account-open", "aria-controls": "account-form", "aria-haspopup": "dialog", onclick: () => (popover.hidden ? open() : (popover.hidden = true)) }, "sign in"),
+          popover,
+        );
       }
     },
     open,

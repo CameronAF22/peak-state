@@ -304,6 +304,28 @@ test("gpt-live: speak mutes the mic, sends the line as commentary, and finishes 
   v.stop();
 });
 
+test("gpt-live: the word highlight follows the guide's spoken transcript and ends on settle", async () => {
+  const { pcs, deps, clock } = setup();
+  const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, deps);
+  await v.start();
+  const ch = pcs[0]!.channel!;
+  const words: [number, string][] = [];
+  v.onWord!((i, t) => words.push([i, t]));
+  const text = "Where is it now?";
+  const p = v.speak(text);
+  assert.deepEqual(words, [], "nothing before the guide speaks");
+  ch.emit({ type: "session.output_transcript.delta", delta: "Where" });
+  assert.deepEqual(words, [[0, text]]);
+  ch.emit({ type: "session.output_transcript.delta", delta: " is it" });
+  assert.deepEqual(words.at(-1), [2, text]);
+  ch.emit({ type: "session.output_transcript.delta", delta: " now? Extra words" });
+  assert.deepEqual(words.at(-1), [3, text], "never past the last word of the line");
+  clock.advance(5000);
+  await p;
+  assert.deepEqual(words.at(-1), [4, text], "settling reports the line as finished");
+  v.stop();
+});
+
 test("gpt-live: speak still finishes if no output transcript arrives", async () => {
   const { pcs, deps, clock } = setup();
   const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, deps);
@@ -568,6 +590,35 @@ test("browser voice: speak resolves on utterance end and pauses recognition mean
     v.stop();
     assert.equal(rec.running, false);
     assert.equal(statuses.at(-1), "idle");
+  } finally {
+    env.uninstall();
+  }
+});
+
+test("browser voice: word boundaries report the word being spoken, end reports the line done", async () => {
+  const env = installSpeech();
+  try {
+    const v = createBrowserVoice();
+    await v.start();
+    const words: [number, string][] = [];
+    v.onWord!((i, t) => words.push([i, t]));
+    const text = "Where is it: ahead or above?";
+    const p = v.speak(text);
+    const u = env.spoken[0]! as unknown as { onboundary: (ev: { name?: string; charIndex: number }) => void; onend: () => void };
+    u.onboundary({ name: "word", charIndex: 0 });
+    u.onboundary({ name: "word", charIndex: 6 });
+    u.onboundary({ name: "word", charIndex: 7 }); // same word again: no repeat
+    u.onboundary({ name: "sentence", charIndex: 13 });
+    u.onboundary({ charIndex: 13 }); // engines that leave out name
+    u.onend();
+    await p;
+    assert.deepEqual(words, [
+      [0, text],
+      [1, text],
+      [3, text],
+      [6, text],
+    ]);
+    v.stop();
   } finally {
     env.uninstall();
   }

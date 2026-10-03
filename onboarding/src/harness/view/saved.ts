@@ -1,8 +1,11 @@
-// The saved strategy card, the playback panel (with its 0..10 rating pad) and the run log.
+// The saved strategy, the playback panel (with its 0..10 rating) and the run log, in the Horizon style
+// (D-onboarding-021): one line of text at a time above the horizon, quiet actions, the steps shown as points of light.
 
 import type { RepSession } from "@peak-state/contracts";
 import type { SavedStrategy, StepView } from "../../types.ts";
-import { h, ICONS, mount, SENSE_LABEL, svg } from "./dom.ts";
+import { h, mount, SENSE_LABEL } from "./dom.ts";
+import { setHorizonMood } from "./horizon.ts";
+import { clearSpoken, followSpoken } from "./spoken.ts";
 
 export interface SavedHandlers {
   run(): void;
@@ -37,43 +40,53 @@ function stepMeta(s: StepView): string {
   return [SENSE_LABEL[s.modality], ...parts].join(" · ");
 }
 
+/** The saved card is rebuilt on every render; it fades in only when it first appears or its strategy changes. */
+let lastCardKey = "";
+
 export function renderSavedCard(m: SavedModel, handlers: SavedHandlers): HTMLElement {
+  const busy = m.running || m.practicing;
+  const updated = m.revision && m.revision > 1;
+  const key = `${m.saved.profile.profileId}|${m.saved.savedAt}|${m.revision ?? 1}`;
+  const fade = key !== lastCardKey ? " fade-in" : "";
+  lastCardKey = key;
   return h(
-    "div",
-    { class: "card saved-card", "data-testid": "saved-card" },
-    h(
-      "div",
-      { class: "saved-head" },
-      h("div", { class: "tick-circle" }, svg(ICONS.check)),
-      h("div", {}, h("h2", {}, "Strategy saved"), h("p", {}, `${m.stateLabel} · ${m.chain} · ${m.revision && m.revision > 1 ? `version ${m.revision}, updated` : "saved"} ${when(m.saved.savedAt)}`)),
-    ),
-    m.reminder ? h("p", { class: "practice-reminder", "data-testid": "reminder" }, m.reminder) : null,
+    "section",
+    { class: "saved-card", "data-testid": "saved-card", "aria-labelledby": "saved-title" },
+    h("p", { class: `section-label${fade}` }, updated ? `Strategy saved  ·  version ${m.revision}` : "Strategy saved"),
+    h("h2", { class: `saved-title${fade}`, id: "saved-title" }, `Your way back to ${m.stateLabel} is saved.`),
+    h("p", { class: `saved-meta${fade}`, title: m.chain }, `${updated ? `version ${m.revision}, updated` : "saved"} ${when(m.saved.savedAt)}`),
+    m.reminder ? h("p", { class: `practice-reminder${fade}`, "data-testid": "reminder" }, m.reminder) : null,
+    // The steps themselves are the points on the horizon; this list carries them for screen readers.
     h(
       "ol",
-      { class: "saved-steps" },
+      { class: "saved-steps visually-hidden" },
       m.steps.map((s) =>
         h(
           "li",
           { class: "saved-step", "data-testid": "saved-step", "data-modality": s.modality, "data-anchor": s.isAnchor ? "true" : "false" },
-          h("div", {}, h("span", { class: "what" }, s.content), s.isAnchor ? h("span", { class: "badge anchor", style: "margin-left:8px" }, "⚓ Anchor") : null, h("span", { class: "meta" }, stepMeta(s))),
+          `${s.content}${s.isAnchor ? " (anchor)" : ""}. ${stepMeta(s)}`,
         ),
       ),
     ),
     h(
-      "button",
-      { class: "btn primary big run-btn", type: "button", "data-testid": "run", disabled: m.running || m.practicing, onclick: () => handlers.run() },
-      h("span", { class: "play", "aria-hidden": "true" }, "▶"),
-      m.running ? "Running…" : "Run my strategy",
+      "div",
+      { class: `saved-run${fade}` },
+      h(
+        "button",
+        { class: "run-btn", type: "button", "data-testid": "run", disabled: busy, onclick: () => handlers.run() },
+        h("span", { class: "play", "aria-hidden": "true" }),
+        m.running ? "Running…" : "Run my strategy",
+      ),
+      handlers.practice
+        ? h("button", { class: "practice-btn", type: "button", "data-testid": "practice", disabled: busy, onclick: () => handlers.practice?.() }, "Practice: recall, rate, adjust")
+        : null,
     ),
-    handlers.practice
-      ? h("button", { class: "btn big practice-btn", type: "button", "data-testid": "practice", disabled: m.running || m.practicing, onclick: () => handlers.practice?.() }, "Practice: recall, rate, adjust")
-      : null,
     h(
       "div",
-      { class: "saved-actions" },
-      h("button", { class: "btn", type: "button", "data-testid": "download", onclick: () => handlers.download() }, "Download JSON"),
-      h("span", { style: "flex:1" }),
-      h("button", { class: "btn ghost", type: "button", "data-testid": "new-strategy", disabled: m.running || m.practicing, onclick: () => handlers.newStrategy() }, "Start a new one"),
+      { class: `quiet-row${fade}` },
+      h("button", { class: "quiet", type: "button", "data-testid": "download", onclick: () => handlers.download() }, "download"),
+      h("span", { class: "sep", "aria-hidden": "true" }, "·"),
+      h("button", { class: "quiet", type: "button", "data-testid": "new-strategy", disabled: busy, onclick: () => handlers.newStrategy() }, "start a new one"),
     ),
   );
 }
@@ -90,16 +103,16 @@ export function renderRunLog(runs: RepSession[]): HTMLElement {
       return h(
         "li",
         { class: "run-entry", "data-testid": "run-entry", "data-ended-by": r.endedBy },
-        h("span", {}, practice ? `Run ${r.repIndex + 1} · practice` : `Run ${r.repIndex + 1}`),
+        h("span", {}, practice ? `run ${r.repIndex + 1} · practice` : `run ${r.repIndex + 1}`),
         h("span", { class: `delta${up ? " up" : ""}` }, practice ? `${after}/10` : `${before} → ${after}`),
         h("span", { class: "when" }, r.endedBy === "completed" ? when(r.startedAt) : `${when(r.startedAt)} · stopped`),
       );
     });
   return h(
     "div",
-    { class: "card", "data-testid": "run-log" },
-    h("h2", { class: "card-title" }, "Run log", h("span", {}, `${runs.length} run${runs.length === 1 ? "" : "s"}`)),
-    items.length ? h("ul", { class: "run-log" }, items) : h("p", { class: "empty" }, "No runs yet. Each run is logged with your rating before → after."),
+    { class: "run-log-wrap", "data-testid": "run-log", "data-count": runs.length },
+    h("h2", { class: "visually-hidden" }, `Run log, ${runs.length} run${runs.length === 1 ? "" : "s"}`),
+    items.length ? h("ul", { class: "run-log" }, items) : null,
   );
 }
 
@@ -117,28 +130,38 @@ export interface PlaybackPanel {
 }
 
 export function createPlaybackPanel(steps: StepView[], onStop: () => void): PlaybackPanel {
-  const line = h("p", { class: "playback-line", "data-testid": "playback-line" }, "");
+  const label = h("p", { class: "section-label" }, "");
+  let line = h("h2", { class: "playback-line", "data-testid": "playback-line" }, "");
+  // The horizon lights the steps; this list mirrors them for screen readers and tests.
   const chips = steps.map((s) =>
     h(
       "li",
       { class: "playback-step", "data-testid": "playback-step", "data-index": s.index, "data-modality": s.modality, "data-active": "false" },
-      svg(ICONS[s.modality]),
-      `${s.index + 1}. ${SENSE_LABEL[s.modality]}`,
-      s.isAnchor ? " ⚓" : "",
+      `${s.index + 1}. ${SENSE_LABEL[s.modality]}${s.isAnchor ? " (anchor)" : ""}`,
     ),
   );
-  const ratingSlot = h("div", {});
-  const stopBtn = h("button", { class: "btn ghost", type: "button", "data-testid": "stop-run", onclick: () => onStop() }, "Stop");
+  const ratingSlot = h("div", { class: "rating-slot" });
+  const stopBtn = h("button", { class: "quiet", type: "button", "data-testid": "stop-run", onclick: () => onStop() }, "stop");
   const el = h(
-    "div",
-    { class: "card playback", "data-testid": "playback" },
-    h("h2", { class: "card-title" }, "Running your strategy", stopBtn),
-    h("ol", { class: "playback-steps" }, chips),
+    "section",
+    { class: "playback", "data-testid": "playback", "aria-label": "Running your strategy" },
+    label,
     line,
+    h("ol", { class: "playback-steps visually-hidden" }, chips),
     ratingSlot,
+    h("div", { class: "quiet-row" }, stopBtn),
   );
 
   let resolveRating: ((n: number) => void) | null = null;
+  const seen = new Set<number>();
+
+  const show = (text: string, labelText: string): void => {
+    label.textContent = labelText;
+    const next = h("h2", { class: `playback-line fade-in${text.length > 110 ? " long" : ""}`, "data-testid": "playback-line" }, text);
+    line.replaceWith(next);
+    line = next;
+    followSpoken(next, text);
+  };
 
   const closeRating = (n: number): void => {
     const r = resolveRating;
@@ -150,32 +173,36 @@ export function createPlaybackPanel(steps: StepView[], onStop: () => void): Play
   return {
     el,
     setLine(stepIndex, text) {
-      line.textContent = text;
+      const step = steps[stepIndex];
+      const anchorLine = Boolean(step?.isAnchor && seen.size >= steps.length);
+      if (stepIndex >= 0) seen.add(stepIndex);
+      setHorizonMood(anchorLine ? "swell" : "playing");
+      show(text, stepIndex < 0 ? "Ready" : anchorLine ? "Your anchor" : `${stepIndex + 1} of ${steps.length}  ·  ${SENSE_LABEL[step?.modality ?? "other"].toLowerCase()}`);
       let seenActive = false;
       for (const c of chips) {
-        const idx = Number(c.dataset.index);
-        const active = idx === stepIndex;
+        const active = Number(c.dataset.index) === stepIndex;
         c.dataset.active = active ? "true" : "false";
         if (active) seenActive = true;
         if (!seenActive && stepIndex >= 0) c.dataset.done = "true";
       }
     },
     rate(prompt) {
-      line.textContent = prompt;
+      const after = seen.size > 0;
+      if (!after) setHorizonMood("playing");
+      show(prompt, after ? "After" : "Before");
       for (const c of chips) c.dataset.active = "false";
       return new Promise<number>((resolve) => {
         resolveRating = resolve;
         const buttons = Array.from({ length: 11 }, (_, n) =>
-          h("button", { class: "rate-btn", type: "button", "data-testid": `rate-${n}`, "aria-label": `${n} out of 10`, onclick: () => closeRating(n) }, String(n)),
+          h("button", { class: "rate-btn", type: "button", style: `animation-delay:${200 + n * 40}ms`, "data-testid": `rate-${n}`, "aria-label": `${n} out of 10`, onclick: () => closeRating(n) }, String(n)),
         );
         mount(
           ratingSlot,
           h(
             "div",
             { class: "rating", "data-testid": "rating", role: "group", "aria-label": prompt },
-            h("p", {}, prompt),
             h("div", { class: "rating-pad" }, buttons),
-            h("div", { class: "rating-scale" }, h("span", {}, "0 · not at all"), h("span", {}, "10 · completely")),
+            h("div", { class: "rating-scale" }, h("span", {}, "not at all"), h("span", {}, "completely")),
           ),
         );
         buttons[5]?.focus({ preventScroll: true });
@@ -187,14 +214,18 @@ export function createPlaybackPanel(steps: StepView[], onStop: () => void): Play
       return true;
     },
     finish(text) {
+      clearSpoken();
+      setHorizonMood("calm");
+      label.textContent = "Last run";
       line.textContent = text;
+      line.className = "playback-line";
       stopBtn.hidden = true;
+      el.dataset.finished = "true";
       for (const c of chips) {
         c.dataset.active = "false";
         c.dataset.done = "true";
       }
       mount(ratingSlot);
-      el.querySelector(".card-title")?.firstChild?.replaceWith("Last run");
     },
   };
 }

@@ -341,6 +341,7 @@ None.
 ## Decisions from other lanes that cover files here
 
 - D-onboarding-013 · Hooks fail with a clear message when tools/coord.py is missing (`onboarding`)
+- D-onboarding-022 · Fix coord self-reference test to predict the id decide will write (`onboarding`)
 
 ## Produced artifacts
 
@@ -417,5 +418,5 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `test/synthetic_lab/peak_state/workflow.py` | `c21ce8c3315c` | D-coord-018 |
 | `test/synthetic_lab/tests/test_workflow.py` | `8db6fbf96dbe` | D-coord-018 |
 | `tools/coord.py` | `de72727efde0` | D-coord-001 |
-| `tools/test_coord.py` | `809b2fce5d82` | D-coord-001 |
+| `tools/test_coord.py` | `741a3e3bf218` | D-coord-001, D-onboarding-022 |
 | `tsconfig.base.json` | `9a0a4c80f350` | D-coord-010 |

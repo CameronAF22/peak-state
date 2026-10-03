@@ -386,7 +386,7 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
     return json({ progress: summarize(await listReps(me.id, state), state) });
   }
 
-  // ── GPT live sessions (D-onboarding-020) ──
+  // ── GPT live sessions (D-onboarding-025) ──
 
   // GPT-Live sessions are created server-side with the project key. The page sends its WebRTC offer and the
   // session settings; only the model, instructions and voice are taken from it, delegation stays client-side.

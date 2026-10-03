@@ -42,7 +42,7 @@ test("account, practice loop, and a second device", async ({ browser }) => {
     }
   }, profile);
   const page = await ctx.newPage();
-  await page.goto(`${ONLINE_URL}/harness/?speed=fast`);
+  await page.goto(`${ONLINE_URL}/?speed=fast`);
   await expect(page.getByTestId("saved-card")).toBeVisible();
 
   // 1 · account: a wrong code is refused, the right one creates the account
@@ -89,7 +89,7 @@ test("account, practice loop, and a second device", async ({ browser }) => {
   // 6 · second device: sign in with the same email and code, get the new version and both runs
   const ctx2 = await browser.newContext({ viewport: { width: 1280, height: 860 } });
   const phone = await ctx2.newPage();
-  await phone.goto(`${ONLINE_URL}/harness/?speed=fast`);
+  await phone.goto(`${ONLINE_URL}/?speed=fast`);
   await phone.getByTestId("account-open").click();
   await phone.getByTestId("account-email").fill(email);
   await phone.getByTestId("account-code").fill(INVITE_CODE!);

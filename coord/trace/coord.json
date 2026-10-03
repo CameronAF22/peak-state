@@ -522,9 +522,10 @@
     },
     {
       "path": "tools/test_coord.py",
-      "sha256": "809b2fce5d82fc8f70a84f23f6c6da672c96cfa3ffde26ca81d6784b37522140",
+      "sha256": "741a3e3bf218510b2e520382e2bae78312564b3a6d5366fd811012b6059364d5",
       "decisions": [
-        "D-coord-001"
+        "D-coord-001",
+        "D-onboarding-022"
       ]
     },
     {

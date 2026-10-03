@@ -4,6 +4,7 @@ import type { VoiceKind, VoiceStatus } from "../types.ts";
 
 export type TranscriptListener = (text: string, final: boolean) => void;
 export type StatusListener = (status: VoiceStatus) => void;
+export type WordListener = (index: number, text: string) => void;
 
 export interface VoiceEmitter {
   status(): VoiceStatus;
@@ -12,11 +13,14 @@ export interface VoiceEmitter {
   onTranscript(cb: TranscriptListener): () => void;
   /** Subscribing replays the current status once so late subscribers are in sync. */
   onStatus(cb: StatusListener): () => void;
+  emitWord(index: number, text: string): void;
+  onWord(cb: WordListener): () => void;
 }
 
 export function createVoiceEmitter(kind: VoiceKind, initial: VoiceStatus["state"] = "idle"): VoiceEmitter {
   const transcripts = new Set<TranscriptListener>();
   const statuses = new Set<StatusListener>();
+  const words = new Set<WordListener>();
   let current: VoiceStatus = { kind, state: initial };
 
   return {
@@ -39,6 +43,21 @@ export function createVoiceEmitter(kind: VoiceKind, initial: VoiceStatus["state"
           // ignore
         }
       }
+    },
+    emitWord(index, text) {
+      for (const cb of [...words]) {
+        try {
+          cb(index, text);
+        } catch {
+          // ignore
+        }
+      }
+    },
+    onWord(cb) {
+      words.add(cb);
+      return () => {
+        words.delete(cb);
+      };
     },
     onTranscript(cb) {
       transcripts.add(cb);

@@ -1,4 +1,4 @@
-// GPT live voice: OpenAI's GPT-Live speech-to-speech model (gpt-live-1) over WebRTC (D-onboarding-020).
+// GPT live voice: OpenAI's GPT-Live speech-to-speech model (gpt-live-1) over WebRTC (D-onboarding-025).
 //
 // The model is only a voice. The deterministic engine decides every question; this adapter hands the
 // model each line to say and streams back transcripts of what the person says.
@@ -22,6 +22,7 @@
 
 import type { GptLiveConfig, VoiceAdapter } from "../types.ts";
 import { createVoiceEmitter } from "./emitter.ts";
+import { splitWords } from "./words.ts";
 
 export const DEFAULT_GPT_LIVE_MODEL = "gpt-live-1";
 /** The harness dev server's route; it holds the key and forwards to OpenAI's /v1/live/sessions. */
@@ -126,6 +127,9 @@ interface PendingSpeak {
   text: string;
   done: boolean;
   firstOutputAt: number | null;
+  /** The guide's spoken transcript so far, and the word last reported for the highlight (D-onboarding-021). */
+  heard: string;
+  word: number;
   timer: unknown;
   capTimer: unknown;
   resolve: () => void;
@@ -215,6 +219,7 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     p.done = true;
     if (p.timer !== undefined) clearT(p.timer);
     if (p.capTimer !== undefined) clearT(p.capTimer);
+    if (p.firstOutputAt !== null) em.emitWord(splitWords(p.text).length, p.text);
     const i = pending.indexOf(p);
     if (i >= 0) pending.splice(i, 1);
     if (pending.length === 0) {
@@ -235,12 +240,22 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     for (const p of [...pending]) settle(p);
   }
 
-  /** Output transcript activity for the current line: finish once it goes quiet and the line had time. */
-  function onOutputActivity(): void {
+  /**
+   * Output transcript activity for the current line: move the word highlight to the words heard so far, and finish
+   * once the transcript goes quiet and the line had time.
+   */
+  function onOutputActivity(delta: string): void {
     const p = pending[0];
     if (!p) return;
     const t = now();
     if (p.firstOutputAt === null) p.firstOutputAt = t;
+    p.heard += delta;
+    const total = splitWords(p.text).length;
+    const word = Math.min(splitWords(p.heard).length - 1, total - 1);
+    if (word > p.word) {
+      p.word = word;
+      em.emitWord(word, p.text);
+    }
     const finishAt = Math.max(t + speakQuietMs, p.firstOutputAt + estimateSpeechMs(p.text));
     if (p.timer !== undefined) clearT(p.timer);
     p.timer = setT(() => settle(p), finishAt - t);
@@ -263,7 +278,7 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
         return;
 
       case "session.output_transcript.delta":
-        onOutputActivity();
+        onOutputActivity(ev.delta ?? "");
         return;
 
       case "session.input_transcript.delta": {
@@ -492,7 +507,7 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
         afterSpeakTimer = undefined;
       }
       return new Promise<void>((resolve) => {
-        const p: PendingSpeak = { id, text, done: false, firstOutputAt: null, timer: undefined, capTimer: undefined, resolve };
+        const p: PendingSpeak = { id, text, done: false, firstOutputAt: null, heard: "", word: -1, timer: undefined, capTimer: undefined, resolve };
         pending.push(p);
         em.setStatus("speaking");
         send({ type: "session.input_audio.mute" });
@@ -507,5 +522,6 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
 
     onTranscript: em.onTranscript,
     onStatus: em.onStatus,
+    onWord: em.onWord,
   };
 }
