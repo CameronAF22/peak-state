@@ -4,12 +4,14 @@
   "files": [
     {
       "path": "reps/PLAN.md",
-      "sha256": "33b22050e4b45b073938545dd89066b0fb82060d5414234466d785d7a596a9c1",
+      "sha256": "7745d8a5269b629d2eb677dfd645458c01c22a76b355877bf2b8ca0d4fc3b357",
       "decisions": [
         "D-reps-001",
         "D-reps-002",
         "D-reps-003",
-        "D-reps-004"
+        "D-reps-004",
+        "D-reps-005",
+        "D-reps-006"
       ]
     }
   ]

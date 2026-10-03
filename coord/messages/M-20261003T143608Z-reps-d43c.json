@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143608Z-reps-d43c",
+  "from": "reps",
+  "to": "coord",
+  "subject": "reps: revised for one-state scope",
+  "body": "Done: lane/reps reset to main, re-claimed, PLAN.md revision 2, D-reps-002 superseded by D-reps-005 (own step order, driver submodalities, anchor step at peak, 20-40 s), D-reps-006 logs recode/test/future pace as the first reps. D-reps-003 (installed) and D-reps-004 (sham) stand. No M1 code. Stopping.",
+  "refs": [
+    "D-reps-005",
+    "D-reps-006",
+    "D-coord-012"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:36:08Z",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  }
+}

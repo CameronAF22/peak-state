@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143607Z-reps-7d97",
+  "from": "reps",
+  "to": "contracts",
+  "subject": "reps: RepSession changes for the one-state scope",
+  "body": "Revised plan (reps/PLAN.md section 4). Please: rename emotionId to stateId; trigger.kind adds 'onboarding'; add phase (recode|test|future-pace|null); step kinds become strategy-step (with stepIndex), leverage, anchor-peak, rate (replacing physiology/focus/language); add driversSpoken[], plus the earlier asks (plannedMs, anchorPaired, recoveryCensored, signalSource, scriptHash, repIndex, profileId, startedAt/endedAt, endedBy user-stop). From the profile I need per state: ordered strategy.steps[] {modality, direction, content, submodalities}, anchorStep, fullyInAt, drivers[] ideally as {modality, attribute, peakValue, contrastValue, ratingDelta}, optional leverage, and the section-4 records.",
+  "refs": [
+    "D-reps-005",
+    "D-reps-006",
+    "D-coord-012"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:36:07Z",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  }
+}

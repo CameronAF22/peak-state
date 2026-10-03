@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "D-reps-005",
+  "lane": "reps",
+  "title": "Rep replays the person's own step chain with driver submodalities; anchor step at the peak; 32 s within 20 to 40 s",
+  "status": "accepted",
+  "type": "product",
+  "context": "Product owner scope change D-coord-011 and D-coord-012: one person-chosen state, strategy as ordered steps with submodalities, drivers found by contrast, and reps replay the person's own order and speak the drivers. D-reps-002's fixed anchor, physiology, focus, language order no longer matches the profile.",
+  "decision": "A rep is generated from one state: rate-before (untimed, skippable on detection); then each strategy step in the person's own order up to fullyInAt, speaking the step's content in their words followed by the drivers that belong to that step's modality as instructions (one core submodality if the step has no driver); then the optional leverage line; then anchor-peak, which replays the anchor step with its submodalities as the conditioning pairing; then rate-after. Timed budget 32 s by default, hard bounds 20 to 40 s; per-step time shrinks and only the top driver is spoken on long chains. Driver phrasing uses a tested template per attribute with fallback 'Make it {peakValue}'. The anchor-only test replays the anchor step alone.",
+  "alternatives": [
+    "Keep the fixed triad order using the derived triad view",
+    "Speak every submodality, not just drivers",
+    "Anchor step only at the start"
+  ],
+  "consequences": "",
+  "produces": [
+    "reps/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-coord-011",
+    "D-coord-012",
+    "D-reps-001"
+  ],
+  "supersedes": [
+    "D-reps-002"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  },
+  "createdAt": "2026-10-03T14:35:57Z",
+  "acceptedAt": "2026-10-03T14:35:57Z",
+  "acceptedBy": "claude"
+}

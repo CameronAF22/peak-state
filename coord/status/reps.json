@@ -4,15 +4,15 @@
   "health": "green",
   "phase": "M0",
   "progress": 10,
-  "summary": "M0 done: claimed, guard verified, PLAN.md written, 4 decisions (installed criterion proposed), RepSession names aligned with contracts",
+  "summary": "Plan revised for one-state scope: own step order + drivers, anchor step at peak (D-reps-005 supersedes 002), onboarding reps (D-reps-006)",
   "now": [
-    "M0 pushed; waiting for a person to confirm D-reps-003 and say go"
+    "Revision 2 pushed; waiting for contracts' new state shape and a person's go for M1"
   ],
   "next": [
-    "M1: script generator against the contracts Profile v2 fixture"
+    "M1: script generator from the contracts one-state fixture"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:04:39Z",
+  "updatedAt": "2026-10-03T14:36:08Z",
   "session": {
     "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
     "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
