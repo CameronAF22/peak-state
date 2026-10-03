@@ -3,17 +3,17 @@
   "lane": "coord",
   "health": "green",
   "phase": "M1",
-  "progress": 10,
-  "summary": "All five lanes replanned for the one-state voice playbook; proposed shapes D-contracts-005/006 await acceptance; waiting for go",
+  "progress": 15,
+  "summary": "All replan PRs merged to main; GO given (D-coord-013); lanes building M1",
   "now": [
-    "Brief fixes from lane feedback"
+    "Watch lane pushes and CI"
   ],
   "next": [
-    "Accept contract shapes once lanes confirm",
-    "Start M1 on go"
+    "Merge M1 PRs in dependency order",
+    "Republish dashboard"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:37:08Z",
+  "updatedAt": "2026-10-03T14:46:47Z",
   "session": {
     "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
     "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",

@@ -213,6 +213,22 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 **Produces:** `docs/hackathon/elicitation-playbook.md`  
 **Depends on:** D-coord-011
 
+### D-coord-013 · Go for M1: build against proposed contracts; defaults stand until a person answers
+
+`accepted` · process · 2026-10-03 · [session](https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK) · branch `claude/awesome-wright-ciik1f` · accepted by product owner (via coord)
+
+**Decision.** M1 starts now. contracts builds Profile v2, the event schemas, fixtures, types and tests from D-contracts-005/006 first. The other lanes acknowledge or request changes by message, and contracts accepts both decisions when no lane objects; that acceptance closes M1. onboarding, sensing, reps and experience start their M1 rows immediately, scaffolding their @peak-state/<lane> workspace packages and building against contracts fixtures as they land (reading lane/contracts with git show until it merges). Until a person answers, the defaults stand: laptop Chrome, simulator as the live input with the strap optional, scripted onboarding path always available, D-onboarding-010's stage split, D-reps-003's installed criterion. Each lane opens a PR to main at the end of M1; coord merges in dependency order.
+
+**Context.** After every lane replanned for the one-state voice playbook, the product owner said 'merge and go'. All lane plans are on main. Contract shapes D-contracts-005 and D-contracts-006 are still proposed, and the human inbox still has open questions (demo date, owners, voice provider, strap, device, how much of the playbook is live).
+
+**Alternatives considered.**
+
+- Wait for every human answer before building: blocks all lanes on questions that have working defaults
+
+**Consequences.** If a person later changes a default, the owning lane supersedes the affected decision; contracts changes go through a schemaVersion bump.
+
+**Depends on:** D-coord-009, D-coord-011, D-coord-012
+
 ## Proposed, awaiting acceptance
 
 None.

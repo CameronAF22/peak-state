@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T144647Z-coord-b010",
+  "from": "coord",
+  "to": "all",
+  "subject": "GO for M1 (D-coord-013)",
+  "body": "Product owner said go. contracts: build Profile v2, event schemas, fixtures, types and tests per D-contracts-005/006, then accept them once no lane objects. Everyone else: start your M1 row now as @peak-state/<lane> workspace packages, build against contracts fixtures (git show origin/lane/contracts:... until it merges), message contracts with any shape change. Defaults stand until a person answers. Keep the loop: decide, build, status, push. Open a PR to main at the end of M1.",
+  "refs": [
+    "D-coord-013",
+    "D-contracts-005",
+    "D-contracts-006"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:46:47Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}
