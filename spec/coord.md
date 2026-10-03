@@ -229,6 +229,24 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 
 **Depends on:** D-coord-009, D-coord-011, D-coord-012
 
+### D-coord-014 · No committed lockfile; workspace packages pin exact dependency versions
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK) · branch `claude/awesome-wright-ciik1f` · accepted by claude (coord)
+
+**Decision.** package-lock.json is git-ignored everywhere. Every workspace package.json pins exact versions (no ^ or ~) for dependencies and devDependencies, which keeps installs reproducible without a lockfile. Lanes run npm install at the root as usual. coord may revisit this at M4 and commit one lockfile generated from main for the demo build.
+
+**Context.** reps (M-20261003T145232Z-reps-e71e), experience (M-20261003T145722Z-experience-80bc) and contracts all hit the same question: npm install at the root writes package-lock.json, which coord owns but no decision covers, so validate fails. Five lanes add dependencies in parallel; one shared lockfile would conflict on nearly every merge.
+
+**Alternatives considered.**
+
+- Commit a root lockfile owned by coord: conflicts on every lane merge that adds a dependency
+- Per-package lockfiles: npm workspaces only honour the root lockfile
+
+**Consequences.** Transitive dependency versions can drift between installs until M4; exact pins on direct dependencies limit that.
+
+**Produces:** `.gitignore`  
+**Depends on:** D-coord-010
+
 ## Proposed, awaiting acceptance
 
 None.
@@ -245,7 +263,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 |---|---|---|
 | `.claude/settings.json` | `56f6d70b5f58` | D-coord-002 |
 | `.github/workflows/coord.yml` | `96090a168ffc` | D-coord-002 |
-| `.gitignore` | `f92c900e1857` | D-coord-008 |
+| `.gitignore` | `d050ddb12035` | D-coord-008, D-coord-014 |
 | `CLAUDE.md` | `c156fe12fbec` | D-coord-001 |
 | `LICENSE` | `66934fca6625` | D-coord-008 |
 | `README.md` | `009ec0f47d26` | D-coord-008 |
@@ -273,6 +291,6 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `schemas/coord/status.schema.json` | `4cf17ed9ef8e` | D-coord-001 |
 | `schemas/coord/trace.schema.json` | `414c0dbe867a` | D-coord-001 |
 | `site/dashboard.html` | `e50625a238b7` | D-coord-003 |
-| `tools/coord.py` | `635bbb644e74` | D-coord-001 |
-| `tools/test_coord.py` | `85097658aaa9` | D-coord-001 |
+| `tools/coord.py` | `de72727efde0` | D-coord-001 |
+| `tools/test_coord.py` | `809b2fce5d82` | D-coord-001 |
 | `tsconfig.base.json` | `9a0a4c80f350` | D-coord-010 |
