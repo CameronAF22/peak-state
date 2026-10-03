@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/user-state-profile.schema.json",
+  "title": "User state profile",
+  "description": "One person's single peak state and the three sensory anchors used to re-enter it. Media fields are references, never file bytes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "profileId", "peakState", "anchors", "induction", "consent"],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "profileId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable id for this profile. Not a display name."
+    },
+    "displayName": {
+      "type": ["string", "null"],
+      "description": "Optional name used only in the greeting."
+    },
+    "peakState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "context", "description"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "A few words in the person's own voice."
+        },
+        "context": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The concrete situation where this state showed up."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "One sentence the person accepted during discovery."
+        }
+      }
+    },
+    "anchors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["auditory", "visual", "kinesthetic"],
+      "properties": {
+        "auditory": { "$ref": "#/$defs/auditoryAnchor" },
+        "visual": { "$ref": "#/$defs/visualAnchor" },
+        "kinesthetic": { "$ref": "#/$defs/kinestheticAnchor" }
+      }
+    },
+    "induction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targetSeconds", "lastStackConfirmedAt", "lastEnteredAt"],
+      "properties": {
+        "targetSeconds": {
+          "type": ["integer", "null"],
+          "minimum": 20,
+          "maximum": 300,
+          "description": "Re-entry time box in seconds. Null means the product default is not chosen yet."
+        },
+        "lastStackConfirmedAt": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "When discovery's stack check was confirmed. Null means draft only."
+        },
+        "lastEnteredAt": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "When a later re-entry was reported as successful."
+        }
+      }
+    },
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["voiceProcessing", "storeMediaReferences"],
+      "properties": {
+        "voiceProcessing": {
+          "type": "boolean",
+          "description": "Person agreed to a realtime voice session."
+        },
+        "storeMediaReferences": {
+          "type": "boolean",
+          "description": "Person agreed to store song and photo references, not the media itself."
+        }
+      }
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "auditoryAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "source", "title", "artist", "moment", "provider", "providerUri"],
+      "properties": {
+        "status": { "enum": ["confirmed", "unknown", "declined"] },
+        "source": {
+          "enum": ["in-moment", "associated", "unknown"],
+          "description": "in-moment: it was actually present. associated: they chose it later as the cue."
+        },
+        "title": { "type": ["string", "null"] },
+        "artist": { "type": ["string", "null"] },
+        "moment": {
+          "type": ["string", "null"],
+          "description": "The bar, lyric, or section that is the actual cue."
+        },
+        "provider": { "enum": ["spotify", "apple_music", "unset"] },
+        "providerUri": {
+          "type": ["string", "null"],
+          "description": "Deep link or URI the person can already play. Never a copied audio file."
+        }
+      }
+    },
+    "visualAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "kind", "caption", "details", "assetRef"],
+      "properties": {
+        "status": { "enum": ["confirmed", "unknown", "declined"] },
+        "kind": { "enum": ["memory", "photo", "unknown"] },
+        "caption": { "type": ["string", "null"] },
+        "details": {
+          "type": "array",
+          "maxItems": 5,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Short visual facts: light, distance, focal object."
+        },
+        "assetRef": {
+          "type": ["string", "null"],
+          "description": "Client-local or provider reference. Not image bytes and not a remote copy we host by default."
+        }
+      }
+    },
+    "kinestheticAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "bodyLocation", "posture", "breath", "keywords"],
+      "properties": {
+        "status": { "enum": ["confirmed", "unknown", "declined"] },
+        "bodyLocation": { "type": ["string", "null"] },
+        "posture": { "type": ["string", "null"] },
+        "breath": { "type": ["string", "null"] },
+        "keywords": {
+          "type": "array",
+          "maxItems": 3,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "The person's call-back words, kept as spoken."
+        }
+      }
+    }
+  }
+}

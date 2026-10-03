@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "profileId": "profile_example_ada",
+  "displayName": "Ada",
+  "peakState": {
+    "label": "quiet before the start",
+    "context": "Standing in the tunnel before a race, headphones half on.",
+    "description": "Calm, tall, and already moving before the gun."
+  },
+  "anchors": {
+    "auditory": {
+      "status": "confirmed",
+      "source": "in-moment",
+      "title": "Holocene",
+      "artist": "Bon Iver",
+      "moment": "The second chorus, when the drums thin out",
+      "provider": "unset",
+      "providerUri": null
+    },
+    "visual": {
+      "status": "confirmed",
+      "kind": "memory",
+      "caption": "The bright rectangle of the stadium mouth at the end of the tunnel",
+      "details": [
+        "cool concrete shade",
+        "white daylight ahead",
+        "lane lines just becoming visible"
+      ],
+      "assetRef": null
+    },
+    "kinesthetic": {
+      "status": "confirmed",
+      "bodyLocation": "sternum",
+      "posture": "crown up, shoulders dropped",
+      "breath": "slow exhale, longer than the inhale",
+      "keywords": ["tall", "easy"]
+    }
+  },
+  "induction": {
+    "targetSeconds": null,
+    "lastStackConfirmedAt": "2026-10-02T18:00:00Z",
+    "lastEnteredAt": null
+  },
+  "consent": {
+    "voiceProcessing": true,
+    "storeMediaReferences": true
+  },
+  "updatedAt": "2026-10-02T18:04:00Z"
+}
