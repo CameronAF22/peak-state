@@ -301,7 +301,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/state-change.md` | `6fb6b1df03c0` | D-coord-008 |
 | `onboarding/.dev.vars.example` | `9972ceaf7419` | D-onboarding-017 |
 | `onboarding/.gitignore` | `e080f460d184` | D-onboarding-018 |
-| `onboarding/DEPLOY.md` | `2a270ca0001d` | D-onboarding-017, D-onboarding-024, D-onboarding-025, D-onboarding-026 |
+| `onboarding/DEPLOY.md` | `cc26b02a4626` | D-onboarding-017, D-onboarding-024, D-onboarding-025, D-onboarding-026 |
 | `onboarding/PLAN.md` | `7913904371a4` | D-onboarding-001, D-onboarding-011 |
 | `onboarding/README.md` | `cf7011ae9d91` | D-onboarding-012, D-onboarding-025 |
 | `onboarding/design/constellation/index.html` | `cd5706cb048d` | D-onboarding-019 |
