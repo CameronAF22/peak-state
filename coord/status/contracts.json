@@ -2,17 +2,17 @@
   "schemaVersion": 1,
   "lane": "contracts",
   "health": "green",
-  "phase": "M0",
-  "progress": 10,
-  "summary": "Replanned for D-coord-011/012: Profile v2 = 1..3 states with ordered strategy steps; D-contracts-005/006 proposed, superseding 003/004",
+  "phase": "M1",
+  "progress": 90,
+  "summary": "M1 built: 6 schemas, TS types, validators, derive helpers, 13 fixtures + 10 invalid, API.md; 9 tests and tsc green",
   "now": [
-    "Waiting on onboarding, sensing, reps and experience to confirm D-contracts-005/006"
+    "PR to main open; waiting for lanes to import and confirm D-contracts-007/008"
   ],
   "next": [
-    "M1 (after a person says go): schemas, TS types, derive helpers, fixtures, tests, API.md"
+    "Fix whatever lanes hit while importing; close M1 when onboarding, sensing, reps and experience acknowledge"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:36:33Z",
+  "updatedAt": "2026-10-03T14:57:25Z",
   "session": {
     "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
     "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",

@@ -3,19 +3,19 @@
   "lane": "onboarding",
   "health": "green",
   "phase": "M0",
-  "progress": 10,
-  "summary": "Replanned for voice playbook (D-coord-011/012): PLAN.md revised, D-onboarding-006..011 supersede 001-005; 007 voice stack and 010 demo split proposed",
+  "progress": 85,
+  "summary": "Question harness MVP on PR #23 (CI green). Added local setup and GPT live debugging guide; hooks now explain when run outside the repo folder",
   "now": [
-    "Waiting on a person for D-onboarding-007/010 and go for M1; on contracts for the playbook profile shape"
+    "Waiting for Cam to test GPT live locally"
   ],
   "next": [
-    "M1: prompts/playbook-voice.md and the playbook script as data"
+    "Fix whatever the live GPT test turns up"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:36:28Z",
+  "updatedAt": "2026-10-03T17:30:59Z",
   "session": {
-    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
-    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
-    "branch": "lane/onboarding"
+    "id": "session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "url": "https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "branch": "claude/project-thread-c4ldi5"
   }
 }

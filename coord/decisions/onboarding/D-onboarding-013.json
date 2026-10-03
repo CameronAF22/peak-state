@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-013",
+  "lane": "onboarding",
+  "title": "Hooks fail with a clear message when tools/coord.py is missing",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Cam's desktop session started in a scratch folder and moved into the repo, so CLAUDE_PROJECT_DIR pointed at the scratch folder and every prompt failed with a bare python 'can't open file' error. The project coordinator asked for a clearer failure.",
+  "decision": "Each hook command in .claude/settings.json checks that $CLAUDE_PROJECT_DIR/tools/coord.py exists. If it does, it runs exactly as before. If not, it prints that the hooks cannot run and to start Claude Code with the peak-state folder as its folder; SessionStart only warns (exit 0), the other hooks block (exit 2) so enforcement never silently turns off.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    ".claude/settings.json"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "url": "https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "branch": "claude/project-thread-c4ldi5"
+  },
+  "createdAt": "2026-10-03T17:30:59Z",
+  "acceptedAt": "2026-10-03T17:30:59Z",
+  "acceptedBy": "claude"
+}

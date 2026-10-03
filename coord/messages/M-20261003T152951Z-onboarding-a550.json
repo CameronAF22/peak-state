@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T152951Z-onboarding-a550",
+  "from": "onboarding",
+  "to": "onboarding",
+  "subject": "Question harness built on branch claude/project-thread-c4ldi5",
+  "body": "Cam asked for a working question harness. It implements onboarding M1-M3 for playbook section 1 plus core submodalities (no contrast/drivers) under onboarding/script, onboarding/src/{engine,voice,harness,playback}, onboarding/harness and onboarding/test. Decision D-onboarding-012. Please build on it rather than in parallel; the draft PR will be linked on the board.",
+  "refs": [
+    "D-onboarding-012"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T15:29:51Z",
+  "session": {
+    "id": "session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "url": "https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "branch": "claude/project-thread-c4ldi5"
+  }
+}

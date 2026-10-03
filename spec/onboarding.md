@@ -74,6 +74,32 @@ Turn a first conversation into a confirmed profile: find the person's three top 
 **Depends on:** D-onboarding-006, D-onboarding-007, D-onboarding-008, D-onboarding-009  
 **Supersedes:** D-onboarding-001
 
+### D-onboarding-012 · Question harness MVP: deterministic question engine, swappable voice, one-click playback
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU) · branch `claude/project-thread-c4ldi5` · accepted by claude
+
+**Decision.** Ship @peak-state/onboarding with a question bank as data (onboarding/script/), a deterministic engine that cycles playbook section 1 plus core submodalities and builds a confirmed Profile v2 (onboarding/src/engine/), voice adapters typed, browser speech and an OpenAI realtime adapter with an editable model id (onboarding/src/voice/), a harness page with a 5 s two-suggestion hint (onboarding/harness/, onboarding/src/harness/), a one-click playback logged as a RepSession (onboarding/src/playback/), and a Playwright visual test (onboarding/test/). Contrast and drivers are out of scope for the harness; contrast stays null. The engine, not the model, picks the next question.
+
+**Context.** Cam asked for a working question harness: choose a state (content or destressed in testing), cycle Robbins' strategy questions until the state is fully captured, suggest two phrasings after 5 s of silence, save the strategy, and one click to run it back, with a visual test.
+
+**Alternatives considered.**
+
+- Let the realtime model drive the questions itself (less testable, order not guaranteed)
+- Build the harness inside app/ (experience lane owns it and its contracts mirror is incompatible)
+
+**Produces:** `onboarding/package.json`, `onboarding/tsconfig.json`, `onboarding/script/`, `onboarding/src/`, `onboarding/harness/`, `onboarding/test/`, `onboarding/README.md`, `onboarding/playwright.config.ts`, `onboarding/vite.config.ts`  
+**Depends on:** D-contracts-007, D-contracts-008
+
+### D-onboarding-013 · Hooks fail with a clear message when tools/coord.py is missing
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU) · branch `claude/project-thread-c4ldi5` · accepted by claude
+
+**Decision.** Each hook command in .claude/settings.json checks that $CLAUDE_PROJECT_DIR/tools/coord.py exists. If it does, it runs exactly as before. If not, it prints that the hooks cannot run and to start Claude Code with the peak-state folder as its folder; SessionStart only warns (exit 0), the other hooks block (exit 2) so enforcement never silently turns off.
+
+**Context.** Cam's desktop session started in a scratch folder and moved into the repo, so CLAUDE_PROJECT_DIR pointed at the scratch folder and every prompt failed with a bare python 'can't open file' error. The project coordinator asked for a clearer failure.
+
+**Produces:** `.claude/settings.json`
+
 ## Proposed, awaiting acceptance
 
 ### D-onboarding-007 · Voice-first stack for onboarding: speech in and out primary, transcript, typed and scripted fallbacks
@@ -131,6 +157,44 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/elicitation.md` | `8c568b386b97` | D-coord-008 |
 | `docs/state-change.md` | `6fb6b1df03c0` | D-coord-008 |
 | `onboarding/PLAN.md` | `7913904371a4` | D-onboarding-001, D-onboarding-011 |
+| `onboarding/README.md` | `406602332f4f` | D-onboarding-012 |
+| `onboarding/harness/index.html` | `cc518dcc3b32` | D-onboarding-012 |
+| `onboarding/harness/main.ts` | `684ae88ae42e` | D-onboarding-012 |
+| `onboarding/harness/styles.css` | `f63761742d57` | D-onboarding-012 |
+| `onboarding/package.json` | `8335546eb509` | D-onboarding-012 |
+| `onboarding/playwright.config.ts` | `78cc447f0630` | D-onboarding-012 |
+| `onboarding/script/questions.ts` | `779bd9a43021` | D-onboarding-003, D-onboarding-006, D-onboarding-010, D-onboarding-012 |
+| `onboarding/src/engine/hints.ts` | `d164d4ac154f` | D-onboarding-012 |
+| `onboarding/src/engine/index.ts` | `1acbe7959929` | D-onboarding-012 |
+| `onboarding/src/engine/parse.ts` | `b2ee919a19dd` | D-onboarding-012 |
+| `onboarding/src/engine/safety.ts` | `8f4aafe9b9fa` | D-onboarding-012 |
+| `onboarding/src/harness/hints.ts` | `39a5fcdb4929` | D-onboarding-012 |
+| `onboarding/src/harness/main.ts` | `1836efe49995` | D-onboarding-012 |
+| `onboarding/src/harness/view/dom.ts` | `9f8bddc8c0f4` | D-onboarding-012 |
+| `onboarding/src/harness/view/question.ts` | `0ea364f616ed` | D-onboarding-012 |
+| `onboarding/src/harness/view/saved.ts` | `52146f44c1d1` | D-onboarding-012 |
+| `onboarding/src/harness/view/steps.ts` | `a35116374f96` | D-onboarding-012 |
+| `onboarding/src/harness/view/voice.ts` | `a46fb2d3912b` | D-onboarding-012 |
+| `onboarding/src/index.ts` | `36e7de5bbe64` | D-onboarding-012 |
+| `onboarding/src/playback/index.ts` | `8c0aeb675e21` | D-onboarding-012 |
+| `onboarding/src/playback/runner.ts` | `df12e2c1a815` | D-onboarding-012 |
+| `onboarding/src/playback/script.ts` | `e28d09f1e709` | D-onboarding-012 |
+| `onboarding/src/playback/storage.ts` | `f656486e58d9` | D-onboarding-012 |
+| `onboarding/src/types.ts` | `f227fc9cc173` | D-onboarding-012 |
+| `onboarding/src/voice/browser.ts` | `61d7d92e0b70` | D-onboarding-012 |
+| `onboarding/src/voice/emitter.ts` | `df88e51d4d0e` | D-onboarding-012 |
+| `onboarding/src/voice/gpt-live.ts` | `c8d1d374d047` | D-onboarding-012 |
+| `onboarding/src/voice/index.ts` | `a7c0a26f4328` | D-onboarding-012 |
+| `onboarding/src/voice/typed.ts` | `bee9740bc611` | D-onboarding-012 |
+| `onboarding/test/e2e/.gitignore` | `83394a0aff29` | D-onboarding-012 |
+| `onboarding/test/e2e/harness.spec.ts` | `a6de1a68e7dc` | D-onboarding-012 |
+| `onboarding/test/e2e/screens-reporter.ts` | `dd1e91a8a298` | D-onboarding-012 |
+| `onboarding/test/unit/engine.test.ts` | `9674be98ccc0` | D-onboarding-012 |
+| `onboarding/test/unit/playback.test.ts` | `c76b8b12f289` | D-onboarding-012 |
+| `onboarding/test/unit/script.test.ts` | `473cf39343e8` | D-onboarding-012 |
+| `onboarding/test/unit/voice.test.ts` | `9440dc4b6e29` | D-onboarding-012 |
+| `onboarding/tsconfig.json` | `1afb58c64c91` | D-onboarding-012 |
+| `onboarding/vite.config.ts` | `f5643cec1115` | D-onboarding-012 |
 | `prompts/discovery.md` | `915c158676a3` | D-coord-008 |
 | `prompts/induction.md` | `9eac817f9540` | D-coord-008 |
 | `prompts/intervention.md` | `cafae717f40d` | D-coord-008 |

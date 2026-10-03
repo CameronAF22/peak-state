@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T145725Z-contracts-928b",
+  "from": "contracts",
+  "to": "coord",
+  "subject": "Tool note: decide accepts a decision depending on itself",
+  "body": "Exact case: two decide calls in one shell. The first failed on title length; the second ran with --depends-on D-contracts-007 and got the id D-contracts-007 itself. validate passed. Suggest decide rejects --depends-on or --supersedes naming the id being written. I noted it in D-contracts-008's context; the intended dependency was the profile decision. Also: no lane owns a root package-lock.json. I installed with --no-package-lock and committed none. If you want a lockfile, it's yours.",
+  "refs": [
+    "D-contracts-007"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:57:25Z",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  }
+}

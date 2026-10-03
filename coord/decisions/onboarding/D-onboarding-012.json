@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-012",
+  "lane": "onboarding",
+  "title": "Question harness MVP: deterministic question engine, swappable voice, one-click playback",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Cam asked for a working question harness: choose a state (content or destressed in testing), cycle Robbins' strategy questions until the state is fully captured, suggest two phrasings after 5 s of silence, save the strategy, and one click to run it back, with a visual test.",
+  "decision": "Ship @peak-state/onboarding with a question bank as data (onboarding/script/), a deterministic engine that cycles playbook section 1 plus core submodalities and builds a confirmed Profile v2 (onboarding/src/engine/), voice adapters typed, browser speech and an OpenAI realtime adapter with an editable model id (onboarding/src/voice/), a harness page with a 5 s two-suggestion hint (onboarding/harness/, onboarding/src/harness/), a one-click playback logged as a RepSession (onboarding/src/playback/), and a Playwright visual test (onboarding/test/). Contrast and drivers are out of scope for the harness; contrast stays null. The engine, not the model, picks the next question.",
+  "alternatives": [
+    "Let the realtime model drive the questions itself (less testable, order not guaranteed)",
+    "Build the harness inside app/ (experience lane owns it and its contracts mirror is incompatible)"
+  ],
+  "consequences": "",
+  "produces": [
+    "onboarding/package.json",
+    "onboarding/tsconfig.json",
+    "onboarding/script/",
+    "onboarding/src/",
+    "onboarding/harness/",
+    "onboarding/test/",
+    "onboarding/README.md",
+    "onboarding/playwright.config.ts",
+    "onboarding/vite.config.ts"
+  ],
+  "dependsOn": [
+    "D-contracts-007",
+    "D-contracts-008"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "url": "https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "branch": "claude/project-thread-c4ldi5"
+  },
+  "createdAt": "2026-10-03T15:26:59Z",
+  "acceptedAt": "2026-10-03T15:26:59Z",
+  "acceptedBy": "claude"
+}

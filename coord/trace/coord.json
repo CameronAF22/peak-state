@@ -4,9 +4,10 @@
   "files": [
     {
       "path": ".claude/settings.json",
-      "sha256": "56f6d70b5f580811482db74e7f12948f261eb8dac8dc32218f434147bff1aec8",
+      "sha256": "9c3a4e493a58ad7d5eb16a497eef79cb576c69f564a9e65eff5108c7a8b0a835",
       "decisions": [
-        "D-coord-002"
+        "D-coord-002",
+        "D-onboarding-013"
       ]
     },
     {
@@ -275,6 +276,21 @@
       ]
     },
     {
+      "path": "test/frontend/action.html",
+      "sha256": "93d3d6d3867811dd4300e9d9785fd33e9aaec945c5df8c46677f6e119607c529",
+      "decisions": [
+        "D-coord-015"
+      ]
+    },
+    {
+      "path": "test/frontend/app.js",
+      "sha256": "953014455dd49a6ea0764d746eff054c55f9c1adbf0d9d522e118ee9b867a162",
+      "decisions": [
+        "D-coord-015",
+        "D-coord-017"
+      ]
+    },
+    {
       "path": "test/frontend/guide.js",
       "sha256": "20d75c7c603cba24de164e71ce4067ef1c58e5b34d6f3b16b63db6606d1415e0",
       "decisions": [
@@ -293,6 +309,14 @@
       "sha256": "98c7044fddeace5d42927bc46abd6a766cb3fe75361102977ae94bbbecdaabf7",
       "decisions": [
         "D-coord-019"
+      ]
+    },
+    {
+      "path": "test/frontend/index.html",
+      "sha256": "d50bac581d0ebea53213aaec937d99ca7baa2e59caad09c72f4207ddfb234944",
+      "decisions": [
+        "D-coord-015",
+        "D-coord-017"
       ]
     },
     {

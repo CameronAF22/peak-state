@@ -25,6 +25,275 @@
       ]
     },
     {
+      "path": "onboarding/README.md",
+      "sha256": "406602332f4f4ac8adf9bbb2a5afced5de859ec8bde832fb6b9080230deebaa2",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/harness/index.html",
+      "sha256": "cc518dcc3b32b25882c09b358de2a8b598b8be244b1485470674f5c72071ffd1",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/harness/main.ts",
+      "sha256": "684ae88ae42e3ee82f4d7eb817dc80616ed919876391f011d61c5b0fcade2c20",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/harness/styles.css",
+      "sha256": "f63761742d57d9630861ac4b27751215c579077787bc9f3ba4626b9b264273a9",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/package.json",
+      "sha256": "8335546eb5098806b81bb049de115f9e6844635f536525cdf8d9b65beeca26b1",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/playwright.config.ts",
+      "sha256": "78cc447f0630a62c61f00ae52dd8eb3c91fc03f529b713a6aec5775d1fbed530",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/script/questions.ts",
+      "sha256": "779bd9a43021eb2abd63baf8fcd352fe7fcd7a6bf37f2666ae216fe0ea4b96f1",
+      "decisions": [
+        "D-onboarding-003",
+        "D-onboarding-006",
+        "D-onboarding-010",
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/engine/hints.ts",
+      "sha256": "d164d4ac154f3cafac9910a86fc3b9719ab46ae4f6ead32dda98cbb4441aed3a",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/engine/index.ts",
+      "sha256": "1acbe7959929d341cb4f01e47c17f53e189a3f8d67075407db12ad8daeccd055",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/engine/parse.ts",
+      "sha256": "b2ee919a19dd9304dacdd7ce72ce724d01d7b3b6fd8698a5b00d6dd304533c98",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/engine/safety.ts",
+      "sha256": "8f4aafe9b9fa57b8dbdba5bb4d4f15909ec1f926d836ac0adc4e241b34bb08a3",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/harness/hints.ts",
+      "sha256": "39a5fcdb49297628f1b721546c0810cac5ec86c5b72450f8724671ad5713d629",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/harness/main.ts",
+      "sha256": "1836efe499953ddabb51c75ec800a189331412cda9ab827e85d500d11f3e955e",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/harness/view/dom.ts",
+      "sha256": "9f8bddc8c0f4f8b493dec0516f5276729ca6b93b04a32af8683077596036e0b1",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/harness/view/question.ts",
+      "sha256": "0ea364f616edb758323c753ee6c3bd071bf41595165cd7563e2e66e5528fd61c",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/harness/view/saved.ts",
+      "sha256": "52146f44c1d18586f14fc038ad474fc576db2e144c293bddd427fbbf347221db",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/harness/view/steps.ts",
+      "sha256": "a35116374f968482ec6fdfff29670a45ffdb64506f2c44dbba88295a63b9c4ba",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/harness/view/voice.ts",
+      "sha256": "a46fb2d3912bebe07d950411d60ad65004f6a144aa78b50d9e48f6f7e9439e74",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/index.ts",
+      "sha256": "36e7de5bbe643d6e2549ab2c6fd7d83b12504ed149d705c43ad24240f1f0f17d",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/playback/index.ts",
+      "sha256": "8c0aeb675e21f71e039ef9797dc574b6b2c26b4f707fb56736ddd30fa5a5b051",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/playback/runner.ts",
+      "sha256": "df12e2c1a8150b6f3ffcbb74cb07ad3abd94bdaf45db7fc633af85b64924d3f3",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/playback/script.ts",
+      "sha256": "e28d09f1e709a39eba0bdee55af7235c04e491ef03c809f2a7ec57de42288f53",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/playback/storage.ts",
+      "sha256": "f656486e58d99609df52706c2f6fa107f2b444616fba9a561b3f96fe81a2bde6",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/types.ts",
+      "sha256": "f227fc9cc173f457c10a94d9fc701ae71f1f8f891a3a9ce96b2c7d1de8e4e5fa",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/voice/browser.ts",
+      "sha256": "61d7d92e0b700f6e5a32540de61de013a0d74d6fe4d02ddf7c0c0b5815b08c78",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/voice/emitter.ts",
+      "sha256": "df88e51d4d0e6b7dbcd7ceaa9adfb8c2f7f9a7042d4807b847a1c43b216c43d8",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/voice/gpt-live.ts",
+      "sha256": "c8d1d374d047523defe53cedda103ee845417e30160f86a1c5e5e35b4683e787",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/voice/index.ts",
+      "sha256": "a7c0a26f432864aaaacfb02f458baa1a326464fbb0e0f015dfa32a857a5c309d",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/voice/typed.ts",
+      "sha256": "bee9740bc611c3ad3f1acfc91d9d8a1998449b30e1f3ffebfaf5c644812b76e2",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/test/e2e/.gitignore",
+      "sha256": "83394a0aff29ef47ff84180d3f8f40f7930e03c4e6fa5757b835a57df08e7e59",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/test/e2e/harness.spec.ts",
+      "sha256": "a6de1a68e7dc407d7f697553a14f46ca499f613fd631a1928f58ee620311e2a9",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/test/e2e/screens-reporter.ts",
+      "sha256": "dd1e91a8a298223380d65638a2ec2441b1a0395c241346c0206f7ba7447a974c",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/test/unit/engine.test.ts",
+      "sha256": "9674be98ccc03cacc177e2c42730d1841d2bad0aa3ad1a70f24c6f9b630a25c8",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/test/unit/playback.test.ts",
+      "sha256": "c76b8b12f2898538cf1e9a826102e9a7c2f4df84700de6f2761bb0c4a013294c",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/test/unit/script.test.ts",
+      "sha256": "473cf39343e894b0a74102c652601b7c366e52ed09f740db453d27157f5b4997",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/test/unit/voice.test.ts",
+      "sha256": "9440dc4b6e29288fe70c124d97613ecab97a21dfe9ae5dd3558df0913a56ccdf",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/tsconfig.json",
+      "sha256": "1afb58c64c91a473fdd1e8727ce99da6cb1adcb6d9f35c89c5844e920923a9c5",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/vite.config.ts",
+      "sha256": "f5643cec1115338253a645ddaca365611bb6d85eba696f3ae0737089e34882db",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
       "path": "prompts/discovery.md",
       "sha256": "915c158676a35f1cc2cc2818875495b64bd86205514c206aa470862c3500ef6e",
       "decisions": [

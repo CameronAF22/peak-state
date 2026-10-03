@@ -3,7 +3,7 @@
   "id": "D-contracts-005",
   "lane": "contracts",
   "title": "Profile v2: 1 to 3 person-chosen states with ordered strategy steps, submodalities, contrast, differences and drivers",
-  "status": "proposed",
+  "status": "rejected",
   "type": "contract",
   "context": "D-coord-011 makes the MVP one person-chosen state elicited by the voice playbook; D-coord-012 makes a strategy an ordered list of steps with submodalities and the triad a derived view. Field list follows the playbook's 'What this feeds downstream' table plus M0 asks: leverage (reps, onboarding), calibration summary per state plus neutral (sensing, onboarding).",
   "decision": "schemas/profile.v2.schema.json, schemaVersion 2: profileId, displayName?, createdAt, confirmedAt (null = draft), neutral? CalibrationSummary, states[] (1..3, unique slug ids). State: id, label, words, memoryCue?, leverage?, strategy {steps[] {modality visual|auditory|kinesthetic|olfactory|gustatory, direction external|internal, content, submodalities {core, extended?, other?} with fixed keys per modality, anchorDetail? scene|song|body}, fullyInAt, confirmed}, anchorStep, contrast {label, submodalities per modality, prefilled}, differences[] {modality, attribute, peak, contrast, ratingDelta}, drivers[] (1..3 indexes into differences), recode, test {before, after}, futurePace {situation}, calibration {peak, contrast}. Unreached sections are null. The physiology/focus/language triad, the step-chain notation and driver instructions are derived in contracts/src/derive.ts, never stored. validateProfile() adds the index checks JSON Schema cannot. Full shape in contracts/PLAN.md.",
@@ -34,5 +34,7 @@
     "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
     "branch": "lane/contracts"
   },
-  "createdAt": "2026-10-03T14:36:03Z"
+  "createdAt": "2026-10-03T14:36:03Z",
+  "acceptedAt": null,
+  "acceptedBy": "claude"
 }

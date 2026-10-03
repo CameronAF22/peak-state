@@ -1,0 +1,24 @@
+{
+  "stateId": "calm-before-pitch",
+  "phase": "contrast",
+  "source": "simulator",
+  "hr": {
+    "mean": 79.5,
+    "sd": 3.0
+  },
+  "lnRmssd": {
+    "mean": 3.45,
+    "sd": 0.15
+  },
+  "windows": 3,
+  "seconds": 24,
+  "quality": "ok",
+  "speechExcludedSeconds": 4,
+  "recordedAt": "2026-10-03T15:01:10Z",
+  "rating": 3,
+  "separability": {
+    "separable": true,
+    "hr": 4.36,
+    "lnRmssd": 3.68
+  }
+}

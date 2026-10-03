@@ -1,0 +1,698 @@
+[
+  {
+    "type": "guideTurn",
+    "text": "What state do you want to be able to get back to? Say it in your own words.",
+    "section": "1.1",
+    "t": 1791039600000
+  },
+  {
+    "type": "userTurn",
+    "text": "Calm before a pitch. Like the room is already mine and there's no rush.",
+    "final": true,
+    "via": "script",
+    "t": 1791039603000
+  },
+  {
+    "type": "stateNamed",
+    "stateId": "calm-before-pitch",
+    "label": "calm before a pitch",
+    "words": "Like the room is already mine and there's no rush",
+    "t": 1791039605000
+  },
+  {
+    "type": "guideTurn",
+    "text": "Can you remember a specific time you were totally calm before a pitch? Step into it. Tell me when you're there.",
+    "section": "1.2",
+    "t": 1791039605500
+  },
+  {
+    "type": "userTurn",
+    "text": "The Berlin demo. I'm there.",
+    "final": true,
+    "via": "script",
+    "t": 1791039608500
+  },
+  {
+    "type": "guideTurn",
+    "text": "What was the very first thing that caused it? Something you saw, heard, or felt?",
+    "section": "1.3",
+    "t": 1791039610500
+  },
+  {
+    "type": "userTurn",
+    "text": "The first face in the room looking up at me.",
+    "final": true,
+    "via": "script",
+    "t": 1791039613500
+  },
+  {
+    "type": "stepCaptured",
+    "stateId": "calm-before-pitch",
+    "stepIndex": 0,
+    "step": {
+      "modality": "visual",
+      "direction": "external",
+      "content": "the first face in the room looking up at me",
+      "submodalities": {
+        "core": {
+          "location": "center",
+          "size": "life-size",
+          "distance": "close",
+          "brightness": "bright",
+          "perspective": "associated"
+        },
+        "extended": {
+          "motion": "movie"
+        },
+        "words": {
+          "distance": "right there, like across a table"
+        }
+      },
+      "anchorDetail": {
+        "kind": "scene",
+        "caption": "The first face looking up",
+        "details": [
+          "warm window light",
+          "a coffee cup on the table"
+        ]
+      }
+    },
+    "fullyIn": false,
+    "t": 1791039615500
+  },
+  {
+    "type": "submodalityCaptured",
+    "stateId": "calm-before-pitch",
+    "target": "peak",
+    "stepIndex": 0,
+    "modality": "visual",
+    "attribute": "location",
+    "value": "center",
+    "t": 1791039616000
+  },
+  {
+    "type": "submodalityCaptured",
+    "stateId": "calm-before-pitch",
+    "target": "peak",
+    "stepIndex": 0,
+    "modality": "visual",
+    "attribute": "size",
+    "value": "life-size",
+    "t": 1791039617500
+  },
+  {
+    "type": "submodalityCaptured",
+    "stateId": "calm-before-pitch",
+    "target": "peak",
+    "stepIndex": 0,
+    "modality": "visual",
+    "attribute": "distance",
+    "value": "close",
+    "t": 1791039619000
+  },
+  {
+    "type": "submodalityCaptured",
+    "stateId": "calm-before-pitch",
+    "target": "peak",
+    "stepIndex": 0,
+    "modality": "visual",
+    "attribute": "brightness",
+    "value": "bright",
+    "t": 1791039620500
+  },
+  {
+    "type": "submodalityCaptured",
+    "stateId": "calm-before-pitch",
+    "target": "peak",
+    "stepIndex": 0,
+    "modality": "visual",
+    "attribute": "perspective",
+    "value": "associated",
+    "t": 1791039622000
+  },
+  {
+    "type": "guideTurn",
+    "text": "After that, what was the very next thing? A picture, something you said to yourself, or a feeling?",
+    "section": "1.4",
+    "t": 1791039623500
+  },
+  {
+    "type": "userTurn",
+    "text": "I said to myself, here we go, slow.",
+    "final": true,
+    "via": "script",
+    "t": 1791039626500
+  },
+  {
+    "type": "stepCaptured",
+    "stateId": "calm-before-pitch",
+    "stepIndex": 1,
+    "step": {
+      "modality": "auditory",
+      "direction": "internal",
+      "content": "'here we go, slow'",
+      "submodalities": {
+        "core": {
+          "source": "my own voice",
+          "volume": "quiet",
+          "location": "inside-head"
+        },
+        "extended": {
+          "tempo": "slow"
+        }
+      }
+    },
+    "fullyIn": false,
+    "t": 1791039628500
+  },
+  {
+    "type": "submodalityCaptured",
+    "stateId": "calm-before-pitch",
+    "target": "peak",
+    "stepIndex": 1,
+    "modality": "auditory",
+    "attribute": "source",
+    "value": "my own voice",
+    "t": 1791039629000
+  },
+  {
+    "type": "submodalityCaptured",
+    "stateId": "calm-before-pitch",
+    "target": "peak",
+    "stepIndex": 1,
+    "modality": "auditory",
+    "attribute": "volume",
+    "value": "quiet",
+    "t": 1791039630500
+  },
+  {
+    "type": "submodalityCaptured",
+    "stateId": "calm-before-pitch",
+    "target": "peak",
+    "stepIndex": 1,
+    "modality": "auditory",
+    "attribute": "location",
+    "value": "inside-head",
+    "t": 1791039632000
+  },
+  {
+    "type": "guideTurn",
+    "text": "And the next thing?",
+    "section": "1.5",
+    "t": 1791039633500
+  },
+  {
+    "type": "userTurn",
+    "text": "Warmth spreading through my chest. That's when I'm fully there.",
+    "final": true,
+    "via": "script",
+    "t": 1791039636500
+  },
+  {
+    "type": "stepCaptured",
+    "stateId": "calm-before-pitch",
+    "stepIndex": 2,
+    "step": {
+      "modality": "kinesthetic",
+      "direction": "internal",
+      "content": "warmth spreading through my chest",
+      "submodalities": {
+        "core": {
+          "bodyLocation": "chest",
+          "intensity": 8,
+          "movement": "moving"
+        },
+        "extended": {
+          "temperature": "warm",
+          "direction": "spreading"
+        }
+      }
+    },
+    "fullyIn": true,
+    "t": 1791039638500
+  },
+  {
+    "type": "submodalityCaptured",
+    "stateId": "calm-before-pitch",
+    "target": "peak",
+    "stepIndex": 2,
+    "modality": "kinesthetic",
+    "attribute": "bodyLocation",
+    "value": "chest",
+    "t": 1791039639000
+  },
+  {
+    "type": "submodalityCaptured",
+    "stateId": "calm-before-pitch",
+    "target": "peak",
+    "stepIndex": 2,
+    "modality": "kinesthetic",
+    "attribute": "intensity",
+    "value": 8,
+    "t": 1791039640500
+  },
+  {
+    "type": "submodalityCaptured",
+    "stateId": "calm-before-pitch",
+    "target": "peak",
+    "stepIndex": 2,
+    "modality": "kinesthetic",
+    "attribute": "movement",
+    "value": "moving",
+    "t": 1791039642000
+  },
+  {
+    "type": "calibrationCaptured",
+    "stateId": "calm-before-pitch",
+    "summary": {
+      "stateId": "calm-before-pitch",
+      "phase": "peak",
+      "source": "simulator",
+      "hr": {
+        "mean": 68.2,
+        "sd": 2.1
+      },
+      "lnRmssd": {
+        "mean": 3.95,
+        "sd": 0.12
+      },
+      "windows": 5,
+      "seconds": 40,
+      "quality": "ok",
+      "speechExcludedSeconds": 8,
+      "recordedAt": "2026-10-03T15:00:40Z",
+      "rating": 8
+    },
+    "t": 1791039643500
+  },
+  {
+    "type": "guideTurn",
+    "text": "So first you see the first face looking up, then you say 'here we go, slow', then you feel warmth spreading in your chest. Is that the order?",
+    "section": "1.6",
+    "t": 1791039644000
+  },
+  {
+    "type": "userTurn",
+    "text": "Yes.",
+    "final": true,
+    "via": "script",
+    "t": 1791039647000
+  },
+  {
+    "type": "guideTurn",
+    "text": "Which one of these, if I gave it back to you, would bring the state back fastest?",
+    "section": "2",
+    "t": 1791039649000
+  },
+  {
+    "type": "userTurn",
+    "text": "The face looking up.",
+    "final": true,
+    "via": "script",
+    "t": 1791039652000
+  },
+  {
+    "type": "anchorStepMarked",
+    "stateId": "calm-before-pitch",
+    "stepIndex": 0,
+    "t": 1791039654000
+  },
+  {
+    "type": "contrastCaptured",
+    "stateId": "calm-before-pitch",
+    "label": "stuck on a small email",
+    "prefilled": true,
+    "t": 1791039654500
+  },
+  {
+    "type": "calibrationCaptured",
+    "stateId": "calm-before-pitch",
+    "summary": {
+      "stateId": "calm-before-pitch",
+      "phase": "contrast",
+      "source": "simulator",
+      "hr": {
+        "mean": 79.5,
+        "sd": 3.0
+      },
+      "lnRmssd": {
+        "mean": 3.45,
+        "sd": 0.15
+      },
+      "windows": 3,
+      "seconds": 24,
+      "quality": "ok",
+      "speechExcludedSeconds": 4,
+      "recordedAt": "2026-10-03T15:01:10Z",
+      "rating": 3,
+      "separability": {
+        "separable": true,
+        "hr": 4.36,
+        "lnRmssd": 3.68
+      }
+    },
+    "t": 1791039655000
+  },
+  {
+    "type": "driverFound",
+    "stateId": "calm-before-pitch",
+    "differenceIndex": 2,
+    "difference": {
+      "stepIndex": 0,
+      "modality": "visual",
+      "attribute": "distance",
+      "peak": "close",
+      "contrast": "far",
+      "ratingDelta": 3
+    },
+    "t": 1791039655500
+  },
+  {
+    "type": "driverFound",
+    "stateId": "calm-before-pitch",
+    "differenceIndex": 3,
+    "difference": {
+      "stepIndex": 0,
+      "modality": "visual",
+      "attribute": "brightness",
+      "peak": "bright",
+      "contrast": "dim",
+      "ratingDelta": 2
+    },
+    "t": 1791039656000
+  },
+  {
+    "type": "driverFound",
+    "stateId": "calm-before-pitch",
+    "differenceIndex": 5,
+    "difference": {
+      "stepIndex": 1,
+      "modality": "auditory",
+      "attribute": "volume",
+      "peak": "quiet",
+      "contrast": "loud",
+      "ratingDelta": 2
+    },
+    "t": 1791039656500
+  },
+  {
+    "type": "guideTurn",
+    "text": "For you, closeness, brightness and a quiet voice seem to matter most. Take the stuck time and give it those: the picture close and bright, the voice quiet.",
+    "section": "4.1",
+    "t": 1791039657000
+  },
+  {
+    "type": "userTurn",
+    "text": "Okay. That's different.",
+    "final": true,
+    "via": "script",
+    "t": 1791039660000
+  },
+  {
+    "type": "guideTurn",
+    "text": "Now think of that old situation again. Where are you, 0 to 10?",
+    "section": "4.2",
+    "t": 1791039662000
+  },
+  {
+    "type": "userTurn",
+    "text": "Seven. It was a three.",
+    "final": true,
+    "via": "script",
+    "t": 1791039665000
+  },
+  {
+    "type": "testRated",
+    "stateId": "calm-before-pitch",
+    "before": 3,
+    "after": 7,
+    "t": 1791039667000
+  },
+  {
+    "type": "guideTurn",
+    "text": "Think of a time coming up when you'll want this. Run the steps there.",
+    "section": "4.3",
+    "t": 1791039667500
+  },
+  {
+    "type": "userTurn",
+    "text": "Thursday's board pitch.",
+    "final": true,
+    "via": "script",
+    "t": 1791039670500
+  },
+  {
+    "type": "guideTurn",
+    "text": "First the face, close and bright. Then 'here we go, slow', quietly. Then the warmth in your chest. That's yours.",
+    "section": "4.4",
+    "t": 1791039672500
+  },
+  {
+    "type": "confirmed",
+    "t": 1791039695000,
+    "profile": {
+      "schemaVersion": 2,
+      "profileId": "profile_demo_ada",
+      "displayName": "Ada",
+      "createdAt": "2026-10-03T15:00:00Z",
+      "confirmedAt": "2026-10-03T15:01:35Z",
+      "states": [
+        {
+          "id": "calm-before-pitch",
+          "label": "calm before a pitch",
+          "words": "Like the room is already mine and there's no rush",
+          "memoryCue": "the Berlin demo",
+          "leverage": "So I stop rushing the part that matters",
+          "strategy": {
+            "steps": [
+              {
+                "modality": "visual",
+                "direction": "external",
+                "content": "the first face in the room looking up at me",
+                "submodalities": {
+                  "core": {
+                    "location": "center",
+                    "size": "life-size",
+                    "distance": "close",
+                    "brightness": "bright",
+                    "perspective": "associated"
+                  },
+                  "extended": {
+                    "motion": "movie"
+                  },
+                  "words": {
+                    "distance": "right there, like across a table"
+                  }
+                },
+                "anchorDetail": {
+                  "kind": "scene",
+                  "caption": "The first face looking up",
+                  "details": [
+                    "warm window light",
+                    "a coffee cup on the table"
+                  ]
+                }
+              },
+              {
+                "modality": "auditory",
+                "direction": "internal",
+                "content": "'here we go, slow'",
+                "submodalities": {
+                  "core": {
+                    "source": "my own voice",
+                    "volume": "quiet",
+                    "location": "inside-head"
+                  },
+                  "extended": {
+                    "tempo": "slow"
+                  }
+                }
+              },
+              {
+                "modality": "kinesthetic",
+                "direction": "internal",
+                "content": "warmth spreading through my chest",
+                "submodalities": {
+                  "core": {
+                    "bodyLocation": "chest",
+                    "intensity": 8,
+                    "movement": "moving"
+                  },
+                  "extended": {
+                    "temperature": "warm",
+                    "direction": "spreading"
+                  }
+                }
+              }
+            ],
+            "fullyInAt": 2,
+            "confirmed": true
+          },
+          "anchorStep": 0,
+          "contrast": {
+            "label": "stuck on a small email",
+            "submodalities": {
+              "visual": {
+                "core": {
+                  "location": "lower-left",
+                  "size": "small",
+                  "distance": "far",
+                  "brightness": "dim",
+                  "perspective": "dissociated"
+                }
+              },
+              "auditory": {
+                "core": {
+                  "source": "my own voice",
+                  "volume": "loud",
+                  "location": "inside-head"
+                },
+                "extended": {
+                  "tempo": "fast"
+                }
+              },
+              "kinesthetic": {
+                "core": {
+                  "bodyLocation": "stomach",
+                  "intensity": 3,
+                  "movement": "still"
+                }
+              }
+            },
+            "prefilled": true
+          },
+          "differences": [
+            {
+              "stepIndex": 0,
+              "modality": "visual",
+              "attribute": "location",
+              "peak": "center",
+              "contrast": "lower-left",
+              "ratingDelta": 1
+            },
+            {
+              "stepIndex": 0,
+              "modality": "visual",
+              "attribute": "size",
+              "peak": "life-size",
+              "contrast": "small",
+              "ratingDelta": 1
+            },
+            {
+              "stepIndex": 0,
+              "modality": "visual",
+              "attribute": "distance",
+              "peak": "close",
+              "contrast": "far",
+              "ratingDelta": 3
+            },
+            {
+              "stepIndex": 0,
+              "modality": "visual",
+              "attribute": "brightness",
+              "peak": "bright",
+              "contrast": "dim",
+              "ratingDelta": 2
+            },
+            {
+              "stepIndex": 0,
+              "modality": "visual",
+              "attribute": "perspective",
+              "peak": "associated",
+              "contrast": "dissociated",
+              "ratingDelta": 1
+            },
+            {
+              "stepIndex": 1,
+              "modality": "auditory",
+              "attribute": "volume",
+              "peak": "quiet",
+              "contrast": "loud",
+              "ratingDelta": 2
+            },
+            {
+              "stepIndex": 1,
+              "modality": "auditory",
+              "attribute": "tempo",
+              "peak": "slow",
+              "contrast": "fast",
+              "ratingDelta": 1
+            },
+            {
+              "stepIndex": 2,
+              "modality": "kinesthetic",
+              "attribute": "movement",
+              "peak": "moving",
+              "contrast": "still",
+              "ratingDelta": 1
+            }
+          ],
+          "drivers": [
+            2,
+            3,
+            5
+          ],
+          "recode": {
+            "appliedDrivers": [
+              2,
+              3,
+              5
+            ]
+          },
+          "test": {
+            "before": 3,
+            "after": 7
+          },
+          "futurePace": {
+            "situation": "Thursday's board pitch"
+          },
+          "calibration": {
+            "peak": {
+              "stateId": "calm-before-pitch",
+              "phase": "peak",
+              "source": "simulator",
+              "hr": {
+                "mean": 68.2,
+                "sd": 2.1
+              },
+              "lnRmssd": {
+                "mean": 3.95,
+                "sd": 0.12
+              },
+              "windows": 5,
+              "seconds": 40,
+              "quality": "ok",
+              "speechExcludedSeconds": 8,
+              "recordedAt": "2026-10-03T15:00:40Z",
+              "rating": 8
+            },
+            "contrast": {
+              "stateId": "calm-before-pitch",
+              "phase": "contrast",
+              "source": "simulator",
+              "hr": {
+                "mean": 79.5,
+                "sd": 3.0
+              },
+              "lnRmssd": {
+                "mean": 3.45,
+                "sd": 0.15
+              },
+              "windows": 3,
+              "seconds": 24,
+              "quality": "ok",
+              "speechExcludedSeconds": 4,
+              "recordedAt": "2026-10-03T15:01:10Z",
+              "rating": 3,
+              "separability": {
+                "separable": true,
+                "hr": 4.36,
+                "lnRmssd": 3.68
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]

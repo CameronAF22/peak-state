@@ -3,7 +3,7 @@
   "id": "D-contracts-006",
   "lane": "contracts",
   "title": "Event shapes and module API: calibration phases, targetStateId, rep steps by strategy index",
-  "status": "proposed",
+  "status": "rejected",
   "type": "contract",
   "context": "D-coord-012: reps replay the person's own step order; calibration windows come from playbook 1.2-1.5 (peak) and 3.1-3.2 (contrast). Folds in M0 asks: sensing's field names (D-sensing-003), reps' session fields and stop handle, onboarding's stopped result, experience's module slots (D-experience-003).",
   "decision": "Calibration {phase peak|contrast|neutral, stateId, source, startedAt, durationSeconds, frameCount, quality, stats {hr {mean,sd}, lnRmssd {mean,sd}, rmssd, windows}, rating?}. SignalFrame {t epoch ms, source, hr, rr[], quality, scenarioStep?}. DetectionEvent {id, t, kind drift|manual, targetStateId, confidence, window {startT,endT,hr,rmssd,quality}, gate {consecutive, refractoryMs, sham}, scores? {toPeak, toContrast}}. RepSession {id, profileId, stateId, repIndex, kind full|anchor-only, trigger {kind detection|manual|practice|onboarding, detectionId?}, arm cue|sham, startedAt, endedAt, steps[] {kind rate|anchor|strategy-step|leverage|peak, strategyStepIndex?, driverIndexes?, plannedMs, startedAt, endedAt, delivered}, intensityBefore, intensityAfter, recoverySeconds, recoveryCensored, anchorPaired, signalSource, scriptHash, endedBy completed|skipped|user-stop|safety-stop|timeout}. API per D-experience-003: onboarding.run(props) -> OnboardingResult (confirmed profile or stopped with reason), sensing.start(profile, onEvent, onFrame?) -> {stop, triggerManual}, sensing.record(stateId|null, phase, seconds) -> CalibrationSummary, reps.run(profile, stateId, trigger, props) -> {session, stop}, reps.progress(sessions).",
@@ -35,5 +35,7 @@
     "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
     "branch": "lane/contracts"
   },
-  "createdAt": "2026-10-03T14:36:12Z"
+  "createdAt": "2026-10-03T14:36:12Z",
+  "acceptedAt": null,
+  "acceptedBy": "claude"
 }
