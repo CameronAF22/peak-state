@@ -242,7 +242,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/hackathon/lanes/experience.md` | `194b7f5ecd0b` | D-coord-004, D-coord-009, D-coord-011 |
 | `docs/hackathon/lanes/onboarding.md` | `0e0157c74b1d` | D-coord-004, D-coord-009, D-coord-011 |
 | `docs/hackathon/lanes/reps.md` | `ce59e47ed3b5` | D-coord-004, D-coord-009, D-coord-011 |
-| `docs/hackathon/lanes/sensing.md` | `ae328a682ccc` | D-coord-004, D-coord-009, D-coord-011 |
+| `docs/hackathon/lanes/sensing.md` | `1baa6374eb75` | D-coord-004, D-coord-009, D-coord-011 |
 | `docs/hackathon/mvp.md` | `57cfa56c173e` | D-coord-005, D-coord-006, D-coord-007, D-coord-009, D-coord-011 |
 | `docs/on-aim-closed-loop.html` | `63ed5ec933fa` | D-coord-008 |
 | `docs/open-questions.md` | `32ec140a0c57` | D-coord-008 |

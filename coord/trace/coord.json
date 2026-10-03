@@ -120,7 +120,7 @@
     },
     {
       "path": "docs/hackathon/lanes/sensing.md",
-      "sha256": "ae328a682ccc07fa35d4caf88833a23170d4de85064f14bb11bcd0a38c3efd74",
+      "sha256": "1baa6374eb75c06580a9d09907171f7c58250f8b709f27960d945e2a1ab33055",
       "decisions": [
         "D-coord-004",
         "D-coord-009",
