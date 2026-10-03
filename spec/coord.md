@@ -278,6 +278,16 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 
 **Produces:** `test/backend/main.py`, `test/backend/users.json`, `test/frontend/index.html`, `test/frontend/app.js`, `test/frontend/styles.css`
 
+### D-coord-019 · Onboarding UI ElevenLabs TTS and AI Guide sandbox
+
+`accepted` · technical · 2026-10-03 · session `local-vikas` · branch `molly-onboardingui` · accepted by claude
+
+**Decision.** Implement the sandbox onboarding and dashboard views, ElevenLabs TTS integration, and local backend scripts for audio test/generation.
+
+**Context.** Develop a local sandbox environment in test/ containing onboarding and home pages, supporting ElevenLabs voice synthesis and Groq AI guide reflection.
+
+**Produces:** `test/backend/ai_guide.py`, `test/backend/elevenlabs_listen_test.py`, `test/backend/elevenlabs_tts.py`, `test/frontend/guide.js`, `test/frontend/home.html`, `test/frontend/home.js`, `test/frontend/onboarding.js`
+
 ## Proposed, awaiting acceptance
 
 None.
@@ -326,14 +336,21 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `schemas/coord/status.schema.json` | `4cf17ed9ef8e` | D-coord-001 |
 | `schemas/coord/trace.schema.json` | `414c0dbe867a` | D-coord-001 |
 | `site/dashboard.html` | `e50625a238b7` | D-coord-003 |
-| `test/backend/main.py` | `191ab14db1de` | D-coord-015, D-coord-017 |
-| `test/backend/requirements.txt` | `0ab58a941f97` | D-coord-015 |
+| `test/backend/ai_guide.py` | `fcba44152d0b` | D-coord-019 |
+| `test/backend/elevenlabs_listen_test.py` | `616d1cd7ecb7` | D-coord-019 |
+| `test/backend/elevenlabs_tts.py` | `8757a6c97865` | D-coord-019 |
+| `test/backend/main.py` | `017184104218` | D-coord-015, D-coord-017 |
+| `test/backend/requirements.txt` | `9b44749768c3` | D-coord-015 |
 | `test/backend/users.json` | `8cf68f30c0d7` | D-coord-017 |
 | `test/frontend/action.html` | `93d3d6d38678` | D-coord-015 |
 | `test/frontend/app.js` | `953014455dd4` | D-coord-015, D-coord-017 |
+| `test/frontend/guide.js` | `20d75c7c603c` | D-coord-019 |
+| `test/frontend/home.html` | `acbdfd78bb19` | D-coord-019 |
+| `test/frontend/home.js` | `98c7044fddea` | D-coord-019 |
 | `test/frontend/index.html` | `d50bac581d0e` | D-coord-015, D-coord-017 |
-| `test/frontend/onboarding.html` | `6152c4cb1f62` | D-coord-015 |
-| `test/frontend/styles.css` | `7ff29ad2a469` | D-coord-015, D-coord-017 |
+| `test/frontend/onboarding.html` | `137d76f707bd` | D-coord-015 |
+| `test/frontend/onboarding.js` | `4d0e2e4e57d5` | D-coord-019 |
+| `test/frontend/styles.css` | `7211e2285b01` | D-coord-015, D-coord-017 |
 | `tools/coord.py` | `de72727efde0` | D-coord-001 |
 | `tools/test_coord.py` | `809b2fce5d82` | D-coord-001 |
 | `tsconfig.base.json` | `9a0a4c80f350` | D-coord-010 |

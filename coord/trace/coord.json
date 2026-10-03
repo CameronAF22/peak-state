@@ -233,8 +233,29 @@
       ]
     },
     {
+      "path": "test/backend/ai_guide.py",
+      "sha256": "fcba44152d0b42218adab6213da8a8f8364533f74482f5ab8bbf8d55db92a9f6",
+      "decisions": [
+        "D-coord-019"
+      ]
+    },
+    {
+      "path": "test/backend/elevenlabs_listen_test.py",
+      "sha256": "616d1cd7ecb79c042ed6326438a29b53799b6466283711f5ca7cdc2fbe71be3d",
+      "decisions": [
+        "D-coord-019"
+      ]
+    },
+    {
+      "path": "test/backend/elevenlabs_tts.py",
+      "sha256": "8757a6c97865abacda24d73a4ee049ef0bcb8313aaaef2eab2f464d7c5a04321",
+      "decisions": [
+        "D-coord-019"
+      ]
+    },
+    {
       "path": "test/backend/main.py",
-      "sha256": "191ab14db1debf39f13d011d0ab4af96c1b8a96ce0ea7d189f569093868b00a6",
+      "sha256": "0171841042181c2dc8f570bc7f25dcb8fb7a8e9ac5c5a2b260edb35aa5c51db2",
       "decisions": [
         "D-coord-015",
         "D-coord-017"
@@ -242,7 +263,7 @@
     },
     {
       "path": "test/backend/requirements.txt",
-      "sha256": "0ab58a941f978675077e0a32fcff5a31e1c31534a8071d43f6d37b5ecfdc543b",
+      "sha256": "9b44749768c376f2d31fcadc5623ad505889dd1451cc2a62c758c4e8c72fc568",
       "decisions": [
         "D-coord-015"
       ]
@@ -270,6 +291,27 @@
       ]
     },
     {
+      "path": "test/frontend/guide.js",
+      "sha256": "20d75c7c603cba24de164e71ce4067ef1c58e5b34d6f3b16b63db6606d1415e0",
+      "decisions": [
+        "D-coord-019"
+      ]
+    },
+    {
+      "path": "test/frontend/home.html",
+      "sha256": "acbdfd78bb191a780aabfe1dbe01479b7f06b0ba59595b9322b1878a5738f16b",
+      "decisions": [
+        "D-coord-019"
+      ]
+    },
+    {
+      "path": "test/frontend/home.js",
+      "sha256": "98c7044fddeace5d42927bc46abd6a766cb3fe75361102977ae94bbbecdaabf7",
+      "decisions": [
+        "D-coord-019"
+      ]
+    },
+    {
       "path": "test/frontend/index.html",
       "sha256": "d50bac581d0ebea53213aaec937d99ca7baa2e59caad09c72f4207ddfb234944",
       "decisions": [
@@ -279,14 +321,21 @@
     },
     {
       "path": "test/frontend/onboarding.html",
-      "sha256": "6152c4cb1f62dfccc296d43fa603944cb8b05f54b8c0937db46bc8d9154de727",
+      "sha256": "137d76f707bdf1b25cc70e28d1c3076efd721f0bf03924a47b7d6135e399069f",
       "decisions": [
         "D-coord-015"
       ]
     },
     {
+      "path": "test/frontend/onboarding.js",
+      "sha256": "4d0e2e4e57d5965130853485360f3295840d7b9cea68545180292899ddd9afd8",
+      "decisions": [
+        "D-coord-019"
+      ]
+    },
+    {
       "path": "test/frontend/styles.css",
-      "sha256": "7ff29ad2a469b15cc68b6574c5458f92f336a84766e9e35e13fde06c43bbc3bf",
+      "sha256": "7211e2285b019c47278473555ced3e13e614d0cb9725b96f3b7e33feff10aad1",
       "decisions": [
         "D-coord-015",
         "D-coord-017"
