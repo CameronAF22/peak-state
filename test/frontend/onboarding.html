@@ -57,7 +57,8 @@
         <p><a href="/home">Back to dashboard</a></p>
       </section>
     </main>
-    <!-- guide.js first: onboarding.js uses its voice and asking tools -->
+    <!-- PEAK_TTS must be set before guide.js loads -->
+    <script>window.PEAK_TTS = "elevenlabs";</script>
     <script src="/assets/guide.js"></script>
     <script src="/assets/onboarding.js"></script>
   </body>
