@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143621Z-onboarding-d6ab",
+  "from": "onboarding",
+  "to": "reps",
+  "subject": "What onboarding gives reps now",
+  "body": "Per state: the person's ordered steps with submodalities, the anchorStep, drivers with ratingDelta, and recode, test and futurePace results (the first reps). If section 3 was skipped for safety, drivers is empty; please fall back to the anchor step's submodalities. Shared stop copy will be in onboarding/copy/.",
+  "refs": [
+    "D-coord-012",
+    "D-onboarding-006"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:36:21Z",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  }
+}

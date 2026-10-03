@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-008",
+  "lane": "onboarding",
+  "title": "Calibration windows come from the playbook: peak during 1.2-1.5, contrast during 3.1-3.2",
+  "status": "accepted",
+  "type": "product",
+  "context": "The playbook (D-coord-011/012) says calibration windows come free from sections 1 and 3, which also gives the detector the person's own off-state, not only a neutral baseline. Sensing needs at least 20 s per label for one RMSSD window. D-onboarding-004 had a separate 20 s block per emotion plus neutral.",
+  "decision": "No separate calibration block. Onboarding calls sensing.record(label) style windows inside the playbook: label 'peak:<stateId>' from step 1.2 (stepping into the memory) until the strategy reaches fullyInAt (1.5), and label 'contrast:<stateId>' during 3.1 to 3.2. Each window is open-ended (start/stop) with a 20 s minimum; if the person moves on sooner, onboarding holds a short silent recall to reach 20 s. The returned summaries go on the state's calibration (shape owned by contracts) with a quality flag. No strap and no simulator still completes onboarding; calibration is then empty and sensing uses its generic baseline. In the scripted demo the simulator returns pinned peak and contrast windows.",
+  "alternatives": [
+    "Keep a separate 20 s recall block after onboarding (adds time; loses the natural contrast window)",
+    "Fixed-length record(seconds) calls only (cuts across the person's pace in a voice session)"
+  ],
+  "consequences": "",
+  "produces": [
+    "onboarding/calibration/"
+  ],
+  "dependsOn": [
+    "D-onboarding-006",
+    "D-coord-007"
+  ],
+  "supersedes": [
+    "D-onboarding-004"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  },
+  "createdAt": "2026-10-03T14:35:21Z",
+  "acceptedAt": "2026-10-03T14:35:21Z",
+  "acceptedBy": "claude"
+}

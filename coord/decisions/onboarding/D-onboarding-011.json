@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-011",
+  "lane": "onboarding",
+  "title": "Onboarding lane plan, revised for the voice playbook",
+  "status": "accepted",
+  "type": "process",
+  "context": "D-coord-011/012 changed scope after M0. D-onboarding-001 described the three-emotion triad plan.",
+  "decision": "Onboarding follows the revised onboarding/PLAN.md: M1 the voice script for the playbook as data plus prompts/playbook-voice.md; M2 an extractor from event log or transcript to the new Profile v2 (states[], ordered steps with submodalities, contrast, drivers) with a fixture conversation; M3 the live voice session with typed and scripted fallbacks, calibration windows inside the playbook; M4 playback and stop copy. Exposes onboarding.run() and mount().",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-onboarding-006",
+    "D-onboarding-007",
+    "D-onboarding-008",
+    "D-onboarding-009"
+  ],
+  "supersedes": [
+    "D-onboarding-001"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  },
+  "createdAt": "2026-10-03T14:35:22Z",
+  "acceptedAt": "2026-10-03T14:35:22Z",
+  "acceptedBy": "claude"
+}

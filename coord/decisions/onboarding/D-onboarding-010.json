@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-010",
+  "lane": "onboarding",
+  "title": "Stage demo: sections 1 and 4 live with core submodalities; contrast and drivers pre-filled from a rehearsal",
+  "status": "proposed",
+  "type": "scope",
+  "context": "The playbook says one state takes 6 to 10 minutes by voice and names this split as the default, open for a person. D-coord-011 expects the demo onboarding step at about 90 s.",
+  "decision": "For the 3-minute stage demo, onboarding runs playbook section 1 (strategy order and playback) and section 4 (recode, test, future pace) live by voice, asks core submodalities only for the anchor step, and loads sections 2 and 3 (full submodalities, contrast, differences, drivers) from a rehearsed fixture marked as pre-filled. The full playbook remains the real-use path. Target about 90 s on stage.",
+  "alternatives": [
+    "Fully scripted onboarding on stage (safest, shows nothing live)",
+    "Full playbook live with a shortened contrast (about 4 to 5 minutes; breaks the 3-minute demo)"
+  ],
+  "consequences": "",
+  "produces": [
+    "onboarding/script/",
+    "onboarding/fixtures/"
+  ],
+  "dependsOn": [
+    "D-onboarding-006",
+    "D-coord-011"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  },
+  "createdAt": "2026-10-03T14:35:22Z"
+}

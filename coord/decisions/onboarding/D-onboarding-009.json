@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-009",
+  "lane": "onboarding",
+  "title": "Safety: per-turn stop pre-check, mild contrast only, break state after contrast",
+  "status": "accepted",
+  "type": "product",
+  "context": "README safety boundary; playbook rules for the voice guide (keep the contrast mild, brief, never traumatic, break state after). Section 3 is the one place the session deliberately visits a negative state, so it needs its own guard on top of the per-turn screen.",
+  "decision": "Keeps D-onboarding-005: every user turn (spoken transcript or typed) passes a deterministic screen in onboarding/safety/ before the model sees it, and every prompt carries the README stop line; on a hit the guide stops, says it is not the right support, points to a person they trust or local emergency services, saves nothing from that turn, and ends in a stopped state. Adds, from the playbook: (1) the contrast prompt always asks for a small, recent, mild time (flat or stuck about something small); if the answer sounds heavy (loss, harm, trauma words, or the person's own rating of how bad it is above a set threshold), the guide does not explore it, asks for a smaller one once, then skips section 3 with drivers left empty; (2) a break state runs immediately after the contrast questions and again if the person stops mid-section 3; (3) the guide never asks what the contrast was about, only how it is represented, and stores only a short label. No clinical labels are stored.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/safety/"
+  ],
+  "dependsOn": [
+    "D-onboarding-006"
+  ],
+  "supersedes": [
+    "D-onboarding-005"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  },
+  "createdAt": "2026-10-03T14:35:21Z",
+  "acceptedAt": "2026-10-03T14:35:21Z",
+  "acceptedBy": "claude"
+}
