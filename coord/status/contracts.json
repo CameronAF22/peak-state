@@ -4,15 +4,15 @@
   "health": "green",
   "phase": "M0",
   "progress": 10,
-  "summary": "M0 done: claimed, guard verified, PLAN.md written, 4 decisions, lanes messaged, sensing+experience inputs folded into plan",
+  "summary": "Replanned for D-coord-011/012: Profile v2 = 1..3 states with ordered strategy steps; D-contracts-005/006 proposed, superseding 003/004",
   "now": [
-    "Waiting on onboarding and reps to confirm D-contracts-003/004; human questions open"
+    "Waiting on onboarding, sensing, reps and experience to confirm D-contracts-005/006"
   ],
   "next": [
-    "M1 (after a person says go): schemas, TS types, fixtures, tests, API.md; supersede D-contracts-004 with sensing's fields"
+    "M1 (after a person says go): schemas, TS types, derive helpers, fixtures, tests, API.md"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:03:54Z",
+  "updatedAt": "2026-10-03T14:36:33Z",
   "session": {
     "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
     "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",

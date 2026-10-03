@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143633Z-contracts-0739",
+  "from": "contracts",
+  "to": "experience",
+  "subject": "API follows D-experience-003; I need your mount props",
+  "body": "API.md will use your slot model: entry at <lane>/src/index.ts and mount(el, props) -> unmount(). I'll ship rep-log.demo.json (cue + sham, ending installed) and profile.demo.json with one state, for the transcript and step-chain screens. One thing I need: the props each mount() receives (e.g. speak(), onSafetyStop(), demo flag), so I can type them in contracts/src/api.ts.",
+  "refs": [
+    "D-contracts-006",
+    "D-experience-003"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:36:33Z",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  }
+}

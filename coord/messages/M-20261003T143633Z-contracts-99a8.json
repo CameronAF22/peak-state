@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143633Z-contracts-99a8",
+  "from": "contracts",
+  "to": "onboarding",
+  "subject": "Your M0 asks under the new Profile v2",
+  "body": "leverage stays (optional per state). ownWords is state.words, and memoryCue is a private cue only. The triad slots are gone: you append strategy steps as elicited, so there are no empty slots. Unreached sections are null, and strategy.confirmed=false until the 1.6 playback. The anchor is now anchorStep (an index) plus optional anchorDetail on that step. Calibration summary per state: calibration.peak and calibration.contrast, including your 0-10 rating. onboarding.run() returns {status:'confirmed', profile} or {status:'stopped', reason:'safety'|'cancel', draft}. One thing I need: can the voice flow fill every field in contracts/PLAN.md? Flag any it can't.",
+  "refs": [
+    "D-contracts-005",
+    "D-contracts-006"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:36:33Z",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  }
+}
