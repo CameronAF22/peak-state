@@ -14,6 +14,8 @@ _BACKEND_DIR = Path(__file__).resolve().parent
 _FILE_API_KEY = ""
 
 MODEL_ID = "eleven_turbo_v2_5"
+# 1.0 = default; slightly above for a calmer but not sluggish guide pace.
+SPEECH_SPEED = 1.1
 API = "https://api.elevenlabs.io/v1"
 
 # Default premade IDs to try when no voice is configured (no voices_read scope needed).
@@ -110,6 +112,7 @@ def synthesize(text: str, voice_id: str) -> bytes:
             "similarity_boost": 0.8,
             "style": 0.15,
             "use_speaker_boost": True,
+            "speed": SPEECH_SPEED,
         },
     }
     req = urllib.request.Request(

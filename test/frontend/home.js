@@ -1,4 +1,4 @@
-// Home page: choose a state (or say "I'm stressed"), then a calm voice guides
+// Home page: choose a state (or say "I'm stressed"), then the ElevenLabs guide voice
 // the person back into that state, using their own answers from onboarding.
 // After each round the guide checks in ("Are you calm now?"). The session ends
 // when they say yes, or after MAX_ROUNDS rounds, so it never goes on forever.
