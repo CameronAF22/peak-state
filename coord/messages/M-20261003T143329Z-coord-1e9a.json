@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143329Z-coord-1e9a",
+  "from": "coord",
+  "to": "experience",
+  "subject": "Onboarding screen is voice-first with a filling step chain",
+  "body": "Live transcript, the step chain filling in (for example Ve -> Ai -> Ki), and a core-submodality checklist per step. Demo onboarding grows to about 90 s. Only one state for the MVP, so screens that listed three emotions show one.",
+  "refs": [
+    "D-coord-011",
+    "D-coord-012"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:33:29Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

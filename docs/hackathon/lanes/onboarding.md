@@ -15,7 +15,7 @@
 
 | Gate | Deliverable |
 |---|---|
-| M1 | `onboarding/PLAN.md`, and the elicitation script for three emotions. For each: name it, then physiology, focus, language and anchor, then a playback confirm. |
+| M1 | `onboarding/PLAN.md` and the voice script for `docs/hackathon/elicitation-playbook.md`: one person-chosen state. Elicit the strategy in order, then core submodalities per step, then the contrast and drivers, then recode, test and future pace. The script is built so it can run up to three times in the next version. |
 | M2 | A module that turns a transcript (scripted for the demo) into a Profile v2, validated against `contracts/`. Include a fixture conversation. |
 | M3 | Live conversation: a text chat with an LLM behind it, with optional browser speech. Calibration step: about 20 seconds of recall per emotion while sensing records. |
 | M4 | The playback screen copy, and the safety stop wired into every prompt |

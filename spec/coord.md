@@ -89,24 +89,6 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 **Produces:** `coord/lanes.json`, `docs/hackathon/lanes/`  
 **Depends on:** D-coord-001
 
-### D-coord-005 · MVP: three emotions, each with a triad strategy, installed through logged reps
-
-`accepted` · scope · 2026-10-03 · [session](https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK) · branch `claude/awesome-wright-ciik1f` · accepted by claude (coord)
-
-**Decision.** The MVP profile holds exactly three emotions. Each emotion carries its own physiology, focus and language strategy in the person's words plus one optional anchor. The loop is onboard, calibrate, detect drift, run a 20 to 40 second rep (anchor, body, focus, words, rate), log it, and mark an emotion installed when the anchor alone brings the state back. Robbins' six conditioning steps map onto these screens as in docs/hackathon/mvp.md, presented as hypotheses the logs measure, with sham trials as the control. Safety boundary from README.md applies.
-
-**Context.** The user asked for an experience that onboards a person, learns their strategy for reaching their three top emotions, detects when they drift, and immediately gives them repetitions to install the state the way Tony Robbins' events do. The existing repo modelled one peak state with three strategies (physiology, focus, language).
-
-**Alternatives considered.**
-
-- One peak state with three strategies (the earlier frame): does not match the three-emotion ask
-- Free-form number of emotions: harder to demo and to validate
-
-**Consequences.** Contracts must add a Profile v2 alongside the v1 schemas. Onboarding takes about three times as long as the single-state discovery, so the demo scripts it.
-
-**Produces:** `docs/hackathon/mvp.md`  
-**Depends on:** D-coord-004
-
 ### D-coord-006 · Browser-only demo in TypeScript; modules meet only at contracts/
 
 `accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK) · branch `claude/awesome-wright-ciik1f` · accepted by claude (coord)
@@ -194,13 +176,50 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 **Produces:** `package.json`, `tsconfig.base.json`  
 **Depends on:** D-coord-006
 
+### D-coord-011 · MVP: one person-chosen state, elicited by voice; three emotions next version
+
+`accepted` · scope · 2026-10-03 · [session](https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK) · branch `claude/awesome-wright-ciik1f` · accepted by product owner (via coord)
+
+**Decision.** The MVP targets one state per person, named and described by the person in their own words. Onboarding is a voice-first session (speak and listen, live transcript, typed and scripted fallbacks) that runs docs/hackathon/elicitation-playbook.md. Shapes hold 1 to 3 states so the next version, choosing among three emotions and running the playbook once per emotion, adds no contract change. Everything else from D-coord-005 stands: detect drift, run a rep, log it, installed when the anchor alone brings the state back, Robbins steps treated as hypotheses measured with sham trials, and the safety boundary.
+
+**Context.** The product owner directed that initial onboarding runs a voice playbook from Robbins' Unlimited Power (strategy order, then submodalities, then drivers by contrast, then recode, test and rehearse), and that for now the person chooses the content of the state, with choosing among three emotions deferred to a later version. D-coord-005 had fixed exactly three emotions with a physiology, focus and language triad each.
+
+**Alternatives considered.**
+
+- Keep three emotions in the MVP: triples a 6 to 10 minute voice playbook
+- Hard-code a menu of states: the owner wants the person to choose the content
+
+**Consequences.** D-contracts-003 (exactly three emotions) and D-onboarding-003 (three-emotion conversation) need superseding by their lanes. The demo onboarding step grows to about 90 s and pre-fills contrast and drivers unless a person decides otherwise.
+
+**Produces:** `docs/hackathon/elicitation-playbook.md`, `docs/hackathon/mvp.md`, `docs/hackathon/lanes/`  
+**Depends on:** D-coord-004  
+**Supersedes:** D-coord-005
+
+### D-coord-012 · Strategy model: ordered steps with submodalities; anchors are step detail; triad is derived
+
+`accepted` · product · 2026-10-03 · [session](https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK) · branch `claude/awesome-wright-ciik1f` · accepted by product owner (via coord)
+
+**Decision.** A state's strategy is an ordered list of steps. Each step has a modality (visual, auditory or kinesthetic, plus other senses if offered), a direction (external or internal), the content in the person's words, and the submodalities from the playbook's core list (extended list optional). Song, scene and body anchors are stored as submodality detail on the matching step, and one step is marked as the anchor step. The contrast state's submodalities, the differences, and the drivers (the 1 to 3 differences with the largest rating change in the one-at-a-time test) are stored with the state as hypotheses with their measured deltas. The physiology, focus and language triad is a derived view (feeling steps to physiology, picture steps to focus, self-talk steps to language), never stored separately. Reps replay the person's own step order and speak the driver submodalities.
+
+**Context.** The playbook elicits a strategy as an ordered sequence of represented steps (for example see something, say something to myself, feel it), where the order matters as much as the parts, and then the submodalities of each step. The product owner noted it maps onto Peak State's extraction session: the strategies are the sequence and the song, scene and body anchors are the submodality detail. Current lane plans assume fixed physiology, focus and language slots run in that order (D-contracts-003, D-reps-002).
+
+**Alternatives considered.**
+
+- Keep fixed triad slots and squeeze the sequence into them: loses the order, which the method says matters
+- Store free text only: reps and detection cannot use it
+
+**Consequences.** contracts redefines Profile v2 and the RepSession steps; reps supersedes D-reps-002's fixed order; sensing gets peak and contrast calibration windows from the playbook itself.
+
+**Produces:** `docs/hackathon/elicitation-playbook.md`  
+**Depends on:** D-coord-011
+
 ## Proposed, awaiting acceptance
 
 None.
 
 ## Superseded and rejected
 
-None.
+- D-coord-005 · MVP: three emotions, each with a triad strategy, installed through logged reps · `superseded` (superseded by D-coord-011)
 
 ## Produced artifacts
 
@@ -217,13 +236,14 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `coord/README.md` | `6b4acf0bc3df` | D-coord-001 |
 | `coord/lanes.json` | `91abfa2f4a74` | D-coord-004 |
 | `docs/architecture.md` | `7a8ff3f2a3d2` | D-coord-008 |
-| `docs/hackathon/lanes/contracts.md` | `e64a79d089f8` | D-coord-004, D-coord-009 |
-| `docs/hackathon/lanes/coord.md` | `5caaf5d27508` | D-coord-004, D-coord-009 |
-| `docs/hackathon/lanes/experience.md` | `194b7f5ecd0b` | D-coord-004, D-coord-009 |
-| `docs/hackathon/lanes/onboarding.md` | `1b82e15164d6` | D-coord-004, D-coord-009 |
-| `docs/hackathon/lanes/reps.md` | `ce59e47ed3b5` | D-coord-004, D-coord-009 |
-| `docs/hackathon/lanes/sensing.md` | `ae328a682ccc` | D-coord-004, D-coord-009 |
-| `docs/hackathon/mvp.md` | `ea182fa801fb` | D-coord-005, D-coord-006, D-coord-007, D-coord-009 |
+| `docs/hackathon/elicitation-playbook.md` | `431ef8310673` | D-coord-011, D-coord-012 |
+| `docs/hackathon/lanes/contracts.md` | `659077ebfecd` | D-coord-004, D-coord-009, D-coord-011 |
+| `docs/hackathon/lanes/coord.md` | `5caaf5d27508` | D-coord-004, D-coord-009, D-coord-011 |
+| `docs/hackathon/lanes/experience.md` | `194b7f5ecd0b` | D-coord-004, D-coord-009, D-coord-011 |
+| `docs/hackathon/lanes/onboarding.md` | `0e0157c74b1d` | D-coord-004, D-coord-009, D-coord-011 |
+| `docs/hackathon/lanes/reps.md` | `ce59e47ed3b5` | D-coord-004, D-coord-009, D-coord-011 |
+| `docs/hackathon/lanes/sensing.md` | `ae328a682ccc` | D-coord-004, D-coord-009, D-coord-011 |
+| `docs/hackathon/mvp.md` | `57cfa56c173e` | D-coord-005, D-coord-006, D-coord-007, D-coord-009, D-coord-011 |
 | `docs/on-aim-closed-loop.html` | `63ed5ec933fa` | D-coord-008 |
 | `docs/open-questions.md` | `32ec140a0c57` | D-coord-008 |
 | `docs/plan.md` | `d6259d0a40d3` | D-coord-008 |

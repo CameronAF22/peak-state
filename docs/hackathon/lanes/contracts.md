@@ -8,7 +8,7 @@
 
 | Gate | Deliverable |
 |---|---|
-| M1 | `schemas/profile.v2.schema.json`: exactly three emotions. Each has `id`, `label`, `words` (the person's phrasing), `strategy.physiology`, `strategy.focus` and `strategy.language`, each `{action, cue, status}`, an optional `anchor` `{kind: sound, gesture or word, value}`, an optional `calibration` summary, and `confirmedAt` on the profile. Keep v1 (`peak-strategies`, `user-state-profile`) valid; v2 is a new file. |
+| M1 | `schemas/profile.v2.schema.json` per `docs/hackathon/elicitation-playbook.md` (D-coord-011, D-coord-012): `states[]` with 1 to 3 items (the MVP uses 1). Each state has `label` and `words` in the person's phrasing, an ordered `strategy.steps[]` `{modality, direction, content, submodalities}`, an `anchorStep`, a `contrast`, `differences[]`, `drivers[]`, `test`, `futurePace`, and a `calibration` summary (peak and contrast). It also carries a derived physiology, focus and language view, and `confirmedAt`. Keep v1 valid; v2 is a new file. |
 | M1 | `schemas/signal-frame`, `detection-event`, `rep-session` and `calibration` schemas, following `docs/hackathon/mvp.md` |
 | M1 | `contracts/`: TypeScript types (`contracts/src/*.ts`), fixtures (`contracts/fixtures/*.json`, one complete demo profile and one scripted drift), and tests that validate every fixture against its schema |
 | M1 | `contracts/API.md`: the module interfaces `onboarding.run`, `sensing.start` and `reps.run`, plus the event flow between them |
