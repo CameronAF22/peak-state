@@ -8,7 +8,7 @@ The product is a closed loop with a manual path inside it:
 2. **Strategies.** On accept, a GPT Live 1 voice session identifies three moves the person already uses: a body action, a point of focus, and a sentence. That is the required output of the first session.
 3. **Intervention.** Later accepts run those three moves and stop. Song, scene, and body anchors remain optional detail inside the three, not a second protocol.
 
-This repository is the shareable frame for that product: the vision, the user journey, the elicitation strategy, the voice prompts, and the profile schema. It does not yet contain a client or a live voice session. Those wait on three decisions recorded in [docs/open-questions.md](docs/open-questions.md).
+This repository is the shareable frame for that product: the vision, the user journey, the elicitation strategy, the voice prompts, and the profile schema. It also contains client/backend scaffolding and the synthetic workflow lab below. A production client and live voice session remain planned; the original interaction decisions are recorded in [docs/open-questions.md](docs/open-questions.md).
 
 ## Hackathon build
 
@@ -34,6 +34,21 @@ Six lanes build it in parallel, coordinated through this repo:
 | 7 | [docs/open-questions.md](docs/open-questions.md) | Decisions still open |
 
 A filled example profile lives at [examples/sample-profile.json](examples/sample-profile.json).
+
+The Ring 4 REST integration investigation and proposed import sequence are in [docs/oura-import-plan.md](docs/oura-import-plan.md), checked against Oura's current documentation on October 3, 2026.
+
+The separate test app uses server-side OpenAI wording to fit prior answers naturally into follow-up questions and saved-state guidance. Setup and offline fallback behavior are in [docs/ai-guide.md](docs/ai-guide.md).
+
+## Synthetic calming workflow lab
+
+The isolated [workflow lab](docs/synthetic-workflow.md) runs without API keys. It includes nine generated HR/HRV scenarios, configurable percentage triggers, acceptance-gated calming suggestions, a recovery check-in, and explicit helpfulness feedback. The components use local rules; there are no live Oura or LLM calls. Its synthetic intraday HRV stream is not an Oura API capability.
+
+```powershell
+cd test/synthetic_lab
+python -m peak_state serve --port 8765
+```
+
+Open [the localhost demo](http://127.0.0.1:8765). Run its tests with `python -m unittest discover -s tests -v` from that same directory. This lab is separate from the coordinated production lanes and their shared contracts.
 
 ## User journey
 

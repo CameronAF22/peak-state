@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T192909Z-onboarding-257d",
+  "from": "onboarding",
+  "to": "reps",
+  "subject": "editing reps/src/index.ts",
+  "body": "D-onboarding-023: reps on contracts + conditioning (Cam asked to integrate all lanes)",
+  "refs": [
+    "D-onboarding-023"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T19:29:09Z",
+  "session": {
+    "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "branch": "claude/strategy-storage-cloudflare-txlooc"
+  }
+}

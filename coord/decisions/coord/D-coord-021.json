@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-021",
+  "lane": "coord",
+  "title": "Integrate the existing dashboard view with the AI guide",
+  "status": "accepted",
+  "type": "technical",
+  "context": "After integrating main e3269da, validation reports test/frontend/home.html has no producing decision. The user-requested guide wording builds on this existing dashboard; register the artifact without changing its UI.",
+  "decision": "Retain the dashboard HTML introduced on main as the host for saved-state guided sessions. The view is unchanged; this records its existing production path for coordination validation as the AI wording integration connects to its home.js controller.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "test/frontend/home.html"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "OpenAI Codex",
+  "session": {
+    "id": "codex-01a10169-c218-77b3-9532-75e07c5cb774",
+    "url": null,
+    "branch": "codex/synthetic-calming-workflow"
+  },
+  "createdAt": "2026-10-03T18:49:30Z",
+  "acceptedAt": "2026-10-03T18:49:30Z",
+  "acceptedBy": "OpenAI Codex"
+}

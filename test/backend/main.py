@@ -5,6 +5,11 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from typing import Literal
+from starlette.concurrency import run_in_threadpool
+
+from ai_guide import AIUnavailable, write_reflection, write_round
+from guide_ai import phrase
 
 from elevenlabs_tts import load_dotenv, sync_key_from_listen_test, text_to_speech
 
@@ -26,6 +31,29 @@ class AuthBody(BaseModel):
 
 class TtsBody(BaseModel):
     text: str = Field(min_length=1, max_length=5000)
+
+
+class GuideStep(BaseModel):
+    kind: Literal["saw", "heard", "said", "felt"]
+    text: str = Field(max_length=6000)
+
+
+class GuideContext(BaseModel):
+    state: str = Field(default="", max_length=200)
+    moment: str = Field(default="", max_length=6000)
+    steps: list[GuideStep] = Field(default_factory=list, max_length=8)
+    step_index: int = Field(default=0, ge=0, le=7)
+
+
+class PhraseBody(BaseModel):
+    goal: Literal["moment", "first_trigger", "next_step", "sequence", "sequence_confirm",
+                  "step_intro", "recall_moment", "recall_step", "check_in"]
+    context: GuideContext
+
+
+@app.post("/api/guide/phrase")
+async def guide_phrase(body: PhraseBody) -> dict[str, str]:
+    return await run_in_threadpool(phrase, body.goal, body.context.model_dump())
 
 
 def load_users() -> dict[str, str]:

@@ -4,10 +4,294 @@
   "files": [
     {
       "path": "app/PLAN.md",
-      "sha256": "aa8980399d0edd39cfbebb673ef6739f5ee425a9f7971b4540400e04ef8c84fc",
+      "sha256": "de8d1626352d482182c5c9cc94b422c820c44cf8cf9a5df7f53338fc2b791454",
       "decisions": [
         "D-experience-001",
-        "D-experience-004"
+        "D-experience-004",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/index.html",
+      "sha256": "a7c6393570608f0543680ed2b0dfc7267b6608be3f8de8e41f3e599b1dcd7558",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/package.json",
+      "sha256": "52c0b4db163af69400057ea5418849fbf90ed28833358ba4de50a24866c99ecd",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/App.tsx",
+      "sha256": "35ff0dbc55fb1f6a8ad86df92f23e47ec8d9600d1ccb36043b047dfb6f36878f",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/components/RatingPad.tsx",
+      "sha256": "3eefa96c55e21a9034407d8faa3f42c79025ceaad6a61fdcc6843784ae493bd0",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/components/SafetyFooter.tsx",
+      "sha256": "7741958ac223adef92edbbdd84568ad91135f8678af819aea2dafe976973cb8f",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/components/StepChain.tsx",
+      "sha256": "834db21aae12c5d4cd5b42a5ba0fc6f8ed43a1b5831dca57acf3cc3f47f4beb0",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/components/TraceChart.tsx",
+      "sha256": "4d46b8a97365ce232fc75bd5ea58d34c1aefc0dfa72e9e06f8e287aae16f32df",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/contracts.ts",
+      "sha256": "b253963c35137cf32c84fa2f0c93961051e69c92657f8753f931a40c5b6ff5f7",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/fixtures.ts",
+      "sha256": "413693ef77e27986fcd669b14cb20dfa2030fef0c49a0357d56bf048df477616",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/host.ts",
+      "sha256": "c9e832083d933ae74563e4d276db5a0fa84cd999bb1b0800fb01f9cd16731f9d",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-005",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/main.tsx",
+      "sha256": "a6bcae9c4f04d6ff36406b2966379834342b41b08b83ba7bd0334712d6cf87f0",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/modules.ts",
+      "sha256": "d7ed1b0fd3c4bf628b69826ef2eb60515c233a0669dc599dafef116cf3503b46",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-003",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/onboardView.ts",
+      "sha256": "381cb5b5bc23df6526682eb5f308a1478df492725822b27d4a5da5ee659f08e5",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/real/onboarding.ts",
+      "sha256": "e4a6e3dcaf5a7c9e49cdac7d6758dbf4897122681293ff6ffa04eefdba1e2789",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/real/reps.ts",
+      "sha256": "bc8cf434192a93334298c29a3c217ef13fde45c7260bda991658d4c50d72c3c6",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/screens/Calibrate.tsx",
+      "sha256": "6cdb2040b70e04fb75ad0a6cde1f48ffcd7fc8b95897da5b125707a7e2273620",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-005",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/screens/Live.tsx",
+      "sha256": "11ec47c7fb0af5f5845993c0d85393b4b2277e3d56f8d655d6cb1520e38ef9a9",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-005",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/screens/Onboard.tsx",
+      "sha256": "f165ee4d673392cc321ada17202d220b107fb3a28c8bc22696c069a4558bb162",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-005",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/screens/Progress.tsx",
+      "sha256": "dc4347aa659fc7b31265408a229c5b1dfe5f88631d9be32871ac0c986cf6f345",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-005",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/screens/Rep.tsx",
+      "sha256": "1549c80889b81d1cef92cdc760841c5034f8b2855bb71ee9ff6c570c00ad4c5e",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-005",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/slots.ts",
+      "sha256": "c9f011e367a0228258de688de9e113c549f6cd1ba6aeee4f064b6c2977961587",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/store.ts",
+      "sha256": "eee162f3a53bc2151e37689493c2f374427daa6ba7786ba8258a06fedf9a5fe4",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/stubs/onboarding.ts",
+      "sha256": "be039b80edb29404f8d2cca3d699c5fb6e9e74f487a9265d83af6d1521dfffef",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-003",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/stubs/sensing.ts",
+      "sha256": "e2000ffd156c2874c4c31a095ce18d4057b9604977753fd06a9b5c4dfa06c61b",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-003",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/src/styles.css",
+      "sha256": "46063af0303ccf43c5ac520ecd876b32ec10c61b73f2965e763d1d8f3c50420b",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/test/flow.test.ts",
+      "sha256": "f4d9ef79198f19349fbc66950f847b25bf3437dd7b1676b788829abadd6ba43a",
+      "decisions": [
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/test/real.test.ts",
+      "sha256": "bf919aa73628637a16401c50af793b98792500f5e008ea11747d10808574ba1f",
+      "decisions": [
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/test/stubs.test.ts",
+      "sha256": "ad6670c1bf683b0ba1f818e9eec083ad84e3986f3ee8575b1e356a60ac3b3b9e",
+      "decisions": [
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/tsconfig.json",
+      "sha256": "ab0aef619214a1598e47e32c14c671d12b3323e03f7c09abfc76a6430101a2c4",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/vite.config.ts",
+      "sha256": "26f57b21778a2ce3d0994d63e16dde30fb5c010bb6eee278950f591ca3bfcca3",
+      "decisions": [
+        "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/vitest.config.ts",
+      "sha256": "16f2aa794638e1a1594d968fd5fb8b083d287f86af288b24357b0894bf06ba9a",
+      "decisions": [
+        "D-onboarding-023"
       ]
     }
   ]

@@ -84,6 +84,50 @@ Install each state as measurable reps: a short rep script per emotion (anchor, p
 **Produces:** `reps/PLAN.md`  
 **Depends on:** D-coord-012, D-reps-003
 
+### D-reps-008 · @peak-state/reps package: Node built-in test runner with type stripping; typescript the only dev dependency
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW) · branch `lane/reps` · accepted by claude
+
+**Decision.** reps/ is the npm workspace package @peak-state/reps (D-coord-010), extending ../tsconfig.base.json with allowImportingTsExtensions. Source in reps/src (entry src/index.ts), tests in reps/test run with 'node --test' on Node >= 22.18 using built-in type stripping, so no test framework or bundler is needed. 'typecheck' runs tsc --noEmit. Code avoids enums, namespaces and parameter properties so it strips cleanly. The package is pure: no DOM access at import time; speech and clock are injected (M2).
+
+**Context.** Coord GO for M1 (D-coord-013). No lane has scaffolded a package yet; the root workspace has no shared test runner. Fewer dependencies means fewer installs and no lockfile churn in a hackathon.
+
+**Alternatives considered.**
+
+- vitest as the test runner
+- tsx plus node --test
+
+**Produces:** `reps/package.json`, `reps/tsconfig.json`, `reps/test/`  
+**Depends on:** D-coord-010, D-coord-013, D-reps-001
+
+### D-reps-009 · M1 builds on a local mirror of D-contracts-005/006; full rep has no opening anchor, peak carries anchorStep
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW) · branch `lane/reps` · accepted by claude
+
+**Decision.** reps/src/shapes.ts mirrors the proposed Profile v2 and RepSession shapes field for field, using contracts' names (kind full|anchor-only, steps[].delivered, trigger.kind onboarding, endedBy). It is the only place reps declares them and is replaced by imports from @peak-state/contracts the moment that package exists; no other file defines a shape. Per D-reps-005 a full rep is rate, strategy-step per step in the person's order up to fullyInAt, optional leverage, peak (strategyStepIndex = anchorStep, the conditioning pairing), rate; there is no opening anchor step. The 'anchor' step kind is used only by the anchor-only test (rate, anchor, rate). A sham logs only the rate steps. Test fixtures in reps/test/fixtures copy contracts' PLAN example profile until contracts/fixtures exists.
+
+**Context.** Coord's GO says build against contracts fixtures as they land; contracts has so far published only its plan. D-contracts-006's prose lists an opening anchor step in a full rep, while D-reps-005 (accepted) pairs the anchor step at the peak only; the schema's step kinds support both.
+
+**Alternatives considered.**
+
+- Wait for contracts to ship before writing code
+- Log an opening anchor step as contracts' prose suggests
+
+**Produces:** `reps/src/shapes.ts`, `reps/test/fixtures/`  
+**Depends on:** D-contracts-005, D-contracts-006, D-reps-005
+
+### D-reps-010 · Rep script wording and timing rules (speech estimate 2.6 words/s, 1.0 s pause)
+
+`accepted` · product · 2026-10-03 · [session](https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW) · branch `lane/reps` · accepted by claude
+
+**Decision.** Same rules as D-reps-007, with the speech estimate changed from 2.2 to 2.6 words per second and the pause after each step from 1.5 s to 1.0 s. Script text is the person's words inside fixed templates; drivers of the step's modality are spoken via a per-attribute template table with fallback 'Make it {peak}.'; one core submodality when a step has no driver; auditory-internal steps add a 2 s repeat silence. Timed steps fill a 32 s target (configurable within 20 to 40 s); spare time is shared in proportion to each step's floor; if floors exceed the target the script runs at the floor; with five or more steps, or floors above 40 s, only the top driver per step is spoken; above 40 s steps are scaled to 40 s and the runner cuts speech (M2). The anchor-only test is the anchor step's text plus its submodalities and 10 s of silence. scriptHash is FNV-1a over step kinds and texts. Draft profiles are refused.
+
+**Context.** With D-reps-007's constants the demo profile's rep needed 38.9 s, near the 40 s cap and well over the 30 s demo slot. Browser speech at rate 1 runs about 2.5 to 3 words per second, so 2.2 overestimated; at 2.6 and a 1.0 s pause the same rep fits about 32 s.
+
+**Produces:** `reps/src/`  
+**Depends on:** D-reps-005  
+**Supersedes:** D-reps-007
+
 ## Proposed, awaiting acceptance
 
 ### D-reps-003 · Installed criterion: 5 good reps, then 2 anchor-only passes in a row
@@ -106,6 +150,11 @@ Install each state as measurable reps: a short rep script per emotion (anchor, p
 ## Superseded and rejected
 
 - D-reps-002 · Rep script: anchor, physiology, focus, language, peak, rate; 32 s default within 20 to 40 s · `superseded` (superseded by D-reps-005)
+- D-reps-007 · Rep script wording and timing rules · `superseded` (superseded by D-reps-010)
+
+## Decisions from other lanes that cover files here
+
+- D-onboarding-023 · Integration: harness is the live app, reps on contracts, app shell at /demo, sensing plan only (`onboarding`)
 
 ## Produced artifacts
 
@@ -113,4 +162,15 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 
 | File | sha256 | Decisions |
 |---|---|---|
-| `reps/PLAN.md` | `7745d8a5269b` | D-reps-001, D-reps-002, D-reps-003, D-reps-004, D-reps-005, D-reps-006 |
+| `reps/PLAN.md` | `07a44f7e2daf` | D-onboarding-023, D-reps-001, D-reps-002, D-reps-003, D-reps-004, D-reps-005, D-reps-006 |
+| `reps/package.json` | `49e87c00e69a` | D-onboarding-023, D-reps-008 |
+| `reps/src/index.ts` | `ce8552eedc60` | D-onboarding-023, D-reps-007, D-reps-010 |
+| `reps/src/progress.ts` | `161fcfb2e330` | D-onboarding-023, D-reps-007, D-reps-010 |
+| `reps/src/script.ts` | `d53fe0bea0dd` | D-onboarding-023, D-reps-007, D-reps-010 |
+| `reps/src/session.ts` | `3ddc336b54e4` | D-onboarding-023, D-reps-007, D-reps-010 |
+| `reps/src/shapes.ts` | `5914569edda9` | D-onboarding-023, D-reps-007, D-reps-009, D-reps-010 |
+| `reps/src/wording.ts` | `032aae724b76` | D-onboarding-023, D-reps-007, D-reps-010 |
+| `reps/test/progress.test.ts` | `f02dd14082d7` | D-onboarding-023, D-reps-008 |
+| `reps/test/script.test.ts` | `8f2fc200021f` | D-onboarding-023, D-reps-008 |
+| `reps/test/session.test.ts` | `44e5c89175d0` | D-onboarding-023, D-reps-008 |
+| `reps/tsconfig.json` | `4967fc7a3d54` | D-onboarding-023, D-reps-008 |

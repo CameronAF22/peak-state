@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "D-reps-008",
+  "lane": "reps",
+  "title": "@peak-state/reps package: Node built-in test runner with type stripping; typescript the only dev dependency",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Coord GO for M1 (D-coord-013). No lane has scaffolded a package yet; the root workspace has no shared test runner. Fewer dependencies means fewer installs and no lockfile churn in a hackathon.",
+  "decision": "reps/ is the npm workspace package @peak-state/reps (D-coord-010), extending ../tsconfig.base.json with allowImportingTsExtensions. Source in reps/src (entry src/index.ts), tests in reps/test run with 'node --test' on Node >= 22.18 using built-in type stripping, so no test framework or bundler is needed. 'typecheck' runs tsc --noEmit. Code avoids enums, namespaces and parameter properties so it strips cleanly. The package is pure: no DOM access at import time; speech and clock are injected (M2).",
+  "alternatives": [
+    "vitest as the test runner",
+    "tsx plus node --test"
+  ],
+  "consequences": "",
+  "produces": [
+    "reps/package.json",
+    "reps/tsconfig.json",
+    "reps/test/"
+  ],
+  "dependsOn": [
+    "D-coord-010",
+    "D-coord-013",
+    "D-reps-001"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  },
+  "createdAt": "2026-10-03T14:49:13Z",
+  "acceptedAt": "2026-10-03T14:49:13Z",
+  "acceptedBy": "claude"
+}

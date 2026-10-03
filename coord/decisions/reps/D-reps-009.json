@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "D-reps-009",
+  "lane": "reps",
+  "title": "M1 builds on a local mirror of D-contracts-005/006; full rep has no opening anchor, peak carries anchorStep",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Coord's GO says build against contracts fixtures as they land; contracts has so far published only its plan. D-contracts-006's prose lists an opening anchor step in a full rep, while D-reps-005 (accepted) pairs the anchor step at the peak only; the schema's step kinds support both.",
+  "decision": "reps/src/shapes.ts mirrors the proposed Profile v2 and RepSession shapes field for field, using contracts' names (kind full|anchor-only, steps[].delivered, trigger.kind onboarding, endedBy). It is the only place reps declares them and is replaced by imports from @peak-state/contracts the moment that package exists; no other file defines a shape. Per D-reps-005 a full rep is rate, strategy-step per step in the person's order up to fullyInAt, optional leverage, peak (strategyStepIndex = anchorStep, the conditioning pairing), rate; there is no opening anchor step. The 'anchor' step kind is used only by the anchor-only test (rate, anchor, rate). A sham logs only the rate steps. Test fixtures in reps/test/fixtures copy contracts' PLAN example profile until contracts/fixtures exists.",
+  "alternatives": [
+    "Wait for contracts to ship before writing code",
+    "Log an opening anchor step as contracts' prose suggests"
+  ],
+  "consequences": "",
+  "produces": [
+    "reps/src/shapes.ts",
+    "reps/test/fixtures/"
+  ],
+  "dependsOn": [
+    "D-contracts-005",
+    "D-contracts-006",
+    "D-reps-005"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  },
+  "createdAt": "2026-10-03T14:49:13Z",
+  "acceptedAt": "2026-10-03T14:49:13Z",
+  "acceptedBy": "claude"
+}

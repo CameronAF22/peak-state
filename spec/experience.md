@@ -60,6 +60,22 @@ Own what a judge touches: the web app that runs onboarding, calibration, live de
 **Depends on:** D-coord-011, D-coord-012, D-experience-002, D-experience-003  
 **Supersedes:** D-experience-001
 
+### D-experience-006 · M1 app shell: temporary contracts mirror and fixture stubs until @peak-state/contracts lands
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U) · branch `lane/experience` · accepted by claude
+
+**Decision.** The app imports every shared type, fixture and the chain() helper through one file, app/src/contracts.ts. Until @peak-state/contracts merges, that file mirrors D-contracts-005/006 field for field (from contracts/PLAN.md) and app/src/fixtures/ holds copies of the planned profile.demo and rep-log.demo fixtures. When contracts ships, contracts.ts becomes a re-export of @peak-state/contracts and app/src/fixtures/ is deleted. No screen touches the mirror directly. Module stubs live in app/src/stubs/ and are chosen per module with ?onboarding|sensing|reps=stub|real. Tests use Vitest in app/test/. The app commits no root lockfile (the root is coord's).
+
+**Context.** D-coord-013 says go for M1 against proposed contracts, but lane/contracts holds only PLAN.md so far. CLAUDE.md forbids a second shape, so the mirror is temporary, one file, and copied exactly.
+
+**Alternatives considered.**
+
+- Wait for contracts before building screens: blocks M1
+- Read fixtures from origin/lane/contracts at build time: they don't exist yet and it couples the build to git
+
+**Produces:** `app/src/contracts.ts`, `app/src/fixtures/`, `app/test/`, `app/src/`, `app/package.json`, `app/tsconfig.json`, `app/vite.config.ts`, `app/index.html`  
+**Depends on:** D-coord-013, D-contracts-005, D-contracts-006, D-experience-002, D-experience-003, D-experience-005
+
 ## Proposed, awaiting acceptance
 
 ### D-experience-005 · ModuleHost and headless onboarding events: the app renders the voice onboarding screen
@@ -82,10 +98,45 @@ Own what a judge touches: the web app that runs onboarding, calibration, live de
 
 - D-experience-001 · Experience lane kickoff: five-screen app on fixture stubs, then real modules · `superseded` (superseded by D-experience-004)
 
+## Decisions from other lanes that cover files here
+
+- D-onboarding-023 · Integration: harness is the live app, reps on contracts, app shell at /demo, sensing plan only (`onboarding`)
+
 ## Produced artifacts
 
 Every file this lane owns, the first 12 hex digits of its SHA-256 at build time, and the decisions that cover it.
 
 | File | sha256 | Decisions |
 |---|---|---|
-| `app/PLAN.md` | `aa8980399d0e` | D-experience-001, D-experience-004 |
+| `app/PLAN.md` | `de8d1626352d` | D-experience-001, D-experience-004, D-onboarding-023 |
+| `app/index.html` | `a7c639357060` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/package.json` | `52c0b4db163a` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/App.tsx` | `35ff0dbc55fb` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/components/RatingPad.tsx` | `3eefa96c55e2` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/components/SafetyFooter.tsx` | `7741958ac223` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/components/StepChain.tsx` | `834db21aae12` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/components/TraceChart.tsx` | `4d46b8a97365` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/contracts.ts` | `b253963c3513` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/fixtures.ts` | `413693ef77e2` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/host.ts` | `c9e832083d93` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
+| `app/src/main.tsx` | `a6bcae9c4f04` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/modules.ts` | `d7ed1b0fd3c4` | D-experience-002, D-experience-003, D-experience-006, D-onboarding-023 |
+| `app/src/onboardView.ts` | `381cb5b5bc23` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/real/onboarding.ts` | `e4a6e3dcaf5a` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/real/reps.ts` | `bc8cf434192a` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/screens/Calibrate.tsx` | `6cdb2040b70e` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
+| `app/src/screens/Live.tsx` | `11ec47c7fb0a` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
+| `app/src/screens/Onboard.tsx` | `f165ee4d6733` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
+| `app/src/screens/Progress.tsx` | `dc4347aa659f` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
+| `app/src/screens/Rep.tsx` | `1549c80889b8` | D-experience-002, D-experience-005, D-experience-006, D-onboarding-023 |
+| `app/src/slots.ts` | `c9f011e367a0` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/store.ts` | `eee162f3a53b` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/src/stubs/onboarding.ts` | `be039b80edb2` | D-experience-002, D-experience-003, D-experience-006, D-onboarding-023 |
+| `app/src/stubs/sensing.ts` | `e2000ffd156c` | D-experience-002, D-experience-003, D-experience-006, D-onboarding-023 |
+| `app/src/styles.css` | `46063af0303c` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/test/flow.test.ts` | `f4d9ef79198f` | D-experience-006, D-onboarding-023 |
+| `app/test/real.test.ts` | `bf919aa73628` | D-experience-006, D-onboarding-023 |
+| `app/test/stubs.test.ts` | `ad6670c1bf68` | D-experience-006, D-onboarding-023 |
+| `app/tsconfig.json` | `ab0aef619214` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/vite.config.ts` | `26f57b21778a` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/vitest.config.ts` | `16f2aa794638` | D-onboarding-023 |

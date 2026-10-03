@@ -278,6 +278,16 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 
 **Produces:** `test/backend/main.py`, `test/backend/users.json`, `test/frontend/index.html`, `test/frontend/app.js`, `test/frontend/styles.css`
 
+### D-coord-018 · Keep the synthetic calming prototype isolated from production lanes
+
+`accepted` · technical · 2026-10-03 · session `codex-01a10169-c218-77b3-9532-75e07c5cb774` · branch `codex/synthetic-calming-workflow` · accepted by OpenAI Codex
+
+**Decision.** Ship a standard-library Python lab under test/synthetic_lab with private synthetic fixtures, configurable HR-rise and HRV-drop rules, acceptance-gated suggestions, recovery check-ins and explicit feedback. The lab does not change production contracts, sensing, reps or onboarding. Document Oura integration separately; no live model or ring connection.
+
+**Context.** The user has no Oura credentials, requested generated inputs and an agentic workflow prototype, selected funny videos, meditation music and breathing, required acceptance, and requested a PR. Main now has coordinated lanes, so the lab belongs under the coord-owned test path.
+
+**Produces:** `test/synthetic_lab/`, `docs/oura-import-plan.md`, `docs/synthetic-workflow.md`, `README.md`, `.gitignore`
+
 ### D-coord-019 · Onboarding UI ElevenLabs TTS and AI Guide sandbox
 
 `accepted` · technical · 2026-10-03 · session `local-vikas` · branch `molly-onboardingui` · accepted by claude
@@ -287,6 +297,36 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 **Context.** Develop a local sandbox environment in test/ containing onboarding and home pages, supporting ElevenLabs voice synthesis and Groq AI guide reflection.
 
 **Produces:** `test/backend/ai_guide.py`, `test/backend/elevenlabs_listen_test.py`, `test/backend/elevenlabs_tts.py`, `test/frontend/guide.js`, `test/frontend/home.html`, `test/frontend/home.js`, `test/frontend/onboarding.js`
+
+### D-coord-020 · Verify guide wording integration and cancellation
+
+`accepted` · technical · 2026-10-03 · session `codex-01a10169-c218-77b3-9532-75e07c5cb774` · branch `codex/synthetic-calming-workflow` · accepted by OpenAI Codex
+
+**Decision.** Add frontend regressions for grounded follow-up context, raw-answer preservation, fallbacks, stopped preparations and cancellation during a spoken question. Preserve complete-return wording for the existing Yes/A little/Not yet check-in semantics.
+
+**Context.** Review found a pre-existing ask-after-stop race and highlighted that closer must not be interpreted as a full return. These tests verify the user-requested OpenAI wording integration without real credentials.
+
+**Produces:** `test/frontend/test-guide.cjs`, `test/frontend/guide.js`, `test/frontend/home.js`, `test/backend/guide_ai.py`, `docs/ai-guide.md`
+
+### D-coord-021 · Integrate the existing dashboard view with the AI guide
+
+`accepted` · technical · 2026-10-03 · session `codex-01a10169-c218-77b3-9532-75e07c5cb774` · branch `codex/synthetic-calming-workflow` · accepted by OpenAI Codex
+
+**Decision.** Retain the dashboard HTML introduced on main as the host for saved-state guided sessions. The view is unchanged; this records its existing production path for coordination validation as the AI wording integration connects to its home.js controller.
+
+**Context.** After integrating main e3269da, validation reports test/frontend/home.html has no producing decision. The user-requested guide wording builds on this existing dashboard; register the artifact without changing its UI.
+
+**Produces:** `test/frontend/home.html`
+
+### D-coord-022 · Use OpenAI for grounded guide wording while keeping the scripted flow
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD) · branch `claude/strategy-storage-cloudflare-txlooc` · accepted by claude
+
+**Decision.** Add a server-side OpenAI Responses phrasing endpoint with bounded structured context and fixed conversational goals. Rewrite follow-up questions and recalled cues naturally rather than interpolating whole answers; retain raw profile answers, question order, choices and session limits. Use concise scripted fallbacks when credentials or model output are unavailable.
+
+**Context.** The user asked to use OpenAI to fit answers into subsequent questions naturally. The current test app uses toYou plus literal full-answer interpolation. This extends the user-requested prototype in the coord-owned test app. (Re-logged from codex/synthetic-calming-workflow, where it was D-coord-019; that id was already taken on main by the ElevenLabs sandbox decision. Merged for Cam's integration request, D-onboarding-023.)
+
+**Produces:** `test/backend/guide_ai.py`, `test/backend/main.py`, `test/backend/test_guide_ai.py`, `test/frontend/guide.js`, `test/frontend/onboarding.js`, `test/frontend/home.js`, `docs/ai-guide.md`
 
 ## Proposed, awaiting acceptance
 
@@ -309,12 +349,13 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 |---|---|---|
 | `.claude/settings.json` | `9c3a4e493a58` | D-coord-002, D-onboarding-013 |
 | `.github/workflows/coord.yml` | `96090a168ffc` | D-coord-002 |
-| `.gitignore` | `d050ddb12035` | D-coord-008, D-coord-014 |
+| `.gitignore` | `7b734bb44610` | D-coord-008, D-coord-014, D-coord-018 |
 | `CLAUDE.md` | `c156fe12fbec` | D-coord-001 |
 | `LICENSE` | `66934fca6625` | D-coord-008 |
-| `README.md` | `009ec0f47d26` | D-coord-008 |
+| `README.md` | `b2171daf1e62` | D-coord-008, D-coord-018 |
 | `coord/README.md` | `6b4acf0bc3df` | D-coord-001 |
 | `coord/lanes.json` | `a231397884d9` | D-coord-004, D-coord-016 |
+| `docs/ai-guide.md` | `5abe486f0c1e` | D-coord-020, D-coord-022 |
 | `docs/architecture.md` | `7a8ff3f2a3d2` | D-coord-008 |
 | `docs/hackathon/elicitation-playbook.md` | `431ef8310673` | D-coord-011, D-coord-012 |
 | `docs/hackathon/lanes/contracts.md` | `659077ebfecd` | D-coord-004, D-coord-009, D-coord-011 |
@@ -326,7 +367,9 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/hackathon/mvp.md` | `57cfa56c173e` | D-coord-005, D-coord-006, D-coord-007, D-coord-009, D-coord-011 |
 | `docs/on-aim-closed-loop.html` | `63ed5ec933fa` | D-coord-008 |
 | `docs/open-questions.md` | `32ec140a0c57` | D-coord-008 |
+| `docs/oura-import-plan.md` | `eb3166588ff3` | D-coord-018 |
 | `docs/plan.md` | `d6259d0a40d3` | D-coord-008 |
+| `docs/synthetic-workflow.md` | `aa83dde55335` | D-coord-018 |
 | `package.json` | `a453f7213364` | D-coord-010 |
 | `schemas/coord/decision.schema.json` | `3b0135d23761` | D-coord-001 |
 | `schemas/coord/event.schema.json` | `ecf3bcd28523` | D-coord-001 |
@@ -340,18 +383,38 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `test/backend/ai_guide.py` | `fcba44152d0b` | D-coord-019 |
 | `test/backend/elevenlabs_listen_test.py` | `616d1cd7ecb7` | D-coord-019 |
 | `test/backend/elevenlabs_tts.py` | `8757a6c97865` | D-coord-019 |
-| `test/backend/main.py` | `017184104218` | D-coord-015, D-coord-017 |
+| `test/backend/guide_ai.py` | `97f4abe8a376` | D-coord-020, D-coord-022 |
+| `test/backend/main.py` | `36309b722a76` | D-coord-015, D-coord-017, D-coord-022 |
 | `test/backend/requirements.txt` | `9b44749768c3` | D-coord-015 |
+| `test/backend/test_guide_ai.py` | `d7ce4def716c` | D-coord-022 |
 | `test/backend/users.json` | `8cf68f30c0d7` | D-coord-017 |
 | `test/frontend/action.html` | `93d3d6d38678` | D-coord-015 |
 | `test/frontend/app.js` | `953014455dd4` | D-coord-015, D-coord-017 |
-| `test/frontend/guide.js` | `20d75c7c603c` | D-coord-019 |
-| `test/frontend/home.html` | `acbdfd78bb19` | D-coord-019 |
-| `test/frontend/home.js` | `98c7044fddea` | D-coord-019 |
+| `test/frontend/guide.js` | `a35f92c78df3` | D-coord-019, D-coord-020, D-coord-022 |
+| `test/frontend/home.html` | `acbdfd78bb19` | D-coord-019, D-coord-021 |
+| `test/frontend/home.js` | `46f1a60897ab` | D-coord-019, D-coord-020, D-coord-022 |
 | `test/frontend/index.html` | `d50bac581d0e` | D-coord-015, D-coord-017 |
 | `test/frontend/onboarding.html` | `137d76f707bd` | D-coord-015 |
-| `test/frontend/onboarding.js` | `4d0e2e4e57d5` | D-coord-019 |
+| `test/frontend/onboarding.js` | `157215be3f02` | D-coord-019, D-coord-022 |
 | `test/frontend/styles.css` | `7211e2285b01` | D-coord-015, D-coord-017 |
+| `test/frontend/test-guide.cjs` | `a97c4dfe3456` | D-coord-020 |
+| `test/synthetic_lab/examples/calming-profile.json` | `b721a9499870` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/declined.json` | `310d754a5a28` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/hr_only.json` | `036930d834b0` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/hrv_only.json` | `555edb4b98dc` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/missing_data.json` | `cc32bce0d2fb` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/no_recovery.json` | `298f4b0e5092` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/recovery.json` | `c5295293955d` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/sleep_hrv.json` | `3370cf0b261c` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/spike.json` | `d314a3984737` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/workout.json` | `9cdd456d240e` | D-coord-018 |
+| `test/synthetic_lab/peak_state/__init__.py` | `002f3858627e` | D-coord-018 |
+| `test/synthetic_lab/peak_state/__main__.py` | `2e311a44ecbd` | D-coord-018 |
+| `test/synthetic_lab/peak_state/demo.html` | `9000579e1008` | D-coord-018 |
+| `test/synthetic_lab/peak_state/scenarios.py` | `20657bae50d5` | D-coord-018 |
+| `test/synthetic_lab/peak_state/server.py` | `678ad2efae52` | D-coord-018 |
+| `test/synthetic_lab/peak_state/workflow.py` | `c21ce8c3315c` | D-coord-018 |
+| `test/synthetic_lab/tests/test_workflow.py` | `8db6fbf96dbe` | D-coord-018 |
 | `tools/coord.py` | `de72727efde0` | D-coord-001 |
 | `tools/test_coord.py` | `741a3e3bf218` | D-coord-001, D-onboarding-022 |
 | `tsconfig.base.json` | `9a0a4c80f350` | D-coord-010 |

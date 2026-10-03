@@ -9,6 +9,49 @@
 // ---------- Finding things on the page ----------
 const $ = (id) => document.getElementById(id);
 
+// Send only wording context to the backend. Raw saved answers stay unchanged.
+function guideContext(profile, stepIndex = 0) {
+  return {
+    state: String(profile.state || "").slice(0, 200),
+    moment: profile.moment === "I'm there" ? "" : String(profile.moment || "").slice(0, 6000),
+    steps: (profile.steps || []).slice(0, 8).map(step => ({ kind: step.kind, text: String(step.text || "").slice(0, 6000) })),
+    step_index: stepIndex,
+  };
+}
+
+const guideRequests = new Set();
+let guideGeneration = 0;
+
+async function phraseGuide(goal, profile, fallback, stepIndex = 0) {
+  const controller = new AbortController();
+  guideRequests.add(controller);
+  const timer = setTimeout(() => controller.abort(), 10000);
+  try {
+    const response = await fetch("/api/guide/phrase", {
+      method: "POST", headers: { "Content-Type": "application/json" }, signal: controller.signal,
+      body: JSON.stringify({ goal, context: guideContext(profile, stepIndex) }),
+    });
+    if (!response.ok) return fallback;
+    const data = await response.json();
+    return typeof data.text === "string" && data.text.trim() && data.text.length <= 420 ? data.text : fallback;
+  } catch {
+    return fallback;
+  } finally {
+    clearTimeout(timer);
+    guideRequests.delete(controller);
+  }
+}
+
+function cancelGuidePhrasing() {
+  guideGeneration++;
+  for (const request of guideRequests) request.abort();
+  if (waiting) {
+    const resolve = waiting;
+    waiting = null;
+    resolve(null);
+  }
+}
+
 // ---------- Speaking (the guide's voice) ----------
 // Default: ElevenLabs via POST /api/tts. Set window.PEAK_TTS = "browser" before this script for system speech.
 if (window.PEAK_TTS === undefined) window.PEAK_TTS = "elevenlabs";
@@ -203,9 +246,13 @@ const RATING_CHOICES = ["0", "2", "4", "6", "8", "10"];
 
 // Show one question, say it out loud, then wait for the answer.
 async function ask(label, question, choices = []) {
+  const generation = guideGeneration;
+  showChoices([]);
+  hideAnswerTools();
   show(label, question);
   $("hint").textContent = "";
   await speak(question);
+  if (generation !== guideGeneration) return null;
   showChoices(choices);
   const answer = new Promise((resolve) => (waiting = resolve));
   setTyping(typing); // show the mic (and start listening) or the typing box
@@ -215,13 +262,16 @@ async function ask(label, question, choices = []) {
 // Ask a question that has tap answers. A spoken answer is matched to the closest tap answer.
 async function askChoice(label, question, choices) {
   const reply = await ask(label, question, choices);
+  if (reply === null) return null;
   return matchChoice(reply, choices);
 }
 
 // Ask for a number from 0 to 10. Asks once more if no number is heard.
 async function askRating(label, question) {
   for (let tries = 0; tries < 2; tries++) {
-    const n = toNumber(await ask(label, question, RATING_CHOICES));
+    const reply = await ask(label, question, RATING_CHOICES);
+    if (reply === null) return null;
+    const n = toNumber(reply);
     if (n !== null) return n;
     question = "Just a number from 0 to 10, please.";
   }

@@ -47,14 +47,14 @@ A rep is generated from **one state** in the profile. It is a timed sequence tha
 | 0 | `rate` (before) | none | untimed | One tap, 0 to 10: "How *{label}* are you right now?" On a detection trigger the person can skip it (logged as `null`). It is not part of the timed budget. |
 | 1…n | `strategy-step` | `steps[i]`, in order, up to `fullyInAt` | about 8 s each | First the step's content in their words ("See the crowd."), then the **drivers that belong to this step's modality**, as instructions ("Bring it close. Make it bright."). A step with no driver gets one core submodality from its own record, so every step still carries a detail. |
 | n+1 | `leverage` | `state.leverage` | 3 s | Optional. Their "why it matters" line, said once. |
-| n+2 | `anchor-peak` | `anchorStep` | 4 s | "Now, at full strength:" followed by the anchor step's content and its submodalities. This is the conditioning pairing. |
+| n+2 | `peak` | `anchorStep` | 4 s | "Now, at full strength:" followed by the anchor step's content and its submodalities. This is the conditioning pairing. |
 | last | `rate` (after) | none | untimed | One tap, 0 to 10. Then the rep ends. |
 
-- **Timing.** Steps 1 to n+2 are timed. The budget defaults to **32 s**, with hard bounds of **20 to 40 s**. The generator shares the budget across steps, uses each step's speech length as its floor, and adds a short silence after each step. Typical chains have 3 steps (for example `Ve → Ai → Ki`, about 8 s each). With 5 or more steps, the per-step time shrinks and only the top driver is spoken.
+- **Timing.** Steps 1 to n+2 are timed. The budget defaults to **32 s** (speech estimated at 2.6 words per second plus a 1 s pause per step, D-reps-010), with hard bounds of **20 to 40 s**. The generator shares the budget across steps, uses each step's speech length as its floor, and adds a short silence after each step. Typical chains have 3 steps (for example `Ve → Ai → Ki`, about 8 s each). With 5 or more steps, the per-step time shrinks and only the top driver is spoken.
 - **Driver phrasing.** A driver is spoken as its peak value in the person's words, through a fixed template per attribute, for example `distance: close` becomes "Bring it close". The templates live in `reps/` and are tested. When there is no template for an attribute, the step falls back to "Make it {peakValue}".
 - **Auditory self-talk steps** (`Ai`) say the person's sentence once, slowly, then leave a 2 s silence for them to repeat it.
-- **Script object.** `RepScript { stateId, mode: "full" | "anchor-only", steps: [{ kind, stepIndex?, modality?, text, plannedMs }], totalMs, scriptHash }`. The `scriptHash` lets the log show exactly which wording ran.
-- **Missing anchor step.** The rep still runs, without the `anchor-peak` step. The state is counted but can never be installed, and progress shows "pick an anchor step to install".
+- **Script object.** `RepScript { profileId, stateId, kind: "full" | "anchor-only", steps: [{ kind, text, plannedMs, timed, strategyStepIndex?, driverIndexes? }], totalMs, scriptHash }` (`reps/src/script.ts`). The `scriptHash` lets the log show exactly which wording ran.
+- **Missing anchor step.** The rep still runs, without the `peak` step. The state is counted but can never be installed, and progress shows "pick an anchor step to install".
 - **Speech.** The runner uses `speechSynthesis` when the browser has it, and otherwise shows the text on screen with the same timing. The clock is injectable, so tests don't wait in real time.
 
 ---
@@ -65,7 +65,7 @@ Coord's direction is that recode, test and future pace count as the first reps. 
 
 | Playbook step | RepSession | Counts toward |
 |---|---|---|
-| 4.1 Recode | `phase: "recode"`, `arm: cue`, no `anchor-peak` | Rep count only. It works on the contrast memory, so the anchor isn't paired. |
+| 4.1 Recode | `phase: "recode"`, `arm: cue`, no `peak` | Rep count only. It works on the contrast memory, so the anchor isn't paired. |
 | 4.2 Test | `phase: "test"`, `intensityBefore: test.before`, `intensityAfter: test.after` | Rep count. It is a good rep if it meets §5. |
 | 4.3 Future pace | `phase: "future-pace"`, full chain, `anchorPaired: true` | Rep count. It is a good rep if onboarding captures a 0 to 10 rating after it (requested from onboarding). |
 
@@ -75,20 +75,19 @@ These sessions have no sensing, so `signalSource: "none"` and `recoverySeconds: 
 
 ## 4. What a RepSession logs
 
-Contracts owns the final shape. I use their field names from D-contracts-004 and ask for the fields marked **new**.
+Contracts owns the final shape. I use their field names from D-contracts-006 (mirrored in `reps/src/shapes.ts` until `@peak-state/contracts` ships, D-reps-009). Fields marked **new** were my requests; most are now in D-contracts-006, and `phase` is still open.
 
 | Field | Type | Why |
 |---|---|---|
 | `id`, `profileId`, `stateId` | string | `stateId` replaces `emotionId` (**new**: rename) |
-| `mode` | `"full"` \| `"anchor-only"` | Keeps the installed test separate from conditioning reps. |
+| `kind` | `"full"` \| `"anchor-only"` | Keeps the installed test separate from conditioning reps. |
 | `trigger` | `{ kind: "detection" \| "manual" \| "practice" \| "onboarding", detectionId? }` | **new:** `onboarding` |
 | `phase` | `"recode"` \| `"test"` \| `"future-pace"` \| `null` | **new.** Set only on onboarding reps. |
 | `arm` | `"cue"` \| `"sham"` | Taken from `DetectionEvent.gate.sham` (D-reps-004). Manual, practice and onboarding reps are always `cue`. |
 | `startedAt`, `endedAt` | ISO time | |
-| `steps[]` | `{ kind: "strategy-step" \| "leverage" \| "anchor-peak" \| "rate", stepIndex?, plannedMs, startedAt, endedAt, completed }` | Records which steps actually ran. A sham has only the `rate` steps. **new:** these kinds replace `physiology`, `focus` and `language`. |
-| `driversSpoken` | string[] | **new.** Which driver attributes were spoken, so later we can ask which drivers go with fast recovery. |
+| `steps[]` | `{ kind: "rate" \| "anchor" \| "strategy-step" \| "leverage" \| "peak", strategyStepIndex?, driverIndexes?, plannedMs, startedAt, endedAt, delivered }` | Records which steps actually ran. A sham has only the `rate` steps. A full rep has no opening `anchor` step (D-reps-009); `anchor` is the anchor-only test. `driverIndexes` replaces the `driversSpoken` I first asked for. |
 | `scriptHash` | string | **new** |
-| `anchorPaired` | bool | **new.** True when `anchor-peak` completed. |
+| `anchorPaired` | bool | **new.** True when `peak` completed. |
 | `intensityBefore`, `intensityAfter` | 0 to 10 or `null` | |
 | `recoverySeconds`, `recoveryCensored` | number or `null`, bool | Recovery time comes from sensing (§6). `recoveryCensored` (**new**) means no recovery happened within the 180 s window. |
 | `signalSource` | `"simulator"` \| `"hr-strap"` \| `"none"` | **new** |
@@ -105,7 +104,7 @@ This is enough to tell a cue from a sham for every rep, which is the definition 
 
 **Installed (D-reps-003, proposed; coord confirmed that it still applies to one state).**
 
-- **Good rep.** `mode: full`, `arm: cue`, `endedBy: completed`, `anchorPaired: true`, and `intensityAfter ≥ 7`. Onboarding reps count when they meet this rule.
+- **Good rep.** `kind: full`, `arm: cue`, `endedBy: completed`, `anchorPaired: true`, and `intensityAfter ≥ 7`. Onboarding reps count when they meet this rule.
 - **Ready to test.** After **5 good reps**, the next practice offer is the anchor-only test.
 - **Anchor-only test.** First the before rating. Then the **anchor step alone**, with its submodalities, and nothing else from the chain. Then 10 s of silence. Then the after rating.
 - **Pass.** `intensityAfter ≥ 7` and a rise of at least 2. When signals are present, recovery is logged but not required to pass.
@@ -127,10 +126,12 @@ This is enough to tell a cue from a sham for every rep, which is the definition 
 **Provides**
 
 ```ts
-reps.script(profile, stateId, mode?: "full" | "anchor-only"): RepScript
+reps.script(profile, stateId, kind?: "full" | "anchor-only", { targetMs? }): RepScript   // M1, built
+reps.createRecorder(script, { trigger, arm, repIndex, signalSource, clock }) // M1, built: steps, ratings, recovery → RepSession
+reps.nextRepIndex(sessions, stateId): number                                  // M1, built
 reps.run(profile, stateId, trigger, opts?: { onStep?, clock?, speech? }): RepHandle
   // RepHandle = { session: Promise<RepSession>, stop(reason?: "user-stop" | "safety-stop"): void }
-reps.fromOnboarding(profile, stateId): RepSession[]
+reps.fromOnboarding(profile, stateId): RepSession[]                          // M1, built
 reps.status(profile, sessions): StateRepStatus[]   // goodReps, "conditioning" | "ready-to-test" | "installed" | "no-anchor"
 reps.progress(sessions): ProgressAggregates      // reps per state, intensity trend, cue vs sham recovery, installed
 ```
@@ -168,7 +169,7 @@ Reps does not store anything. Experience persists the log in the browser and pas
 | human | Confirm the installed criterion in D-reps-003 (5 good reps; then an anchor-step-only test with a rating of at least 7 and a rise of at least 2; two passes in a row). |
 | human | On stage, should the sham rate be 0, or should one sham be pinned in the scripted scenario? |
 | human | Is a 32 s rep (bounds 20 to 40 s) right for the demo pacing? |
-| contracts | Please add the §4 fields, `trigger.kind: onboarding`, `phase`, the `strategy-step` and `anchor-peak` step kinds, and the `stateId` rename. Will drivers carry `{ modality, attribute, peakValue, contrastValue, ratingDelta }`? |
+| contracts | Please add the §4 fields, `trigger.kind: onboarding`, `phase`, the `strategy-step` and `peak` step kinds, and the `stateId` rename. Will drivers carry `{ modality, attribute, peakValue, contrastValue, ratingDelta }`? |
 | onboarding | Can you capture a 0 to 10 rating after future pace (4.3), and timestamps for 4.1 to 4.3? |
 
 ---

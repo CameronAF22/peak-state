@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "D-experience-006",
+  "lane": "experience",
+  "title": "M1 app shell: temporary contracts mirror and fixture stubs until @peak-state/contracts lands",
+  "status": "accepted",
+  "type": "technical",
+  "context": "D-coord-013 says go for M1 against proposed contracts, but lane/contracts holds only PLAN.md so far. CLAUDE.md forbids a second shape, so the mirror is temporary, one file, and copied exactly.",
+  "decision": "The app imports every shared type, fixture and the chain() helper through one file, app/src/contracts.ts. Until @peak-state/contracts merges, that file mirrors D-contracts-005/006 field for field (from contracts/PLAN.md) and app/src/fixtures/ holds copies of the planned profile.demo and rep-log.demo fixtures. When contracts ships, contracts.ts becomes a re-export of @peak-state/contracts and app/src/fixtures/ is deleted. No screen touches the mirror directly. Module stubs live in app/src/stubs/ and are chosen per module with ?onboarding|sensing|reps=stub|real. Tests use Vitest in app/test/. The app commits no root lockfile (the root is coord's).",
+  "alternatives": [
+    "Wait for contracts before building screens: blocks M1",
+    "Read fixtures from origin/lane/contracts at build time: they don't exist yet and it couples the build to git"
+  ],
+  "consequences": "",
+  "produces": [
+    "app/src/contracts.ts",
+    "app/src/fixtures/",
+    "app/test/",
+    "app/src/",
+    "app/package.json",
+    "app/tsconfig.json",
+    "app/vite.config.ts",
+    "app/index.html"
+  ],
+  "dependsOn": [
+    "D-coord-013",
+    "D-contracts-005",
+    "D-contracts-006",
+    "D-experience-002",
+    "D-experience-003",
+    "D-experience-005"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  },
+  "createdAt": "2026-10-03T14:48:32Z",
+  "acceptedAt": "2026-10-03T14:48:32Z",
+  "acceptedBy": "claude"
+}

@@ -12,14 +12,16 @@
     "typecheck": "tsc -p tsconfig.json",
     "harness": "vite --host 127.0.0.1 --port 5174",
     "build:harness": "vite build",
+    "build:all": "vite build && npm run build -w @peak-state/app",
     "test:visual": "playwright test",
     "design": "vite --config design/vite.config.ts",
     "test:design": "playwright test -c design/playwright.config.ts",
-    "worker:dev": "npm run build:harness && wrangler d1 migrations apply peak-state --local && wrangler dev --ip 127.0.0.1 --port 8787",
-    "worker:deploy": "npm run build:harness && wrangler d1 migrations apply peak-state --remote && wrangler deploy"
+    "worker:dev": "npm run build:all && wrangler d1 migrations apply peak-state --local && wrangler dev --ip 127.0.0.1 --port 8787",
+    "worker:deploy": "npm run build:all && wrangler d1 migrations apply peak-state --remote && wrangler deploy"
   },
   "dependencies": {
-    "@peak-state/contracts": "0.1.0"
+    "@peak-state/contracts": "0.1.0",
+    "@peak-state/reps": "0.1.0"
   },
   "devDependencies": {
     "@playwright/test": "1.56.1",

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T145722Z-experience-80bc",
+  "from": "experience",
+  "to": "coord",
+  "subject": "Experience M1 shell done; lockfile and root workspace note",
+  "body": "@peak-state/app runs all five screens end to end on stubs. Typecheck, 9 Vitest tests and the build pass, and the build has no external URLs. Running npm install at the root creates a root package-lock.json that no lane owns, so I install with --no-package-lock and commit no lockfile. Please decide whether coord owns a root lockfile. Root 'npm test' and 'npm run typecheck' pick up app's scripts.",
+  "refs": [
+    "D-experience-006",
+    "D-coord-010"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:57:22Z",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  }
+}

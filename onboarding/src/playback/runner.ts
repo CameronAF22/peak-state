@@ -18,6 +18,10 @@ export interface RunOptions {
   wait?: (ms: number) => Promise<void>;
   /** Session id. Default derived from the start time. */
   id?: string;
+  /** What started the run. Default practice; "I'm off" is manual (D-onboarding-023). */
+  trigger?: RepSession["trigger"];
+  /** "anchor-only" plays just the anchor step: the installed test (D-reps-003). Default "full". */
+  kind?: RepSession["kind"];
 }
 
 export const DEFAULT_PAUSE_MS = 1500;
@@ -36,7 +40,9 @@ export async function runStrategy(profile: ProfileV2, stateId: StateId, cb: Play
   const wait = opts.wait ?? realWait;
   const pauseMs = Math.max(0, Math.round(opts.pauseMs ?? DEFAULT_PAUSE_MS));
   const iso = (): string => new Date(now()).toISOString();
-  const lines = buildPlaybackLines(profile, stateId);
+  const kind = opts.kind ?? "full";
+  const all = buildPlaybackLines(profile, stateId);
+  const lines = kind === "anchor-only" ? all.filter((l) => l.kind === "anchor") : all;
 
   const startedAt = iso();
   const steps: RepStep[] = [];
@@ -60,7 +66,7 @@ export async function runStrategy(profile: ProfileV2, stateId: StateId, cb: Play
     await wait(pauseMs);
     if (line.kind === "intro") continue;
     steps.push({
-      kind: line.kind === "anchor" ? "anchor-peak" : "strategy-step",
+      kind: line.kind === "anchor" ? (kind === "anchor-only" ? "anchor" : "anchor-peak") : "strategy-step",
       stepIndex: line.stepIndex,
       plannedMs: pauseMs,
       startedAt: t0,
@@ -83,9 +89,9 @@ export async function runStrategy(profile: ProfileV2, stateId: StateId, cb: Play
     profileId: profile.profileId,
     stateId,
     repIndex: Math.max(0, Math.floor(opts.repIndex ?? 0)),
-    kind: "full",
+    kind,
     phase: null,
-    trigger: { kind: "practice" },
+    trigger: opts.trigger ?? { kind: "practice" },
     arm: "cue",
     startedAt,
     endedAt: iso(),

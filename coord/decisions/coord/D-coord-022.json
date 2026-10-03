@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-022",
+  "lane": "coord",
+  "title": "Use OpenAI for grounded guide wording while keeping the scripted flow",
+  "status": "accepted",
+  "type": "technical",
+  "context": "The user asked to use OpenAI to fit answers into subsequent questions naturally. The current test app uses toYou plus literal full-answer interpolation. This extends the user-requested prototype in the coord-owned test app. (Re-logged from codex/synthetic-calming-workflow, where it was D-coord-019; that id was already taken on main by the ElevenLabs sandbox decision. Merged for Cam's integration request, D-onboarding-023.)",
+  "decision": "Add a server-side OpenAI Responses phrasing endpoint with bounded structured context and fixed conversational goals. Rewrite follow-up questions and recalled cues naturally rather than interpolating whole answers; retain raw profile answers, question order, choices and session limits. Use concise scripted fallbacks when credentials or model output are unavailable.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "test/backend/guide_ai.py",
+    "test/backend/main.py",
+    "test/backend/test_guide_ai.py",
+    "test/frontend/guide.js",
+    "test/frontend/onboarding.js",
+    "test/frontend/home.js",
+    "docs/ai-guide.md"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "branch": "claude/strategy-storage-cloudflare-txlooc"
+  },
+  "createdAt": "2026-10-03T19:33:00Z",
+  "acceptedAt": "2026-10-03T19:33:00Z",
+  "acceptedBy": "claude"
+}

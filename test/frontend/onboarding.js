@@ -196,11 +196,10 @@ async function partStrategy() {
   await guideSays("The first trigger", firstQuestion, answers.steps[0].text, "Good.", 800);
 
   if (SHORT_VERSION) setProgress(3);
-  answers.steps.push(await askStep("The next step", STRATEGY.nextStep, next));
+  answers.steps.push(await askStep("The next step", await phraseGuide("next_step", answers, STRATEGY.nextStep), next));
   showPath();
 
   // Write the sequence down in order. The order matters as much as the parts.
-  const [a, b] = answers.steps;
   if (SHORT_VERSION) {
     // Read it back as a statement, not a question, to keep it to 4 questions.
     // The AI walks through the path in its own words; without AI, the fixed sentence.
@@ -209,7 +208,7 @@ async function partStrategy() {
   }
   const order = await askChoice(
     "1 · Your sequence",
-    `So first, ${toYou(a.text)}. Then, ${toYou(b.text)}. Is that the right order?`,
+    await phraseGuide("sequence_confirm", answers, "Think about your first trigger and the step that followed. Is that the right order?"),
     ["Yes", "Swap them"],
   );
   if (order === "Swap them") {
@@ -224,7 +223,7 @@ async function partDetails() {
   await say("2 · The details", "Now let's look closer at each step. Not what it's about, just how it is.");
   for (const [i, step] of answers.steps.entries()) {
     const group = DETAIL_GROUP[step.kind];
-    await say(`2 · Step ${i + 1}`, `Step ${i + 1}: ${toYou(step.text)}. Let's look at the ${GROUP_NAME[group]}.`, 400);
+    await say(`2 · Step ${i + 1}`, await phraseGuide("step_intro", answers, `Bring step ${i + 1} to mind. Let’s look at the ${GROUP_NAME[group]}.`, i), 400);
     step.details = await askDetails(`2 · Step ${i + 1} · ${GROUP_NAME[group]}`, group);
   }
 }
