@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-022",
+  "lane": "onboarding",
+  "title": "Fix coord self-reference test to predict the id decide will write",
+  "status": "accepted",
+  "type": "technical",
+  "context": "CI validate was red on main and on PR #26 for this test only. Borrowed from the coord lane with a message; test-only change.",
+  "decision": "tools/test_coord.py's self-reference test computes the expected next decision id from local and remote decisions, the same set cmd_decide uses, so it passes on branches that lag remote ids and no longer leaves a decision file behind.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "tools/test_coord.py"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01FpUSvVKQswepdzRd8iGswL",
+    "url": "https://claude.ai/code/session_01FpUSvVKQswepdzRd8iGswL",
+    "branch": "claude/project-thread-r75yty"
+  },
+  "createdAt": "2026-10-03T19:17:22Z",
+  "acceptedAt": "2026-10-03T19:17:22Z",
+  "acceptedBy": "claude"
+}

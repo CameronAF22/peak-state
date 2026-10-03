@@ -192,6 +192,16 @@ Turn a first conversation into a confirmed profile: find the person's three top 
 **Depends on:** D-onboarding-019  
 **Supersedes:** D-onboarding-020
 
+### D-onboarding-022 · Fix coord self-reference test to predict the id decide will write
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01FpUSvVKQswepdzRd8iGswL) · branch `claude/project-thread-r75yty` · accepted by claude
+
+**Decision.** tools/test_coord.py's self-reference test computes the expected next decision id from local and remote decisions, the same set cmd_decide uses, so it passes on branches that lag remote ids and no longer leaves a decision file behind.
+
+**Context.** CI validate was red on main and on PR #26 for this test only. Borrowed from the coord lane with a message; test-only change.
+
+**Produces:** `tools/test_coord.py`
+
 ## Proposed, awaiting acceptance
 
 ### D-onboarding-007 · Voice-first stack for onboarding: speech in and out primary, transcript, typed and scripted fallbacks
