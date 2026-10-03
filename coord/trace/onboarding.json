@@ -17,6 +17,13 @@
       ]
     },
     {
+      "path": "onboarding/PLAN.md",
+      "sha256": "1185ceb4485676807923a40020e5e2aecd64cf4a1766831575d827249ca075c8",
+      "decisions": [
+        "D-onboarding-001"
+      ]
+    },
+    {
       "path": "prompts/discovery.md",
       "sha256": "915c158676a35f1cc2cc2818875495b64bd86205514c206aa470862c3500ef6e",
       "decisions": [

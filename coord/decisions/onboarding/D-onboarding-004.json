@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-004",
+  "lane": "onboarding",
+  "title": "Calibration: 20 s guided recall per emotion via sensing.record()",
+  "status": "accepted",
+  "type": "product",
+  "context": "The brief says about 20 s, lanes.json says about 60 s, and the demo table gives the Calibrate step 30 s in total. 20 s x 3 = 60 s plus settles is the shortest window that still gives several RR-based HRV windows; the demo fast-forwards it.",
+  "decision": "After playback, onboarding runs one calibration block per emotion: a 5 s settle, then a 20 s guided recall that speaks that emotion's triad back in their words while onboarding calls sensing.record(20). Onboarding stores sensing's summary (to be defined by contracts: HR and RMSSD mean, spread, quality, source) on emotion.calibration, with the person's 0 to 10 intensity rating after the recall. Readings with poor quality are flagged, not dropped. A skip is always allowed; the emotion then has no calibration and sensing falls back to its generic baseline. In demo mode the simulator returns a pinned on-state, so the step can be fast-forwarded.",
+  "alternatives": [
+    "60 s per emotion (lanes.json; better HRV estimate, three minutes on its own)",
+    "One calibration for the whole profile (cannot tell the three on-states apart)"
+  ],
+  "consequences": "",
+  "produces": [
+    "onboarding/calibration/"
+  ],
+  "dependsOn": [
+    "D-onboarding-001",
+    "D-coord-007"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  },
+  "createdAt": "2026-10-03T14:03:01Z",
+  "acceptedAt": "2026-10-03T14:03:01Z",
+  "acceptedBy": "claude"
+}
