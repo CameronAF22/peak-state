@@ -3,92 +3,113 @@
 Owner lane: `experience`. Owns `app/` and `demo/`.
 Mission: the web app a judge touches (onboard, calibrate, live, rep, progress), wired to the other lanes' modules, plus the three-minute demo.
 
-Status at M0: `contracts/` does not exist yet. This plan builds against the first-cut shapes in `docs/hackathon/mvp.md` and switches to `contracts/` as soon as the contracts lane publishes it.
+**Revised for the scope change** (D-coord-011, D-coord-012, `docs/hackathon/elicitation-playbook.md`):
+
+- The MVP has **one state** that the person chooses and names in their own words.
+- Onboarding is a **voice playbook**: strategy order, then submodalities, then drivers found by contrast, then recode, test and future pace.
+- A strategy is an **ordered list of steps** (for example `Ve → Ai → Ki`). The physiology, focus and language triad is only a derived view.
+
+Every screen shows one state. Layouts leave room for 1 to 3, so the next version, which offers three emotions, needs no redesign.
 
 ## Stack
 
-- **Vite + TypeScript + React**, static build, no server. It runs offline once loaded (all assets bundled, no CDN, no fonts fetched at runtime).
-- The app owns all chrome and navigation. Modules plug in through the interfaces in `contracts/API.md`. The app never reaches into a module's internals.
-- The live chart is a small canvas component, so there is no chart library to load.
-- Persistence (M3) uses `localStorage` under one versioned key per record type: the Profile and the RepSession log. There are no accounts and no cloud storage.
-- The other lanes do not need React. A module is either headless (functions and callbacks) or exposes `mount(el: HTMLElement, props) → unmount()`. The app wraps either kind in a React slot.
-
-Rejected: plain TypeScript with no framework (five stateful screens and a live chart get slow to build by hand) and Next.js or another SSR stack (needs a server and doesn't fit offline-first).
+- **Vite + React + TypeScript**, static build, offline once loaded (D-experience-002).
+- `app/` is the npm workspace package `@peak-state/app` (D-coord-010). It extends `../tsconfig.base.json`, exposes `test` and `typecheck`, and imports the other lanes by package name (`@peak-state/onboarding`, `@peak-state/sensing`, `@peak-state/reps`, `@peak-state/contracts`).
+- The live chart is a small canvas component, so there is no chart library.
+- Persistence (M3) uses `localStorage` under versioned keys for the Profile and the RepSession log. Reps does not persist anything. The app owns the log and passes it back to reps (agreed with reps).
 
 ## The five screens
 
-Navigation is a linear state machine with a visible step bar: `onboard → calibrate → live → rep → progress`. Demo mode can jump to any screen using fixture data. Every screen shows a persistent footer with the safety line and a **Stop** button.
+Navigation is a linear flow with a step bar: `onboard → calibrate → live → rep → progress`. Demo mode can jump to any screen with fixture data. A persistent safety footer (the stop line from `README.md`) and a **Stop** button are on every screen.
 
 | Screen | What it shows | Module / contract | Fixture fallback |
 |---|---|---|---|
-| **Onboard** | Conversation that finds three emotions. Each strategy is played back in the person's words (body, focus, words, anchor). The person confirms. | `onboarding.run() → Profile` (or `onboarding.mount(el, {onDone})`) | Fixture Profile from `contracts/`; a "Use sample profile" button |
-| **Calibrate** | For each emotion: a recall prompt, a countdown, and a live HR/HRV trace. Stores what "on" looks like for that emotion. | onboarding calibration step + `sensing` frames → `profile.emotions[i].calibration` | Simulator frames; calibration summary taken from the fixture |
-| **Live** | Live HR/RR trace, a band for the on-state, detector gate state (windows, refractory, sham flag), a large **I'm off** button, and the source badge (simulator / strap / manual). | `sensing.start(profile, onEvent)` emits `SignalFrame` and `DetectionEvent` | Pinned simulator scenario that drifts at a fixed time |
-| **Rep** | Plays the anchor, then runs the strategy steps in order (body, focus, words). Asks for an intensity rating 0 to 10 before and after. On a sham arm the cue is withheld and the screen says so honestly afterwards. | `reps.run(profile, emotionId, trigger) → RepSession` (or `reps.mount`) | Fixture RepSession |
-| **Progress** | Reps per emotion, intensity trend, recovery time for cue vs sham, and an **installed** badge after a successful anchor-only test. | reads the RepSession log; reps provides the aggregation or the installed rule | Fixture RepSession log |
+| **Onboard** (voice-first) | Mic state and live transcript. The person's state name in their words. A **step chain that fills in** as steps are captured (`Ve → Ai → Ki`, each chip showing the content in their words). Under the active step, a **core-submodality checklist** for its modality (picture: location, size, distance, brightness, associated or dissociated; sound: source, volume, location; feeling: body location, intensity 0 to 10, moving or still). A contrast panel with the differences and the 1 to 3 **drivers**, framed as hypotheses. The anchor step is marked. A final playback in order with the drivers, and a Confirm button. Typed fallback input is always there. | `onboarding` headless session: events in, guide turns and captures out. Result is Profile v2 with `states[]`. | Scripted session from fixtures that fills the chain on a timer. "Use sample profile" button. |
+| **Calibrate** | The peak and contrast windows the playbook already recorded (sections 1.2 to 1.5 and 3.1 to 3.2), shown as two bands on the HR/HRV trace: what *on* and *off* look like for this person. Optional re-record. Connect strap button. | `sensing` calibration from the onboarding windows. Calibration is stored on the state. | Fixture calibration |
+| **Live** | Live HR/RR trace at 1 Hz with 5 s window features, the on-band, and the gate state (consecutive windows, refractory, sham flag). False fires per minute for the current scenario. A large **I'm off** button. A source badge (simulator, strap or manual). | `sensing.start(profile, onEvent, {source, targetStateId, mode})`, `sensing.manual()`, `connectStrap()` (called from a click) | Pinned scenario `sensing/scenarios/demo.json` |
+| **Rep** | Rating 0 to 10, then the person's **own steps in their own order**, each with its driver submodalities spoken as instructions ("bring the picture close and bright"), then the anchor step at the peak, then a second rating. Stop is visible for the whole rep. A sham arm withholds the cue and says so honestly afterwards. | `reps.run(profile, stateId, trigger, host)` returns `{session, stop}` with `onStep`. The app renders each step. | Fixture RepSession |
+| **Progress** | Reps for the state, intensity trend, cue vs sham recovery time, the playbook's test result (before and after the recode), and status (`conditioning`, `ready-to-test`, `installed`). Shows **installed** once an anchor-only rep brings the state back. | `reps.progress(sessions)`, `reps.status(profile, sessions)` | Seeded rep log `contracts/fixtures/rep-log.demo.json` |
 
 ## How modules plug in
 
+The agreed shape is D-experience-003, which contracts has accepted. Each module's entry point is `<lane>/src/index.ts`. A module with its own UI exposes `mount(el, props) → unmount()`. Every other module is headless (functions plus callbacks), and the app renders it.
+
 ```
-app/src/modules.ts      one registry: { onboarding, sensing, reps }, each typed by contracts/
-app/src/fixtures.ts     loads the fixtures from contracts/ (or examples/) for demo mode
-app/src/screens/*.tsx   five screens; each takes module + fixture through props
+app/src/modules.ts      registry { onboarding, sensing, reps }, typed by @peak-state/contracts
+app/src/host.ts         the ModuleHost the app hands to modules
+app/src/stubs/          fixture stub per module, same interface; ?onboarding=stub|real etc.
+app/src/screens/*.tsx   five screens
 ```
 
-- Each module is imported from its lane's entry point (`onboarding/`, `sensing/`, `reps/`). Which file is the entry point is for `contracts/API.md` to settle; my proposal is `<lane>/src/index.ts`.
-- Each slot has a **fixture stub** that implements the same interface from `contracts/` fixtures. The app runs end to end on stubs from day one, and each lane's real module replaces its stub on its own schedule. A query flag (`?onboarding=stub&sensing=real&reps=real`) picks stub or real per module, so the demo can fall back in seconds.
-- The app validates every Profile, DetectionEvent and RepSession that crosses a boundary against the `contracts/` schemas in dev builds, so a drift between lanes shows up loudly instead of silently.
-- I never define a shape myself. If I need a field, I message `contracts`.
+**ModuleHost** (my answer to contracts):
+
+```ts
+interface ModuleHost {
+  el?: HTMLElement;                        // only for modules that mount their own UI
+  speech: { speak(text: string): Promise<void>; listen(onText: (t: string, final: boolean) => void): () => void; muted: boolean };
+  clock: { now(): number; speed: number }; // the demo can fast-forward deterministically
+  onSafetyStop(reason: string): void;      // the app shows the stop end screen
+}
+```
+
+The app owns the speech adapter (browser speech for now, and whatever D-onboarding-002 settles later), so the demo can mute it, fast-forward it, or switch it to scripted in one place.
+
+**Onboarding** is headless, and the app renders the voice screen. It emits typed events: `guideTurn`, `userTurn` (interim and final), `stateNamed`, `stepCaptured`, `submodalityCaptured`, `contrastCaptured`, `driverFound`, `anchorStepMarked`, `testRated` and `confirmed`. These drive the transcript, the step chain and the checklist. The onboarding lane can keep a default view for its own testing. The event names belong in `contracts/API.md`.
+
+**Which state a detection fires:** the MVP has only one, so it fires that state. With three states (next version), the state picked on Live is `targetStateId`.
 
 ## Gates
 
 | Gate | Deliverable |
 |---|---|
-| **M0** | This plan, the stack decision, and messages to every lane. |
-| **M1** | Vite app scaffold in `app/`. Five screens as stubs on fixture data from `contracts/`. Module registry with fixture stubs. Safety footer. |
-| **M2** | Vertical slice in the app: fixture profile, then a simulated drift, then a fired rep, then a logged RepSession, then progress. Real `sensing` and `reps` modules wired in as soon as they exist. |
-| **M3** | Real onboarding conversation, calibration, and the Web Bluetooth strap when present (Chrome only, with feature detection that falls back to the simulator). Profile and rep log persisted to `localStorage`. |
-| **M4** | `demo/`: the three-minute script, the pinned simulator scenario, a fallback screen recording, pitch notes, and safety copy on screen. |
+| **M0** | Plan, stack and module-slot decisions, messages to every lane. Revised for the one-state voice scope. |
+| **M1** | `@peak-state/app` scaffold. Five screens as stubs on `contracts/` fixtures: Onboard shows a scripted step chain filling in with checklists, Live runs the stub simulator. Registry with stubs. Safety footer. |
+| **M2** | Vertical slice: fixture profile (one state, ordered steps), then a simulated drift, then a fired rep in the person's step order, then a logged RepSession, then progress. Real `sensing` and `reps` wired in as they land. |
+| **M3** | Real voice onboarding through the playbook, calibration from the playbook windows, the strap when present (simulator fallback), and the profile and log in `localStorage`. |
+| **M4** | `demo/`: the script, the pinned scenario timed with sensing, prefilled contrast and driver results from a rehearsal, a fallback recording, pitch notes, and safety copy on screen. |
 
 ## Three-minute demo outline
 
+Onboarding grows to about 90 s. Sections 1 and 4 of the playbook run live with core submodalities only. The contrast and driver results come prefilled from a rehearsal (the playbook's default; it is still an open question for a person).
+
 | Time | Screen | Beat |
 |---|---|---|
-| 0:00–0:10 | title | "Peak State finds the moves you already use to reach your best states, then trains them back in when you drift." Safety line visible. |
-| 0:10–1:10 | Onboard | Short conversation (scripted, fast-forwardable) finds *confident*, *calm focus*, *playful*. Playback of one strategy in the person's words: body, focus, sentence, anchor. |
-| 1:10–1:40 | Calibrate | Recall *calm focus* for a few seconds on the simulator (or strap). The on-band appears on the trace. |
-| 1:40–2:10 | Live | Pinned scenario: the trace drifts out of the band, the gate counts consecutive windows, opens, and a rep fires. Point at the **I'm off** button as the always-available manual path. |
-| 2:10–2:40 | Rep | Anchor plays. Body, focus, words. Rating 4 → 8. RepSession logged. |
-| 2:40–3:00 | Progress | Reps per emotion, intensity trend, cue vs sham recovery, the *installed* badge on one emotion (seeded log). Close: "We measure it; we don't claim it." |
+| 0:00–0:05 | title | One line about what Peak State does. The safety line is visible. |
+| 0:05–1:35 | Onboard | By voice, the person names their state ("calm before a pitch") and steps into a memory. The chain fills in `Ve → Ai → Ki` with their words on each chip, and the checklists tick. The contrast and drivers appear prefilled ("closeness and brightness seem to matter most for you"). Recode, test 3 → 7, future pace, playback, confirm. |
+| 1:35–1:45 | Calibrate | Peak and contrast bands from the recording made during the playbook. "This is what *on* looks like for you." |
+| 1:45–2:15 | Live | The pinned scenario drifts out of the band, the gate counts windows and opens, and the rep fires. Point at **I'm off**. |
+| 2:15–2:45 | Rep | Rating 4, then their own steps in their order with drivers spoken, then the anchor step at the peak, then rating 8. Logged. |
+| 2:45–3:00 | Progress | Seeded log: the rep count, the trend, cue vs sham recovery, and **installed** after an anchor-only pass. "We measure it; we don't claim it." |
 
-The demo runs from a pinned simulator scenario with a seeded rep log, so it is the same every time with no network. A screen recording is the fallback.
+It is offline and deterministic: scripted onboarding, a pinned scenario, and a seeded log. A screen recording is the fallback.
 
 ## Interfaces
 
 **Needs**
 
-- `contracts`: Profile v2, SignalFrame, DetectionEvent and RepSession schemas, TS types, fixtures (including a seeded multi-session RepSession log for progress), and `contracts/API.md` with the module entry points and signatures.
-- `onboarding`: `run()` or `mount()` that returns a confirmed Profile, plus the calibration step.
-- `sensing`: `start(profile, onEvent)` with `stop()`, a frame stream for the chart, a pinned deterministic demo scenario, and the manual trigger entry point that the app's **I'm off** button calls.
-- `reps`: `run(profile, emotionId, trigger)` or `mount()`, the RepSession it produces, and the progress aggregation and installed rule (or a pure function the app can call).
+- `contracts`: types and fixtures for Profile v2 with `states[]` (1 to 3) and ordered steps with submodalities, contrast, differences, drivers, anchor step, test and future pace. Also Calibration (peak and contrast windows), SignalFrame, DetectionEvent and RepSession (steps follow the person's order). Also `rep-log.demo.json`, a scripted onboarding fixture (the timed event stream above), and `API.md` with ModuleHost and the onboarding event names.
+- `onboarding`: a headless session emitting the events above, with a scripted mode of about 90 s that runs offline and can be fast-forwarded, and a stopped result for the safety stop.
+- `sensing`: `start/stop`, 1 Hz frames plus window features, `manual()`, `connectStrap()`, calibration from the onboarding windows, the pinned demo scenario, and false fires per minute.
+- `reps`: `run` with `onStep` replaying the person's step order with drivers, plus `status`, `progress` and the seeded history.
 
 **Provides**
 
-- The app shell, navigation, and a screen slot for each module (`mount(el, props)` or headless).
-- Fixture stubs for every module, so each lane can see its own module in the app before the others are ready.
-- The demo timeline (above, and later `demo/script.md`) that the other lanes rehearse against.
+- The app shell, navigation, ModuleHost (speech, clock, safety stop) and screen slots.
+- A fixture stub per module, so each lane sees its module in the app early.
+- The rep log persistence.
+- The demo timeline above (moving to `demo/script.md` at M4) for the other lanes to rehearse against.
 
 ## Risks
 
-- **`contracts/` lands late.** Mitigation: build on the `mvp.md` first-cut shapes behind one adapter file, then swap.
-- **Module UI vs headless mismatch.** Mitigation: support both slot kinds; agree in `contracts/API.md`.
-- **Web Bluetooth.** Chrome/Edge desktop and Android only, and it needs HTTPS or localhost. Mitigation: the simulator is the default and the strap is opt-in.
-- **Live demo risk.** Mitigation: pinned scenario, seeded log, stub/real switch per module, recorded fallback.
-- **Safety copy drift.** Mitigation: one shared safety component in the app shell, never per-screen text.
+- **The 90 s voice onboarding is the riskiest beat on stage.** Mitigation: scripted mode by default, one clock that can fast-forward, and a recording.
+- **Profile v2 is being redefined.** Mitigation: one adapter file over `@peak-state/contracts`, so the screens never touch raw shapes.
+- **Live speech recognition** varies by browser and needs a quiet room. Mitigation: typed fallback and scripted path.
+- **Web Bluetooth** works only in Chrome or Edge, over HTTPS or localhost, and needs a user click. Mitigation: simulator by default.
+- **Safety copy drift.** Mitigation: one shared safety component plus a stop end screen used by every module through `onSafetyStop`.
 
 ## Open questions (for `human`)
 
-1. Which device runs the demo: a laptop with Chrome, or a phone? This decides layout and whether the strap is usable.
-2. Is a Web Bluetooth heart-rate strap (Polar H10 or similar) available on demo day?
-3. Is the onboarding conversation live on stage, or scripted and fast-forwarded? A live LLM call needs a network, which conflicts with "no network" in the definition of done.
+1. Which device runs the demo: a laptop with Chrome, or a phone?
+2. Is a Web Bluetooth heart-rate strap available on demo day?
+3. On stage, is the voice onboarding live speech or scripted? The playbook's default is that sections 1 and 4 run live and contrast and drivers come prefilled. A live LLM call needs a network, which conflicts with "no network" in the definition of done.
 4. When is the demo, and how long is the hackathon?
