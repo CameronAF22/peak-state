@@ -2,11 +2,14 @@ import json
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from ai_guide import AIUnavailable, write_reflection, write_round
+from elevenlabs_tts import load_dotenv, sync_key_from_listen_test, text_to_speech
+
+load_dotenv()
+sync_key_from_listen_test()
 
 FRONTEND = Path(__file__).resolve().parent.parent / "frontend"
 USERS_FILE = Path(__file__).resolve().parent / "users.json"
@@ -19,6 +22,10 @@ app.mount("/assets", StaticFiles(directory=FRONTEND), name="assets")
 class AuthBody(BaseModel):
     username: str = Field(min_length=1, max_length=64)
     password: str = Field(min_length=1, max_length=128)
+
+
+class TtsBody(BaseModel):
+    text: str = Field(min_length=1, max_length=5000)
 
 
 def load_users() -> dict[str, str]:
@@ -73,6 +80,15 @@ async def login(body: AuthBody) -> dict[str, str]:
     if users.get(username) != body.password:
         raise HTTPException(status_code=401, detail="Invalid username or password")
     return {"username": username}
+
+
+@app.post("/api/tts")
+async def tts(body: TtsBody) -> Response:
+    try:
+        audio = text_to_speech(body.text.strip())
+    except RuntimeError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return Response(content=audio, media_type="audio/mpeg")
 
 
 @app.get("/api/auth/me")
