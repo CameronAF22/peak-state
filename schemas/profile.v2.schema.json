@@ -1,0 +1,311 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/profile.v2.schema.json",
+  "title": "Profile v2",
+  "description": "One person's 1 to 3 chosen states (the MVP has one), each elicited with the voice playbook (docs/hackathon/elicitation-playbook.md): an ordered strategy of represented steps with submodalities, the contrast, the differences and the drivers. The physiology/focus/language triad is derived in contracts/src/derive.ts, never stored. Cross-references (step and difference indexes) are checked by validateProfile() in contracts/src/validate.ts. D-contracts-008.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "profileId", "createdAt", "confirmedAt", "states"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 2 },
+    "profileId": { "type": "string", "minLength": 1, "description": "Stable id. Not a display name." },
+    "displayName": { "type": ["string", "null"], "description": "Used only in the greeting." },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "confirmedAt": { "type": ["string", "null"], "format": "date-time", "description": "Set at playbook 4.4 (final playback). Null is a draft; reps refuse a draft." },
+    "states": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "$ref": "#/$defs/state" } }
+  },
+  "$defs": {
+    "stateId": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,31}$" },
+    "stepIndex": { "type": "integer", "minimum": 0 },
+    "rating": { "type": "integer", "minimum": 0, "maximum": 10 },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "words", "strategy", "anchorStep", "contrast", "differences", "drivers", "recode", "test", "futurePace", "calibration"],
+      "properties": {
+        "id": { "$ref": "#/$defs/stateId" },
+        "label": { "type": "string", "minLength": 1, "description": "Playbook 1.1: the state in the person's own words, short." },
+        "words": { "type": "string", "minLength": 1, "description": "Playbook 1.1: how they describe it." },
+        "memoryCue": { "type": ["string", "null"], "maxLength": 80, "description": "Playbook 1.2: a short private cue to the memory. Never the story." },
+        "leverage": { "type": ["string", "null"], "description": "Optional line on why this state matters, spoken in the rep." },
+        "strategy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["steps", "fullyInAt", "confirmed"],
+          "properties": {
+            "steps": { "type": "array", "items": { "$ref": "#/$defs/step" }, "description": "Playbook 1.3 to 1.5 in order. The array position is the step index." },
+            "fullyInAt": { "oneOf": [{ "$ref": "#/$defs/stepIndex" }, { "type": "null" }], "description": "Playbook 1.5: the step where they were fully in the state." },
+            "confirmed": { "type": "boolean", "description": "Playbook 1.6: the person accepted the order on playback." }
+          }
+        },
+        "anchorStep": { "oneOf": [{ "$ref": "#/$defs/stepIndex" }, { "type": "null" }], "description": "Section 2: the step that brings the state back fastest." },
+        "contrast": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label", "submodalities", "prefilled"],
+              "properties": {
+                "label": { "type": "string", "minLength": 1, "maxLength": 80, "description": "Playbook 3.1: a short label only. Never what it was about." },
+                "submodalities": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "visual": { "$ref": "#/$defs/visualSubmodalities" },
+                    "auditory": { "$ref": "#/$defs/auditorySubmodalities" },
+                    "kinesthetic": { "$ref": "#/$defs/kinestheticSubmodalities" }
+                  }
+                },
+                "prefilled": { "type": "boolean", "description": "True when filled from a rehearsal rather than live (stage demo, D-onboarding-010)." }
+              }
+            }
+          ]
+        },
+        "differences": { "type": "array", "items": { "$ref": "#/$defs/difference" }, "description": "Playbook 3.4 and 3.5." },
+        "drivers": {
+          "type": "array",
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 0 },
+          "description": "Playbook 3.6: indexes into differences, largest ratingDelta first. Hypotheses, not facts. Empty until found."
+        },
+        "recode": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["appliedDrivers"],
+              "properties": { "appliedDrivers": { "type": "array", "uniqueItems": true, "items": { "type": "integer", "minimum": 0 } } }
+            }
+          ]
+        },
+        "test": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["before", "after"],
+              "properties": { "before": { "$ref": "#/$defs/rating" }, "after": { "$ref": "#/$defs/rating" } }
+            }
+          ]
+        },
+        "futurePace": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["situation"],
+              "properties": { "situation": { "type": "string", "minLength": 1 } }
+            }
+          ]
+        },
+        "calibration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["peak", "contrast"],
+          "properties": {
+            "peak": { "oneOf": [{ "type": "null" }, { "$ref": "calibration.schema.json" }] },
+            "contrast": { "oneOf": [{ "type": "null" }, { "$ref": "calibration.schema.json" }] }
+          }
+        }
+      }
+    },
+    "step": {
+      "description": "One represented step: something seen, heard or felt, outside or inside.",
+      "oneOf": [
+        { "$ref": "#/$defs/visualStep" },
+        { "$ref": "#/$defs/auditoryStep" },
+        { "$ref": "#/$defs/kinestheticStep" },
+        { "$ref": "#/$defs/otherStep" }
+      ]
+    },
+    "stepBase": {
+      "type": "object",
+      "required": ["modality", "direction", "content", "submodalities"],
+      "properties": {
+        "modality": { "enum": ["visual", "auditory", "kinesthetic", "other"] },
+        "submodalities": { "type": "object" },
+        "direction": { "enum": ["external", "internal"] },
+        "content": { "type": "string", "minLength": 1, "description": "The step in the person's words." },
+        "anchorDetail": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/anchorDetail" }] }
+      }
+    },
+    "visualStep": {
+      "allOf": [{ "$ref": "#/$defs/stepBase" }],
+      "properties": {
+        "modality": { "const": "visual" },
+        "direction": true, "content": true, "anchorDetail": true,
+        "submodalities": { "$ref": "#/$defs/visualSubmodalities" }
+      },
+      "unevaluatedProperties": false
+    },
+    "auditoryStep": {
+      "allOf": [{ "$ref": "#/$defs/stepBase" }],
+      "properties": {
+        "modality": { "const": "auditory" },
+        "direction": true, "content": true, "anchorDetail": true,
+        "submodalities": { "$ref": "#/$defs/auditorySubmodalities" }
+      },
+      "unevaluatedProperties": false
+    },
+    "kinestheticStep": {
+      "allOf": [{ "$ref": "#/$defs/stepBase" }],
+      "properties": {
+        "modality": { "const": "kinesthetic" },
+        "direction": true, "content": true, "anchorDetail": true,
+        "submodalities": { "$ref": "#/$defs/kinestheticSubmodalities" }
+      },
+      "unevaluatedProperties": false
+    },
+    "otherStep": {
+      "allOf": [{ "$ref": "#/$defs/stepBase" }],
+      "properties": {
+        "modality": { "const": "other" },
+        "direction": true, "content": true, "anchorDetail": true,
+        "submodalities": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "words": { "$ref": "#/$defs/words" } }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "words": {
+      "type": "object",
+      "description": "The person's own phrasing for any attribute, keyed by attribute name.",
+      "additionalProperties": { "type": "string" }
+    },
+    "visualSubmodalities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "core": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "location": { "enum": ["center", "left", "right", "above", "below", "upper-left", "upper-right", "lower-left", "lower-right", "all-around"] },
+            "size": { "enum": ["small", "medium", "life-size", "larger-than-life"] },
+            "distance": { "enum": ["close", "arm-length", "across-room", "far"] },
+            "brightness": { "enum": ["dim", "normal", "bright"] },
+            "perspective": { "enum": ["associated", "dissociated"], "description": "associated: through your own eyes; dissociated: watching yourself." }
+          }
+        },
+        "extended": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "motion": { "enum": ["still", "movie"] },
+            "colour": { "enum": ["colour", "black-and-white"] },
+            "focus": { "enum": ["sharp", "soft"] },
+            "frame": { "enum": ["framed", "panoramic"] }
+          }
+        },
+        "words": { "$ref": "#/$defs/words" }
+      }
+    },
+    "auditorySubmodalities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "core": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "source": { "type": "string", "minLength": 1, "description": "Whose voice or what source, in their words." },
+            "volume": { "enum": ["quiet", "normal", "loud"] },
+            "location": { "enum": ["inside-head", "front", "behind", "left", "right", "above", "all-around"] }
+          }
+        },
+        "extended": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "pitch": { "enum": ["low", "mid", "high"] },
+            "tempo": { "enum": ["slow", "medium", "fast"] },
+            "tone": { "enum": ["warm", "neutral", "sharp"] }
+          }
+        },
+        "words": { "$ref": "#/$defs/words" }
+      }
+    },
+    "kinestheticSubmodalities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "core": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "bodyLocation": { "enum": ["head", "face", "throat", "chest", "stomach", "shoulders", "arms", "hands", "back", "legs", "feet", "whole-body"] },
+            "intensity": { "$ref": "#/$defs/rating" },
+            "movement": { "enum": ["still", "moving"] }
+          }
+        },
+        "extended": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "temperature": { "enum": ["cool", "neutral", "warm"] },
+            "pressure": { "enum": ["light", "medium", "heavy"] },
+            "rhythm": { "enum": ["steady", "pulsing"] },
+            "direction": { "enum": ["up", "down", "outward", "inward", "spreading", "circling"] }
+          }
+        },
+        "words": { "$ref": "#/$defs/words" }
+      }
+    },
+    "anchorDetail": {
+      "description": "The earlier frame's anchors, now detail on a step: scene on a picture step, song on a sound step, body cue on a feeling step.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "caption"],
+          "properties": {
+            "kind": { "const": "scene" },
+            "caption": { "type": "string", "minLength": 1 },
+            "details": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "title"],
+          "properties": {
+            "kind": { "const": "song" },
+            "title": { "type": "string", "minLength": 1 },
+            "artist": { "type": ["string", "null"] },
+            "moment": { "type": ["string", "null"], "description": "The exact moment in the track." }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "gesture"],
+          "properties": {
+            "kind": { "const": "body" },
+            "gesture": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stepIndex", "modality", "attribute", "peak", "contrast", "ratingDelta"],
+      "properties": {
+        "stepIndex": { "$ref": "#/$defs/stepIndex", "description": "The strategy step whose submodality this is." },
+        "modality": { "enum": ["visual", "auditory", "kinesthetic"] },
+        "attribute": { "type": "string", "minLength": 1, "description": "A core or extended key of that modality, for example distance." },
+        "peak": { "type": ["string", "number"] },
+        "contrast": { "type": ["string", "number"] },
+        "ratingDelta": { "type": ["number", "null"], "description": "Playbook 3.5: change in the 0 to 10 rating when this one attribute is switched. Null until tested." }
+      }
+    }
+  }
+}

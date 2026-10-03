@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "D-contracts-008",
+  "lane": "contracts",
+  "title": "Profile v2 frozen for M1: controlled submodality vocabulary, drivers as indexes, peak/contrast calibration",
+  "status": "accepted",
+  "type": "contract",
+  "context": "Onboarding asked for a controlled vocabulary or differences cannot be computed, and for modality 'other'. Reps asked for driver objects. Sensing defined the calibration summary in D-sensing-006. Coord gave the go for M1 (D-coord-013). Note: D-contracts-007 lists itself under depends-on; it meant this decision.",
+  "decision": "As D-contracts-005, with lane feedback folded in. modality is visual|auditory|kinesthetic|other. Core submodalities use a controlled vocabulary so differences can be computed: visual {location, size, distance, brightness, perspective}, auditory {source (free text), volume, location}, kinesthetic {bodyLocation, intensity 0-10, movement}; extended keys likewise enumerated; the person's own phrasing for any attribute goes in submodalities.words. differences[] gain stepIndex. drivers[] stay 1-3 indexes into differences; derive.ts resolves them to {modality, attribute, peakValue, contrastValue, ratingDelta} for reps. calibration is {peak, contrast}, each a CalibrationSummary (D-sensing-006 shape, defined in D-contracts-007) or null; no neutral. The derived triad, chain notation and driver resolution live in contracts/src/derive.ts (contracts owns them). validateProfile() checks schema plus cross-references. Enum lists are in schemas/profile.v2.schema.json.",
+  "alternatives": [
+    "Free-text submodality values compared by string (fragile)",
+    "drivers[] as copies of the differences (two sources of truth)"
+  ],
+  "consequences": "",
+  "produces": [
+    "schemas/profile.v2.schema.json",
+    "contracts/src/profile.ts",
+    "contracts/src/derive.ts",
+    "contracts/src/validate.ts",
+    "contracts/fixtures/profile.demo.json",
+    "contracts/fixtures/profile.three-states.json",
+    "contracts/fixtures/profile.draft.json",
+    "contracts/fixtures/invalid/"
+  ],
+  "dependsOn": [
+    "D-coord-012",
+    "D-coord-013",
+    "D-contracts-002",
+    "D-onboarding-008",
+    "D-sensing-006"
+  ],
+  "supersedes": [
+    "D-contracts-005"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  },
+  "createdAt": "2026-10-03T14:49:34Z",
+  "acceptedAt": "2026-10-03T14:49:34Z",
+  "acceptedBy": "claude"
+}

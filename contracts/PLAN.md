@@ -6,6 +6,8 @@ Owns: `schemas/` (except `schemas/coord/`), `examples/`, `contracts/`.
 
 **Revised for the scope change (D-coord-011, D-coord-012).** The MVP has one state that the person chooses, elicited by voice through `docs/hackathon/elicitation-playbook.md`. Shapes hold 1 to 3 states. A strategy is an ordered list of steps with submodalities. The physiology, focus and language triad becomes a derived view and is never stored. This plan replaces the three-emotion first cut (D-contracts-003 and D-contracts-004, superseded).
 
+**M1 status.** Built. The final shapes are D-contracts-008 (Profile v2) and D-contracts-007 (events and API), which take each lane's own field names. Where the sketches below differ, the schemas, `contracts/API.md` and `contracts/README.md` win.
+
 ## Principles
 
 1. **JSON Schema is the source of truth** (D-contracts-002). Draft 2020-12, one file per shape in `schemas/`. TypeScript types in `contracts/src/` mirror the schemas. One test validates every fixture with Ajv and type-checks it with `tsc`.

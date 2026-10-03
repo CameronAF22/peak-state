@@ -1,0 +1,19 @@
+{
+  "stateId": "calm-before-pitch",
+  "phase": "peak",
+  "source": "simulator",
+  "hr": {
+    "mean": 68.2,
+    "sd": 2.1
+  },
+  "lnRmssd": {
+    "mean": 3.95,
+    "sd": 0.12
+  },
+  "windows": 5,
+  "seconds": 40,
+  "quality": "ok",
+  "speechExcludedSeconds": 8,
+  "recordedAt": "2026-10-03T15:00:40Z",
+  "rating": 8
+}
