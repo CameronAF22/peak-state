@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "reps/PLAN.md",
-      "sha256": "7745d8a5269b629d2eb677dfd645458c01c22a76b355877bf2b8ca0d4fc3b357",
+      "sha256": "07a44f7e2dafd63aaac31fd5a2b5837af3d7ec88dde5c2785b67eee98ed7674c",
       "decisions": [
         "D-reps-001",
         "D-reps-002",
@@ -12,6 +12,83 @@
         "D-reps-004",
         "D-reps-005",
         "D-reps-006"
+      ]
+    },
+    {
+      "path": "reps/package.json",
+      "sha256": "adb774053dde16f6c9db35b194a1cba8bb013f5b50caaf7de4c6e68920ca6769",
+      "decisions": [
+        "D-reps-008"
+      ]
+    },
+    {
+      "path": "reps/src/index.ts",
+      "sha256": "684d28ad16632dd091362bda48aece05657bf8002fd182f8ee7d2f291fecb6e8",
+      "decisions": [
+        "D-reps-007",
+        "D-reps-010"
+      ]
+    },
+    {
+      "path": "reps/src/script.ts",
+      "sha256": "0a1cc9034cd36915d2c98e00b3374f31e877015f4cb91246d3214fef179a119a",
+      "decisions": [
+        "D-reps-007",
+        "D-reps-010"
+      ]
+    },
+    {
+      "path": "reps/src/session.ts",
+      "sha256": "8f1b954ea2921a890b90e8eb9b90f364722d35b62277b409ebdffc7ec53707ad",
+      "decisions": [
+        "D-reps-007",
+        "D-reps-010"
+      ]
+    },
+    {
+      "path": "reps/src/shapes.ts",
+      "sha256": "f363d74787f77f40a1ed5f11613307a765cc00092cdd3778e5a232003976bec9",
+      "decisions": [
+        "D-reps-007",
+        "D-reps-009",
+        "D-reps-010"
+      ]
+    },
+    {
+      "path": "reps/src/wording.ts",
+      "sha256": "90102d454f1f251f45db28aa50f88b196acfd6fc017e48905d8b013a8994c9a1",
+      "decisions": [
+        "D-reps-007",
+        "D-reps-010"
+      ]
+    },
+    {
+      "path": "reps/test/fixtures/profile.demo.json",
+      "sha256": "b9204798149f2f2b43e7cc5a146b1076daea7bf453c029c51b71b6b00e740411",
+      "decisions": [
+        "D-reps-008",
+        "D-reps-009"
+      ]
+    },
+    {
+      "path": "reps/test/script.test.ts",
+      "sha256": "d461c6058ee701179bc08678aee9794a90aebb4a793bf4adec0b514aaf3f28ff",
+      "decisions": [
+        "D-reps-008"
+      ]
+    },
+    {
+      "path": "reps/test/session.test.ts",
+      "sha256": "c5663ecc3b3b9b5d1b7e2ca6e377e59246acbcf685ad9dbdcc924f85cd3246c6",
+      "decisions": [
+        "D-reps-008"
+      ]
+    },
+    {
+      "path": "reps/tsconfig.json",
+      "sha256": "4967fc7a3d54ed93ff3016cd04102beeeb55b1b941fc6d344659c1854ecf2ac8",
+      "decisions": [
+        "D-reps-008"
       ]
     }
   ]
