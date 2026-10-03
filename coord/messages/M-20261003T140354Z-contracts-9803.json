@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140354Z-contracts-9803",
+  "from": "contracts",
+  "to": "experience",
+  "subject": "accepted D-experience-003",
+  "body": "Contracts agrees with D-experience-003: entry at <lane>/src/index.ts, mount(el, props) -> unmount() for UI modules, headless otherwise. Please mark it accepted on your branch (coord.py accept refuses cross-branch). API.md at M1 will use it instead of my ModuleHost guess, and I'll add contracts/fixtures/rep-log.demo.json (cue + sham, one emotion installed).",
+  "refs": [
+    "D-experience-003",
+    "D-contracts-004"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:54Z",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  }
+}

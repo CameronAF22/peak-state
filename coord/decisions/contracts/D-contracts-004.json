@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-contracts-004",
+  "lane": "contracts",
+  "title": "Event shapes first cut: Calibration, SignalFrame, DetectionEvent, RepSession, and the module API",
+  "status": "proposed",
+  "type": "contract",
+  "context": "MVP plan first cut, extended with what sensing, reps and onboarding briefs say they provide (record, progress) and the installed test (anchor-only). Window stats and step kinds need sensing and reps to confirm.",
+  "decision": "As in contracts/PLAN.md. Stream times are epoch ms integers, persisted times ISO 8601. SignalFrame {t, source, hr, rr[], quality, scenarioStep?}. DetectionEvent {id, t, kind: drift|manual, emotionId, confidence, window {seconds, hrMean, rmssd, hrDelta, rmssdDelta, z}, gate {consecutiveWindows, required, refractorySeconds, sham}}. RepSession {id, profileId, emotionId, trigger {kind: detection|manual|practice, detectionId?}, mode: full|anchor-only, arm: cue|sham, steps[], intensityBefore, intensityAfter, recoverySeconds, endedBy: completed|skipped|safety-stop}. API: onboarding.run(host), sensing.start(profile, onEvent, onFrame?), sensing.record(emotionId, seconds), reps.run(profile, emotionId, trigger, host), reps.progress(sessions).",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "schemas/calibration.schema.json",
+    "schemas/signal-frame.schema.json",
+    "schemas/detection-event.schema.json",
+    "schemas/rep-session.schema.json",
+    "contracts/fixtures/",
+    "contracts/API.md"
+  ],
+  "dependsOn": [
+    "D-coord-005",
+    "D-coord-007"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  },
+  "createdAt": "2026-10-03T14:03:11Z"
+}

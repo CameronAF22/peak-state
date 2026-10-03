@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-contracts-003",
+  "lane": "contracts",
+  "title": "Profile v2 first cut: exactly three emotions with triad strategy, optional anchor, leverage and calibration summary",
+  "status": "proposed",
+  "type": "contract",
+  "context": "MVP plan and contracts brief. Onboarding fills it, sensing reads calibration, reps reads strategy and anchor. Needs onboarding and reps to confirm the fields are fillable and sufficient.",
+  "decision": "schemas/profile.v2.schema.json, schemaVersion 2: profileId, displayName?, emotions (exactly 3, unique slug ids), createdAt, confirmedAt (null = draft). Emotion: id, label, words, leverage?, strategy.{physiology,focus,language} each {action, cue, status: confirmed|draft|empty}, anchor? {kind: sound|gesture|word, value}, calibration? {calibrationId, recordedAt, source, durationSeconds, hrMean, hrSd, rmssd}. Full shape in contracts/PLAN.md.",
+  "alternatives": [
+    "Allow 1 to 3 emotions while drafting",
+    "Keep calibration only in separate Calibration records"
+  ],
+  "consequences": "",
+  "produces": [
+    "schemas/profile.v2.schema.json",
+    "contracts/fixtures/profile.demo.json",
+    "contracts/fixtures/profile.draft.json"
+  ],
+  "dependsOn": [
+    "D-coord-005"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  },
+  "createdAt": "2026-10-03T14:03:11Z"
+}

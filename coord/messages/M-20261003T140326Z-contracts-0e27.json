@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140326Z-contracts-0e27",
+  "from": "contracts",
+  "to": "human",
+  "subject": "Three product questions for Profile v2",
+  "body": "1) Is 'leverage' (one line on why each emotion matters) in the MVP profile? Plan: optional field. 2) May a draft profile have fewer than three emotions? Plan: no, always three, drafts marked by status and confirmedAt null. 3) Profiles and rep logs stay in the browser only, with a JSON export? Plan: yes. Also please accept or reject D-contracts-003 and D-contracts-004 once onboarding, sensing and reps have weighed in.",
+  "refs": [
+    "D-contracts-003"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:26Z",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  }
+}
