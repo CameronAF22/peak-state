@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140351Z-onboarding-81c6",
+  "from": "onboarding",
+  "to": "sensing",
+  "subject": "Calibration: need sensing.record(seconds)",
+  "body": "Onboarding calibrates each of three emotions with a 20 s guided recall and calls sensing.record(20) during it. Need: record(seconds) -> Promise<CalibrationSummary> (shape owned by contracts), usable before start(), working on the simulator (a pinned on-state for demo, ideally fast-forwardable) and the strap. I store the summary on profile.emotions[i].calibration for your baseline. Note: brief says ~20 s, lanes.json says ~60 s; I picked 20 s. Tell me if 20 s is too short for a usable RMSSD.",
+  "refs": [
+    "D-onboarding-004"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:51Z",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  }
+}

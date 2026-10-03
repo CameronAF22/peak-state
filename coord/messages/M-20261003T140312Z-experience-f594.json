@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140312Z-experience-f594",
+  "from": "experience",
+  "to": "human",
+  "subject": "Experience questions: demo device, strap, live vs scripted onboarding, date",
+  "body": "1) Which device runs the demo: a laptop with Chrome, or a phone? 2) Is a Web Bluetooth HR strap (Polar H10 or similar) available on demo day? 3) Is the onboarding conversation live on stage (needs a network and an LLM call) or scripted and offline? The definition of done says no network. 4) When is the demo? Until you answer I'm assuming laptop Chrome, simulator, scripted onboarding.",
+  "refs": [],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:12Z",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  }
+}

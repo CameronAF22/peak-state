@@ -16,11 +16,78 @@ Turn a first conversation into a confirmed profile: find the person's three top 
 
 ## Decisions in force
 
-None yet.
+### D-onboarding-001 · Onboarding lane plan for M1 to M4
+
+`accepted` · process · 2026-10-03 · [session](https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2) · branch `lane/onboarding` · accepted by claude
+
+**Decision.** Onboarding follows onboarding/PLAN.md: M1 an elicitation script for three emotions (name all three, then per emotion physiology, focus, language, anchor, leverage line, playback confirm); M2 a transcript-to-Profile-v2 extractor validated against contracts/ with a fixture conversation; M3 the live text conversation with optional browser speech plus a 20 s per emotion calibration through sensing.record(); M4 playback copy and a safety stop checked on every turn. Exposes onboarding.run() -> Profile.
+
+**Context.** Gate M0. The brief, mvp.md, prompts/strategy-extraction.md (one state, three strategies) and docs/state-change.md (the triad) are the starting point. The existing prompts assume one peak state and GPT Live voice; the MVP needs three emotions in about 60 s of demo time.
+
+**Produces:** `onboarding/PLAN.md`  
+**Depends on:** D-coord-005, D-coord-006, D-coord-008
+
+### D-onboarding-003 · One conversation: name three emotions first, then one triad pass per emotion
+
+`accepted` · product · 2026-10-03 · [session](https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2) · branch `lane/onboarding` · accepted by claude
+
+**Decision.** The conversation runs Frame -> name three emotions (a concrete moment each, a label in their words, ranked) -> for each emotion in turn: physiology, focus, language (one follow-up per slot, as an if-then cue), an anchor (sound, gesture or word; optional), one leverage line on why it matters -> per-emotion playback in their words with yes/partly/no. Partly replaces only the flat slot. An emotion is saved only after a yes. The profile is confirmed when all three are confirmed. If time runs out, unconfirmed slots stay empty; nothing is invented. Target under three minutes.
+
+**Context.** prompts/strategy-extraction.md has one state with two follow-ups per slot. Three emotions times four slots does not fit three minutes at two follow-ups, so follow-ups drop to one. Naming all three up front lets the person rank them and stops the conversation from fixating on the first one. The leverage line feeds the rep's Get Leverage step (mvp.md).
+
+**Alternatives considered.**
+
+- Run the full strategy-extraction flow three times in sequence (too long; the person often runs out of distinct moments)
+- Collect one triad and reuse it across three labels (fails the no-invented-strategies rule)
+
+**Produces:** `prompts/onboarding-three-emotions.md`, `onboarding/script/`  
+**Depends on:** D-onboarding-001, D-coord-005
+
+### D-onboarding-004 · Calibration: 20 s guided recall per emotion via sensing.record()
+
+`accepted` · product · 2026-10-03 · [session](https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2) · branch `lane/onboarding` · accepted by claude
+
+**Decision.** After playback, onboarding runs one calibration block per emotion: a 5 s settle, then a 20 s guided recall that speaks that emotion's triad back in their words while onboarding calls sensing.record(20). Onboarding stores sensing's summary (to be defined by contracts: HR and RMSSD mean, spread, quality, source) on emotion.calibration, with the person's 0 to 10 intensity rating after the recall. Readings with poor quality are flagged, not dropped. A skip is always allowed; the emotion then has no calibration and sensing falls back to its generic baseline. In demo mode the simulator returns a pinned on-state, so the step can be fast-forwarded.
+
+**Context.** The brief says about 20 s, lanes.json says about 60 s, and the demo table gives the Calibrate step 30 s in total. 20 s x 3 = 60 s plus settles is the shortest window that still gives several RR-based HRV windows; the demo fast-forwards it.
+
+**Alternatives considered.**
+
+- 60 s per emotion (lanes.json; better HRV estimate, three minutes on its own)
+- One calibration for the whole profile (cannot tell the three on-states apart)
+
+**Produces:** `onboarding/calibration/`  
+**Depends on:** D-onboarding-001, D-coord-007
+
+### D-onboarding-005 · Safety stop checked on every turn, outside the model
+
+`accepted` · product · 2026-10-03 · [session](https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2) · branch `lane/onboarding` · accepted by claude
+
+**Decision.** Every user turn, typed or spoken, passes a safety check before the conversation model sees it: a deterministic keyword and phrase screen in onboarding/safety/, plus the model's own stop instruction in every prompt. On a hit the guide stops elicitation, says it is not the right support, points to someone they trust or local emergency services, saves nothing from that turn, and ends the conversation with a stopped state the app can show. The check also refuses to store clinical labels. The stop text is shared copy so reps and experience can reuse it.
+
+**Context.** README.md safety boundary and mvp.md Safety section. A model-only stop can be missed or talked around; a deterministic pre-check also covers the scripted offline path where no model runs.
+
+**Produces:** `onboarding/safety/`  
+**Depends on:** D-onboarding-001
 
 ## Proposed, awaiting acceptance
 
-None.
+### D-onboarding-002 · Conversation model and voice stack for onboarding
+
+`proposed` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2) · branch `lane/onboarding`
+
+**Decision.** Text chat is the primary surface. Claude (claude-sonnet-5-5, for turn latency) runs the conversation from prompts/onboarding-three-emotions.md through a structured tool call per confirmed field, so the model never speaks JSON. Browser Web Speech API (SpeechRecognition plus speechSynthesis) is optional on top, behind a toggle. The demo path is a deterministic scripted conversation that needs no network and no key; the live LLM path is opt-in (key entered at runtime or a thin proxy, to be agreed with experience). Both paths feed the same extractor, so they produce the same Profile v2.
+
+**Context.** D-coord-006 requires a browser-only demo that runs offline once loaded, so a live LLM cannot be the only path. mvp.md question 3 says the earlier docs assume GPT Live 1 and the default here is text plus browser speech with an LLM behind it. A person must pick the model and say how much of onboarding is scripted on stage.
+
+**Alternatives considered.**
+
+- GPT Live 1 realtime voice as the primary surface (earlier docs; needs network, a key and a server, and is hard to make deterministic for a demo)
+- Fully scripted, no LLM at all (safest demo, but does not show elicitation in the person's own words)
+- Claude Opus for higher elicitation quality at higher latency
+
+**Produces:** `onboarding/conversation/`, `prompts/onboarding-three-emotions.md`  
+**Depends on:** D-coord-006, D-onboarding-001
 
 ## Superseded and rejected
 
@@ -38,6 +105,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 |---|---|---|
 | `docs/elicitation.md` | `8c568b386b97` | D-coord-008 |
 | `docs/state-change.md` | `6fb6b1df03c0` | D-coord-008 |
+| `onboarding/PLAN.md` | `1185ceb44856` | D-onboarding-001 |
 | `prompts/discovery.md` | `915c158676a3` | D-coord-008 |
 | `prompts/induction.md` | `9eac817f9540` | D-coord-008 |
 | `prompts/intervention.md` | `cafae717f40d` | D-coord-008 |

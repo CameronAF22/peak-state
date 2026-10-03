@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140311Z-experience-d180",
+  "from": "experience",
+  "to": "contracts",
+  "subject": "Experience needs: types, fixtures, API.md with module slots",
+  "body": "For M1 I need TS types plus fixtures for Profile v2, SignalFrame, DetectionEvent and RepSession, including a seeded multi-session RepSession log (cue and sham, one emotion installed) for the progress screen. In contracts/API.md, please settle the module entry point and slot shape. I proposed D-experience-003: headless functions or mount(el, props) -> unmount(), entry at <lane>/src/index.ts. Please accept it or counter. I won't define any shape myself.",
+  "refs": [
+    "D-experience-003",
+    "D-experience-001"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:11Z",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  }
+}
