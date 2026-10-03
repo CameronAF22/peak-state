@@ -226,6 +226,29 @@ function toYou(text) {
     .replace(/[.!]+$/, "");
 }
 
+// ---------- The AI guide (on our server) ----------
+const SAFETY_MESSAGE =
+  "Let's pause here. I'm not the right support for this. Please reach out to someone you trust, or your local emergency services.";
+
+// Ask the server's AI guide. Returns its answer, or null if the AI is not available
+// (no key, an error, or no answer within 25 seconds). Then the page uses its built-in script.
+async function askGuideAI(path, body) {
+  $("hint").textContent = "Your guide is thinking…";
+  try {
+    const reply = await fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(25000),
+    });
+    return reply.ok ? await reply.json() : null;
+  } catch {
+    return null;
+  } finally {
+    $("hint").textContent = "";
+  }
+}
+
 // ---------- Saved states ----------
 // Every state the person has mapped, saved on this computer:
 //   { "calm": { state, moment, steps, drivers, ... }, "motivated": { ... } }

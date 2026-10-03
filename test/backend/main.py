@@ -6,6 +6,8 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from ai_guide import AIUnavailable, write_reflection, write_round
+
 FRONTEND = Path(__file__).resolve().parent.parent / "frontend"
 USERS_FILE = Path(__file__).resolve().parent / "users.json"
 
@@ -80,4 +82,40 @@ async def me(username: str) -> dict[str, str]:
     if name not in users:
         raise HTTPException(status_code=404, detail="User not found")
     return {"username": name}
+
+
+# ---------- The AI guide (Groq) ----------
+# The page calls these. If the AI is not set up, they answer 503
+# and the page uses its built-in script instead.
+
+
+class ReflectBody(BaseModel):
+    person: dict  # the state, moment and steps so far
+    last_question: str = ""
+    last_answer: str = ""
+    final: bool = False
+
+
+class GuideBody(BaseModel):
+    person: dict  # the saved state: moment, steps, details, drivers
+    round: int = Field(ge=1, le=10)
+    max_rounds: int = Field(ge=1, le=10)
+    stressed: bool = False
+    last_checkin: str | None = None
+
+
+@app.post("/api/ai/reflect")
+async def ai_reflect(body: ReflectBody) -> dict:
+    try:
+        return await write_reflection(body.person, body.last_question, body.last_answer, body.final)
+    except AIUnavailable as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+
+
+@app.post("/api/ai/guide")
+async def ai_guide(body: GuideBody) -> dict:
+    try:
+        return await write_round(body.person, body.round, body.max_rounds, body.stressed, body.last_checkin)
+    except AIUnavailable as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
 
