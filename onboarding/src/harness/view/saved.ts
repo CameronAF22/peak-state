@@ -6,6 +6,8 @@ import { h, ICONS, mount, SENSE_LABEL, svg } from "./dom.ts";
 
 export interface SavedHandlers {
   run(): void;
+  /** The practice loop (D-onboarding-015). */
+  practice?(): void;
   download(): void;
   newStrategy(): void;
 }
@@ -16,6 +18,12 @@ export interface SavedModel {
   chain: string;
   steps: StepView[];
   running: boolean;
+  /** A practice loop is open: the run buttons wait. */
+  practicing?: boolean;
+  /** "You've chosen to feel content 12 times…" (D-onboarding-016). */
+  reminder?: string | null;
+  /** Revision of the saved strategy, shown once it has changed. */
+  revision?: number;
 }
 
 function when(iso: string): string {
@@ -37,8 +45,9 @@ export function renderSavedCard(m: SavedModel, handlers: SavedHandlers): HTMLEle
       "div",
       { class: "saved-head" },
       h("div", { class: "tick-circle" }, svg(ICONS.check)),
-      h("div", {}, h("h2", {}, "Strategy saved"), h("p", {}, `${m.stateLabel} · ${m.chain} · saved ${when(m.saved.savedAt)}`)),
+      h("div", {}, h("h2", {}, "Strategy saved"), h("p", {}, `${m.stateLabel} · ${m.chain} · ${m.revision && m.revision > 1 ? `version ${m.revision}, updated` : "saved"} ${when(m.saved.savedAt)}`)),
     ),
+    m.reminder ? h("p", { class: "practice-reminder", "data-testid": "reminder" }, m.reminder) : null,
     h(
       "ol",
       { class: "saved-steps" },
@@ -52,16 +61,19 @@ export function renderSavedCard(m: SavedModel, handlers: SavedHandlers): HTMLEle
     ),
     h(
       "button",
-      { class: "btn primary big run-btn", type: "button", "data-testid": "run", disabled: m.running, onclick: () => handlers.run() },
+      { class: "btn primary big run-btn", type: "button", "data-testid": "run", disabled: m.running || m.practicing, onclick: () => handlers.run() },
       h("span", { class: "play", "aria-hidden": "true" }, "▶"),
       m.running ? "Running…" : "Run my strategy",
     ),
+    handlers.practice
+      ? h("button", { class: "btn big practice-btn", type: "button", "data-testid": "practice", disabled: m.running || m.practicing, onclick: () => handlers.practice?.() }, "Practice: recall, rate, adjust")
+      : null,
     h(
       "div",
       { class: "saved-actions" },
       h("button", { class: "btn", type: "button", "data-testid": "download", onclick: () => handlers.download() }, "Download JSON"),
       h("span", { style: "flex:1" }),
-      h("button", { class: "btn ghost", type: "button", "data-testid": "new-strategy", disabled: m.running, onclick: () => handlers.newStrategy() }, "Start a new one"),
+      h("button", { class: "btn ghost", type: "button", "data-testid": "new-strategy", disabled: m.running || m.practicing, onclick: () => handlers.newStrategy() }, "Start a new one"),
     ),
   );
 }
@@ -73,12 +85,13 @@ export function renderRunLog(runs: RepSession[]): HTMLElement {
     .map((r) => {
       const before = r.intensityBefore ?? "–";
       const after = r.intensityAfter ?? "–";
+      const practice = r.trigger.kind === "practice" && r.intensityBefore === null;
       const up = typeof r.intensityBefore === "number" && typeof r.intensityAfter === "number" && r.intensityAfter > r.intensityBefore;
       return h(
         "li",
         { class: "run-entry", "data-testid": "run-entry", "data-ended-by": r.endedBy },
-        h("span", {}, `Run ${r.repIndex + 1}`),
-        h("span", { class: `delta${up ? " up" : ""}` }, `${before} → ${after}`),
+        h("span", {}, practice ? `Run ${r.repIndex + 1} · practice` : `Run ${r.repIndex + 1}`),
+        h("span", { class: `delta${up ? " up" : ""}` }, practice ? `${after}/10` : `${before} → ${after}`),
         h("span", { class: "when" }, r.endedBy === "completed" ? when(r.startedAt) : `${when(r.startedAt)} · stopped`),
       );
     });

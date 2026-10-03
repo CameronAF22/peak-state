@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-018",
+  "lane": "onboarding",
+  "title": "Online tests and local Worker files: SQLite D1 fake, online browser test, ignored local state",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Supports D-onboarding-017 without adding a Workers test runner dependency.",
+  "decision": "The API is unit-tested in Node against a D1-shaped wrapper over node:sqlite with the real migration applied (onboarding/test/unit/d1.ts), and the page client is tested against the real handler in-process. onboarding/test/e2e/online.spec.ts drives the full online flow (account, practice loop, second device) against wrangler dev or a deploy and is skipped unless ONLINE_URL and INVITE_CODE are set, so the default visual test is unchanged. onboarding/.gitignore keeps .wrangler/, .dev.vars and dist-harness/ out of git.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/test/unit/d1.ts",
+    "onboarding/test/e2e/online.spec.ts",
+    "onboarding/.gitignore"
+  ],
+  "dependsOn": [
+    "D-onboarding-017"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "branch": "claude/strategy-storage-cloudflare-txlooc"
+  },
+  "createdAt": "2026-10-03T18:05:57Z",
+  "acceptedAt": "2026-10-03T18:05:57Z",
+  "acceptedBy": "claude"
+}
