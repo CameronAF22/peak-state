@@ -6,10 +6,59 @@
     <title>Onboarding</title>
     <link rel="stylesheet" href="/assets/styles.css" />
   </head>
-  <body>
-    <main class="page">
-      <h1>Onboarding</h1>
-      <p><a href="/?signout=1">Back home</a></p>
+  <body class="onboarding-page">
+    <main class="page onboarding">
+      <!-- Top: progress bar and the steps the person has named so far -->
+      <div class="progress" id="progress" aria-hidden="true">
+        <i></i><i></i><i></i><i></i>
+      </div>
+      <div class="path" id="path"></div>
+
+      <!-- Middle: one question at a time -->
+      <section class="stage">
+        <p class="label" id="label">Welcome</p>
+        <p class="question" id="question" aria-live="polite">
+          Let's find the way you already get to your best.
+        </p>
+        <p class="heard" id="heard" aria-live="polite"></p>
+        <div class="choices" id="choices"></div>
+
+        <!-- Part 3: what is different between the strong time and the stuck time -->
+        <div class="differences" id="differences" hidden>
+          <h2>What's different</h2>
+          <ul></ul>
+        </div>
+
+        <!-- The end: everything we learned -->
+        <div class="summary" id="summary" hidden></div>
+      </section>
+
+      <!-- Bottom: how the person answers -->
+      <section class="answer">
+        <button type="button" class="start" id="start">Begin</button>
+        <!-- Shown at the end of onboarding -->
+        <a class="start" id="go-home" href="/home" hidden>Go to home</a>
+
+        <button type="button" class="mic" id="mic" aria-label="Answer by voice" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="3" width="6" height="11" rx="3" />
+            <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
+          </svg>
+        </button>
+        <p class="hint" id="hint"></p>
+
+        <form class="typed" id="typed" hidden>
+          <input type="text" id="typed-input" placeholder="Type your answer" autocomplete="off" />
+          <button type="submit">Send</button>
+        </form>
+        <button type="button" class="switch" id="switch" hidden>Type instead</button>
+
+        <p class="safety">Peak State is not therapy. If you're in distress, please reach out to someone you trust.</p>
+        <p><a href="/home">Back to dashboard</a></p>
+      </section>
     </main>
+    <!-- guide.js first: onboarding.js uses its voice and asking tools -->
+    <script src="/assets/guide.js"></script>
+    <script src="/assets/onboarding.js"></script>
   </body>
 </html>
