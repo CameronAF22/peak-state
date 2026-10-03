@@ -1,35 +1,45 @@
-// GPT live voice: an OpenAI Realtime speech-to-speech model over WebRTC.
+// GPT live voice: OpenAI's GPT-Live speech-to-speech model (gpt-live-1) over WebRTC (D-onboarding-025).
 //
-// The model is only a voice. The deterministic engine decides every question; this adapter asks the
-// model to say that exact text and streams back transcripts of what the person says. Server VAD
-// detects turns but never triggers a reply on its own (turn_detection.create_response = false):
-// the model speaks only when speak() sends a response.create.
+// The model is only a voice. The deterministic engine decides every question; this adapter hands the
+// model each line to say and streams back transcripts of what the person says.
 //
-// Flow (OpenAI Realtime WebRTC):
-//   getUserMedia(audio) → RTCPeerConnection + mic track + remote audio → <audio autoplay>
+// Flow (OpenAI GPT-Live WebRTC):
+//   getUserMedia(audio) → RTCPeerConnection + mic track + remote audio → <audio>
 //   data channel "oai-events" → createOffer / setLocalDescription
-//   POST offer SDP to `${endpoint}?model=…` (Content-Type application/sdp, Bearer apiKey)
-//   setRemoteDescription(answer) → on channel open, send session.update.
+//   POST { session, sdp } to the harness route /api/live/session (harness/live-proxy.ts), which adds the
+//   project key and calls POST https://api.openai.com/v1/live/sessions → { transport: { sdp: answer } }
+//   setRemoteDescription(answer) → wait for "session.started" before sending anything.
 //
-// The model id is a setting (default "gpt-live-1"), and the wire shapes for session.update and
-// response.create each live in one exported function so they are easy to fix if the API differs.
+// GPT-Live is full duplex and has no response.create (without Responses delegation), no turn-detection
+// settings and no completed-transcript event. So:
+//   - speak() sends session.commentary.append, mutes the mic while the guide talks, and treats the line
+//     as finished when the output transcript goes quiet (with a duration estimate and a hard cap);
+//   - the remote audio is muted outside speak(), so replies the model makes on its own are not heard;
+//   - answers are built from session.input_transcript.delta fragments and are final after a silence gap.
+//
+// The startup session and the per-line event each live in one exported function so the wire shape is
+// easy to fix if the API differs.
 
 import type { GptLiveConfig, VoiceAdapter } from "../types.ts";
 import { createVoiceEmitter } from "./emitter.ts";
-import { splitWords, wordTimeline } from "./words.ts";
+import { splitWords } from "./words.ts";
 
 export const DEFAULT_GPT_LIVE_MODEL = "gpt-live-1";
-export const DEFAULT_REALTIME_ENDPOINT = "https://api.openai.com/v1/realtime/calls";
-export const DEFAULT_TRANSCRIBE_MODEL = "gpt-4o-transcribe";
+/** The harness dev server's route; it holds the key and forwards to OpenAI's /v1/live/sessions. */
+export const DEFAULT_LIVE_SESSION_ENDPOINT = "/api/live/session";
 
 /** GptLiveConfig plus voice-layer-only options (types.ts is not ours to extend). */
 export type GptLiveVoiceConfig = GptLiveConfig & {
-  /** Model for input audio transcription. Default "gpt-4o-transcribe". */
-  transcribeModel?: string;
-  /** Fetches a short-lived key when apiKey is empty (the server's /api/realtime/token). */
-  getApiKey?: () => Promise<string>;
-  /** Milliseconds to wait for the data channel to open. Default 20000. */
+  /** Milliseconds to wait for session.started. Default 20000. */
   connectTimeoutMs?: number;
+  /** Silence after the last heard fragment that ends an answer. Default 1800. */
+  answerSilenceMs?: number;
+  /** Quiet output transcript that ends a spoken line. Default 900. */
+  speakQuietMs?: number;
+  /** Log every GPT-Live event to the console. */
+  debug?: boolean;
+  /** Extra headers for the session route, e.g. the signed-in account on the Cloudflare Worker. */
+  headers?: () => Record<string, string>;
 };
 
 /** Minimal shapes so tests can inject fakes. Real browser objects satisfy them. */
@@ -61,6 +71,7 @@ export interface MediaStreamLike {
 
 export interface AudioElementLike {
   autoplay: boolean;
+  muted?: boolean;
   srcObject: unknown;
   play?: () => Promise<void> | void;
 }
@@ -77,114 +88,97 @@ export interface GptLiveDeps {
   /** Injected for tests. */
   setTimeout?: (fn: () => void, ms: number) => unknown;
   clearTimeout?: (handle: unknown) => void;
+  now?: () => number;
 }
 
 const GUIDE_INSTRUCTIONS = [
   "You are the speaking voice of a scripted guide in a wellbeing app called Peak State.",
-  "You do not run the conversation. A program decides every line.",
-  "When asked to speak, say ONLY the exact text you are given, word for word, in a calm, warm, unhurried voice.",
+  "You do not run the conversation. A program decides every line and sends it to you as commentary.",
+  "When you receive commentary, say it aloud exactly as written, word for word, in a calm, warm, unhurried voice.",
   "Never add your own questions, greetings, commentary, summaries, follow-ups, or reactions to what the person said.",
-  "Never reply to the person on your own. If you are not given text to say, stay silent.",
+  "When the person speaks, listen and stay silent. Do not answer them, acknowledge them, or ask for anything. Wait for the next commentary.",
   "Never give therapy, counselling, diagnosis, medical or mental-health advice.",
 ].join(" ");
 
-/**
- * The session.update event sent when the data channel opens. Uses the GA Realtime session shape
- * (session.type "realtime", audio.input / audio.output). If the API rejects it, fix it here only.
- */
-export function buildSessionUpdate(config: GptLiveVoiceConfig): Record<string, unknown> {
-  const output: Record<string, unknown> = {};
-  if (config.voice) output.voice = config.voice;
-  return {
-    type: "session.update",
-    session: {
-      type: "realtime",
-      instructions: GUIDE_INSTRUCTIONS,
-      audio: {
-        input: {
-          transcription: { model: config.transcribeModel ?? DEFAULT_TRANSCRIBE_MODEL },
-          turn_detection: {
-            type: "server_vad",
-            // The app decides when the model speaks. VAD only marks turns for transcription.
-            create_response: false,
-            interrupt_response: false,
-          },
-        },
-        ...(Object.keys(output).length > 0 ? { output } : {}),
-      },
-    },
+/** The startup session sent with the WebRTC offer. GPT-Live rejects unknown fields, so keep it minimal. */
+export function buildLiveSession(config: GptLiveVoiceConfig): Record<string, unknown> {
+  const session: Record<string, unknown> = {
+    model: config.model?.trim() || DEFAULT_GPT_LIVE_MODEL,
+    instructions: GUIDE_INSTRUCTIONS,
+    delegation: { type: "client" },
   };
+  if (config.voice) session.audio = { output: { voice: config.voice } };
+  return session;
 }
 
-/** The exact instruction given to the model for one line. */
-export function speakInstruction(text: string): string {
-  return `Say exactly this, word for word, and nothing else: "${text}"`;
+/** The event that makes the model say one line. eventId comes back as error.client_event_id. */
+export function buildSpeakEvent(text: string, eventId: string): Record<string, unknown> {
+  return { type: "session.commentary.append", event_id: eventId, delegation_id: null, content: text };
 }
 
-/** The response.create event for one spoken line. speakId is echoed back in response.metadata. */
-export function buildSpeakEvent(text: string, speakId: string): Record<string, unknown> {
-  return {
-    type: "response.create",
-    event_id: speakId,
-    response: {
-      instructions: speakInstruction(text),
-      metadata: { peak_speak_id: speakId },
-    },
-  };
+/** Rough speaking time for a line (2.6 words per second, as in D-reps-010). */
+export function estimateSpeechMs(text: string): number {
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1200, Math.round((words / 2.6) * 1000));
 }
 
 interface PendingSpeak {
   id: string;
-  responseId: string | null;
-  audioStarted: boolean;
-  done: boolean;
-  timer: unknown;
-  /** The line being spoken, for word progress (D-onboarding-021). */
   text: string;
-  /** Words of the assistant's audio transcript so far; null until a transcript delta arrives. */
-  heard: string | null;
-  /** Word currently reported, and the timer that moves it on. */
+  done: boolean;
+  firstOutputAt: number | null;
+  /** The guide's spoken transcript so far, and the word last reported for the highlight (D-onboarding-021). */
+  heard: string;
   word: number;
-  wordTimer: unknown;
+  timer: unknown;
+  capTimer: unknown;
   resolve: () => void;
 }
 
-interface RealtimeEvent {
+interface LiveEvent {
   type?: string;
-  event_id?: string;
-  item_id?: string;
   delta?: string;
-  transcript?: string;
-  response_id?: string;
-  response?: { id?: string; status?: string; metadata?: Record<string, unknown> | null; status_details?: unknown };
-  error?: { message?: string; code?: string; type?: string; event_id?: string } | null;
+  reason?: string;
+  delegation?: { id?: string };
+  error?: { message?: string; code?: string; type?: string; param?: string; client_event_id?: string } | null;
 }
 
 function describeHttpError(status: number, body: string): string {
   let message = body.trim().slice(0, 300);
   try {
-    const parsed = JSON.parse(body) as { error?: { message?: string } };
-    if (parsed?.error?.message) message = parsed.error.message;
+    // OpenAI and the local proxy send { error: { message } }; the Cloudflare Worker sends { error: "…" }.
+    const parsed = JSON.parse(body) as { error?: { message?: string } | string };
+    if (typeof parsed?.error === "string") message = parsed.error;
+    else if (parsed?.error?.message) message = parsed.error.message;
   } catch {
     // body was not JSON
   }
   const hint =
     status === 401
-      ? " Check the API key."
-      : status === 404 || status === 400
-        ? " Check the model id and endpoint in voice settings."
-        : status === 429
-          ? " Rate limited or out of quota."
-          : "";
-  return `OpenAI Realtime refused the connection (HTTP ${status}).${hint}${message ? ` ${message}` : ""}`;
+      ? " Check OPENAI_API_KEY (or the key in the gear)."
+      : status === 403
+        ? " The key's project may not have access to this model."
+        : status === 404
+          ? " Check the model id, and that the page is served by `npm run harness` (it provides /api/live/session)."
+          : status === 400
+            ? " Check the model id and session settings."
+            : status === 429
+              ? " Rate limited or out of quota."
+              : "";
+  return `GPT live could not start a session (HTTP ${status}).${hint}${message ? ` ${message}` : ""}`;
 }
 
 export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps = {}): VoiceAdapter {
   const em = createVoiceEmitter("gpt-live");
-  const model = config.model?.trim() || DEFAULT_GPT_LIVE_MODEL;
-  const endpoint = config.endpoint?.trim() || DEFAULT_REALTIME_ENDPOINT;
+  const endpoint = config.endpoint?.trim() || DEFAULT_LIVE_SESSION_ENDPOINT;
+  const answerSilenceMs = config.answerSilenceMs ?? 1800;
+  const speakQuietMs = config.speakQuietMs ?? 900;
   const setT = deps.setTimeout ?? ((fn: () => void, ms: number) => setTimeout(fn, ms));
   const clearT = deps.clearTimeout ?? ((h: unknown) => clearTimeout(h as ReturnType<typeof setTimeout>));
+  const now = deps.now ?? (() => Date.now());
+  const log = (...args: unknown[]) => {
+    if (config.debug) console.debug("[gpt-live]", ...args);
+  };
 
   let pc: PeerConnectionLike | null = null;
   let dc: DataChannelLike | null = null;
@@ -192,23 +186,53 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
   let audioEl: AudioElementLike | null = null;
   let session = 0; // bumps on stop() so late async steps from an old start() do nothing
   let speakSeq = 0;
+  let started = false;
   let connectTimer: unknown;
+  let onStarted: ((err?: Error) => void) | null = null;
   const pending: PendingSpeak[] = [];
-  const partials = new Map<string, string>(); // item_id → transcript so far
+  let heard = ""; // the answer so far, joined from input transcript fragments
+  let answerTimer: unknown;
+  let afterSpeakTimer: unknown;
 
   function fail(detail: string): void {
     em.setStatus("error", detail);
+  }
+
+  function send(ev: Record<string, unknown>): boolean {
+    if (!dc || dc.readyState !== "open") return false;
+    try {
+      dc.send(JSON.stringify(ev));
+      log("→", ev.type);
+      return true;
+    } catch (err) {
+      fail(`GPT live could not send ${String(ev.type)} (${(err as Error)?.message ?? err}).`);
+      return false;
+    }
+  }
+
+  function setRemoteAudible(on: boolean): void {
+    if (audioEl) audioEl.muted = !on;
   }
 
   function settle(p: PendingSpeak): void {
     if (p.done) return;
     p.done = true;
     if (p.timer !== undefined) clearT(p.timer);
-    if (p.wordTimer !== undefined) clearT(p.wordTimer);
-    if (p.audioStarted) em.emitWord(splitWords(p.text).length, p.text);
+    if (p.capTimer !== undefined) clearT(p.capTimer);
+    if (p.firstOutputAt !== null) em.emitWord(splitWords(p.text).length, p.text);
     const i = pending.indexOf(p);
     if (i >= 0) pending.splice(i, 1);
-    if (pending.length === 0 && em.status().state === "speaking") em.setStatus("ready");
+    if (pending.length === 0) {
+      if (em.status().state === "speaking") em.setStatus("ready");
+      // Let the last syllables and room echo die away, then listen and silence the model again.
+      if (afterSpeakTimer !== undefined) clearT(afterSpeakTimer);
+      afterSpeakTimer = setT(() => {
+        afterSpeakTimer = undefined;
+        if (pending.length > 0) return;
+        send({ type: "session.input_audio.unmute" });
+        setRemoteAudible(false);
+      }, 400);
+    }
     p.resolve();
   }
 
@@ -216,148 +240,91 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     for (const p of [...pending]) settle(p);
   }
 
-  function findSpeak(ev: RealtimeEvent): PendingSpeak | undefined {
-    const rid = ev.response?.id ?? ev.response_id;
-    const meta = ev.response?.metadata?.peak_speak_id;
-    if (typeof meta === "string") {
-      const byMeta = pending.find((p) => p.id === meta);
-      if (byMeta) return byMeta;
-    }
-    if (rid) {
-      const byId = pending.find((p) => p.responseId === rid);
-      if (byId) return byId;
-    }
-    return undefined;
-  }
-
   /**
-   * Word progress while the audio plays: the paced estimate (2.6 words/s, 1 s after a sentence) from the moment the
-   * audio starts, never ahead of the words the transcript deltas have delivered when the server sends them.
+   * Output transcript activity for the current line: move the word highlight to the words heard so far, and finish
+   * once the transcript goes quiet and the line had time.
    */
-  function stepWords(p: PendingSpeak): void {
-    const words = splitWords(p.text);
-    const { starts } = wordTimeline(words);
-    const advance = (): void => {
-      p.wordTimer = undefined;
-      if (p.done || p.word >= words.length - 1) return;
-      const heardCount = p.heard === null ? Infinity : splitWords(p.heard).length;
-      if (p.word + 1 >= heardCount) {
-        p.wordTimer = setT(advance, 120); // wait for the transcript to catch up
-        return;
-      }
-      p.word++;
-      em.emitWord(p.word, p.text);
-      if (p.word < words.length - 1) p.wordTimer = setT(advance, starts[p.word + 1] - starts[p.word]);
-    };
-    if (words.length === 0) return;
-    p.word = 0;
-    em.emitWord(0, p.text);
-    if (words.length > 1) p.wordTimer = setT(advance, starts[1] - starts[0]);
+  function onOutputActivity(delta: string): void {
+    const p = pending[0];
+    if (!p) return;
+    const t = now();
+    if (p.firstOutputAt === null) p.firstOutputAt = t;
+    p.heard += delta;
+    const total = splitWords(p.text).length;
+    const word = Math.min(splitWords(p.heard).length - 1, total - 1);
+    if (word > p.word) {
+      p.word = word;
+      em.emitWord(word, p.text);
+    }
+    const finishAt = Math.max(t + speakQuietMs, p.firstOutputAt + estimateSpeechMs(p.text));
+    if (p.timer !== undefined) clearT(p.timer);
+    p.timer = setT(() => settle(p), finishAt - t);
   }
 
-  function handleEvent(ev: RealtimeEvent): void {
+  function finalizeAnswer(): void {
+    answerTimer = undefined;
+    const text = heard.trim().replace(/\s+/g, " ");
+    heard = "";
+    if (text) em.emitTranscript(text, true);
+    if (pending.length === 0 && em.status().state === "listening") em.setStatus("ready");
+  }
+
+  function handleEvent(ev: LiveEvent): void {
+    log("←", ev.type, ev.error ?? ev.delta ?? ev.reason ?? "");
     switch (ev.type) {
-      case "session.created":
-      case "session.updated":
+      case "session.started":
+        started = true;
+        onStarted?.();
         return;
 
-      case "response.created": {
-        const p = findSpeak(ev) ?? pending.find((x) => x.responseId === null);
-        if (p && ev.response?.id) p.responseId = ev.response.id;
+      case "session.output_transcript.delta":
+        onOutputActivity(ev.delta ?? "");
         return;
-      }
 
-      case "output_audio_buffer.started": {
-        const p = findSpeak(ev);
-        if (p && !p.audioStarted) {
-          p.audioStarted = true;
-          stepWords(p);
-        }
-        return;
-      }
-
-      // The assistant's transcript of its own audio: it caps how far the paced word estimate may run ahead.
-      case "response.output_audio_transcript.delta":
-      case "response.audio_transcript.delta": {
-        const p = findSpeak(ev) ?? pending.find((x) => !x.done && x.audioStarted);
-        if (p) p.heard = (p.heard ?? "") + (ev.delta ?? "");
+      case "session.input_transcript.delta": {
+        // The mic is muted while the guide speaks; anything that still arrives then is echo.
+        if (pending.length > 0 || afterSpeakTimer !== undefined) return;
+        heard += ev.delta ?? "";
+        const sofar = heard.trim().replace(/\s+/g, " ");
+        if (!sofar) return;
+        em.emitTranscript(sofar, false);
+        if (em.status().state === "ready") em.setStatus("listening");
+        if (answerTimer !== undefined) clearT(answerTimer);
+        answerTimer = setT(finalizeAnswer, answerSilenceMs);
         return;
       }
 
-      case "output_audio_buffer.stopped":
-      case "output_audio_buffer.cleared": {
-        const p = findSpeak(ev);
-        if (p) settle(p);
-        return;
-      }
-
-      case "response.done": {
-        const p = findSpeak(ev);
-        if (!p) return;
-        const status = ev.response?.status;
-        if (status === "failed") {
-          fail(`GPT live could not speak the line (${JSON.stringify(ev.response?.status_details ?? "failed")}).`);
-          settle(p);
-          return;
-        }
-        // Over WebRTC, response.done arrives when generation ends; audio may still be playing.
-        // If playback started, wait for output_audio_buffer.stopped, with a short safety net.
-        if (!p.audioStarted) {
-          settle(p);
-        } else {
-          if (p.timer !== undefined) clearT(p.timer);
-          p.timer = setT(() => settle(p), 8000);
-        }
-        return;
-      }
-
-      case "input_audio_buffer.speech_started":
-        if (pending.length === 0) em.setStatus("listening");
-        return;
-
-      case "input_audio_buffer.speech_stopped":
-        if (pending.length === 0) em.setStatus("ready");
-        return;
-
-      case "conversation.item.input_audio_transcription.delta": {
-        const key = ev.item_id ?? "";
-        const so_far = (partials.get(key) ?? "") + (ev.delta ?? "");
-        partials.set(key, so_far);
-        if (so_far.trim()) em.emitTranscript(so_far.trim(), false);
-        return;
-      }
-
-      case "conversation.item.input_audio_transcription.completed": {
-        const key = ev.item_id ?? "";
-        partials.delete(key);
-        const text = (ev.transcript ?? "").trim();
-        if (text) em.emitTranscript(text, true);
-        return;
-      }
-
-      case "conversation.item.input_audio_transcription.failed":
-        fail(`Transcription failed${ev.error?.message ? `: ${ev.error.message}` : ""}. You can type your answer.`);
+      case "session.closed":
+        if (em.status().state !== "idle") fail(`GPT live session ended (${ev.reason ?? "closed"}). Switch the voice off and on to reconnect.`);
+        settleAll();
         return;
 
       case "error": {
-        const msg = ev.error?.message ?? "Unknown Realtime error.";
-        fail(`GPT live error: ${msg}`);
-        const ref = ev.error?.event_id;
+        const msg = ev.error?.message ?? "Unknown GPT live error.";
+        const where = ev.error?.param ? ` (${ev.error.param})` : "";
+        if (!started && onStarted) {
+          onStarted(new Error(`GPT live refused the session: ${msg}${where}`));
+          return;
+        }
+        fail(`GPT live error: ${msg}${where}`);
+        const ref = ev.error?.client_event_id;
         const p = ref ? pending.find((x) => x.id === ref) : undefined;
         if (p) settle(p);
         return;
       }
 
       default:
+        // session.commentary.appended, session.usage.updated, session.delegation.created, … need nothing.
         return;
     }
   }
 
   function teardown(): void {
-    if (connectTimer !== undefined) {
-      clearT(connectTimer);
-      connectTimer = undefined;
-    }
+    for (const t of [connectTimer, answerTimer, afterSpeakTimer]) if (t !== undefined) clearT(t);
+    connectTimer = answerTimer = afterSpeakTimer = undefined;
+    onStarted = null;
+    started = false;
+    heard = "";
     if (dc) {
       dc.onopen = dc.onmessage = dc.onclose = dc.onerror = null;
       try {
@@ -380,7 +347,6 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     dc = null;
     pc = null;
     stream = null;
-    partials.clear();
     settleAll();
   }
 
@@ -388,25 +354,6 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     teardown();
     const mine = ++session;
     const stale = () => mine !== session;
-
-    // A typed key wins; otherwise ask the server for a short-lived one (D-onboarding-017).
-    let apiKey = config.apiKey?.trim() ?? "";
-    if (!apiKey && config.getApiKey) {
-      try {
-        apiKey = (await config.getApiKey()).trim();
-      } catch (err) {
-        if (stale()) return;
-        const detail = `Could not get a GPT live key from the server (${(err as Error)?.message ?? err}).`;
-        fail(detail);
-        throw new Error(detail);
-      }
-      if (stale()) return;
-    }
-    if (!apiKey) {
-      const detail = "GPT live needs an OpenAI API key. Add one in voice settings, or use browser or typed voice.";
-      fail(detail);
-      throw new Error(detail);
-    }
 
     const fetchFn = deps.fetch ?? (globalThis.fetch as unknown as GptLiveDeps["fetch"]);
     const PC = deps.RTCPeerConnection ?? (globalThis as unknown as { RTCPeerConnection?: new () => PeerConnectionLike }).RTCPeerConnection;
@@ -438,22 +385,18 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
       audioEl = deps.audioEl ?? null;
       if (!audioEl) {
         const doc = (globalThis as unknown as { document?: Document }).document;
-        if (doc) {
-          const el = doc.createElement("audio");
-          el.autoplay = true;
-          audioEl = el as unknown as AudioElementLike;
-        }
+        if (doc) audioEl = doc.createElement("audio") as unknown as AudioElementLike;
       }
       if (audioEl) audioEl.autoplay = true;
+      setRemoteAudible(false); // nothing is heard until the first speak()
       conn.ontrack = (ev) => {
-        if (audioEl) {
-          audioEl.srcObject = ev.streams[0] ?? null;
-          try {
-            const r = audioEl.play?.();
-            if (r && typeof (r as Promise<void>).catch === "function") (r as Promise<void>).catch(() => {});
-          } catch {
-            // autoplay is allowed after the user gesture that started the session
-          }
+        if (!audioEl) return;
+        audioEl.srcObject = ev.streams[0] ?? null;
+        try {
+          const r = audioEl.play?.();
+          if (r && typeof (r as Promise<void>).catch === "function") (r as Promise<void>).catch(() => {});
+        } catch {
+          // autoplay is allowed after the user gesture that started the session
         }
       };
       conn.onconnectionstatechange = () => {
@@ -468,35 +411,23 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
 
       const channel = conn.createDataChannel("oai-events");
       dc = channel;
-      const opened = new Promise<void>((resolve, reject) => {
-        const timer = setT(
-          () => reject(new Error("Timed out waiting for the GPT live session to open.")),
-          config.connectTimeoutMs ?? 20_000,
-        );
-        connectTimer = timer;
-        channel.onopen = () => {
-          clearT(timer);
+      const ready = new Promise<void>((resolve, reject) => {
+        connectTimer = setT(() => reject(new Error("Timed out waiting for the GPT live session to start.")), config.connectTimeoutMs ?? 20_000);
+        onStarted = (err) => {
+          if (connectTimer !== undefined) clearT(connectTimer);
           connectTimer = undefined;
-          try {
-            channel.send(JSON.stringify(buildSessionUpdate(config)));
-          } catch (err) {
-            reject(err);
-            return;
-          }
-          resolve();
+          onStarted = null;
+          if (err) reject(err);
+          else resolve();
         };
-        channel.onerror = () => {
-          clearT(timer);
-          connectTimer = undefined;
-          reject(new Error("The GPT live data channel failed."));
-        };
+        channel.onerror = () => reject(new Error("The GPT live data channel failed."));
       });
-      opened.catch(() => {}); // handled below; avoid unhandled rejection if an earlier step throws
+      ready.catch(() => {}); // handled below; avoid an unhandled rejection if an earlier step throws
       channel.onmessage = (ev) => {
         if (stale()) return;
-        let parsed: RealtimeEvent;
+        let parsed: LiveEvent;
         try {
-          parsed = JSON.parse(String(ev.data)) as RealtimeEvent;
+          parsed = JSON.parse(String(ev.data)) as LiveEvent;
         } catch {
           return;
         }
@@ -512,23 +443,34 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
       await conn.setLocalDescription(offer);
       if (stale()) return;
 
-      const url = `${endpoint}?model=${encodeURIComponent(model)}`;
+      const headers: Record<string, string> = { ...(config.headers?.() ?? {}), "Content-Type": "application/json" };
+      // Only sent to the local harness route, which prefers OPENAI_API_KEY from its own environment.
+      if (config.apiKey?.trim()) headers["x-openai-key"] = config.apiKey.trim();
       let res;
       try {
-        res = await fetchFn(url, {
+        res = await fetchFn(endpoint, {
           method: "POST",
-          body: offer.sdp ?? "",
-          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/sdp" },
+          body: JSON.stringify({ session: buildLiveSession(config), sdp: offer.sdp ?? "" }),
+          headers,
         });
       } catch (err) {
-        throw new Error(`Could not reach OpenAI Realtime (${(err as Error)?.message ?? err}).`);
+        throw new Error(`Could not reach the GPT live session route (${(err as Error)?.message ?? err}).`);
       }
       const body = await res.text();
       if (stale()) return;
       if (!res.ok) throw new Error(describeHttpError(res.status, body));
 
-      await conn.setRemoteDescription({ type: "answer", sdp: body });
-      await opened;
+      let answer: string | undefined;
+      try {
+        const parsed = JSON.parse(body) as { transport?: { sdp?: string }; sdp?: string };
+        answer = parsed.transport?.sdp ?? parsed.sdp;
+      } catch {
+        if (body.trimStart().startsWith("v=")) answer = body; // raw SDP answer
+      }
+      if (!answer) throw new Error(`GPT live session started without an SDP answer: ${body.slice(0, 200)}`);
+
+      await conn.setRemoteDescription({ type: "answer", sdp: answer });
+      await ready;
       if (stale()) return;
       em.setStatus("ready");
     } catch (err) {
@@ -546,26 +488,35 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
 
     stop() {
       session++;
+      send({ type: "session.close" });
       teardown();
       em.setStatus("idle");
     },
 
     speak(text: string) {
-      const channel = dc;
-      if (!text.trim() || !channel || channel.readyState !== "open") return Promise.resolve();
-      const id = `peak_speak_${Date.now().toString(36)}_${++speakSeq}`;
+      if (!text.trim() || !started || !dc || dc.readyState !== "open") return Promise.resolve();
+      const id = `peak_speak_${now().toString(36)}_${++speakSeq}`;
+      // A new question ends whatever answer was in progress.
+      if (answerTimer !== undefined) {
+        clearT(answerTimer);
+        answerTimer = undefined;
+      }
+      heard = "";
+      if (afterSpeakTimer !== undefined) {
+        clearT(afterSpeakTimer);
+        afterSpeakTimer = undefined;
+      }
       return new Promise<void>((resolve) => {
-        const p: PendingSpeak = { id, responseId: null, audioStarted: false, done: false, timer: undefined, resolve, text, heard: null, word: -1, wordTimer: undefined };
+        const p: PendingSpeak = { id, text, done: false, firstOutputAt: null, heard: "", word: -1, timer: undefined, capTimer: undefined, resolve };
         pending.push(p);
-        // Fallback so a lost event never hangs the harness.
-        p.timer = setT(() => settle(p), 15_000 + 70 * text.length);
         em.setStatus("speaking");
-        try {
-          channel.send(JSON.stringify(buildSpeakEvent(text, id)));
-        } catch (err) {
-          fail(`GPT live could not send the line (${(err as Error)?.message ?? err}).`);
-          settle(p);
-        }
+        send({ type: "session.input_audio.mute" });
+        setRemoteAudible(true);
+        // If no output transcript arrives, assume the line took about its estimated time.
+        p.timer = setT(() => settle(p), estimateSpeechMs(text) + 3000);
+        // Hard cap so a lost event never hangs the harness.
+        p.capTimer = setT(() => settle(p), 15_000 + 70 * text.length);
+        if (!send(buildSpeakEvent(text, id))) settle(p);
       });
     },
 

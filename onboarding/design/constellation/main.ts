@@ -12,6 +12,7 @@ import { createVoiceControls } from "../../src/harness/view/voice.ts";
 import { appendRun, clearStrategy, DEFAULT_PAUSE_MS, loadStrategy, runsFor, runStrategy, saveStrategy } from "../../src/playback/index.ts";
 import type { Answer, EngineSnapshot, Question, SavedStrategy, StepView, VoiceAdapter, VoiceKind, VoiceStatus } from "../../src/types.ts";
 import { createVoice, loadVoiceSettings, saveVoiceSettings, type VoiceSettings } from "../../src/voice/index.ts";
+import { createApi } from "../../src/sync/index.ts";
 import { createSky, type LightMode, type StarModel } from "./sky.ts";
 
 /** Exposed on window.__harness for tests and debugging (same shape as the harness). */
@@ -27,6 +28,9 @@ export interface HarnessApi {
 const params = new URLSearchParams(location.search);
 const hintDelay = hintDelayFromUrl(location.search);
 const fast = params.get("speed") === "fast";
+const debugLive = params.get("debug") === "live";
+// On the Cloudflare Worker, GPT live needs the account signed in on the harness page (same browser storage).
+const accountApi = createApi();
 const pauseMs = fast ? 150 : DEFAULT_PAUSE_MS;
 const KINDS: VoiceKind[] = ["typed", "browser", "gpt-live"];
 
@@ -94,7 +98,10 @@ async function switchVoice(start: boolean): Promise<void> {
   } catch {
     /* ignore */
   }
-  voice = createVoice(settings.kind, settings.kind === "gpt-live" ? { apiKey: settings.apiKey ?? "", model: settings.model } : undefined);
+  voice = createVoice(
+    settings.kind,
+    settings.kind === "gpt-live" ? { apiKey: settings.apiKey ?? "", model: settings.model, debug: debugLive, headers: () => accountApi.authHeaders() } : undefined,
+  );
   voiceUnsubs.push(voice.onStatus(setStatus), voice.onTranscript(onTranscript));
   voiceStarted = false;
   if (!start && settings.kind !== "typed") {

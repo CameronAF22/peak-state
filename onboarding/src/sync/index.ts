@@ -79,7 +79,8 @@ export interface Api {
   putStrategy(record: StrategyRecord, replaces?: { profileId: string; revision: number } | null): Promise<{ record: StrategyRecord | null; conflict: boolean }>;
   getReps(): Promise<RepSession[]>;
   postReps(reps: RepSession[]): Promise<number>;
-  realtimeKey(model: string): Promise<string>;
+  /** Authorization for the signed-in account, for routes called outside this client (GPT live's /api/live/session). */
+  authHeaders(): Record<string, string>;
 }
 
 export interface ApiOptions {
@@ -172,10 +173,8 @@ export function createApi(opts: ApiOptions = {}): Api {
       const data = await call("POST", "/api/reps", { reps });
       return Number(data.stored ?? 0);
     },
-    async realtimeKey(model) {
-      const data = await call("POST", "/api/realtime/token", { model });
-      if (typeof data.value !== "string") throw new ApiError(502, "The server sent no voice key.");
-      return data.value;
+    authHeaders(): Record<string, string> {
+      return session ? { authorization: `Bearer ${session.token}` } : {};
     },
   };
 }

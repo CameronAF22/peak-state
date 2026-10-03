@@ -18,6 +18,7 @@ Open the printed URL. The page lives at `/`, because Vite's root is `onboarding/
 | `?hint=<ms>` | Hint delay. Default 5000 (`HINT_DELAY_MS`) |
 | `?speed=fast` | Short playback pauses (about 150 ms) for testing. Default 1500 ms |
 | `?voice=typed\|browser\|gpt-live` | Overrides the saved voice choice for this load |
+| `?debug=live` | Logs every GPT live event (sent and received) to the console |
 
 `npm run build:harness -w @peak-state/onboarding` builds a static copy to `onboarding/dist-harness/`.
 
@@ -27,7 +28,15 @@ Pick a voice in the header. A dot next to it shows the voice's status. Typing al
 
 - **Typed**: nothing is spoken. During playback, each line stays on screen while its step card glows.
 - **Browser voice**: uses the Web Speech API (speechSynthesis and SpeechRecognition), so it needs Chrome or Edge. The guide speaks each question. Partial transcripts show live in the answer box, and a final transcript is sent as your answer. During a run, you can say a number to rate.
-- **GPT live**: the realtime voice. Open the gear to paste an API key and to edit the model id (default `gpt-live-1`). Tick "Remember" to keep the key in this browser's localStorage. If you don't, the key lasts only for the page session.
+- **GPT live**: OpenAI's GPT-Live voice (`gpt-live-1`) over WebRTC (D-onboarding-025). GPT-Live sessions must be created server-side with the project key, so the page posts its WebRTC offer to `/api/live/session`. That route is served by the harness dev server (`harness/live-proxy.ts`), which adds the key and calls `POST https://api.openai.com/v1/live/sessions`. Start the harness with the key in its environment:
+
+  ```bash
+  OPENAI_API_KEY=sk-… npm run harness -w @peak-state/onboarding
+  ```
+
+  On Cloudflare the Worker serves the same route for signed-in accounts, using its `OPENAI_API_KEY` secret (see DEPLOY.md).
+
+  A key pasted in the gear also works. It is sent only to that local route, which uses it when `OPENAI_API_KEY` is unset. The gear also edits the model id. Each question is sent as `session.commentary.append`, and the mic is muted while the guide speaks. The model's audio is muted outside those lines, so replies the model makes on its own are not heard. Answers are assembled from `session.input_transcript.delta` fragments and sent after 1.8 s of silence. GPT-Live says commentary in its own voice and may paraphrase. Run with `?debug=live` to see the spoken transcript.
 
 Microphone and speech start on your first click on the page, because browsers require a user gesture before they will start either.
 
@@ -50,6 +59,7 @@ Microphone and speech start on your first click on the page, because browsers re
 | `src/playback/` | `storage.ts` (save, load and clear helpers plus the run log), `script.ts` (`buildPlaybackLines(profile, stateId)`), `runner.ts` (`runStrategy(profile, stateId, callbacks, opts)`, which returns a RepSession) |
 | `src/engine/`, `script/` | The question engine and the question bank |
 | `src/voice/` | Typed, browser and GPT live voice adapters |
+| `harness/live-proxy.ts` | Dev and preview server route `/api/live/session`: holds the OpenAI key and starts GPT-Live sessions |
 | `src/index.ts` | Public exports for other lanes |
 
 `window.__harness.snapshot()` returns the engine's current `EngineSnapshot`, for tests.

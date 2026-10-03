@@ -1,5 +1,6 @@
 // Corner voice control (Horizon style, D-onboarding-021): one quiet button showing the current voice and its state,
-// opening a small menu: Typed · Browser voice · GPT live, with the GPT live model, key and status.
+// opening a small menu: Typed · Browser voice · GPT live, with the GPT live model, key and status. With `fixed`, the
+// voice is set (GPT live for the demo, D-onboarding-026) and the menu only shows its status.
 
 import type { VoiceKind, VoiceStatus } from "../../types.ts";
 import type { VoiceSettings } from "../../voice/index.ts";
@@ -15,7 +16,7 @@ const SHORT: Record<VoiceKind, string> = { typed: "typing", browser: "voice", "g
 
 const MIC = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/></svg>`;
 
-export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, onChange: (s: VoiceSettings) => void): VoiceControls {
+export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, onChange: (s: VoiceSettings) => void, fixed = false): VoiceControls {
   let settings: VoiceSettings = { ...initial };
 
   const icon = h("span", { class: "vt-icon" });
@@ -69,7 +70,8 @@ export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, o
     ),
   );
   const status = h("p", { class: "vt-status", "data-testid": "voice-status", role: "status" }, "");
-  const menu = h("div", { class: "vt-menu", id: "voice-menu", "data-testid": "voice-settings", role: "menu", "aria-label": "Voice", hidden: true }, option("typed"), option("browser"), option("gpt-live"), gpt, status);
+  const menuAttrs = { class: "vt-menu", id: "voice-menu", "data-testid": "voice-settings", role: "menu", "aria-label": "Voice", hidden: true };
+  const menu = fixed ? h("div", menuAttrs, status) : h("div", menuAttrs, option("typed"), option("browser"), option("gpt-live"), gpt, status);
 
   const syncOptions = (): void => {
     for (const b of menu.querySelectorAll<HTMLElement>(".vt-opt")) b.setAttribute("aria-checked", b.dataset.testid === `voice-${settings.kind}` ? "true" : "false");
@@ -112,6 +114,7 @@ export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, o
       label.textContent = s.state === "listening" ? "listening" : s.state === "speaking" ? "speaking" : SHORT[s.kind];
     },
     openSettings() {
+      if (fixed) return;
       open();
       gpt.hidden = false;
       key.focus();

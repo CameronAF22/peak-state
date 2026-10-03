@@ -137,10 +137,11 @@ export interface VoiceAdapter {
 }
 
 export interface GptLiveConfig {
+  /** Optional: sent only to the local harness route, which prefers OPENAI_API_KEY. "" means use the server's key. */
   apiKey: string;
   /** Editable in settings. Default "gpt-live-1". */
   model: string;
-  /** Default "https://api.openai.com/v1/realtime/calls". */
+  /** Session route that holds the key. Default "/api/live/session" (harness/live-proxy.ts). */
   endpoint?: string;
   voice?: string;
 }

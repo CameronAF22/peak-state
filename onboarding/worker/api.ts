@@ -23,7 +23,7 @@ export interface Env {
   DB: Database;
   /** Worker secret. Account creation and sign-in need it. */
   INVITE_CODE?: string;
-  /** Worker secret. The real OpenAI key; only short-lived keys leave the Worker. */
+  /** Worker secret. The real OpenAI key; it never leaves the Worker (GPT live sessions start here). */
   OPENAI_API_KEY?: string;
 }
 
@@ -43,10 +43,13 @@ export const MAX_WRONG_CODES_PER_DAY = 500;
 export const MAX_SIGN_INS_PER_EMAIL_PER_DAY = 10;
 export const MAX_REVISIONS_PER_STRATEGY = 2000;
 export const MAX_REPS_PER_ACCOUNT = 20000;
-export const MAX_VOICE_KEYS_PER_DAY = 40;
+/** GPT live sessions started per account per day. */
+export const MAX_VOICE_SESSIONS_PER_DAY = 40;
 export const MAX_BODY_BYTES = 512 * 1024;
-export const REALTIME_SECRETS_URL = "https://api.openai.com/v1/realtime/client_secrets";
-export const DEFAULT_REALTIME_MODEL = "gpt-realtime";
+export const LIVE_SESSIONS_URL = "https://api.openai.com/v1/live/sessions";
+export const DEFAULT_LIVE_MODEL = "gpt-live-1";
+const MAX_INSTRUCTIONS = 4000;
+const MAX_SDP = 64 * 1024;
 
 const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
 const ID = /^[A-Za-z0-9_.:-]{1,128}$/;
@@ -383,36 +386,47 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
     return json({ progress: summarize(await listReps(me.id, state), state) });
   }
 
-  // ── short-lived GPT live keys ──
+  // ── GPT live sessions (D-onboarding-025) ──
 
-  async function realtimeToken(req: Request): Promise<Response> {
+  // GPT-Live sessions are created server-side with the project key. The page sends its WebRTC offer and the
+  // session settings; only the model, instructions and voice are taken from it, delegation stays client-side.
+  async function liveSession(req: Request): Promise<Response> {
     const me = await account(req);
     if (!env.OPENAI_API_KEY) throw new HttpError(503, "GPT live is not set up on this server.");
     const body = await readBody(req);
-    const model = typeof body.model === "string" && MODEL.test(body.model.trim()) ? body.model.trim() : DEFAULT_REALTIME_MODEL;
-    if ((await bump(`voice:${me.id}`)) > MAX_VOICE_KEYS_PER_DAY) throw new HttpError(429, "That's the voice limit for today. Use browser or typed voice.");
+    const sdp = typeof body.sdp === "string" ? body.sdp : "";
+    if (!sdp.trim() || sdp.length > MAX_SDP) throw new HttpError(400, "Send the WebRTC offer as sdp.");
+    const asked = (body.session ?? {}) as { model?: unknown; instructions?: unknown; audio?: { output?: { voice?: unknown } } };
+    const model = typeof asked.model === "string" && MODEL.test(asked.model.trim()) ? asked.model.trim() : DEFAULT_LIVE_MODEL;
+    const session: Record<string, unknown> = { model, delegation: { type: "client" } };
+    if (typeof asked.instructions === "string" && asked.instructions.trim()) session.instructions = asked.instructions.slice(0, MAX_INSTRUCTIONS);
+    const voice = asked.audio?.output?.voice;
+    if (typeof voice === "string" && MODEL.test(voice)) session.audio = { output: { voice } };
+    if ((await bump(`voice:${me.id}`)) > MAX_VOICE_SESSIONS_PER_DAY) throw new HttpError(429, "That's the voice limit for today. Use browser or typed voice.");
     let res: Response;
     try {
-      res = await doFetch(REALTIME_SECRETS_URL, {
+      res = await doFetch(LIVE_SESSIONS_URL, {
         method: "POST",
         headers: { authorization: `Bearer ${env.OPENAI_API_KEY}`, "content-type": "application/json" },
-        body: JSON.stringify({ expires_after: { anchor: "created_at", seconds: 120 }, session: { type: "realtime", model } }),
+        body: JSON.stringify({ session, transport: { type: "webrtc", sdp } }),
       });
     } catch {
       throw new HttpError(502, "Could not reach OpenAI.");
     }
     const text = await res.text();
-    if (!res.ok) throw new HttpError(502, `OpenAI refused the voice key (${res.status}).`);
-    let parsed: { value?: unknown; expires_at?: unknown; client_secret?: { value?: unknown; expires_at?: unknown } };
+    let parsed: { transport?: { sdp?: unknown }; session?: { id?: unknown }; error?: { message?: unknown } } = {};
     try {
       parsed = JSON.parse(text);
     } catch {
-      throw new HttpError(502, "OpenAI sent an unreadable voice key.");
+      // not JSON
     }
-    const value = parsed.value ?? parsed.client_secret?.value;
-    const expiresAt = parsed.expires_at ?? parsed.client_secret?.expires_at ?? null;
-    if (typeof value !== "string" || !value) throw new HttpError(502, "OpenAI sent no voice key.");
-    return json({ value, expiresAt, model });
+    if (!res.ok) {
+      const why = typeof parsed.error?.message === "string" ? `: ${parsed.error.message}` : "";
+      throw new HttpError(502, `OpenAI refused the GPT live session (${res.status})${why}`, { upstreamStatus: res.status });
+    }
+    const answer = parsed.transport?.sdp;
+    if (typeof answer !== "string" || !answer) throw new HttpError(502, "OpenAI sent no SDP answer.");
+    return json({ session: { id: typeof parsed.session?.id === "string" ? parsed.session.id : null, model }, transport: { type: "webrtc", sdp: answer } }, 201);
   }
 
   // ── routing ──
@@ -444,8 +458,8 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
           return await postReps(req);
         case "GET /api/progress":
           return await getProgress(req, url);
-        case "POST /api/realtime/token":
-          return await realtimeToken(req);
+        case "POST /api/live/session":
+          return await liveSession(req);
         default:
           return json({ error: "Not found." }, 404);
       }

@@ -10,12 +10,11 @@ export { createBrowserVoice, isBrowserVoiceSupported } from "./browser.ts";
 export type { BrowserVoiceOptions } from "./browser.ts";
 export {
   createGptLiveVoice,
-  buildSessionUpdate,
+  buildLiveSession,
   buildSpeakEvent,
-  speakInstruction,
+  estimateSpeechMs,
   DEFAULT_GPT_LIVE_MODEL,
-  DEFAULT_REALTIME_ENDPOINT,
-  DEFAULT_TRANSCRIBE_MODEL,
+  DEFAULT_LIVE_SESSION_ENDPOINT,
 } from "./gpt-live.ts";
 export type {
   AudioElementLike,
@@ -27,8 +26,8 @@ export type {
 } from "./gpt-live.ts";
 
 /**
- * Build the adapter for a kind. "gpt-live" without a config (or without an API key) still returns the
- * GPT live adapter; its start() reports a clear error status so the UI can ask for a key.
+ * Build the adapter for a kind. "gpt-live" needs no key in the page: the harness route uses OPENAI_API_KEY
+ * from its own environment, and start() reports a clear error status when no key is available anywhere.
  */
 export function createVoice(kind: VoiceKind, config?: GptLiveVoiceConfig): VoiceAdapter {
   switch (kind) {

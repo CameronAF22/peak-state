@@ -1,7 +1,9 @@
 // Horizon: the question harness as one band of light. A dark screen, a soft dawn-like band low down that
 // rises and brightens as the state builds, one line of question text above it, and a quiet underline to answer.
 // Same engine, hints, playback and voice modules as the harness (src/); only the presentation differs.
-// URL options: ?hint=<ms> hint delay · ?speed=fast short playback pauses · ?voice=typed|browser|gpt-live.
+// It is the front page of the deployed demo, with GPT live as the set voice (D-onboarding-024).
+// URL options: ?hint=<ms> hint delay · ?speed=fast short playback pauses · ?voice=typed|browser (testing fallback)
+// · ?debug=live logs every GPT live event.
 
 import type { OnboardingEvent, RepSession } from "@peak-state/contracts";
 import { createEngine } from "../../src/engine/index.ts";
@@ -20,6 +22,8 @@ import {
 } from "../../src/playback/index.ts";
 import type { Answer, EngineSnapshot, Question, SavedStrategy, StepView, VoiceAdapter, VoiceKind, VoiceStatus } from "../../src/types.ts";
 import { createVoice, loadVoiceSettings, saveVoiceSettings, type VoiceSettings } from "../../src/voice/index.ts";
+import { ApiError, createApi, type ServerInfo } from "../../src/sync/index.ts";
+import { createSignIn } from "./signin.ts";
 import { createSky } from "./sky.ts";
 import { createVoiceToggle } from "./voice.ts";
 
@@ -35,6 +39,11 @@ interface HarnessApi {
 const params = new URLSearchParams(location.search);
 const hintDelay = hintDelayFromUrl(location.search);
 const fast = params.get("speed") === "fast";
+const debugLive = params.get("debug") === "live";
+// On the Cloudflare Worker, GPT live needs a signed-in account (the sheet below, or the harness page: same storage).
+const accountApi = createApi();
+let server: ServerInfo | null = null;
+const serverChecked = accountApi.health().then((s) => (server = s));
 const pauseMs = fast ? 150 : DEFAULT_PAUSE_MS;
 const KINDS: VoiceKind[] = ["typed", "browser", "gpt-live"];
 
@@ -59,9 +68,11 @@ let afterRun: string | null = null;
 
 // ── voice ───────────────────────────────────────────────────────────────────
 
-let settings: VoiceSettings = loadVoiceSettings();
+// GPT live is the set voice; ?voice= picks another one for tests or as a fallback, with the full menu.
+let settings: VoiceSettings = { ...loadVoiceSettings(), kind: "gpt-live" };
 const urlVoice = params.get("voice");
 if (urlVoice && (KINDS as string[]).includes(urlVoice)) settings = { ...settings, kind: urlVoice as VoiceKind };
+const voiceFixed = !urlVoice && settings.kind === "gpt-live";
 
 let voice: VoiceAdapter = createVoice("typed");
 let voiceUnsubs: (() => void)[] = [];
@@ -71,6 +82,26 @@ const toggle = createVoiceToggle(voiceRoot, settings, (next) => {
   settings = next;
   saveVoiceSettings(settings);
   void switchVoice(true);
+}, voiceFixed);
+
+function needsSignIn(): boolean {
+  return settings.kind === "gpt-live" && !settings.apiKey && Boolean(server?.voice) && !accountApi.account();
+}
+
+const signIn = createSignIn(async (email, code) => {
+  try {
+    await accountApi.createAccount(email, code);
+  } catch (err) {
+    if (!(err instanceof ApiError && err.status === 409)) return err instanceof Error ? err.message : String(err);
+    try {
+      await accountApi.signIn(email, code);
+    } catch (again) {
+      return again instanceof Error ? again.message : String(again);
+    }
+  }
+  signIn.close();
+  void switchVoice(true);
+  return null;
 });
 
 function setStatus(s: VoiceStatus): void {
@@ -85,7 +116,10 @@ async function switchVoice(start: boolean): Promise<void> {
   } catch {
     /* ignore */
   }
-  voice = createVoice(settings.kind, settings.kind === "gpt-live" ? { apiKey: settings.apiKey ?? "", model: settings.model } : undefined);
+  voice = createVoice(
+    settings.kind,
+    settings.kind === "gpt-live" ? { apiKey: settings.apiKey ?? "", model: settings.model, debug: debugLive, headers: () => accountApi.authHeaders() } : undefined,
+  );
   voiceUnsubs.push(voice.onStatus(setStatus), voice.onTranscript(onTranscript));
   voiceStarted = false;
   if (!start && settings.kind !== "typed") {
@@ -98,7 +132,10 @@ async function switchVoice(start: boolean): Promise<void> {
     await voice.start();
   } catch (err) {
     setStatus({ kind: settings.kind, state: "error", detail: err instanceof Error ? err.message : String(err) });
-    if (settings.kind === "gpt-live" && !settings.apiKey) toggle.openSettings();
+    if (settings.kind === "gpt-live" && !settings.apiKey) {
+      if (server?.voice && /HTTP 401|Sign in/.test(String(err))) signIn.open();
+      else toggle.openSettings();
+    }
     return;
   }
   if (mode === "elicit" && snap.question) speak(snap.question.text);
@@ -641,11 +678,14 @@ render();
 void switchVoice(settings.kind === "typed");
 
 if (settings.kind !== "typed") {
+  void serverChecked;
   const startOnGesture = (e: Event): void => {
     if ((e.target as Element | null)?.closest?.("#voice-root")) return;
     removeEventListener("pointerdown", startOnGesture, true);
     removeEventListener("keydown", startOnGesture, true);
-    if (!voiceStarted) void switchVoice(true);
+    if (voiceStarted) return;
+    if (needsSignIn()) signIn.open();
+    else void switchVoice(true);
   };
   addEventListener("pointerdown", startOnGesture, true);
   addEventListener("keydown", startOnGesture, true);

@@ -928,3 +928,69 @@ body[data-mood="stopped"] .points {
     margin-top: 1.3rem;
   }
 }
+
+/* Sign-in sheet before the live voice starts (D-onboarding-024). */
+.si {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(3, 4, 5, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.si[hidden] {
+  display: none;
+}
+
+.si-card {
+  width: min(22rem, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.si-title {
+  margin: 0 0 0.4rem;
+  font-size: 1.15rem;
+  color: var(--ink);
+  text-align: center;
+}
+
+.si-card input {
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--hair);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+  padding: 0.55rem 0.1rem;
+  outline: none;
+}
+
+.si-card input:focus {
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+}
+
+.si-error {
+  min-height: 1.2em;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--soft);
+}
+
+.si-go {
+  align-self: center;
+  background: none;
+  color: var(--ink);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 0.45rem 1.6rem;
+  cursor: pointer;
+}
+
+.si-go:disabled {
+  opacity: 0.5;
+}

@@ -1,5 +1,6 @@
 // A tiny corner control for the voice: one quiet button that shows the current voice and its state,
-// opening a small menu (Typed · Browser voice · GPT live, with the GPT live key and model).
+// opening a small menu (Typed · Browser voice · GPT live, with the GPT live key and model). With `fixed`, the voice
+// is set (GPT live for the demo, D-onboarding-024) and the menu only shows its status.
 
 import type { VoiceKind, VoiceStatus } from "../../src/types.ts";
 import type { VoiceSettings } from "../../src/voice/index.ts";
@@ -15,7 +16,7 @@ const SHORT: Record<VoiceKind, string> = { typed: "typing", browser: "voice", "g
 
 const MIC = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/></svg>`;
 
-export function createVoiceToggle(root: HTMLElement, initial: VoiceSettings, onChange: (s: VoiceSettings) => void): VoiceToggle {
+export function createVoiceToggle(root: HTMLElement, initial: VoiceSettings, onChange: (s: VoiceSettings) => void, fixed = false): VoiceToggle {
   let settings: VoiceSettings = { ...initial };
 
   const icon = h("span", { class: "vt-icon" });
@@ -68,7 +69,9 @@ export function createVoiceToggle(root: HTMLElement, initial: VoiceSettings, onC
     ),
   );
   const status = h("p", { class: "vt-status", "data-testid": "voice-status" }, "");
-  const menu = h("div", { class: "vt-menu", role: "menu", hidden: true }, option("typed"), option("browser"), option("gpt-live"), gpt, status);
+  const menu = fixed
+    ? h("div", { class: "vt-menu", role: "menu", hidden: true }, status)
+    : h("div", { class: "vt-menu", role: "menu", hidden: true }, option("typed"), option("browser"), option("gpt-live"), gpt, status);
 
   const syncOptions = (): void => {
     for (const b of menu.querySelectorAll<HTMLElement>(".vt-opt")) b.setAttribute("aria-checked", b.dataset.testid === `voice-${settings.kind}` ? "true" : "false");
@@ -113,6 +116,7 @@ export function createVoiceToggle(root: HTMLElement, initial: VoiceSettings, onC
       label.textContent = s.state === "listening" ? "listening" : s.state === "speaking" ? "speaking" : SHORT[s.kind];
     },
     openSettings() {
+      if (fixed) return;
       open();
       gpt.hidden = false;
       key.focus();

@@ -2,7 +2,8 @@
 // appear after the hint delay), save the strategy, then run it back with one click.
 // After the first session, Practice runs the recall → rate → one question → try again loop (D-onboarding-015), and
 // a signed-in account keeps the strategy and every run on the server (D-onboarding-017).
-// URL options: ?hint=<ms> hint delay · ?speed=fast short playback pauses · ?voice=typed|browser|gpt-live.
+// URL options: ?hint=<ms> hint delay · ?speed=fast short playback pauses · ?voice=typed|browser|gpt-live
+// · ?debug=live logs every GPT live event to the console.
 
 import type { OnboardingEvent, RepSession } from "@peak-state/contracts";
 import { createEngine } from "../engine/index.ts";
@@ -40,6 +41,7 @@ export interface HarnessApi {
 const params = new URLSearchParams(location.search);
 const hintDelay = hintDelayFromUrl(location.search);
 const fast = params.get("speed") === "fast";
+const debugLive = params.get("debug") === "live";
 const pauseMs = fast ? 150 : DEFAULT_PAUSE_MS;
 const KINDS: VoiceKind[] = ["typed", "browser", "gpt-live"];
 
@@ -62,9 +64,12 @@ let mode: Mode = saved ? "saved" : "elicit";
 
 // ── voice ───────────────────────────────────────────────────────────────────
 
-let settings: VoiceSettings = loadVoiceSettings();
+// GPT live is the set voice for the live demo (D-onboarding-026); ?voice=typed|browser picks another one, with the full
+// menu, for tests and as a fallback.
+let settings: VoiceSettings = { ...loadVoiceSettings(), kind: "gpt-live" };
 const urlVoice = params.get("voice");
 if (urlVoice && (KINDS as string[]).includes(urlVoice)) settings = { ...settings, kind: urlVoice as VoiceKind };
+const voiceFixed = !urlVoice && settings.kind === "gpt-live";
 
 let voice: VoiceAdapter = createVoice("typed");
 let voiceUnsubs: (() => void)[] = [];
@@ -74,7 +79,7 @@ const controls = createVoiceControls(voiceRoot, settings, (next) => {
   settings = next;
   saveVoiceSettings(settings);
   void switchVoice(true);
-});
+}, voiceFixed);
 
 function setStatus(s: VoiceStatus): void {
   controls.setStatus(s);
@@ -90,7 +95,9 @@ async function switchVoice(start: boolean): Promise<void> {
   }
   voice = createVoice(
     settings.kind,
-    settings.kind === "gpt-live" ? { apiKey: settings.apiKey ?? "", model: settings.model, getApiKey: serverVoice() ? () => api.realtimeKey(settings.model) : undefined } : undefined,
+    settings.kind === "gpt-live"
+      ? { apiKey: settings.apiKey ?? "", model: settings.model, debug: debugLive, headers: () => api.authHeaders() }
+      : undefined,
   );
   voiceUnsubs.push(voice.onStatus(setStatus), voice.onTranscript(onTranscript), attachSpokenVoice(voice));
   voiceStarted = false;
@@ -105,8 +112,8 @@ async function switchVoice(start: boolean): Promise<void> {
   } catch (err) {
     setStatus({ kind: settings.kind, state: "error", detail: err instanceof Error ? err.message : String(err) });
     if (settings.kind === "gpt-live" && !settings.apiKey) {
-      if (server?.voice && !api.account()) account?.open();
-      else controls.openSettings();
+      if (server?.voice && !api.account()) setTimeout(() => account?.open(), 0);
+      else if (/API key/.test(String(err))) controls.openSettings();
     }
     return;
   }
@@ -504,8 +511,13 @@ let server: ServerInfo | null = null;
 let syncing = false;
 let syncNote: string | null = null;
 
-function serverVoice(): boolean {
-  return Boolean(server?.voice && api.account());
+/** GPT live on the Worker needs a signed-in account; the first tap opens sign-in instead of failing. */
+function needsSignIn(): boolean {
+  return settings.kind === "gpt-live" && !settings.apiKey && Boolean(server?.voice) && !api.account();
+}
+
+function startLiveAfterSignIn(): void {
+  if (settings.kind === "gpt-live") void switchVoice(true);
 }
 
 const account = accountRoot
@@ -513,10 +525,12 @@ const account = accountRoot
       async create(email, code) {
         await api.createAccount(email, code);
         await sync();
+        startLiveAfterSignIn();
       },
       async signIn(email, code) {
         await api.signIn(email, code);
         await sync();
+        startLiveAfterSignIn();
       },
       async signOut() {
         await api.signOut().catch(() => {});
@@ -620,7 +634,12 @@ if (settings.kind !== "typed") {
     if ((e.target as Element | null)?.closest?.("#voice-root")) return; // the voice controls handle themselves
     window.removeEventListener("pointerdown", startOnGesture, true);
     window.removeEventListener("keydown", startOnGesture, true);
-    if (!voiceStarted) void switchVoice(true);
+    if (voiceStarted) return;
+    if (needsSignIn()) {
+      setStatus({ kind: settings.kind, state: "idle", detail: "Sign in to start the live voice" });
+      // After this tap: the sign-in popover closes on taps outside it, and this tap is one.
+      setTimeout(() => account?.open(), 0);
+    } else void switchVoice(true);
   };
   window.addEventListener("pointerdown", startOnGesture, true);
   window.addEventListener("keydown", startOnGesture, true);

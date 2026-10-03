@@ -28,11 +28,14 @@ Needs a Cloudflare account and either `npx wrangler login` or `CLOUDFLARE_API_TO
 cd onboarding
 npx wrangler d1 create peak-state          # already done: the id is in wrangler.jsonc and 0001 is applied
 npx wrangler secret put INVITE_CODE        # the invite code people type to create an account
-npx wrangler secret put OPENAI_API_KEY     # optional: enables GPT live through short-lived keys
+npx wrangler secret put OPENAI_API_KEY     # optional: enables GPT live (gpt-live-1) for signed-in accounts
 npm run worker:deploy                      # builds, applies migrations remotely, deploys
 ```
 
 The app is then at `https://peak-state.<your-subdomain>.workers.dev`.
+
+Pages (D-onboarding-026): `/` is the harness in the Horizon design with GPT live as the set voice (signed out, the first
+tap opens sign-in with an email and the invite code), and `/design/` lists the three standalone design prototypes.
 
 ### Or from the Cloudflare dashboard (Workers Builds)
 
@@ -62,6 +65,6 @@ Secret. New migrations still need `npx wrangler d1 migrations apply peak-state -
 | `GET /api/strategy`, `PUT /api/strategy` | The strategy record; an older revision gets 409 and the server copy |
 | `GET /api/reps`, `POST /api/reps` | The run log (contracts RepSession), idempotent by id |
 | `GET /api/progress?state=` | Times chosen, good reps, trend, day streak |
-| `POST /api/realtime/token` | A short-lived GPT live key, 40 a day per account |
+| `POST /api/live/session` | `{session, sdp}`: starts a GPT live (gpt-live-1) WebRTC session with the server's key and returns the SDP answer; 40 a day per account (D-onboarding-025) |
 
 Limits: 20 wrong invite codes per client per day; sessions last 90 days.
