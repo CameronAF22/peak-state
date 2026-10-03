@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "D-sensing-002",
+  "lane": "sensing",
+  "title": "Simulator scenarios are seeded JSON segment lists",
+  "status": "accepted",
+  "type": "technical",
+  "context": "The demo must fire exactly when scripted, and M2 unit tests need the same scenarios. Generating RR (not just HR) lets the detector compute RMSSD the same way for simulator and strap.",
+  "decision": "A scenario is JSON: {id, seed, hopMs, profileRef, segments:[{label: baseline|drift|recovery|artifact, durationS, hr:{from,to}, rmssd:{from,to}, quality}], expect:[{t, kind}]}. The simulator expands segments into RR intervals with a seeded PRNG (mulberry32), derives hr per frame, and emits SignalFrames on a virtual clock that can run in real time or as fast as possible. Same seed, same frames, byte for byte. expect[] lists when the detector must fire, so the scenario doubles as a test fixture.",
+  "alternatives": [
+    "Replay recorded strap CSVs: realistic but not scriptable and needs hardware first",
+    "Emit HR only: simpler, but RMSSD path would be untested until the strap"
+  ],
+  "consequences": "",
+  "produces": [
+    "sensing/scenarios/",
+    "sensing/src/simulator.ts",
+    "sensing/src/prng.ts"
+  ],
+  "dependsOn": [
+    "D-coord-007"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01VAT2w9TTWLQAeoV81MAgwd",
+    "url": "https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd",
+    "branch": "lane/sensing"
+  },
+  "createdAt": "2026-10-03T14:02:32Z",
+  "acceptedAt": "2026-10-03T14:02:32Z",
+  "acceptedBy": "claude"
+}

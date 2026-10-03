@@ -13,7 +13,15 @@
       "path": "docs/trigger-flow.md",
       "sha256": "4ab4f10fb9ea8a47269d4381116710e56cae1f1966e0527b39875d7931c25293",
       "decisions": [
-        "D-coord-008"
+        "D-coord-008",
+        "D-sensing-004"
+      ]
+    },
+    {
+      "path": "sensing/PLAN.md",
+      "sha256": "ee911a7d44f17dbaebaa10b5bfc210b6c6b81fcac980da4c5814d8046d04a0c7",
+      "decisions": [
+        "D-sensing-001"
       ]
     }
   ]

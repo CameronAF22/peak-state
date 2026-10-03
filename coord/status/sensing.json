@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "lane": "sensing",
+  "health": "green",
+  "phase": "M0",
+  "progress": 10,
+  "summary": "M0 done: lane claimed, guard verified, PLAN.md written, 4 decisions logged, deps messaged",
+  "now": [
+    "Waiting for go on M1; contracts fixtures pending"
+  ],
+  "next": [
+    "M1: seeded scenario simulator emitting SignalFrames (D-sensing-002)"
+  ],
+  "blockers": [],
+  "updatedAt": "2026-10-03T14:03:17Z",
+  "session": {
+    "id": "session_01VAT2w9TTWLQAeoV81MAgwd",
+    "url": "https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd",
+    "branch": "lane/sensing"
+  }
+}

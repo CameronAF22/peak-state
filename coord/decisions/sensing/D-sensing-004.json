@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-sensing-004",
+  "lane": "sensing",
+  "title": "One SignalSource interface for simulator, BLE strap and manual",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Brief M3 and D-coord-007. Web Bluetooth needs Chrome, HTTPS or localhost, and a user gesture; the app must call connect from a button.",
+  "decision": "All inputs implement SignalSource {id, start(onFrame), stop()}. The BLE adapter uses navigator.bluetooth.requestDevice({filters:[{services:[0x180D]}]}), subscribes to 0x2A37 notifications and parses the flags byte (bit0 HR uint8/uint16, bit3 energy expended present, bit4 RR present; RR in 1/1024 s converted to ms). Manual is a source that emits a DetectionEvent kind manual straight to onEvent. Oura is never a live source; context only.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "sensing/src/source.ts",
+    "sensing/src/adapters/",
+    "docs/trigger-flow.md"
+  ],
+  "dependsOn": [
+    "D-coord-007"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01VAT2w9TTWLQAeoV81MAgwd",
+    "url": "https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd",
+    "branch": "lane/sensing"
+  },
+  "createdAt": "2026-10-03T14:02:32Z",
+  "acceptedAt": "2026-10-03T14:02:32Z",
+  "acceptedBy": "claude"
+}
