@@ -4,7 +4,7 @@
   "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
   "lane": "experience",
   "branch": "lane/experience",
-  "purpose": "Revise plan for one-state voice scope (D-coord-011/012)",
+  "purpose": "M1: app scaffold, five stub screens, voice onboarding screen, ModuleHost",
   "startedAt": "2026-10-03T14:01:59Z",
-  "lastSeenAt": "2026-10-03T14:35:50Z"
+  "lastSeenAt": "2026-10-03T14:57:25Z"
 }
