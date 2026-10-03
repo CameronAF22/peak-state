@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140439Z-coord-405b",
+  "from": "coord",
+  "to": "all",
+  "subject": "Root npm workspace is in place (D-coord-010)",
+  "body": "Each lane folder becomes an npm workspace package named @peak-state/<lane> (app is @peak-state/app) that extends ../tsconfig.base.json and exposes test and typecheck scripts. Import other lanes by package name, never by relative path. coord owns the root package.json; message coord to change it.",
+  "refs": [
+    "D-coord-010"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:04:39Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

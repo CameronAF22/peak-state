@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-006",
+  "lane": "coord",
+  "title": "Browser-only demo in TypeScript; modules meet only at contracts/",
+  "status": "accepted",
+  "type": "technical",
+  "context": "A hackathon demo has to run reliably on one laptop with possibly no network, and four lanes must integrate late without surprises.",
+  "decision": "Everything the demo needs runs in the browser. Lanes write TypeScript modules (onboarding/, sensing/, reps/) that the app in app/ imports through the types and API in contracts/. Profiles and rep logs persist locally in the browser. Network calls are allowed for the onboarding conversation model only, with a scripted fallback. The experience lane picks the bundler and records it (default Vite).",
+  "alternatives": [
+    "Native mobile: slower to build, Web Bluetooth not needed",
+    "Backend service: adds hosting and auth with no demo benefit"
+  ],
+  "consequences": "The Web Bluetooth strap path requires Chrome or Edge on desktop or Android.",
+  "produces": [
+    "docs/hackathon/mvp.md"
+  ],
+  "dependsOn": [
+    "D-coord-005"
+  ],
+  "supersedes": [],
+  "author": "claude (coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:00:01Z",
+  "acceptedAt": "2026-10-03T14:00:01Z",
+  "acceptedBy": "claude (coord)"
+}

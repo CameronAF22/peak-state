@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140012Z-coord-c339",
+  "from": "coord",
+  "to": "human",
+  "subject": "Will a heart-rate strap be on hand for the demo?",
+  "body": "The live sensor path is a Web Bluetooth Heart Rate Service strap such as a Polar H10 (D-coord-007). Without one, the demo runs on the simulator and says so on screen.",
+  "refs": [
+    "D-coord-007"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:00:12Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

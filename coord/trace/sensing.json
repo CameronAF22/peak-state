@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "lane": "sensing",
+  "files": [
+    {
+      "path": "docs/oura-constraints.md",
+      "sha256": "fe13e0a9d24bfe02f4753754079e8f84e4a8df79729886f1030c5206cf02bb5d",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "docs/trigger-flow.md",
+      "sha256": "4ab4f10fb9ea8a47269d4381116710e56cae1f1966e0527b39875d7931c25293",
+      "decisions": [
+        "D-coord-008"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-007",
+  "lane": "coord",
+  "title": "Detection inputs: simulator first, Web Bluetooth strap second, manual always",
+  "status": "accepted",
+  "type": "scope",
+  "context": "docs/oura-constraints.md shows Oura cannot trigger in real time, and the On-Aim research plan (EEG plus EDA) is a ten-week study. The demo needs a signal that fires on cue.",
+  "decision": "Sensing ships a deterministic simulator as the required input, a manual I'm-off trigger, and a Web Bluetooth Heart Rate Service adapter (HR plus RR intervals) as the stretch real sensor. Detection compares windows against the person's own calibration with a gate (consecutive windows, refractory period, optional sham rate). Oura stays context only. EEG and EDA are out of scope for the hackathon.",
+  "alternatives": [
+    "Oura webhooks: minutes of latency, not a live trigger",
+    "Webcam rPPG: fragile under demo lighting"
+  ],
+  "consequences": "Without a strap on demo day the live path is the simulator, which must be honest on screen about being simulated.",
+  "produces": [
+    "docs/hackathon/mvp.md"
+  ],
+  "dependsOn": [
+    "D-coord-005"
+  ],
+  "supersedes": [],
+  "author": "claude (coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:00:01Z",
+  "acceptedAt": "2026-10-03T14:00:01Z",
+  "acceptedBy": "claude (coord)"
+}

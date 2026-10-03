@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-005",
+  "lane": "coord",
+  "title": "MVP: three emotions, each with a triad strategy, installed through logged reps",
+  "status": "accepted",
+  "type": "scope",
+  "context": "The user asked for an experience that onboards a person, learns their strategy for reaching their three top emotions, detects when they drift, and immediately gives them repetitions to install the state the way Tony Robbins' events do. The existing repo modelled one peak state with three strategies (physiology, focus, language).",
+  "decision": "The MVP profile holds exactly three emotions. Each emotion carries its own physiology, focus and language strategy in the person's words plus one optional anchor. The loop is onboard, calibrate, detect drift, run a 20 to 40 second rep (anchor, body, focus, words, rate), log it, and mark an emotion installed when the anchor alone brings the state back. Robbins' six conditioning steps map onto these screens as in docs/hackathon/mvp.md, presented as hypotheses the logs measure, with sham trials as the control. Safety boundary from README.md applies.",
+  "alternatives": [
+    "One peak state with three strategies (the earlier frame): does not match the three-emotion ask",
+    "Free-form number of emotions: harder to demo and to validate"
+  ],
+  "consequences": "Contracts must add a Profile v2 alongside the v1 schemas. Onboarding takes about three times as long as the single-state discovery, so the demo scripts it.",
+  "produces": [
+    "docs/hackathon/mvp.md"
+  ],
+  "dependsOn": [
+    "D-coord-004"
+  ],
+  "supersedes": [],
+  "author": "claude (coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:00:01Z",
+  "acceptedAt": "2026-10-03T14:00:01Z",
+  "acceptedBy": "claude (coord)"
+}

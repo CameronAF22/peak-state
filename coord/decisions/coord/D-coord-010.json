@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-010",
+  "lane": "coord",
+  "title": "Root npm workspace owned by coord; lanes are packages",
+  "status": "accepted",
+  "type": "technical",
+  "context": "contracts (M-20261003T140326Z-contracts-8c23, D-contracts-002) made contracts/ a package named @peak-state/contracts and asked who owns a root package.json, since no lane did and lanes could only import it by relative path.",
+  "decision": "coord owns the root package.json, package-lock.json and tsconfig.base.json. The root package.json declares npm workspaces contracts, onboarding, sensing, reps and app. Each lane owns its own <dir>/package.json and names its package @peak-state/<lane> (the app is @peak-state/app), extends ../tsconfig.base.json, and exposes test and typecheck scripts that the root runs with --workspaces --if-present. Lanes import each other by package name, never by relative path across lane folders. Changes to the root files go through a message to coord.",
+  "alternatives": [
+    "Relative imports across lane folders: breaks when folders move and hides cross-lane coupling",
+    "contracts owns the root package.json: every other lane would need contracts to add scripts and dependencies"
+  ],
+  "consequences": "npm install at the root links all lanes. A lane without its package.json yet is simply skipped by --if-present scripts; npm install warns until every workspace folder has one.",
+  "produces": [
+    "package.json",
+    "tsconfig.base.json"
+  ],
+  "dependsOn": [
+    "D-coord-006"
+  ],
+  "supersedes": [],
+  "author": "claude (coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:04:38Z",
+  "acceptedAt": "2026-10-03T14:04:38Z",
+  "acceptedBy": "claude (coord)"
+}

@@ -1,0 +1,552 @@
+<title>Peak State Lanes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a mission board. Header with gate strip, then tabbed views; the board is a lane grid beside a "needs a person" column. */
+:root {
+  --bg: #f3f5f2;
+  --surface: #ffffff;
+  --sunken: #e9ede8;
+  --ink: #16201b;
+  --muted: #56645c;
+  --line: #d5ddd6;
+  --accent: #0e6f61;
+  --accent-ink: #ffffff;
+  --accent-soft: #d7ece6;
+  --good: #23824f;
+  --good-soft: #dcf0e3;
+  --warn: #a86b00;
+  --warn-soft: #f6ead0;
+  --bad: #b8382f;
+  --bad-soft: #f7dedb;
+  --idle: #7b857f;
+  --idle-soft: #e6e9e6;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1412; --surface: #161d1a; --sunken: #1d2622; --ink: #e5ece8; --muted: #9aa9a1; --line: #2a3530;
+    --accent: #45c4a9; --accent-ink: #062a23; --accent-soft: #163a32;
+    --good: #5cc98a; --good-soft: #173826; --warn: #e3ac45; --warn-soft: #3a2d12; --bad: #f07a6f; --bad-soft: #3f1d1a; --idle: #8f9a94; --idle-soft: #252d29;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1412; --surface: #161d1a; --sunken: #1d2622; --ink: #e5ece8; --muted: #9aa9a1; --line: #2a3530;
+  --accent: #45c4a9; --accent-ink: #062a23; --accent-soft: #163a32;
+  --good: #5cc98a; --good-soft: #173826; --warn: #e3ac45; --warn-soft: #3a2d12; --bad: #f07a6f; --bad-soft: #3f1d1a; --idle: #8f9a94; --idle-soft: #252d29;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font-body); }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 48px; display: grid; gap: 20px; }
+.mono { font-family: var(--font-mono); font-size: 0.86em; }
+.muted { color: var(--muted); }
+
+header.top { display: grid; gap: 14px; }
+.titlerow { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; justify-content: space-between; }
+h1 { font: 700 clamp(26px, 4vw, 36px)/1.1 var(--font-display); letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+h1 span { color: var(--muted); font-weight: 500; }
+.fresh { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--idle); flex: none; }
+.dot.live { background: var(--good); box-shadow: 0 0 0 3px var(--good-soft); }
+.dot.stale { background: var(--warn); }
+
+.gates { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.gate { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; }
+.gate b { font: 600 12px/1 var(--font-mono); letter-spacing: 0.04em; display: block; margin-bottom: 4px; }
+.gate small { display: block; font-size: 12px; color: var(--muted); line-height: 1.3; }
+.gate .meter { height: 4px; border-radius: 2px; background: var(--sunken); margin-top: 8px; overflow: hidden; }
+.gate .meter i { display: block; height: 100%; background: var(--accent); }
+.gate.done { border-color: var(--good); }
+.gate.done .meter i { background: var(--good); }
+
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--line); }
+nav.tabs button { font: 500 14px var(--font-body); color: var(--muted); background: none; border: 0; padding: 10px 12px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+nav.tabs button .count { font: 500 11px var(--font-mono); background: var(--sunken); color: var(--muted); border-radius: 999px; padding: 1px 7px; margin-left: 6px; }
+
+.boardgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 20px; align-items: start; }
+.lanes { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.lane { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 10px; min-width: 0; align-content: start; }
+.lane header { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; }
+.lane h3 { margin: 0; font: 600 16px/1.25 var(--font-display); }
+.lane .lid { font: 500 12px var(--font-mono); color: var(--muted); }
+.pill { font: 600 11px/1 var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; padding: 5px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.green { background: var(--good-soft); color: var(--good); }
+.pill.amber { background: var(--warn-soft); color: var(--warn); }
+.pill.red { background: var(--bad-soft); color: var(--bad); }
+.pill.idle, .pill.none { background: var(--idle-soft); color: var(--idle); }
+.progress { display: flex; align-items: center; gap: 10px; font: 500 12px var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar { flex: 1; height: 6px; background: var(--sunken); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+.summary { margin: 0; font-size: 14px; }
+.lane ul { margin: 0; padding-left: 18px; font-size: 13px; color: var(--muted); display: grid; gap: 2px; }
+.lane .label { font: 600 11px var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.blocker { background: var(--bad-soft); color: var(--bad); border-radius: 6px; padding: 6px 8px; font-size: 13px; }
+.lane footer { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; }
+.lane footer a { overflow-wrap: anywhere; }
+.empty-lane { font-size: 13px; color: var(--muted); }
+
+aside.attention { display: grid; gap: 12px; position: sticky; top: env(safe-area-inset-top, 0px); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.panel h2 { margin: 0; font: 600 15px var(--font-display); display: flex; justify-content: space-between; gap: 8px; }
+.panel h2 small { font: 500 12px var(--font-mono); color: var(--muted); }
+.item { display: grid; gap: 2px; font-size: 13px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.item:last-child { border-bottom: 0; padding-bottom: 0; }
+.item .meta { font: 400 12px var(--font-mono); color: var(--muted); overflow-wrap: anywhere; }
+.none-msg { font-size: 13px; color: var(--muted); margin: 0; }
+
+.timeline { display: grid; gap: 0; }
+.ev { display: grid; grid-template-columns: 72px 92px minmax(0, 1fr); gap: 10px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.ev time { font: 400 12px var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.ev .k { font: 500 12px var(--font-mono); }
+.ev .s { min-width: 0; overflow-wrap: anywhere; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chip { font: 500 12px var(--font-mono); background: var(--surface); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 5px 10px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+input[type="search"] { font: 14px var(--font-body); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; min-width: 0; flex: 1 1 200px; }
+
+.dlist { display: grid; gap: 8px; }
+details.dec { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+details.dec summary { list-style: none; cursor: pointer; padding: 10px 14px; display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+details.dec summary::-webkit-details-marker { display: none; }
+details.dec summary .t { font-weight: 500; min-width: 0; }
+details.dec .body { padding: 0 14px 14px; display: grid; gap: 8px; font-size: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+details.dec .body p { margin: 0; max-width: 72ch; }
+.kv { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 4px 12px; font-size: 13px; }
+.kv dt { color: var(--muted); font: 500 12px var(--font-mono); }
+.kv dd { margin: 0; overflow-wrap: anywhere; }
+.tag { font: 500 11px var(--font-mono); background: var(--sunken); border-radius: 4px; padding: 2px 6px; margin: 0 4px 4px 0; display: inline-block; }
+.st { font: 600 11px var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 7px; border-radius: 4px; white-space: nowrap; }
+.st.accepted { background: var(--good-soft); color: var(--good); }
+.st.proposed { background: var(--warn-soft); color: var(--warn); }
+.st.superseded, .st.rejected { background: var(--idle-soft); color: var(--idle); text-decoration: line-through; }
+
+.spec-lane { display: grid; gap: 10px; }
+.spec-lane + .spec-lane { border-top: 1px solid var(--line); padding-top: 18px; }
+.spec-lane h2 { margin: 0; font: 600 20px var(--font-display); }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 11px var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); background: var(--sunken); }
+td.mono { white-space: nowrap; }
+.uncovered { color: var(--bad); font-weight: 600; }
+
+.view[hidden] { display: none !important; }
+.notice { background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+
+@media (max-width: 900px) {
+  .boardgrid { grid-template-columns: minmax(0, 1fr); }
+  aside.attention { position: static; }
+  .gate { padding: 7px 8px; }
+  .gate .gname { display: none; }
+  details.dec summary { grid-template-columns: minmax(0, 1fr) auto; }
+  details.dec summary .mono:first-child { grid-column: 1 / -1; }
+  .ev { grid-template-columns: 60px minmax(0, 1fr); }
+  .ev .k { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dot.live { transition: box-shadow 0.6s ease; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="titlerow">
+      <h1 id="title">Peak State <span>lanes</span></h1>
+      <div class="fresh" aria-live="polite"><span class="dot" id="freshDot"></span><span id="freshText">Loading the board…</span></div>
+    </div>
+    <div class="gates" id="gates" aria-label="Milestone gates"></div>
+  </header>
+
+  <div class="notice" id="notice" hidden></div>
+
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" id="tab-board" aria-selected="true" data-view="board">Board</button>
+    <button role="tab" id="tab-decisions" aria-selected="false" data-view="decisions">Decisions <span class="count" id="countDecisions">0</span></button>
+    <button role="tab" id="tab-spec" aria-selected="false" data-view="spec">Spec and trace</button>
+    <button role="tab" id="tab-messages" aria-selected="false" data-view="messages">Messages <span class="count" id="countMessages">0</span></button>
+    <button role="tab" id="tab-sessions" aria-selected="false" data-view="sessions">Sessions and branches</button>
+  </nav>
+
+  <section class="view" id="view-board">
+    <div class="boardgrid">
+      <div style="display:grid; gap:20px; min-width:0">
+        <div class="lanes" id="lanes"></div>
+        <div class="panel">
+          <h2>Activity <small id="eventCount"></small></h2>
+          <div class="timeline" id="timeline"></div>
+        </div>
+      </div>
+      <aside class="attention">
+        <div class="panel"><h2>Needs a person <small id="humanCount"></small></h2><div id="human"></div></div>
+        <div class="panel"><h2>Proposed decisions <small id="proposedCount"></small></h2><div id="proposed"></div></div>
+        <div class="panel"><h2>Blockers <small id="blockerCount"></small></h2><div id="blockers"></div></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="view" id="view-decisions" hidden>
+    <div style="display:grid; gap:12px">
+      <div class="filters" id="laneFilters"></div>
+      <div class="filters" id="statusFilters"></div>
+      <div class="filters"><input type="search" id="q" placeholder="Search titles, decisions, paths" aria-label="Search decisions"></div>
+      <div class="dlist" id="decisionList"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-spec" hidden><div style="display:grid; gap:18px" id="spec"></div></section>
+  <section class="view" id="view-messages" hidden><div class="panel" id="messages"></div></section>
+  <section class="view" id="view-sessions" hidden>
+    <div style="display:grid; gap:16px">
+      <div class="panel"><h2>Sessions <small>reopen one to recover the conversation behind its decisions</small></h2><div id="sessions"></div></div>
+      <div class="panel"><h2>Branches <small id="branchCount"></small></h2><div class="tablewrap"><table><thead><tr><th>Branch</th><th>Commit</th><th>When</th><th>Last commit</th></tr></thead><tbody id="branches"></tbody></table></div></div>
+    </div>
+  </section>
+</div>
+
+<!--PEAK_INLINE_DATA-->
+<script>
+(function () {
+  "use strict";
+  var GATES = [
+    { id: "M0", name: "Setup verified", phase: "M0" },
+    { id: "M1", name: "Contracts frozen", phase: "M1" },
+    { id: "M2", name: "Vertical slice", phase: "M2" },
+    { id: "M3", name: "Real inputs", phase: "M3" },
+    { id: "M4", name: "Demo-ready", phase: "M4" }
+  ];
+  var state = { data: null, view: "board", lane: "all", status: "all", q: "", source: "" };
+
+  function el(tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      if (k === "text") node.textContent = attrs[k];
+      else if (k === "class") node.className = attrs[k];
+      else node.setAttribute(k, attrs[k]);
+    });
+    (children || []).forEach(function (c) { if (c != null) node.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    return node;
+  }
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); return node; }
+  function ago(iso) {
+    if (!iso) return "never";
+    var s = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 1000));
+    if (s < 60) return s + "s ago";
+    if (s < 3600) return Math.floor(s / 60) + "m ago";
+    if (s < 86400) return Math.floor(s / 3600) + "h ago";
+    return Math.floor(s / 86400) + "d ago";
+  }
+  function hhmm(iso) { var d = new Date(iso); return isNaN(d) ? "" : d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); }
+  function link(url, text) { return url ? el("a", { href: url, target: "_blank", rel: "noopener", text: text }) : el("span", { text: text }); }
+  function phaseRank(p) { var m = /M(\d)/.exec(p || ""); return m ? Number(m[1]) : -1; }
+
+  function laneName(id) {
+    var lanes = (state.data && state.data.lanes) || [];
+    for (var i = 0; i < lanes.length; i++) if (lanes[i].id === id) return lanes[i].name;
+    return id;
+  }
+
+  function renderGates(d) {
+    var box = clear(document.getElementById("gates"));
+    var lanes = d.lanes.map(function (l) { return l.id; });
+    GATES.forEach(function (g, index) {
+      // A lane is past a gate once its phase is later, or it reports 100% in that phase.
+      // M0 also counts a lane that has posted status and logged a decision.
+      var reached = lanes.filter(function (id) {
+        var st = d.status[id];
+        if (!st) return false;
+        var rank = phaseRank(st.phase);
+        return rank > index || (rank === index && st.progress >= 100) || (index === 0 && hasKickoff(d, id));
+      }).length;
+      var pct = lanes.length ? Math.round((reached / lanes.length) * 100) : 0;
+      var node = el("div", { class: "gate" + (pct === 100 ? " done" : ""), title: reached + " of " + lanes.length + " lanes past " + g.id }, [
+        el("b", { text: g.id }), el("small", null, [el("span", { class: "gname", text: g.name + " · " }), reached + "/" + lanes.length]),
+        el("div", { class: "meter" }, [el("i", { style: "width:" + pct + "%" })])
+      ]);
+      box.appendChild(node);
+    });
+  }
+  function hasKickoff(d, lane) {
+    return !!d.status[lane] && d.decisions.some(function (x) { return x.lane === lane; });
+  }
+
+  function renderLanes(d) {
+    var box = clear(document.getElementById("lanes"));
+    d.lanes.forEach(function (lane) {
+      var st = d.status[lane.id];
+      var sess = d.sessions.filter(function (s) { return s.lane === lane.id; })[0];
+      var mine = d.decisions.filter(function (x) { return x.lane === lane.id; });
+      var inForce = mine.filter(function (x) { return x.effectiveStatus === "accepted"; }).length;
+      var proposed = mine.filter(function (x) { return x.effectiveStatus === "proposed"; }).length;
+      var files = (d.trace[lane.id] || []);
+      var uncovered = files.filter(function (f) { return !f.decisions.length; }).length;
+      var health = st ? st.health : "none";
+      var card = el("article", { class: "lane", "aria-label": lane.name }, [
+        el("header", null, [
+          el("div", null, [el("div", { class: "lid", text: lane.id }), el("h3", { text: lane.name })]),
+          el("span", { class: "pill " + health, text: st ? st.health : "no status" })
+        ])
+      ]);
+      if (st) {
+        card.appendChild(el("div", { class: "progress" }, [el("span", { text: (st.phase || "—") }), el("div", { class: "bar" }, [el("i", { style: "width:" + (st.progress || 0) + "%" })]), el("span", { text: (st.progress || 0) + "%" })]));
+        card.appendChild(el("p", { class: "summary", text: st.summary }));
+        [["Now", st.now], ["Next", st.next]].forEach(function (pair) {
+          if (pair[1] && pair[1].length) {
+            card.appendChild(el("div", null, [el("div", { class: "label", text: pair[0] }), el("ul", null, pair[1].slice(0, 4).map(function (t) { return el("li", { text: t }); }))]));
+          }
+        });
+        (st.blockers || []).forEach(function (b) { card.appendChild(el("div", { class: "blocker", text: b })); });
+      } else {
+        card.appendChild(el("p", { class: "empty-lane", text: lane.mission }));
+        card.appendChild(el("p", { class: "empty-lane", text: "Waiting for a session to claim this lane." }));
+      }
+      var foot = el("footer");
+      foot.appendChild(el("span", { text: inForce + " in force" + (proposed ? " · " + proposed + " proposed" : "") }));
+      if (files.length) foot.appendChild(el("span", { class: uncovered ? "uncovered" : "", text: (files.length - uncovered) + "/" + files.length + " files covered" }));
+      if (st) foot.appendChild(el("span", { text: "updated " + ago(st.updatedAt) }));
+      if (sess) foot.appendChild(link(sess.url, sess.branch ? "session · " + sess.branch : "session"));
+      card.appendChild(foot);
+      box.appendChild(card);
+    });
+  }
+
+  function renderAttention(d) {
+    var human = d.messages.filter(function (m) { return m.to === "human"; });
+    var hbox = clear(document.getElementById("human"));
+    document.getElementById("humanCount").textContent = human.length || "";
+    if (!human.length) hbox.appendChild(el("p", { class: "none-msg", text: "No questions waiting on a person." }));
+    human.slice(0, 12).forEach(function (m) {
+      hbox.appendChild(el("div", { class: "item" }, [el("strong", { text: m.subject }), el("span", { text: m.body }), el("span", { class: "meta", text: m.from + " · " + ago(m.createdAt) + (m.refs && m.refs.length ? " · " + m.refs.join(", ") : "") })]));
+    });
+    var proposed = d.decisions.filter(function (x) { return x.effectiveStatus === "proposed"; });
+    var pbox = clear(document.getElementById("proposed"));
+    document.getElementById("proposedCount").textContent = proposed.length || "";
+    if (!proposed.length) pbox.appendChild(el("p", { class: "none-msg", text: "Nothing waiting for acceptance." }));
+    proposed.forEach(function (x) {
+      var row = el("div", { class: "item" }, [el("span", { class: "meta", text: x.id }), el("strong", { text: x.title })]);
+      row.addEventListener("click", function () { openDecision(x.id); });
+      row.style.cursor = "pointer";
+      pbox.appendChild(row);
+    });
+    var blockers = [];
+    Object.keys(d.status).forEach(function (lane) { (d.status[lane].blockers || []).forEach(function (b) { blockers.push({ lane: lane, text: b }); }); });
+    var bbox = clear(document.getElementById("blockers"));
+    document.getElementById("blockerCount").textContent = blockers.length || "";
+    if (!blockers.length) bbox.appendChild(el("p", { class: "none-msg", text: "No lane reports a blocker." }));
+    blockers.forEach(function (b) { bbox.appendChild(el("div", { class: "item" }, [el("span", { class: "meta", text: b.lane }), el("span", { text: b.text })])); });
+  }
+
+  function renderTimeline(d) {
+    var box = clear(document.getElementById("timeline"));
+    document.getElementById("eventCount").textContent = d.events.length ? d.events.length + " events" : "";
+    if (!d.events.length) box.appendChild(el("p", { class: "none-msg", text: "No activity yet." }));
+    d.events.slice(0, 40).forEach(function (e) {
+      box.appendChild(el("div", { class: "ev" }, [
+        el("time", { datetime: e.ts, title: e.ts, text: hhmm(e.ts) }),
+        el("span", { class: "k", text: e.lane + " · " + e.kind }),
+        el("span", { class: "s", text: (e.ref && e.kind !== "status" ? e.ref + " · " : "") + e.summary })
+      ]));
+    });
+  }
+
+  function renderFilters(d) {
+    var lf = clear(document.getElementById("laneFilters"));
+    ["all"].concat(d.lanes.map(function (l) { return l.id; })).forEach(function (id) {
+      var b = el("button", { class: "chip", type: "button", "aria-pressed": String(state.lane === id), text: id === "all" ? "all lanes" : id });
+      b.addEventListener("click", function () { state.lane = id; renderFilters(d); renderDecisions(d); });
+      lf.appendChild(b);
+    });
+    var sf = clear(document.getElementById("statusFilters"));
+    ["all", "accepted", "proposed", "superseded", "rejected"].forEach(function (s) {
+      var b = el("button", { class: "chip", type: "button", "aria-pressed": String(state.status === s), text: s === "all" ? "any status" : s });
+      b.addEventListener("click", function () { state.status = s; renderFilters(d); renderDecisions(d); });
+      sf.appendChild(b);
+    });
+  }
+
+  function decisionNode(x) {
+    var s = x.session || {};
+    var dl = el("dl", { class: "kv" });
+    function row(k, v) { if (v == null || v === "" || (v.length === 0)) return; dl.appendChild(el("dt", { text: k })); dl.appendChild(el("dd", null, [typeof v === "string" ? el("span", { text: v }) : v])); }
+    function tags(list) { var span = el("span"); list.forEach(function (t) { span.appendChild(el("span", { class: "tag", text: t })); }); return span; }
+    row("Lane", laneName(x.lane) + " (" + x.lane + ")");
+    row("Type", x.type);
+    row("Made", x.createdAt + " by " + x.author);
+    if (x.acceptedBy) row("Accepted", (x.acceptedAt || "") + " by " + x.acceptedBy);
+    row("Session", link(s.url, s.url ? s.url.replace("https://", "") : s.id));
+    row("Branch", s.branch || "");
+    if (x.produces && x.produces.length) row("Produces", tags(x.produces));
+    if (x.dependsOn && x.dependsOn.length) row("Depends on", tags(x.dependsOn));
+    if (x.supersedes && x.supersedes.length) row("Supersedes", tags(x.supersedes));
+    if (x.supersededBy && x.supersededBy.length) row("Superseded by", tags(x.supersededBy));
+    row("Seen on", tags(x.branches || []));
+    var body = el("div", { class: "body" }, [
+      el("p", null, [el("strong", { text: "Decision. " }), x.decision]),
+      el("p", { class: "muted" }, [el("strong", { text: "Context. " }), x.context])
+    ]);
+    if (x.alternatives && x.alternatives.length) body.appendChild(el("p", { class: "muted" }, [el("strong", { text: "Alternatives. " }), x.alternatives.join("; ")]));
+    if (x.consequences) body.appendChild(el("p", { class: "muted" }, [el("strong", { text: "Consequences. " }), x.consequences]));
+    if (x.conflict) body.appendChild(el("div", { class: "blocker", text: "This id has different content on different branches. Its lane should supersede one version." }));
+    body.appendChild(dl);
+    return el("details", { class: "dec", id: "dec-" + x.id }, [
+      el("summary", null, [el("span", { class: "mono", text: x.id }), el("span", { class: "t", text: x.title }), el("span", { class: "st " + x.effectiveStatus, text: x.effectiveStatus })]),
+      body
+    ]);
+  }
+
+  function renderDecisions(d) {
+    var box = clear(document.getElementById("decisionList"));
+    var q = state.q.trim().toLowerCase();
+    var list = d.decisions.filter(function (x) {
+      if (state.lane !== "all" && x.lane !== state.lane) return false;
+      if (state.status !== "all" && x.effectiveStatus !== state.status) return false;
+      if (q) {
+        var hay = [x.id, x.title, x.decision, x.context, (x.produces || []).join(" ")].join(" ").toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+    if (!list.length) box.appendChild(el("p", { class: "none-msg", text: "No decisions match these filters." }));
+    list.forEach(function (x) { box.appendChild(decisionNode(x)); });
+  }
+
+  function openDecision(id) {
+    selectView("decisions");
+    state.lane = "all"; state.status = "all"; state.q = "";
+    document.getElementById("q").value = "";
+    renderFilters(state.data); renderDecisions(state.data);
+    var node = document.getElementById("dec-" + id);
+    if (node) { node.open = true; node.scrollIntoView({ block: "center" }); }
+  }
+
+  function renderSpec(d) {
+    var box = clear(document.getElementById("spec"));
+    d.lanes.forEach(function (lane) {
+      var inForce = d.decisions.filter(function (x) { return x.lane === lane.id && x.effectiveStatus === "accepted"; }).sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+      var files = d.trace[lane.id] || [];
+      var section = el("section", { class: "spec-lane" }, [
+        el("h2", { text: lane.name }),
+        el("p", { class: "muted", style: "margin:0;max-width:72ch", text: lane.mission }),
+        el("div", null, [el("span", { class: "label muted mono", text: "owns " }), el("span", null, lane.owns.map(function (o) { return el("span", { class: "tag", text: o }); }))])
+      ]);
+      if (inForce.length) {
+        var tbody = el("tbody");
+        inForce.forEach(function (x) {
+          var a = el("a", { href: "#", text: x.id });
+          a.addEventListener("click", function (ev) { ev.preventDefault(); openDecision(x.id); });
+          tbody.appendChild(el("tr", null, [el("td", { class: "mono" }, [a]), el("td", { text: x.title }), el("td", null, (x.produces || []).map(function (p) { return el("span", { class: "tag", text: p }); }))]));
+        });
+        section.appendChild(el("div", { class: "tablewrap" }, [el("table", null, [el("thead", null, [el("tr", null, [el("th", { text: "Decision" }), el("th", { text: "In force" }), el("th", { text: "Produces" })])]), tbody])]));
+      } else {
+        section.appendChild(el("p", { class: "none-msg", text: "No decisions in force yet." }));
+      }
+      if (files.length) {
+        var fb = el("tbody");
+        files.forEach(function (f) {
+          fb.appendChild(el("tr", null, [el("td", { class: "mono", text: f.path }), el("td", { class: "mono", text: f.sha256.slice(0, 12) }), el("td", { class: f.decisions.length ? "" : "uncovered", text: f.decisions.join(", ") || "uncovered" })]));
+        });
+        var det = el("details", null, [el("summary", { class: "muted", style: "cursor:pointer;font-size:13px", text: files.length + " produced files with hashes (trace)" }), el("div", { class: "tablewrap", style: "margin-top:8px" }, [el("table", null, [el("thead", null, [el("tr", null, [el("th", { text: "File" }), el("th", { text: "sha256" }), el("th", { text: "Covered by" })])]), fb])])]);
+        section.appendChild(det);
+      }
+      box.appendChild(section);
+    });
+  }
+
+  function renderMessages(d) {
+    var box = clear(document.getElementById("messages"));
+    box.appendChild(el("h2", null, ["Messages between lanes", el("small", { text: "a message arrives when its sender pushes" })]));
+    if (!d.messages.length) box.appendChild(el("p", { class: "none-msg", text: "No messages yet." }));
+    d.messages.forEach(function (m) {
+      box.appendChild(el("div", { class: "item" }, [
+        el("span", { class: "meta", text: m.from + " → " + m.to + " · " + ago(m.createdAt) + (m.refs && m.refs.length ? " · refs " + m.refs.join(", ") : "") + (m.replyTo ? " · reply to " + m.replyTo : "") }),
+        el("strong", { text: m.subject }),
+        el("span", { text: m.body })
+      ]));
+    });
+  }
+
+  function renderSessions(d) {
+    var box = clear(document.getElementById("sessions"));
+    if (!d.sessions.length) box.appendChild(el("p", { class: "none-msg", text: "No sessions have claimed a lane yet." }));
+    d.sessions.forEach(function (s) {
+      box.appendChild(el("div", { class: "item" }, [
+        el("span", { class: "meta", text: s.lane + " · branch " + (s.branch || "?") + " · started " + ago(s.startedAt) + " · seen " + ago(s.lastSeenAt) }),
+        link(s.url, s.url || s.sessionId),
+        s.purpose ? el("span", { class: "muted", text: s.purpose }) : null
+      ]));
+    });
+    var tb = clear(document.getElementById("branches"));
+    document.getElementById("branchCount").textContent = d.branches.length + " on origin";
+    d.branches.forEach(function (b) {
+      tb.appendChild(el("tr", null, [el("td", { class: "mono", text: b.name }), el("td", { class: "mono", text: b.sha }), el("td", { text: ago(b.committedAt) }), el("td", { text: b.subject })]));
+    });
+  }
+
+  function renderFresh(d) {
+    var age = (Date.now() - new Date(d.generatedAt).getTime()) / 60000;
+    var dot = document.getElementById("freshDot");
+    dot.className = "dot " + (age < 20 ? "live" : "stale");
+    document.getElementById("freshText").textContent = "Built " + ago(d.generatedAt) + " from " + d.branches.length + " branches" + (state.source ? " · " + state.source : "");
+  }
+
+  function render() {
+    var d = state.data;
+    if (!d) return;
+    document.getElementById("title").firstChild.textContent = (d.project && d.project.name ? d.project.name : "Peak State") + " ";
+    document.getElementById("countDecisions").textContent = d.decisions.length;
+    document.getElementById("countMessages").textContent = d.messages.length;
+    renderFresh(d); renderGates(d); renderLanes(d); renderAttention(d); renderTimeline(d);
+    renderFilters(d); renderDecisions(d); renderSpec(d); renderMessages(d); renderSessions(d);
+    var notice = document.getElementById("notice");
+    if (d.parseErrors && d.parseErrors.length) { notice.hidden = false; notice.textContent = "Some records could not be read: " + d.parseErrors.join(", "); }
+    else notice.hidden = true;
+  }
+
+  function selectView(name) {
+    state.view = name;
+    Array.prototype.forEach.call(document.querySelectorAll("nav.tabs button"), function (b) { b.setAttribute("aria-selected", String(b.getAttribute("data-view") === name)); });
+    ["board", "decisions", "spec", "messages", "sessions"].forEach(function (v) { document.getElementById("view-" + v).hidden = v !== name; });
+    try { localStorage.setItem("peak-dashboard-view", name); } catch (e) { /* storage unavailable */ }
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll("nav.tabs button"), function (b) {
+    b.addEventListener("click", function () { selectView(b.getAttribute("data-view")); });
+  });
+  document.getElementById("q").addEventListener("input", function (e) { state.q = e.target.value; if (state.data) renderDecisions(state.data); });
+  try { var saved = localStorage.getItem("peak-dashboard-view"); if (saved) selectView(saved); } catch (e) { /* storage unavailable */ }
+  var hash = (location.hash || "").replace("#", "");
+  if (["board", "decisions", "spec", "messages", "sessions"].indexOf(hash) !== -1) selectView(hash);
+
+  function accept(data, source) {
+    if (!data || !data.lanes) return;
+    if (state.data && state.data.generatedAt >= data.generatedAt) return;
+    state.data = data; state.source = source; render();
+  }
+  function poll() {
+    if (!window.fetch) return;
+    fetch("data.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) { if (data) accept(data, "live"); else noData(); })
+      .catch(noData);
+  }
+  function noData() {
+    if (state.data) return; // keep showing the last good data
+    document.getElementById("freshText").textContent = "No board data yet";
+    var notice = document.getElementById("notice");
+    notice.hidden = false;
+    notice.textContent = "data.json could not be loaded. The coord workflow publishes it to the coord-dashboard branch after each push; locally, run python3 tools/coord.py site --out <dir> --fragment.";
+  }
+  if (window.__PEAK_DATA__) accept(window.__PEAK_DATA__, "snapshot");
+  poll();
+  setInterval(poll, 60000);
+  setInterval(function () { if (state.data) renderFresh(state.data); }, 30000);
+})();
+</script>

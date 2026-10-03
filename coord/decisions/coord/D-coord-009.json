@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-009",
+  "lane": "coord",
+  "title": "Gates M0 to M4 are ordered, not timed; lane sessions stop after M0",
+  "status": "accepted",
+  "type": "process",
+  "context": "The hackathon length is unknown. The user asked to start several sessions and have them test the setup before building.",
+  "decision": "Milestones are ordered gates: M0 setup verified, M1 contracts frozen, M2 vertical slice, M3 real inputs, M4 demo-ready. Each lane session's first task is the M0 checklist in its brief: claim, prove the edit guard, write PLAN.md, log a kickoff decision, message neighbours, post status, push, then stop and report. Building M1 starts when a person says go. Clock times get attached once the schedule is known.",
+  "alternatives": [
+    "Let sessions start building immediately: burns time if the setup or the plan needs correcting"
+  ],
+  "consequences": "Lane status phase uses M0 to M4, which drives the gate strip on the dashboard.",
+  "produces": [
+    "docs/hackathon/mvp.md",
+    "docs/hackathon/lanes/"
+  ],
+  "dependsOn": [
+    "D-coord-004"
+  ],
+  "supersedes": [],
+  "author": "claude (coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:00:01Z",
+  "acceptedAt": "2026-10-03T14:00:01Z",
+  "acceptedBy": "claude (coord)"
+}

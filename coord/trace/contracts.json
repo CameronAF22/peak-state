@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "lane": "contracts",
+  "files": [
+    {
+      "path": "examples/sample-profile.json",
+      "sha256": "291e50b2e629e9eb265603ccba7bfff329cfebb3124a3b4a337990e875f86f4a",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "examples/sample-strategies.json",
+      "sha256": "2e568daa55ce8c50aa582b99f7a70bc315faadf4182f83ac5f7d032c90a1abd1",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "schemas/anchor-update.schema.json",
+      "sha256": "aebf1af9180b74248581b420cedc62181d71abd5ad66f16942935aaf693fdfb6",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "schemas/intervention-offer.schema.json",
+      "sha256": "c7532e6f1b96fa09823f7f9bd56c4550d47a516e9c4c856c963efda2bb1abe9d",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "schemas/peak-strategies.schema.json",
+      "sha256": "9926246d2c4cf150c15df0a1afa0a0000b64c79e215447bec239f7fc123ae2a8",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "schemas/user-state-profile.schema.json",
+      "sha256": "a33d13d344de693b19eaca61a351413dd9853bee8b927721daa7e8a3613c3e76",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "schemas/voice-session.schema.json",
+      "sha256": "ae7e8687cc367d1b6b896892b1c502f549a1cee3838c4d71bced4773fc6e2a86",
+      "decisions": [
+        "D-coord-008"
+      ]
+    }
+  ]
+}

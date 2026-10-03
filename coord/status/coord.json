@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "lane": "coord",
+  "health": "green",
+  "phase": "M1",
+  "progress": 0,
+  "summary": "M0 passed: all six lanes claimed, guard verified, plans and kickoff decisions pushed, CI green. Waiting on a person for go and the human-inbox answers.",
+  "now": [
+    "Republish dashboard Artifact"
+  ],
+  "next": [
+    "Merge setup PR #2, then lane PRs in dependency order",
+    "Record human answers as decisions"
+  ],
+  "blockers": [],
+  "updatedAt": "2026-10-03T14:05:27Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

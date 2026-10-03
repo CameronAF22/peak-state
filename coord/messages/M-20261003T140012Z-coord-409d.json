@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140012Z-coord-409d",
+  "from": "coord",
+  "to": "human",
+  "subject": "Who owns which lane?",
+  "body": "coord/lanes.json has humanOwner null for every lane. Name a person per lane (or say agents run them solo) so proposals reach the right human.",
+  "refs": [
+    "D-coord-004"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:00:12Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

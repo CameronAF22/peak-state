@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/coord/session-ref.schema.json",
+  "title": "Session reference",
+  "description": "Which Claude Code session wrote a record, so the conversation behind it can be reopened. Embedded in decisions, status, messages and events.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "url", "branch"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "url": { "type": ["string", "null"], "pattern": "^https://" },
+    "branch": { "type": ["string", "null"] }
+  }
+}

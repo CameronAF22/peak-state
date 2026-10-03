@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-001",
+  "lane": "coord",
+  "title": "Repo is the coordination bus; tools/coord.py is the only writer",
+  "status": "accepted",
+  "type": "process",
+  "context": "Six Claude Code sessions will build the hackathon MVP in parallel and the user wants every decision logged, tied to what it produced, recoverable later, and visible in real time. Sessions run in separate containers and can only share state through GitHub.",
+  "decision": "Each lane works on its own branch. Coordination records (decisions, status, messages, session claims, events) are JSON files under coord/, one file per record so parallel branches never conflict, each validated against schemas/coord/. tools/coord.py writes them, renders the per-lane spec and trace, and reads coord/ from every remote branch with git ls-tree and cat-file so agents see each other without merging. Every lane-owned file must be covered by a decision's produces list, and every record names the session (id, URL, branch) that wrote it.",
+  "alternatives": [
+    "One shared coordination branch every session pushes to: conflicts constantly and breaks the one-branch-per-session rule",
+    "An external tracker (Linear, ClickUp, Notion): not tied to the code, and agents cannot enforce it in hooks",
+    "The Artifact database as the bus: real time, but not versioned with the code and not readable from git or CI"
+  ],
+  "consequences": "Messages arrive when the sender pushes, so latency is one push plus one fetch (hooks fetch at most every 90 s). Decisions are append-only; changes go through supersedes.",
+  "produces": [
+    "coord/README.md",
+    "CLAUDE.md",
+    "schemas/coord/",
+    "tools/coord.py",
+    "tools/test_coord.py"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "claude (coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:00:00Z",
+  "acceptedAt": "2026-10-03T14:00:00Z",
+  "acceptedBy": "claude (coord)"
+}

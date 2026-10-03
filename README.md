@@ -10,6 +10,17 @@ The product is a closed loop with a manual path inside it:
 
 This repository is the shareable frame for that product: the vision, the user journey, the elicitation strategy, the voice prompts, and the profile schema. It does not yet contain a client or a live voice session. Those wait on three decisions recorded in [docs/open-questions.md](docs/open-questions.md).
 
+## Hackathon build
+
+The hackathon MVP is planned in [docs/hackathon/mvp.md](docs/hackathon/mvp.md). The plan covers three top emotions, a strategy for each, drift detection and conditioning reps.
+
+Six lanes build it in parallel, coordinated through this repo:
+
+- [CLAUDE.md](CLAUDE.md): the rules every session follows
+- [coord/README.md](coord/README.md): the protocol
+- [spec/](spec/README.md): the decision log rendered per lane
+- The live dashboard: https://cameronaf22.github.io/peak-state/
+
 ## What a collaborator should read
 
 | Order | Document | What it settles |

@@ -1,0 +1,21 @@
+{
+  "name": "peak-state",
+  "private": true,
+  "description": "Peak State hackathon MVP. Each lane is an npm workspace; coord owns this root file.",
+  "workspaces": [
+    "contracts",
+    "onboarding",
+    "sensing",
+    "reps",
+    "app"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "coord": "python3 tools/coord.py",
+    "coord:validate": "python3 tools/coord.py validate",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  }
+}
