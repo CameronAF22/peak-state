@@ -1,0 +1,3 @@
+# Copy to .dev.vars for `wrangler dev` (that file is git-ignored). Never commit real values.
+INVITE_CODE=replace-with-the-invite-code
+OPENAI_API_KEY=sk-replace-me

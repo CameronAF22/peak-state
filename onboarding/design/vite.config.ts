@@ -1,4 +1,4 @@
-// Vite serves the three light-and-text design prototypes (D-onboarding-014).
+// Vite serves the three light-and-text design prototypes (D-onboarding-019).
 // `npm run design -w @peak-state/onboarding` serves design/ on port 5175; open /orb/, /horizon/ or /constellation/.
 // Each prototype imports the same engine, hints, playback and voice modules from ../src as the harness.
 

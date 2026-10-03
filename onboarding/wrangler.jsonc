@@ -1,0 +1,25 @@
+// Peak State on Cloudflare (D-onboarding-017): one Worker serves the built harness and the /api.
+// Build the page first (npm run build:harness), then `npx wrangler dev` locally or `npx wrangler deploy`.
+// Secrets (never in this file): npx wrangler secret put INVITE_CODE · npx wrangler secret put OPENAI_API_KEY
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "peak-state",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-30",
+  "observability": { "enabled": true },
+  "assets": {
+    "directory": "./dist-harness",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api", "/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "peak-state",
+      // Replace with the id printed by `npx wrangler d1 create peak-state` before the first deploy.
+      "database_id": "ad55b62e-45a3-4fbf-8afd-a04295fdae96",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

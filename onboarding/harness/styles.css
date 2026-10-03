@@ -277,6 +277,7 @@ button {
 }
 
 .popover input[type="text"],
+.popover input[type="email"],
 .popover input[type="password"] {
   border: 1px solid var(--border);
   background: var(--surface-2);
@@ -1067,4 +1068,34 @@ button {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* ── practice loop, reminders and account (D-onboarding-015, 016, 017) ── */
+
+.practice-notice {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+
+.practice-remembered {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.practice-reminder {
+  margin: 0;
+  color: var(--muted);
+}
+
+.account {
+  margin-left: auto;
+}
+
+.practice-title {
+  font: inherit;
+  margin: 0;
 }

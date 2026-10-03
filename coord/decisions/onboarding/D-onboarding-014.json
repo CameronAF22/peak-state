@@ -2,30 +2,30 @@
   "schemaVersion": 1,
   "id": "D-onboarding-014",
   "lane": "onboarding",
-  "title": "Three white-light minimal-text design prototypes for the question harness",
+  "title": "Strategy record: revisioned profile with a change log, stored local first and synced to the account",
   "status": "accepted",
   "type": "technical",
-  "context": "Cam asked for a simple, attention-focusing visual for choosing a state and running the strategy questions, and asked for three versions to compare. Kept on branch claude/project-thread-r75yty so PR #23's harness code is untouched.",
-  "decision": "Build three self-contained prototype pages (orb, horizon, constellation) under onboarding/design/, each a dark full-screen view with one moving white light and one line of text, driven by the existing engine, hints, playback and voice modules unchanged. Each has its own Playwright screenshot run for content and destressed. The production harness page is not changed until Cam picks one.",
-  "alternatives": [
-    "Restyle the existing harness page in place",
-    "Memory photo or self photo as the background"
-  ],
+  "context": "Cam: store the answers that are someone's strategy so the second iteration is only recall, a rating and one question, and update the strategy when an answer changes. Builds on D-onboarding-012 (PR #23).",
+  "decision": "A saved strategy is a StrategyRecord {profile (contracts Profile v2, unchanged), revision (1, 2, ...), savedAt, changes[]}. Each StrategyChange names stateId, stepIndex, field ('content' or 'core.<attribute>'), from, to, the rating that prompted it, and the new revision. Every change writes a new revision; old revisions are kept on the server. The browser saves first (localStorage, the existing peak-state.harness.strategy key now holds the record, old SavedStrategy values upgrade on read) and pushes to the account when signed in. The server refuses a revision that is not newer than its latest (409 with its copy) and the page then takes the server copy. Runs stay contracts RepSessions in the existing run log and are pushed the same way. StrategyRecord and StrategyChange are onboarding-internal shapes; if another lane needs them they move to contracts.",
+  "alternatives": [],
   "consequences": "",
   "produces": [
-    "onboarding/design/",
-    "onboarding/package.json",
-    "onboarding/tsconfig.json"
+    "onboarding/src/store/",
+    "onboarding/test/unit/store.test.ts"
   ],
-  "dependsOn": [],
+  "dependsOn": [
+    "D-onboarding-012",
+    "D-contracts-008",
+    "D-contracts-007"
+  ],
   "supersedes": [],
   "author": "claude",
   "session": {
-    "id": "session_01FpUSvVKQswepdzRd8iGswL",
-    "url": "https://claude.ai/code/session_01FpUSvVKQswepdzRd8iGswL",
-    "branch": "claude/project-thread-r75yty"
+    "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "branch": "claude/strategy-storage-cloudflare-txlooc"
   },
-  "createdAt": "2026-10-03T17:46:20Z",
-  "acceptedAt": "2026-10-03T17:46:20Z",
+  "createdAt": "2026-10-03T17:52:31Z",
+  "acceptedAt": "2026-10-03T17:52:31Z",
   "acceptedBy": "claude"
 }

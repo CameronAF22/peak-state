@@ -1,8 +1,8 @@
 // The voice layer: speaks the engine's question text and transcribes the person. Never decides what to ask.
 
-import type { GptLiveConfig, VoiceAdapter, VoiceKind } from "../types.ts";
+import type { VoiceAdapter, VoiceKind } from "../types.ts";
 import { createBrowserVoice } from "./browser.ts";
-import { createGptLiveVoice, DEFAULT_GPT_LIVE_MODEL } from "./gpt-live.ts";
+import { createGptLiveVoice, DEFAULT_GPT_LIVE_MODEL, type GptLiveVoiceConfig } from "./gpt-live.ts";
 import { createTypedVoice } from "./typed.ts";
 
 export { createTypedVoice } from "./typed.ts";
@@ -30,7 +30,7 @@ export type {
  * Build the adapter for a kind. "gpt-live" without a config (or without an API key) still returns the
  * GPT live adapter; its start() reports a clear error status so the UI can ask for a key.
  */
-export function createVoice(kind: VoiceKind, config?: GptLiveConfig): VoiceAdapter {
+export function createVoice(kind: VoiceKind, config?: GptLiveVoiceConfig): VoiceAdapter {
   switch (kind) {
     case "browser":
       return createBrowserVoice();

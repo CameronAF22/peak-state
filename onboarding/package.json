@@ -14,7 +14,9 @@
     "build:harness": "vite build",
     "test:visual": "playwright test",
     "design": "vite --config design/vite.config.ts",
-    "test:design": "playwright test -c design/playwright.config.ts"
+    "test:design": "playwright test -c design/playwright.config.ts",
+    "worker:dev": "npm run build:harness && wrangler d1 migrations apply peak-state --local && wrangler dev --ip 127.0.0.1 --port 8787",
+    "worker:deploy": "npm run build:harness && wrangler d1 migrations apply peak-state --remote && wrangler deploy"
   },
   "dependencies": {
     "@peak-state/contracts": "0.1.0"
@@ -23,6 +25,7 @@
     "@playwright/test": "1.56.1",
     "@types/node": "22.10.0",
     "typescript": "5.9.3",
-    "vite": "8.3.2"
+    "vite": "8.3.2",
+    "wrangler": "4.147.0"
   }
 }

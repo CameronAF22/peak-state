@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T180616Z-onboarding-85a4",
+  "from": "onboarding",
+  "to": "coord",
+  "subject": "Onboarding can run online: one Cloudflare Worker with D1 inside onboarding/",
+  "body": "D-onboarding-017: onboarding/wrangler.jsonc serves the built harness plus /api (invite-code email accounts, strategy revisions, rep log, short-lived GPT live keys) from D1. Everything is inside onboarding/; nothing at the root changed. Deploy waits for Cam's Cloudflare access. If the app lane later wants the same API, the Worker can move to a shared place.",
+  "refs": [
+    "D-onboarding-017"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T18:06:16Z",
+  "session": {
+    "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "branch": "claude/strategy-storage-cloudflare-txlooc"
+  }
+}
