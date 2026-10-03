@@ -1,115 +1,119 @@
-// Header voice controls: Typed / Browser voice / GPT live, a settings popover for GPT live, and a status dot.
+// Corner voice control (Horizon style, D-onboarding-021): one quiet button showing the current voice and its state,
+// opening a small menu: Typed · Browser voice · GPT live, with the GPT live model, key and status.
 
 import type { VoiceKind, VoiceStatus } from "../../types.ts";
 import type { VoiceSettings } from "../../voice/index.ts";
-import { h, ICONS, mount, svg } from "./dom.ts";
+import { h, mount } from "./dom.ts";
 
 export interface VoiceControls {
   setStatus(status: VoiceStatus): void;
   openSettings(): void;
 }
 
-const STATE_TEXT: Record<VoiceStatus["state"], string> = {
-  idle: "Off",
-  connecting: "Connecting…",
-  ready: "Ready",
-  speaking: "Speaking",
-  listening: "Listening",
-  error: "Problem",
-};
+const KIND_LABEL: Record<VoiceKind, string> = { typed: "Typed", browser: "Browser voice", "gpt-live": "GPT live" };
+const SHORT: Record<VoiceKind, string> = { typed: "typing", browser: "voice", "gpt-live": "live voice" };
+
+const MIC = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/></svg>`;
 
 export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, onChange: (s: VoiceSettings) => void): VoiceControls {
   let settings: VoiceSettings = { ...initial };
 
-  const select = h(
-    "select",
-    { id: "voice-select", "data-testid": "voice-select", "aria-label": "Voice" },
-    h("option", { value: "typed" }, "Typed"),
-    h("option", { value: "browser" }, "Browser voice"),
-    h("option", { value: "gpt-live" }, "GPT live"),
+  const icon = h("span", { class: "vt-icon" });
+  icon.innerHTML = MIC;
+  const label = h("span", { class: "vt-label" }, SHORT[settings.kind]);
+  const button = h(
+    "button",
+    { class: "vt", type: "button", "data-testid": "voice-toggle", "aria-haspopup": "menu", "aria-expanded": "false", "aria-controls": "voice-menu", "data-state": "ready", title: "Voice" },
+    icon,
+    label,
   );
-  select.value = settings.kind;
 
-  const statusText = h("span", { class: "status-text" }, "Ready");
-  const status = h("span", { class: "status", "data-testid": "voice-status", "data-state": "ready", role: "status", title: "Voice status" }, h("span", { class: "dot" }), statusText);
-
-  const model = h("input", { type: "text", id: "gpt-model", "data-testid": "gpt-model", value: settings.model, autocomplete: "off", spellcheck: "false" });
-  const key = h("input", { type: "password", id: "gpt-key", "data-testid": "gpt-key", value: settings.apiKey ?? "", autocomplete: "off", placeholder: "sk-…" });
-  const remember = h("input", { type: "checkbox", id: "gpt-remember", "data-testid": "gpt-remember" });
-  remember.checked = settings.remember;
-
-  const popover = h(
-    "div",
-    { class: "popover", "data-testid": "voice-settings", role: "dialog", "aria-label": "GPT live settings", hidden: true },
-    h("h2", {}, "GPT live settings"),
-    h("label", { class: "field", for: "gpt-model" }, "Model id", model),
-    h("label", { class: "field", for: "gpt-key" }, "API key", key),
-    h("label", { class: "check", for: "gpt-remember" }, remember, "Remember the key in this browser"),
-    h("p", { class: "note" }, "The key is sent only to the realtime endpoint. Unless you tick remember, it is kept for this page only."),
+  const option = (kind: VoiceKind) =>
     h(
-      "div",
-      { class: "row" },
-      h("button", { class: "btn ghost", type: "button", onclick: () => (popover.hidden = true) }, "Cancel"),
-      h(
-        "button",
-        {
-          class: "btn primary",
-          type: "button",
-          "data-testid": "voice-settings-save",
-          onclick: () => {
-            settings = { ...settings, model: model.value.trim() || "gpt-live-1", apiKey: key.value.trim() || undefined, remember: remember.checked };
-            popover.hidden = true;
-            onChange(settings);
-          },
+      "button",
+      {
+        class: "vt-opt",
+        type: "button",
+        role: "menuitemradio",
+        "data-testid": `voice-${kind}`,
+        "aria-checked": settings.kind === kind ? "true" : "false",
+        onclick: () => choose(kind),
+      },
+      KIND_LABEL[kind],
+    );
+
+  const model = h("input", { type: "text", "data-testid": "gpt-model", value: settings.model, autocomplete: "off", spellcheck: "false", "aria-label": "Model id" });
+  const key = h("input", { type: "password", "data-testid": "gpt-key", value: settings.apiKey ?? "", autocomplete: "off", placeholder: "API key", "aria-label": "API key" });
+  const remember = h("input", { type: "checkbox", "data-testid": "gpt-remember", id: "gpt-remember" });
+  remember.checked = settings.remember;
+  const gpt = h(
+    "div",
+    { class: "vt-gpt", hidden: settings.kind !== "gpt-live" },
+    model,
+    key,
+    h("label", { class: "vt-check", for: "gpt-remember" }, remember, "remember the key in this browser"),
+    h("p", { class: "vt-note" }, "The key goes only to the realtime endpoint. Signed in, the account can supply it."),
+    h(
+      "button",
+      {
+        class: "vt-save",
+        type: "button",
+        "data-testid": "voice-settings-save",
+        onclick: () => {
+          settings = { ...settings, model: model.value.trim() || settings.model, apiKey: key.value.trim() || undefined, remember: remember.checked };
+          close();
+          onChange(settings);
         },
-        "Save",
-      ),
+      },
+      "save",
     ),
   );
+  const status = h("p", { class: "vt-status", "data-testid": "voice-status", role: "status" }, "");
+  const menu = h("div", { class: "vt-menu", id: "voice-menu", "data-testid": "voice-settings", role: "menu", "aria-label": "Voice", hidden: true }, option("typed"), option("browser"), option("gpt-live"), gpt, status);
 
-  const gear = h(
-    "button",
-    {
-      class: "icon-btn",
-      type: "button",
-      "data-testid": "voice-settings-button",
-      "aria-label": "Voice settings",
-      title: "Voice settings",
-      onclick: () => {
-        popover.hidden = !popover.hidden;
-        if (!popover.hidden) (settings.apiKey ? model : key).focus();
-      },
-    },
-    svg(ICONS.gear),
-  );
-
-  select.addEventListener("change", () => {
-    settings = { ...settings, kind: select.value as VoiceKind };
-    if (settings.kind === "gpt-live" && !settings.apiKey) {
-      popover.hidden = false;
-      key.focus();
-    }
+  const syncOptions = (): void => {
+    for (const b of menu.querySelectorAll<HTMLElement>(".vt-opt")) b.setAttribute("aria-checked", b.dataset.testid === `voice-${settings.kind}` ? "true" : "false");
+    gpt.hidden = settings.kind !== "gpt-live";
+    label.textContent = SHORT[settings.kind];
+  };
+  const open = (): void => {
+    menu.hidden = false;
+    button.setAttribute("aria-expanded", "true");
+  };
+  const close = (): void => {
+    menu.hidden = true;
+    button.setAttribute("aria-expanded", "false");
+  };
+  function choose(kind: VoiceKind): void {
+    settings = { ...settings, kind };
+    syncOptions();
+    // GPT live without a key keeps the menu open on the key field; a signed-in account may supply the key instead.
+    if (kind === "gpt-live" && !settings.apiKey) key.focus();
+    else close();
     onChange(settings);
-  });
+  }
 
+  button.addEventListener("click", () => (menu.hidden ? open() : close()));
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") popover.hidden = true;
+    if (e.key === "Escape") close();
   });
   document.addEventListener("pointerdown", (e) => {
-    if (!popover.hidden && !root.contains(e.target as Node)) popover.hidden = true;
+    if (!menu.hidden && !root.contains(e.target as Node)) close();
   });
 
-  mount(root, h("label", { class: "voice-label", for: "voice-select" }, "Voice"), select, status, gear, popover);
+  mount(root, button, menu);
 
   return {
     setStatus(s) {
-      status.dataset.state = s.state;
-      const text = s.kind === "typed" && s.state === "ready" ? "Typed" : STATE_TEXT[s.state];
-      statusText.textContent = text;
-      status.title = s.detail ? `${text}: ${s.detail}` : text;
+      button.dataset.state = s.state;
+      const text = s.kind === "typed" ? "Typing. Switch to a voice to speak your answers." : `${KIND_LABEL[s.kind]}: ${s.state}${s.detail ? `. ${s.detail}` : ""}`;
+      status.textContent = text;
+      button.title = text;
+      label.textContent = s.state === "listening" ? "listening" : s.state === "speaking" ? "speaking" : SHORT[s.kind];
     },
     openSettings() {
-      popover.hidden = false;
+      open();
+      gpt.hidden = false;
       key.focus();
     },
   };

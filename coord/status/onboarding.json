@@ -3,16 +3,16 @@
   "lane": "onboarding",
   "health": "green",
   "phase": "M0",
-  "progress": 85,
-  "summary": "Three light-and-text design prototypes (orb, horizon, constellation) built on branch claude/project-thread-r75yty; visual tests pass for all three",
+  "progress": 90,
+  "summary": "Harness page now uses the Horizon design with a spoken-word highlight (D-onboarding-021), stacked on PR #24; tsc, 87 unit tests and harness/online/spoken e2e pass",
   "now": [
-    "Presenting the three designs to Cam"
+    "Waiting for Cam to review PR #26"
   ],
   "next": [
-    "Port the chosen design into the harness once Cam picks"
+    "Merge into PR #24's line once Cam agrees"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T18:29:38Z",
+  "updatedAt": "2026-10-03T19:05:51Z",
   "session": {
     "id": "session_01FpUSvVKQswepdzRd8iGswL",
     "url": "https://claude.ai/code/session_01FpUSvVKQswepdzRd8iGswL",

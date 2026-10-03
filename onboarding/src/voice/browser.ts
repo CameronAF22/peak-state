@@ -4,6 +4,7 @@
 
 import type { VoiceAdapter } from "../types.ts";
 import { createVoiceEmitter } from "./emitter.ts";
+import { splitWords, wordIndexAtChar } from "./words.ts";
 
 // Minimal local shapes: SpeechRecognition is not in TypeScript's DOM lib.
 interface RecognitionAlternative {
@@ -241,8 +242,22 @@ export function createBrowserVoice(opts: BrowserVoiceOptions = {}): VoiceAdapter
         const u = new Utterance(text);
         u.lang = lang;
         u.rate = rate;
-        u.onend = done;
+        u.onend = () => {
+          em.emitWord(words.length, text);
+          done();
+        };
         u.onerror = done;
+        // Word boundaries drive the spoken-word highlight; engines without them simply never call this.
+        const words = splitWords(text);
+        let lastWord = -1;
+        u.onboundary = (ev) => {
+          if (ev.name && ev.name !== "word") return;
+          const i = wordIndexAtChar(words, ev.charIndex);
+          if (i >= 0 && i !== lastWord) {
+            lastWord = i;
+            em.emitWord(i, text);
+          }
+        };
         // Some engines never fire onend (long text, background tabs). Do not hang the harness.
         timer = setTimeout(done, 10_000 + (text.length * 90) / Math.max(rate, 0.1));
         try {
@@ -255,5 +270,6 @@ export function createBrowserVoice(opts: BrowserVoiceOptions = {}): VoiceAdapter
 
     onTranscript: em.onTranscript,
     onStatus: em.onStatus,
+    onWord: em.onWord,
   };
 }

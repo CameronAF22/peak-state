@@ -254,6 +254,61 @@ test("gpt-live: when audio is playing, speak waits for output_audio_buffer.stopp
   v.stop();
 });
 
+test("gpt-live: word progress paced from audio start, capped by the audio transcript, ends on settle", async () => {
+  const { pcs, deps } = setup();
+  const timers: { fn: () => void; ms: number; live: boolean }[] = [];
+  const v = createGptLiveVoice(
+    { apiKey: "k", model: "gpt-live-1" },
+    {
+      ...deps,
+      setTimeout: (fn, ms) => {
+        const t = { fn, ms, live: true };
+        timers.push(t);
+        return t;
+      },
+      clearTimeout: (t) => {
+        if (t) (t as { live: boolean }).live = false;
+      },
+    },
+  );
+  const startP = v.start();
+  await new Promise<void>((r) => setTimeout(r, 20));
+  await startP;
+  const ch = pcs[0]!.channel!;
+  const words: [number, string][] = [];
+  v.onWord!((i, t) => words.push([i, t]));
+  const text = "See it. Feel it.";
+  const p = v.speak(text);
+  const id = ch.sent.at(-1)!.response.metadata.peak_speak_id;
+  ch.emit({ type: "response.created", response: { id: "resp_w", metadata: { peak_speak_id: id } } });
+  assert.deepEqual(words, [], "nothing before the audio starts");
+  ch.emit({ type: "output_audio_buffer.started", response_id: "resp_w" });
+  assert.deepEqual(words, [[0, text]]);
+  const fire = () => {
+    const t = timers.filter((x) => x.live).at(-1)!;
+    t.live = false;
+    t.fn();
+    return t.ms;
+  };
+  assert.equal(fire(), Math.round(1000 / 2.6));
+  assert.deepEqual(words.at(-1), [1, text]);
+  // The transcript has delivered only two words: the estimate waits for it.
+  ch.emit({ type: "response.output_audio_transcript.delta", response_id: "resp_w", delta: "See it." });
+  assert.equal(fire(), Math.round(2000 / 2.6 + 1000) - Math.round(1000 / 2.6), "a sentence pause after 'it.'");
+  assert.deepEqual(words.at(-1), [1, text]);
+  assert.equal(fire(), 120);
+  assert.deepEqual(words.at(-1), [1, text]);
+  ch.emit({ type: "response.output_audio_transcript.delta", response_id: "resp_w", delta: " Feel it." });
+  assert.equal(fire(), 120);
+  assert.deepEqual(words.at(-1), [2, text]);
+  fire();
+  assert.deepEqual(words.at(-1), [3, text]);
+  ch.emit({ type: "output_audio_buffer.stopped", response_id: "resp_w" });
+  await p;
+  assert.deepEqual(words.at(-1), [4, text], "settling reports the line as finished");
+  v.stop();
+});
+
 test("gpt-live: transcription delta → partial, completed → final", async () => {
   const { pcs, deps } = setup();
   const v = createGptLiveVoice({ apiKey: "k", model: "gpt-live-1" }, deps);
@@ -459,6 +514,35 @@ test("browser voice: speak resolves on utterance end and pauses recognition mean
     v.stop();
     assert.equal(rec.running, false);
     assert.equal(statuses.at(-1), "idle");
+  } finally {
+    env.uninstall();
+  }
+});
+
+test("browser voice: word boundaries report the word being spoken, end reports the line done", async () => {
+  const env = installSpeech();
+  try {
+    const v = createBrowserVoice();
+    await v.start();
+    const words: [number, string][] = [];
+    v.onWord!((i, t) => words.push([i, t]));
+    const text = "Where is it: ahead or above?";
+    const p = v.speak(text);
+    const u = env.spoken[0]! as unknown as { onboundary: (ev: { name?: string; charIndex: number }) => void; onend: () => void };
+    u.onboundary({ name: "word", charIndex: 0 });
+    u.onboundary({ name: "word", charIndex: 6 });
+    u.onboundary({ name: "word", charIndex: 7 }); // same word again: no repeat
+    u.onboundary({ name: "sentence", charIndex: 13 });
+    u.onboundary({ charIndex: 13 }); // engines that leave out name
+    u.onend();
+    await p;
+    assert.deepEqual(words, [
+      [0, text],
+      [1, text],
+      [3, text],
+      [6, text],
+    ]);
+    v.stop();
   } finally {
     env.uninstall();
   }

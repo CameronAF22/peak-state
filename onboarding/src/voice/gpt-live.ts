@@ -16,6 +16,7 @@
 
 import type { GptLiveConfig, VoiceAdapter } from "../types.ts";
 import { createVoiceEmitter } from "./emitter.ts";
+import { splitWords, wordTimeline } from "./words.ts";
 
 export const DEFAULT_GPT_LIVE_MODEL = "gpt-live-1";
 export const DEFAULT_REALTIME_ENDPOINT = "https://api.openai.com/v1/realtime/calls";
@@ -138,6 +139,13 @@ interface PendingSpeak {
   audioStarted: boolean;
   done: boolean;
   timer: unknown;
+  /** The line being spoken, for word progress (D-onboarding-021). */
+  text: string;
+  /** Words of the assistant's audio transcript so far; null until a transcript delta arrives. */
+  heard: string | null;
+  /** Word currently reported, and the timer that moves it on. */
+  word: number;
+  wordTimer: unknown;
   resolve: () => void;
 }
 
@@ -196,6 +204,8 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     if (p.done) return;
     p.done = true;
     if (p.timer !== undefined) clearT(p.timer);
+    if (p.wordTimer !== undefined) clearT(p.wordTimer);
+    if (p.audioStarted) em.emitWord(splitWords(p.text).length, p.text);
     const i = pending.indexOf(p);
     if (i >= 0) pending.splice(i, 1);
     if (pending.length === 0 && em.status().state === "speaking") em.setStatus("ready");
@@ -220,6 +230,31 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     return undefined;
   }
 
+  /**
+   * Word progress while the audio plays: the paced estimate (2.6 words/s, 1 s after a sentence) from the moment the
+   * audio starts, never ahead of the words the transcript deltas have delivered when the server sends them.
+   */
+  function stepWords(p: PendingSpeak): void {
+    const words = splitWords(p.text);
+    const { starts } = wordTimeline(words);
+    const advance = (): void => {
+      p.wordTimer = undefined;
+      if (p.done || p.word >= words.length - 1) return;
+      const heardCount = p.heard === null ? Infinity : splitWords(p.heard).length;
+      if (p.word + 1 >= heardCount) {
+        p.wordTimer = setT(advance, 120); // wait for the transcript to catch up
+        return;
+      }
+      p.word++;
+      em.emitWord(p.word, p.text);
+      if (p.word < words.length - 1) p.wordTimer = setT(advance, starts[p.word + 1] - starts[p.word]);
+    };
+    if (words.length === 0) return;
+    p.word = 0;
+    em.emitWord(0, p.text);
+    if (words.length > 1) p.wordTimer = setT(advance, starts[1] - starts[0]);
+  }
+
   function handleEvent(ev: RealtimeEvent): void {
     switch (ev.type) {
       case "session.created":
@@ -234,7 +269,18 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
 
       case "output_audio_buffer.started": {
         const p = findSpeak(ev);
-        if (p) p.audioStarted = true;
+        if (p && !p.audioStarted) {
+          p.audioStarted = true;
+          stepWords(p);
+        }
+        return;
+      }
+
+      // The assistant's transcript of its own audio: it caps how far the paced word estimate may run ahead.
+      case "response.output_audio_transcript.delta":
+      case "response.audio_transcript.delta": {
+        const p = findSpeak(ev) ?? pending.find((x) => !x.done && x.audioStarted);
+        if (p) p.heard = (p.heard ?? "") + (ev.delta ?? "");
         return;
       }
 
@@ -509,7 +555,7 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
       if (!text.trim() || !channel || channel.readyState !== "open") return Promise.resolve();
       const id = `peak_speak_${Date.now().toString(36)}_${++speakSeq}`;
       return new Promise<void>((resolve) => {
-        const p: PendingSpeak = { id, responseId: null, audioStarted: false, done: false, timer: undefined, resolve };
+        const p: PendingSpeak = { id, responseId: null, audioStarted: false, done: false, timer: undefined, resolve, text, heard: null, word: -1, wordTimer: undefined };
         pending.push(p);
         // Fallback so a lost event never hangs the harness.
         p.timer = setT(() => settle(p), 15_000 + 70 * text.length);
@@ -525,5 +571,6 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
 
     onTranscript: em.onTranscript,
     onStatus: em.onStatus,
+    onWord: em.onWord,
   };
 }

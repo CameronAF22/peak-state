@@ -13,10 +13,12 @@ import { loadRecord, newRecord, saveRecord, type StrategyRecord } from "../store
 import { createApi, pushRecord, syncAll, type ServerInfo } from "../sync/index.ts";
 import type { Answer, EngineSnapshot, VoiceAdapter, VoiceKind, VoiceStatus } from "../types.ts";
 import { createVoice, loadVoiceSettings, saveVoiceSettings, type VoiceSettings } from "../voice/index.ts";
+import { splitWords, wordTimeline } from "../voice/words.ts";
 import { createHintTimer, hintDelayFromUrl } from "./hints.ts";
 import { createAccountControls } from "./view/account.ts";
 import { h, mount } from "./view/dom.ts";
 import { createPracticeView } from "./view/practice.ts";
+import { attachSpokenVoice } from "./view/spoken.ts";
 import { createQuestionView } from "./view/question.ts";
 import { createPlaybackPanel, renderRunLog, renderSavedCard, type PlaybackPanel } from "./view/saved.ts";
 import { chainFromProfile, renderSteps, stepViewsFromProfile } from "./view/steps.ts";
@@ -89,7 +91,7 @@ async function switchVoice(start: boolean): Promise<void> {
     settings.kind,
     settings.kind === "gpt-live" ? { apiKey: settings.apiKey ?? "", model: settings.model, getApiKey: serverVoice() ? () => api.realtimeKey(settings.model) : undefined } : undefined,
   );
-  voiceUnsubs.push(voice.onStatus(setStatus), voice.onTranscript(onTranscript));
+  voiceUnsubs.push(voice.onStatus(setStatus), voice.onTranscript(onTranscript), attachSpokenVoice(voice));
   voiceStarted = false;
   if (!start && settings.kind !== "typed") {
     setStatus({ kind: settings.kind, state: "idle", detail: "Click anywhere on the page to start the voice" });
@@ -291,7 +293,7 @@ function renderSavedMode(): void {
     chain,
     steps,
     fullyInAt: saved.profile.states[0].strategy.fullyInAt,
-    activeStep,
+    activeStep: activeStep ?? practiceStep(),
   });
 }
 
@@ -324,10 +326,16 @@ function newStrategy(): void {
   apply(engine.reset());
 }
 
-/** How long to leave a line on screen when nothing is spoken (typed voice). */
+/** How long to leave a line on screen when nothing is spoken (typed voice): the paced word estimate, so the
+ *  spoken-word highlight reaches the last word before the line moves on. */
 function readingMs(text: string): number {
-  const words = text.split(/\s+/).filter(Boolean).length;
-  return Math.min(6000, Math.max(1200, words * 280));
+  return Math.min(12_000, Math.max(1200, wordTimeline(splitWords(text)).total + 400));
+}
+
+/** The step the practice loop is recalling, lit on the horizon. */
+function practiceStep(): number | null {
+  const p = practice?.snapshot();
+  return p && p.phase === "recall" && p.recallAt !== null ? (p.recallOrder[p.recallAt] ?? null) : null;
 }
 
 async function run(): Promise<void> {

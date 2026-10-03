@@ -194,7 +194,7 @@
     },
     {
       "path": "onboarding/harness/index.html",
-      "sha256": "43399b706f074c16b815b1e74bb1ea5b0d01936446ee6bb010de0ada94a52cca",
+      "sha256": "0d2fb069bf36a2c766682829559abe5f8c15716a68b26c6a9ddf8548de403d39",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-020",
@@ -212,7 +212,7 @@
     },
     {
       "path": "onboarding/harness/styles.css",
-      "sha256": "8b27393249b60958bbf06b7033db8e17205b32e0d0d7da2ea3bb5464272068f3",
+      "sha256": "565709af51f075956229041e5066e376f6db85e77633bd519cc152b33d550960",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-020",
@@ -290,7 +290,7 @@
     },
     {
       "path": "onboarding/src/harness/main.ts",
-      "sha256": "ff13a7408062ca84210807bff15b1782db8c76d5f73210d04d528c424d035a89",
+      "sha256": "8324a0d5cda334623b9f742efc2e3ab39c1628b2192d8cbecd6cae7bea134e76",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-020",
@@ -299,7 +299,7 @@
     },
     {
       "path": "onboarding/src/harness/view/account.ts",
-      "sha256": "8e7c64aa400cb27c2047efc6f4b3701b22942adc28b18fab53f985ef13f6d5bd",
+      "sha256": "cd6708736c95cdbf94ac2ecaebfc6b887f2f48167bd0de65c3abf21262a058a4",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-017",
@@ -317,8 +317,17 @@
       ]
     },
     {
+      "path": "onboarding/src/harness/view/horizon.ts",
+      "sha256": "0ec1f0e599a2d17de5d915020bb73b6d2c9d54a0b42fa358c654623e871b78fc",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-020",
+        "D-onboarding-021"
+      ]
+    },
+    {
       "path": "onboarding/src/harness/view/practice.ts",
-      "sha256": "b4026f32c3fffff339a708881a04ef8e5547a13458ca96662d4787fbf83819b3",
+      "sha256": "2275312321ce6b28f8d88292f6b644968dd2126c13ffdf213937307238cfc894",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-015",
@@ -328,7 +337,7 @@
     },
     {
       "path": "onboarding/src/harness/view/question.ts",
-      "sha256": "0ea364f616edb758323c753ee6c3bd071bf41595165cd7563e2e66e5528fd61c",
+      "sha256": "56af5bfae1aec60f3b7dc50833885fc1188b17f9d6e833db78406f5fa98d99a9",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-020",
@@ -337,7 +346,16 @@
     },
     {
       "path": "onboarding/src/harness/view/saved.ts",
-      "sha256": "e3d2a9054bc1b98be62e4532ef013662e1978aa1e0660e62ac0819f4d6e451b8",
+      "sha256": "f5c7a911d98632207b2777b7957ab8ef18099be8e29ab5ee8b48570a897ceefe",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-020",
+        "D-onboarding-021"
+      ]
+    },
+    {
+      "path": "onboarding/src/harness/view/spoken.ts",
+      "sha256": "ab29570e3bda535ed138f9f7377d54b7df06713117c73c1b99ae1ec024948fa3",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-020",
@@ -346,7 +364,7 @@
     },
     {
       "path": "onboarding/src/harness/view/steps.ts",
-      "sha256": "a35116374f968482ec6fdfff29670a45ffdb64506f2c44dbba88295a63b9c4ba",
+      "sha256": "47460f49c48cb474a8e8ebe341661ff3d4c3bcb7b4e732c3d0bdff9e0b456acc",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-020",
@@ -355,7 +373,7 @@
     },
     {
       "path": "onboarding/src/harness/view/voice.ts",
-      "sha256": "a46fb2d3912bebe07d950411d60ad65004f6a144aa78b50d9e48f6f7e9439e74",
+      "sha256": "7d0150851dc7bd74d39201bb5743197aee479a6b2a4ac720d961873651641bc9",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-020",
@@ -439,7 +457,7 @@
     },
     {
       "path": "onboarding/src/types.ts",
-      "sha256": "f227fc9cc173f457c10a94d9fc701ae71f1f8f891a3a9ce96b2c7d1de8e4e5fa",
+      "sha256": "1b37bbb0fe221a25daf65db629e78dd4ffa5ea91c159337ac9f0e6f62e569274",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-021"
@@ -447,7 +465,7 @@
     },
     {
       "path": "onboarding/src/voice/browser.ts",
-      "sha256": "61d7d92e0b700f6e5a32540de61de013a0d74d6fe4d02ddf7c0c0b5815b08c78",
+      "sha256": "726127bed40cabbff805c9e0fd17905088bc76b6b9d30d7ee25be62068171b63",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-021"
@@ -455,7 +473,7 @@
     },
     {
       "path": "onboarding/src/voice/emitter.ts",
-      "sha256": "df88e51d4d0e6b7dbcd7ceaa9adfb8c2f7f9a7042d4807b847a1c43b216c43d8",
+      "sha256": "a7afda61cd147a47ac7428221a0e8e1b50b3f4b72195a270ac7b45c3067327bc",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-021"
@@ -463,7 +481,7 @@
     },
     {
       "path": "onboarding/src/voice/gpt-live.ts",
-      "sha256": "25fc290509c2ea62a2a5209bc664e81672acb60b07c46a4b55050a02231bb072",
+      "sha256": "980726c09ebe555807d3482518f8c82167f6cc061c0695950b3d918539a9881c",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-021"
@@ -480,6 +498,14 @@
     {
       "path": "onboarding/src/voice/typed.ts",
       "sha256": "bee9740bc611c3ad3f1acfc91d9d8a1998449b30e1f3ffebfaf5c644812b76e2",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-021"
+      ]
+    },
+    {
+      "path": "onboarding/src/voice/words.ts",
+      "sha256": "fdb3d8d13f438358a87cb624b7567ee82e35173884f0b84cef03e730593e6b59",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-021"
@@ -516,6 +542,15 @@
     {
       "path": "onboarding/test/e2e/screens-reporter.ts",
       "sha256": "dd1e91a8a298223380d65638a2ec2441b1a0395c241346c0206f7ba7447a974c",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-020",
+        "D-onboarding-021"
+      ]
+    },
+    {
+      "path": "onboarding/test/e2e/spoken.spec.ts",
+      "sha256": "80bb069316ca640bf498ccbb8df9c97a1957e45a63ddb39d6a9c98974db58ffc",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-020",
@@ -593,7 +628,15 @@
     },
     {
       "path": "onboarding/test/unit/voice.test.ts",
-      "sha256": "9440dc4b6e29288fe70c124d97613ecab97a21dfe9ae5dd3558df0913a56ccdf",
+      "sha256": "6aa79e7d549ac427a6707a5d3515f5c47699559ff380787782b7c1880ca269c3",
+      "decisions": [
+        "D-onboarding-012",
+        "D-onboarding-021"
+      ]
+    },
+    {
+      "path": "onboarding/test/unit/words.test.ts",
+      "sha256": "322647ed357aef68bd22fc617f2b7554a3c374456ae8e11ce83b79d384208fb9",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-021"
