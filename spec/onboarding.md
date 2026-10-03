@@ -223,7 +223,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/state-change.md` | `6fb6b1df03c0` | D-coord-008 |
 | `onboarding/.dev.vars.example` | `9972ceaf7419` | D-onboarding-017 |
 | `onboarding/.gitignore` | `e080f460d184` | D-onboarding-018 |
-| `onboarding/DEPLOY.md` | `97063d713a39` | D-onboarding-017 |
+| `onboarding/DEPLOY.md` | `eab8565b57bd` | D-onboarding-017 |
 | `onboarding/PLAN.md` | `7913904371a4` | D-onboarding-001, D-onboarding-011 |
 | `onboarding/README.md` | `375a56d82a77` | D-onboarding-012 |
 | `onboarding/harness/index.html` | `43399b706f07` | D-onboarding-012 |

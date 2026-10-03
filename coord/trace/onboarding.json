@@ -32,7 +32,7 @@
     },
     {
       "path": "onboarding/DEPLOY.md",
-      "sha256": "97063d713a390d5e8586e307ba53915e2d1ba675e9339f03503b4959680ce6ef",
+      "sha256": "eab8565b57bda7a1ca8b10d1e931d066f565bb0cc88200f30318f3299060cbf3",
       "decisions": [
         "D-onboarding-017"
       ]
