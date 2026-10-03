@@ -32,6 +32,27 @@
       ]
     },
     {
+      "path": "onboarding/playwright.config.ts",
+      "sha256": "cae619e9045df899c11f2c7b625ea096234762598fa6765b65a9e669e2ed1fcd",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/playback/script.ts",
+      "sha256": "edde0b5ecfc3c79535188125489cf5fe6cd29389ae2803830a1604d93751b03c",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/playback/storage.ts",
+      "sha256": "f656486e58d99609df52706c2f6fa107f2b444616fba9a561b3f96fe81a2bde6",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
       "path": "onboarding/src/types.ts",
       "sha256": "f227fc9cc173f457c10a94d9fc701ae71f1f8f891a3a9ce96b2c7d1de8e4e5fa",
       "decisions": [
@@ -40,7 +61,7 @@
     },
     {
       "path": "onboarding/src/voice/browser.ts",
-      "sha256": "803ac3c9c652186a1690ead4b0b9f2d9aaab8a0dbc6206f98341520cda21eea7",
+      "sha256": "61d7d92e0b700f6e5a32540de61de013a0d74d6fe4d02ddf7c0c0b5815b08c78",
       "decisions": [
         "D-onboarding-012"
       ]
@@ -55,6 +76,13 @@
     {
       "path": "onboarding/src/voice/typed.ts",
       "sha256": "bee9740bc611c3ad3f1acfc91d9d8a1998449b30e1f3ffebfaf5c644812b76e2",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/test/e2e/probe.spec.ts",
+      "sha256": "c28726ef364a90c0bc902c84f4c2e5d2f00c5c71ce6166ed12dc2b9e86565e38",
       "decisions": [
         "D-onboarding-012"
       ]
