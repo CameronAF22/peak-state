@@ -1,5 +1,3 @@
-// Guide voice: ElevenLabs (window.PEAK_TTS in onboarding.html, before guide.js).
-
 // Onboarding: the guide asks a fixed set of questions, one at a time, out loud.
 // The person answers by voice, by tapping an answer, or by typing.
 //

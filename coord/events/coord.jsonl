@@ -48,3 +48,4 @@
 {"ts": "2026-10-03T16:35:26Z", "lane": "coord", "kind": "claim", "ref": "local-vikas", "summary": "test app MVP auth", "session": "local-vikas"}
 {"ts": "2026-10-03T16:35:26Z", "lane": "coord", "kind": "decision", "ref": "D-coord-017", "summary": "[accepted] test app JSON auth", "session": "local-vikas"}
 {"ts": "2026-10-03T16:35:40Z", "lane": "coord", "kind": "status", "ref": "green", "summary": "test/ home auth with JSON user store and localStorage session", "session": "local-vikas"}
+{"ts": "2026-10-03T18:49:13Z", "lane": "coord", "kind": "decision", "ref": "D-coord-019", "summary": "[accepted] Onboarding UI ElevenLabs TTS and AI Guide sandbox", "session": "local-vikas"}

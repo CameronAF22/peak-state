@@ -1,4 +1,4 @@
-// The guide's voice and ears, shared by the onboarding page and the home page.
+// The guide's voice (ElevenLabs by default) and ears, shared by onboarding and home.
 // Load this file BEFORE the page's own script:
 //   <script src="/assets/guide.js"></script>
 //   <script src="/assets/onboarding.js"></script>
@@ -10,8 +10,9 @@
 const $ = (id) => document.getElementById(id);
 
 // ---------- Speaking (the guide's voice) ----------
-// Set window.PEAK_TTS = "elevenlabs" before this script runs to use the backend TTS API.
-const useElevenLabs = () => window.PEAK_TTS === "elevenlabs";
+// Default: ElevenLabs via POST /api/tts. Set window.PEAK_TTS = "browser" before this script for system speech.
+if (window.PEAK_TTS === undefined) window.PEAK_TTS = "elevenlabs";
+const useElevenLabs = () => window.PEAK_TTS !== "browser";
 
 let voice = null;
 let currentAudio = null;
