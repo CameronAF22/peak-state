@@ -3,16 +3,16 @@
   "lane": "onboarding",
   "health": "green",
   "phase": "M0",
-  "progress": 30,
-  "summary": "Question harness MVP (D-onboarding-012) on claude/project-thread-c4ldi5: engine, voice, harness page, playback and Playwright visual test being built in parallel on contracts M1",
+  "progress": 80,
+  "summary": "Question harness MVP built (D-onboarding-012): engine, voice (typed, browser, GPT live), harness page, one-click playback; 42 unit tests and the Playwright visual test pass for content and destressed",
   "now": [
-    "Building engine, voice adapters, harness page and visual test"
+    "Pushing and updating PR #23"
   ],
   "next": [
-    "Run visual test, open draft PR"
+    "Cam tests by hand; wire GPT live with a real key; contrast and drivers later"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T15:29:51Z",
+  "updatedAt": "2026-10-03T15:49:24Z",
   "session": {
     "id": "session_01AUPD3DWvpWuBX5tGm9JxwU",
     "url": "https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU",
