@@ -1,45 +1,54 @@
-// GPT live voice: OpenAI's GPT-Live speech-to-speech model (gpt-live-1) over WebRTC (D-onboarding-025).
+// GPT live voice: OpenAI's GPT-Live speech-to-speech model (gpt-live-1) over WebRTC, run the way ChatGPT voice runs it
+// (D-onboarding-025, D-onboarding-028).
 //
-// The model is only a voice. The deterministic engine decides every question; this adapter hands the
-// model each line to say and streams back transcripts of what the person says.
+// GPT-Live is full duplex: it listens while it speaks, decides by itself when the person has finished, waits through
+// pauses, and stops when interrupted. There are no turn-detection or speed settings; behaviour comes from the prompt
+// (OpenAI "Prompting GPT-Live": style and pace, silence handling, backchannels, interruptions, delegation policy).
 //
-// Flow (OpenAI GPT-Live WebRTC):
-//   getUserMedia(audio) → RTCPeerConnection + mic track + remote audio → <audio>
-//   data channel "oai-events" → createOffer / setLocalDescription
-//   POST { session, sdp } to the harness route /api/live/session (harness/live-proxy.ts), which adds the
-//   project key and calls POST https://api.openai.com/v1/live/sessions → { transport: { sdp: answer } }
-//   setRemoteDescription(answer) → wait for "session.started" before sending anything.
+// The deterministic engine still decides every question. The model hosts the conversation:
+//   speak(question)      → session.instructions.append "ask exactly …" (answering an open delegation when there is one)
+//   the person answers   → GPT-Live judges the answer finished and delegates: session.delegation.created
+//   the adapter          → gathers the person's words since the question from session.input_transcript.delta,
+//                          drops the guide's own echo, asks the interpreter (an LLM with the question and choices)
+//                          for its best guess, and emits it as the final transcript
+//   not an answer yet    → session.thinking.append to that delegation: keep listening (nothing reaches the engine)
+//   the harness          → feeds the engine and calls speak(next question), which answers the delegation
+// If the model does not delegate, a semantic end of turn does: after a short quiet gap (shorter for a choice or a
+// number) the interpreter judges whether the thought is complete, and "incomplete" keeps listening.
 //
-// GPT-Live is full duplex and has no response.create (without Responses delegation), no turn-detection
-// settings and no completed-transcript event. So:
-//   - speak() sends session.commentary.append, mutes the mic while the guide talks, and treats the line
-//     as finished when the output transcript goes quiet (with a duration estimate and a hard cap);
-//   - the remote audio is muted outside speak(), so replies the model makes on its own are not heard;
-//   - answers are built from session.input_transcript.delta fragments and are final after a silence gap.
-//
-// The startup session and the per-line event each live in one exported function so the wire shape is
-// easy to fix if the API differs.
+// Connection: getUserMedia → RTCPeerConnection + mic + remote audio; data channel "oai-events"; POST { session, sdp }
+// to /api/live/session (Vite dev proxy or the Cloudflare Worker, which hold the key) → SDP answer; wait for
+// session.started before sending anything. The startup session and each event shape live in one exported function.
 
 import type { GptLiveConfig, VoiceAdapter } from "../types.ts";
 import { createVoiceEmitter } from "./emitter.ts";
+import { echoOverlap, isFillerOnly, looksUnfinished, wordsOf, type AnswerContext, type Interpretation } from "./interpret.ts";
 import { splitWords } from "./words.ts";
 
 export const DEFAULT_GPT_LIVE_MODEL = "gpt-live-1";
-/** The harness dev server's route; it holds the key and forwards to OpenAI's /v1/live/sessions. */
+/** The route that holds the key and forwards to OpenAI's /v1/live/sessions (Vite dev server or the Worker). */
 export const DEFAULT_LIVE_SESSION_ENDPOINT = "/api/live/session";
 
 /** GptLiveConfig plus voice-layer-only options (types.ts is not ours to extend). */
 export type GptLiveVoiceConfig = GptLiveConfig & {
   /** Milliseconds to wait for session.started. Default 20000. */
   connectTimeoutMs?: number;
-  /** Silence after the last heard fragment that ends an answer. Default 1800. */
+  /** Quiet gap before checking whether an open answer is complete (when the model has not delegated). Default 3000. */
   answerSilenceMs?: number;
-  /** Quiet output transcript that ends a spoken line. Default 900. */
+  /** The same for a choice or number answer. Default 1800. */
+  shortAnswerSilenceMs?: number;
+  /** Extra wait when the words stop mid-thought, and after each "incomplete" verdict. Default 2000. */
+  unfinishedExtraMs?: number;
+  /** Quiet output transcript that ends a spoken line. Default 1200. */
   speakQuietMs?: number;
   /** Log every GPT-Live event to the console. */
   debug?: boolean;
   /** Extra headers for the session route, e.g. the signed-in account on the Cloudflare Worker. */
   headers?: () => Record<string, string>;
+  /** What the guide is waiting for, so waits adapt and the interpreter has context. */
+  answerContext?: () => AnswerContext | null;
+  /** Turns the raw recognised words into the person's intended answer, or says to wait, or that it was noise. */
+  interpret?: (ctx: AnswerContext, heard: string) => Promise<Interpretation>;
 };
 
 /** Minimal shapes so tests can inject fakes. Real browser objects satisfy them. */
@@ -83,7 +92,7 @@ export interface GptLiveDeps {
     text(): Promise<string>;
   }>;
   RTCPeerConnection?: new () => PeerConnectionLike;
-  getUserMedia?: (constraints: { audio: boolean }) => Promise<MediaStreamLike>;
+  getUserMedia?: (constraints: { audio: boolean | Record<string, boolean> }) => Promise<MediaStreamLike>;
   audioEl?: AudioElementLike;
   /** Injected for tests. */
   setTimeout?: (fn: () => void, ms: number) => unknown;
@@ -91,14 +100,24 @@ export interface GptLiveDeps {
   now?: () => number;
 }
 
-const GUIDE_INSTRUCTIONS = [
-  "You are the speaking voice of a scripted guide in a wellbeing app called Peak State.",
-  "You do not run the conversation. A program decides every line and sends it to you as commentary.",
-  "When you receive commentary, say it aloud exactly as written, word for word, in a calm, warm, unhurried voice.",
-  "Never add your own questions, greetings, commentary, summaries, follow-ups, or reactions to what the person said.",
-  "When the person speaks, listen and stay silent. Do not answer them, acknowledge them, or ask for anything. Wait for the next commentary.",
-  "Never give therapy, counselling, diagnosis, medical or mental-health advice.",
-].join(" ");
+/**
+ * The guide's startup prompt, in the sections OpenAI recommends for GPT-Live: role and style, how the conversation
+ * works, listening (pauses, noise, backchannels, interruptions), delegation, safety.
+ */
+export const GUIDE_INSTRUCTIONS = `# Role and style
+You are the voice guide for Peak State, a practice tool that helps a person step back into a good state they have felt before and notice how they got there. Speak like a calm, kind person sitting with them: slowly, softly and unhurried, about 120 words a minute, with natural pauses between sentences. Keep your own words short and plain. Warm, never cheerful or clinical.
+
+# How this conversation works
+The app runs a fixed sequence of questions and gives you each one as an instruction. Ask each question exactly as written, in full. You may add one or two soft words before it, like "Okay." or "Mm, good.", when it follows an answer. Never invent, skip, reorder, merge or add questions. Never answer for the person or suggest what they might say.
+
+# Listening
+After you ask, stop and listen. Let the person answer in their own time. They may pause for a long while to remember or to feel; that is welcome. Keep listening while they pause and do not fill the silence. Do not treat breathing, a cough, music, typing or nearby conversation as an answer or a new request. Use backchannels sparingly: at most a quiet "mm" during a long answer. If the person interrupts you, stop speaking at once and listen.
+
+# When they have answered
+The app needs every answer to choose the next question, and you cannot continue without it. So after every answer, as soon as the person has clearly finished answering the current question (even a one-word answer, or "I'm there"), delegate so the app can record it and give you the next question. Before delegating, say nothing, or a brief warm acknowledgment like "Mm." Do not repeat, summarize or comment on what they said. Then wait for the app's instruction. If they ask you to repeat the question, repeat it. If you could not make out the answer, gently ask them to say it again instead of delegating. If they ask something else, answer in one short sentence and return to the current question. If the app tells you they are still answering, keep listening.
+
+# Safety
+This is a practice tool, not therapy, counselling or a crisis service. Never diagnose or give medical or mental-health advice. If the person sounds distressed or mentions harm, stop the exercise, say gently that this tool is for practice and not a crisis service, and encourage them to reach someone they trust or local emergency services.`;
 
 /** The startup session sent with the WebRTC offer. GPT-Live rejects unknown fields, so keep it minimal. */
 export function buildLiveSession(config: GptLiveVoiceConfig): Record<string, unknown> {
@@ -111,15 +130,34 @@ export function buildLiveSession(config: GptLiveVoiceConfig): Record<string, unk
   return session;
 }
 
-/** The event that makes the model say one line. eventId comes back as error.client_event_id. */
-export function buildSpeakEvent(text: string, eventId: string): Record<string, unknown> {
-  return { type: "session.commentary.append", event_id: eventId, delegation_id: null, content: text };
+/**
+ * The event that makes the guide ask the next line. instructions.append is the most reliable way to set what GPT-Live
+ * says (commentary is paraphrased). It answers the open delegation when there is one.
+ */
+export function buildSpeakEvent(text: string, eventId: string, delegationId: string | null = null): Record<string, unknown> {
+  return {
+    type: "session.instructions.append",
+    event_id: eventId,
+    delegation_id: delegationId,
+    content: `Now say this to the person, exactly as written and in full, slowly, then stop and listen: "${text}"`,
+  };
 }
 
-/** Rough speaking time for a line (2.6 words per second, as in D-reps-010). */
+/** Context for an open delegation that should not produce a new question (still answering, or not an answer). */
+export function buildWaitEvent(reason: "incomplete" | "noise" | "empty" | "recorded", eventId: string, delegationId: string): Record<string, unknown> {
+  const content =
+    reason === "recorded"
+      ? "The answer is recorded. Wait quietly for the app's next instruction."
+      : reason === "incomplete"
+        ? "The person has not finished answering yet. Keep listening quietly and let them continue."
+        : "That was not an answer to the current question. Keep listening quietly. If they stay silent for a long while, gently repeat the current question.";
+  return { type: "session.thinking.append", event_id: eventId, delegation_id: delegationId, content };
+}
+
+/** Rough speaking time for a line at the guide's slow pace (2 words per second, about 120 a minute). */
 export function estimateSpeechMs(text: string): number {
   const words = text.trim().split(/\s+/).filter(Boolean).length;
-  return Math.max(1200, Math.round((words / 2.6) * 1000));
+  return Math.max(1200, Math.round((words / 2) * 1000));
 }
 
 interface PendingSpeak {
@@ -139,7 +177,9 @@ interface LiveEvent {
   type?: string;
   delta?: string;
   reason?: string;
-  delegation?: { id?: string };
+  start_ms?: number;
+  end_ms?: number;
+  delegation?: { id?: string; target?: string };
   error?: { message?: string; code?: string; type?: string; param?: string; client_event_id?: string } | null;
 }
 
@@ -171,8 +211,10 @@ function describeHttpError(status: number, body: string): string {
 export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps = {}): VoiceAdapter {
   const em = createVoiceEmitter("gpt-live");
   const endpoint = config.endpoint?.trim() || DEFAULT_LIVE_SESSION_ENDPOINT;
-  const answerSilenceMs = config.answerSilenceMs ?? 1800;
-  const speakQuietMs = config.speakQuietMs ?? 900;
+  const answerSilenceMs = config.answerSilenceMs ?? 3000;
+  const shortAnswerSilenceMs = config.shortAnswerSilenceMs ?? 1800;
+  const unfinishedExtraMs = config.unfinishedExtraMs ?? 2000;
+  const speakQuietMs = config.speakQuietMs ?? 1200;
   const setT = deps.setTimeout ?? ((fn: () => void, ms: number) => setTimeout(fn, ms));
   const clearT = deps.clearTimeout ?? ((h: unknown) => clearTimeout(h as ReturnType<typeof setTimeout>));
   const now = deps.now ?? (() => Date.now());
@@ -185,14 +227,27 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
   let stream: MediaStreamLike | null = null;
   let audioEl: AudioElementLike | null = null;
   let session = 0; // bumps on stop() so late async steps from an old start() do nothing
-  let speakSeq = 0;
+  let eventSeq = 0;
   let started = false;
   let connectTimer: unknown;
   let onStarted: ((err?: Error) => void) | null = null;
   const pending: PendingSpeak[] = [];
-  let heard = ""; // the answer so far, joined from input transcript fragments
-  let answerTimer: unknown;
-  let afterSpeakTimer: unknown;
+  /** The person's words since the current question. */
+  let heard = "";
+  /** Words heard while the guide was speaking, held until judged echo or a real barge-in. */
+  let overlapHeard = "";
+  let bargedIn = false;
+  let lastLine = "";
+  /** The delegation GPT-Live opened when it judged the answer finished; the next speak() answers it. */
+  let delegation: string | null = null;
+  let fallbackTimer: unknown;
+  let recordedTimer: unknown;
+  let echoTailUntil = 0;
+  let interpretSeq = 0;
+  let incompletes = 0;
+
+  const nextId = (kind: string): string => `peak_${kind}_${now().toString(36)}_${++eventSeq}`;
+  const tidy = (t: string): string => t.trim().replace(/\s+/g, " ");
 
   function fail(detail: string): void {
     em.setStatus("error", detail);
@@ -202,7 +257,7 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     if (!dc || dc.readyState !== "open") return false;
     try {
       dc.send(JSON.stringify(ev));
-      log("→", ev.type);
+      log("→", ev.type, ev.delegation_id ?? "", typeof ev.content === "string" ? ev.content : "");
       return true;
     } catch (err) {
       fail(`GPT live could not send ${String(ev.type)} (${(err as Error)?.message ?? err}).`);
@@ -210,28 +265,24 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     }
   }
 
-  function setRemoteAudible(on: boolean): void {
-    if (audioEl) audioEl.muted = !on;
+  function clearTimer(t: unknown): undefined {
+    if (t !== undefined) clearT(t);
+    return undefined;
   }
+
+  // ── the guide speaking ──
 
   function settle(p: PendingSpeak): void {
     if (p.done) return;
     p.done = true;
-    if (p.timer !== undefined) clearT(p.timer);
-    if (p.capTimer !== undefined) clearT(p.capTimer);
+    p.timer = clearTimer(p.timer);
+    p.capTimer = clearTimer(p.capTimer);
     if (p.firstOutputAt !== null) em.emitWord(splitWords(p.text).length, p.text);
     const i = pending.indexOf(p);
     if (i >= 0) pending.splice(i, 1);
     if (pending.length === 0) {
       if (em.status().state === "speaking") em.setStatus("ready");
-      // Let the last syllables and room echo die away, then listen and silence the model again.
-      if (afterSpeakTimer !== undefined) clearT(afterSpeakTimer);
-      afterSpeakTimer = setT(() => {
-        afterSpeakTimer = undefined;
-        if (pending.length > 0) return;
-        send({ type: "session.input_audio.unmute" });
-        setRemoteAudible(false);
-      }, 400);
+      echoTailUntil = now() + 700; // the room echo of the last syllables
     }
     p.resolve();
   }
@@ -240,37 +291,117 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     for (const p of [...pending]) settle(p);
   }
 
-  /**
-   * Output transcript activity for the current line: move the word highlight to the words heard so far, and finish
-   * once the transcript goes quiet and the line had time.
-   */
+  /** Output transcript for the current line: move the word highlight, finish once it goes quiet and had time. */
   function onOutputActivity(delta: string): void {
     const p = pending[0];
-    if (!p) return;
+    if (!p) return; // the model speaking on its own (an acknowledgment, a repeat): nothing to track
     const t = now();
     if (p.firstOutputAt === null) p.firstOutputAt = t;
     p.heard += delta;
+    // Count from where the line itself starts, so a soft lead-in ("Mm. Okay.") does not move the highlight ahead.
+    const lineWords = wordsOf(p.text);
+    const saidWords = wordsOf(p.heard);
+    const from = lineWords.length ? saidWords.indexOf(lineWords[0]!) : -1;
     const total = splitWords(p.text).length;
-    const word = Math.min(splitWords(p.heard).length - 1, total - 1);
+    const word = from < 0 ? -1 : Math.min(saidWords.length - from - 1, total - 1);
     if (word > p.word) {
       p.word = word;
       em.emitWord(word, p.text);
     }
     const finishAt = Math.max(t + speakQuietMs, p.firstOutputAt + estimateSpeechMs(p.text));
-    if (p.timer !== undefined) clearT(p.timer);
+    clearTimer(p.timer);
     p.timer = setT(() => settle(p), finishAt - t);
   }
 
-  function finalizeAnswer(): void {
-    answerTimer = undefined;
-    const text = heard.trim().replace(/\s+/g, " ");
+  // ── the person answering ──
+
+  function context(): AnswerContext {
+    return config.answerContext?.() ?? { question: lastLine, choices: [], expects: "open" };
+  }
+
+  /**
+   * Semantic end of turn when GPT-Live has not delegated: after a quiet gap that adapts to the question, to trailing
+   * off, and to earlier "incomplete" verdicts, the interpreter decides whether the answer is complete.
+   */
+  function armFallback(): void {
+    clearTimer(fallbackTimer);
+    const base = context().expects === "open" ? answerSilenceMs : shortAnswerSilenceMs;
+    fallbackTimer = setT(() => {
+      fallbackTimer = undefined;
+      void finalize("silence");
+    }, base + (looksUnfinished(heard) ? unfinishedExtraMs : 0) + incompletes * unfinishedExtraMs);
+  }
+
+  function hear(delta: string): void {
+    heard += delta;
+    const sofar = tidy(heard);
+    if (!sofar) return;
+    em.emitTranscript(sofar, false);
+    if (em.status().state === "ready") em.setStatus("listening");
+    armFallback();
+  }
+
+  /** Reply to the open delegation without a new question. */
+  function holdDelegation(reason: "incomplete" | "noise" | "empty" | "recorded"): void {
+    if (!delegation) return;
+    send(buildWaitEvent(reason, nextId("wait"), delegation));
+    delegation = null;
+  }
+
+  async function finalize(source: "delegation" | "silence"): Promise<void> {
+    fallbackTimer = clearTimer(fallbackTimer);
+    const raw = tidy(heard);
+    if (!raw || isFillerOnly(raw)) {
+      if (source === "delegation") holdDelegation("empty");
+      if (!raw) return;
+      heard = "";
+      em.emitTranscript("", false);
+      if (em.status().state === "listening") em.setStatus("ready");
+      return;
+    }
+    const mine = ++interpretSeq;
+    const asked = heard;
+    let v: Interpretation = { verdict: "answer", text: raw };
+    if (config.interpret) {
+      em.setStatus("listening", "Making sure I heard you");
+      try {
+        v = await config.interpret(context(), raw);
+      } catch {
+        v = { verdict: "answer", text: raw };
+      }
+    }
+    // A new question started, or the person kept talking: a later pass handles the fuller answer.
+    if (mine !== interpretSeq) return;
+    if (heard !== asked) {
+      if (source === "delegation") holdDelegation("incomplete");
+      return;
+    }
+    log("interpret", v.verdict, v.text);
+    if (v.verdict === "incomplete" && incompletes < 2) {
+      incompletes++;
+      holdDelegation("incomplete");
+      armFallback();
+      return;
+    }
+    if (v.verdict === "noise") {
+      heard = "";
+      incompletes = 0;
+      holdDelegation("noise");
+      em.emitTranscript("", false);
+      em.setStatus("ready");
+      return;
+    }
     heard = "";
-    if (text) em.emitTranscript(text, true);
-    if (pending.length === 0 && em.status().state === "listening") em.setStatus("ready");
+    incompletes = 0;
+    em.setStatus("ready");
+    em.emitTranscript(v.verdict === "answer" && v.text ? v.text : raw, true);
+    // The harness answers with speak(next question). If it does not (the end, or a screen change), release the model.
+    recordedTimer = clearTimer(recordedTimer);
+    if (delegation) recordedTimer = setT(() => holdDelegation("recorded"), 2500);
   }
 
   function handleEvent(ev: LiveEvent): void {
-    log("←", ev.type, ev.error ?? ev.delta ?? ev.reason ?? "");
+    log("←", ev.type, ev.error ?? ev.delta ?? ev.reason ?? ev.delegation?.id ?? "");
     switch (ev.type) {
       case "session.started":
         started = true;
@@ -282,15 +413,28 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
         return;
 
       case "session.input_transcript.delta": {
-        // The mic is muted while the guide speaks; anything that still arrives then is echo.
-        if (pending.length > 0 || afterSpeakTimer !== undefined) return;
-        heard += ev.delta ?? "";
-        const sofar = heard.trim().replace(/\s+/g, " ");
-        if (!sofar) return;
-        em.emitTranscript(sofar, false);
-        if (em.status().state === "ready") em.setStatus("listening");
-        if (answerTimer !== undefined) clearT(answerTimer);
-        answerTimer = setT(finalizeAnswer, answerSilenceMs);
+        const delta = ev.delta ?? "";
+        const guideTalking = pending.length > 0 || now() < echoTailUntil;
+        if (!guideTalking || bargedIn) return hear(delta);
+        // The guide's own voice can come back through the mic. Hold what is heard until it is clearly the person
+        // (three words or more, mostly not the guide's line), then treat it as a barge-in.
+        overlapHeard += delta;
+        const words = tidy(overlapHeard).split(" ").filter(Boolean);
+        if (words.length >= 3 && !isFillerOnly(overlapHeard) && echoOverlap(overlapHeard, pending[0]?.text ?? lastLine) < 0.4) {
+          bargedIn = true;
+          const said = overlapHeard;
+          overlapHeard = "";
+          hear(said);
+        }
+        return;
+      }
+
+      case "session.delegation.created": {
+        // GPT-Live judged the answer finished (or wants the app). Answer with the next question or a hold.
+        if (delegation) holdDelegation("recorded");
+        delegation = ev.delegation?.id ?? null;
+        if (!delegation) return;
+        void finalize("delegation");
         return;
       }
 
@@ -314,14 +458,17 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
       }
 
       default:
-        // session.commentary.appended, session.usage.updated, session.delegation.created, … need nothing.
+        // session.instructions.appended, session.thinking.appended, session.usage.updated, … need nothing.
         return;
     }
   }
 
   function teardown(): void {
-    for (const t of [connectTimer, answerTimer, afterSpeakTimer]) if (t !== undefined) clearT(t);
-    connectTimer = answerTimer = afterSpeakTimer = undefined;
+    for (const t of [connectTimer, fallbackTimer, recordedTimer]) if (t !== undefined) clearT(t);
+    connectTimer = fallbackTimer = recordedTimer = undefined;
+    delegation = null;
+    overlapHeard = "";
+    bargedIn = false;
     onStarted = null;
     started = false;
     heard = "";
@@ -359,8 +506,9 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     const PC = deps.RTCPeerConnection ?? (globalThis as unknown as { RTCPeerConnection?: new () => PeerConnectionLike }).RTCPeerConnection;
     const gum =
       deps.getUserMedia ??
-      ((c: { audio: boolean }) => {
-        const md = (globalThis as unknown as { navigator?: { mediaDevices?: { getUserMedia?: (c: { audio: boolean }) => Promise<MediaStreamLike> } } }).navigator?.mediaDevices;
+      ((c: { audio: boolean | Record<string, boolean> }) => {
+        type Gum = (c: { audio: boolean | Record<string, boolean> }) => Promise<MediaStreamLike>;
+        const md = (globalThis as unknown as { navigator?: { mediaDevices?: { getUserMedia?: Gum } } }).navigator?.mediaDevices;
         if (!md?.getUserMedia) return Promise.reject(new Error("getUserMedia is not available"));
         return md.getUserMedia(c);
       });
@@ -373,7 +521,8 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
     em.setStatus("connecting");
     try {
       try {
-        stream = await gum({ audio: true });
+        // Echo cancellation keeps the guide's voice out of the open mic; noise suppression drops room sound.
+        stream = await gum({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
       } catch (err) {
         throw new Error(`Microphone unavailable or permission denied (${(err as Error)?.message ?? err}). Allow the microphone or type your answers.`);
       }
@@ -388,7 +537,6 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
         if (doc) audioEl = doc.createElement("audio") as unknown as AudioElementLike;
       }
       if (audioEl) audioEl.autoplay = true;
-      setRemoteAudible(false); // nothing is heard until the first speak()
       conn.ontrack = (ev) => {
         if (!audioEl) return;
         audioEl.srcObject = ev.streams[0] ?? null;
@@ -495,28 +643,27 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
 
     speak(text: string) {
       if (!text.trim() || !started || !dc || dc.readyState !== "open") return Promise.resolve();
-      const id = `peak_speak_${now().toString(36)}_${++speakSeq}`;
+      const id = nextId("speak");
       // A new question ends whatever answer was in progress.
-      if (answerTimer !== undefined) {
-        clearT(answerTimer);
-        answerTimer = undefined;
-      }
+      fallbackTimer = clearTimer(fallbackTimer);
+      recordedTimer = clearTimer(recordedTimer);
       heard = "";
-      if (afterSpeakTimer !== undefined) {
-        clearT(afterSpeakTimer);
-        afterSpeakTimer = undefined;
-      }
+      overlapHeard = "";
+      bargedIn = false;
+      incompletes = 0;
+      interpretSeq++;
+      lastLine = text;
+      const answering = delegation;
+      delegation = null;
       return new Promise<void>((resolve) => {
         const p: PendingSpeak = { id, text, done: false, firstOutputAt: null, heard: "", word: -1, timer: undefined, capTimer: undefined, resolve };
         pending.push(p);
         em.setStatus("speaking");
-        send({ type: "session.input_audio.mute" });
-        setRemoteAudible(true);
-        // If no output transcript arrives, assume the line took about its estimated time.
-        p.timer = setT(() => settle(p), estimateSpeechMs(text) + 3000);
-        // Hard cap so a lost event never hangs the harness.
-        p.capTimer = setT(() => settle(p), 15_000 + 70 * text.length);
-        if (!send(buildSpeakEvent(text, id))) settle(p);
+        // If no output transcript arrives, assume the line took about its estimated time; a hard cap so a lost event
+        // never hangs the harness.
+        p.timer = setT(() => settle(p), estimateSpeechMs(text) + 4000);
+        p.capTimer = setT(() => settle(p), 20_000 + 90 * text.length);
+        if (!send(buildSpeakEvent(text, id, answering))) settle(p);
       });
     },
 

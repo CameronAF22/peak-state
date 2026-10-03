@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-028",
+  "lane": "onboarding",
+  "title": "GPT live runs like ChatGPT voice: model-led turn-taking, delegation per answer, LLM clean-up of what was heard",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Cameron: live audio must be full duplex, slower, wait for the person, filter misc audio, adapt recognition and use an LLM to infer what was said; it should work like gpt-live-1 in the ChatGPT app. OpenAI docs: GPT-Live has no turn-detection or speed settings; behaviour comes from the prompt; instructions.append is the most reliable way to set speech, commentary is paraphrased; delegation carries no transcript. Verified against the real API with synthetic speech: waits through a 2.5 s mid-sentence pause, delegates after answers, chatter judged noise.",
+  "decision": "GPT-Live hosts the conversation full duplex (no input muting, audio always on). Questions go out with session.instructions.append (verbatim, answering the open delegation); the prompt follows OpenAI's GPT-Live prompting sections (slow pace ~120 wpm, keep listening through pauses, ignore coughs/music/nearby talk, sparing backchannels, stop on interruption, delegate after every answer, safety). On session.delegation.created the adapter gathers the person's words since the question (dropping the guide's echo; three or more non-echo words while it speaks count as a barge-in) and asks /api/answer/interpret (Worker and Vite proxy; OpenAI Responses API, gpt-5.4-mini, strict JSON schema answer|incomplete|noise) for the best guess using the question and choices. answer → final transcript to the engine; incomplete/noise → session.thinking.append to keep listening. Without a delegation, a semantic end of turn runs after an adaptive quiet gap (1.8 s choice/number, 3 s open, +2 s trailing off). The interpreter falls back to the raw words on any failure.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/src/voice/gpt-live.ts",
+    "onboarding/src/voice/interpret.ts",
+    "onboarding/src/harness/main.ts",
+    "onboarding/harness/live-proxy.ts",
+    "onboarding/worker/api.ts",
+    "onboarding/test/unit/voice.test.ts",
+    "onboarding/test/unit/interpret.test.ts",
+    "onboarding/test/unit/worker.test.ts",
+    "onboarding/test/unit/live-proxy.test.ts",
+    "onboarding/README.md",
+    "onboarding/DEPLOY.md"
+  ],
+  "dependsOn": [
+    "D-onboarding-025",
+    "D-onboarding-026"
+  ],
+  "supersedes": [
+    "D-onboarding-025"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "32d60a9b-b6fa-430d-8874-8454b73678f3",
+    "url": null,
+    "branch": "integration/all"
+  },
+  "createdAt": "2026-10-03T20:13:29Z",
+  "acceptedAt": "2026-10-03T20:13:29Z",
+  "acceptedBy": "claude"
+}

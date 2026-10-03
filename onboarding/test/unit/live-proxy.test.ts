@@ -122,3 +122,23 @@ test("live proxy: network failure → 502", async () => {
   assert.equal(out.out.statusCode, 502);
   assert.match(out.json().error.message, /ENOTFOUND/);
 });
+
+test("live proxy: /api/answer/interpret cleans up an answer with the same key", async () => {
+  const calls: { url: string; init: { headers: Record<string, string>; body: string } }[] = [];
+  const fetch = async (url: string, init: { method: string; headers: Record<string, string>; body: string }) => {
+    calls.push({ url, init });
+    const out = { output: [{ type: "message", content: [{ type: "output_text", text: '{"verdict":"noise","text":""}' }] }] };
+    return { status: 200, text: async () => JSON.stringify(out), headers: { get: () => "application/json" } };
+  };
+  const out = res();
+  const body = JSON.stringify({ question: "Q?", choices: [], expects: "open", heard: "did you see the game" });
+  await createLiveProxy({ env: { OPENAI_API_KEY: "sk-env" }, fetch })(req({ url: "/api/answer/interpret", body }), out.r, () => assert.fail("next"));
+  assert.equal(out.out.statusCode, 200);
+  assert.deepEqual(out.json(), { verdict: "noise", text: "" });
+  assert.equal(calls[0]!.url, "https://api.openai.com/v1/responses");
+  assert.equal(calls[0]!.init.headers.Authorization, "Bearer sk-env");
+
+  const none = res();
+  await createLiveProxy({ env: {}, fetch })(req({ url: "/api/answer/interpret", body }), none.r, () => {});
+  assert.equal(none.out.statusCode, 401);
+});

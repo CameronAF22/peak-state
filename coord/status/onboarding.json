@@ -3,16 +3,16 @@
   "lane": "onboarding",
   "health": "green",
   "phase": "M0",
-  "progress": 95,
-  "summary": "Merged to main (#29): gpt-live-1 voice via /api/live/session, harness (Horizon) at / with GPT live as the set voice, designs at /design/. Deployed to peak-state.cameron-982.workers.dev.",
+  "progress": 96,
+  "summary": "GPT live now runs like ChatGPT voice: model-led turn-taking, full duplex, slow pace, delegation per answer, LLM clean-up of heard words (D-onboarding-028). Verified on gpt-live-1.",
   "now": [
-    "Cameron testing the live demo"
+    "Shipping to main and Cloudflare"
   ],
   "next": [
-    "Tune live voice timing from real sessions; rotate the OpenAI key after the demo"
+    "Cameron tests live; tune prompt and quiet gaps from real sessions"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T19:45:31Z",
+  "updatedAt": "2026-10-03T20:13:38Z",
   "session": {
     "id": "32d60a9b-b6fa-430d-8874-8454b73678f3",
     "url": null,

@@ -4,6 +4,7 @@
 
 import type { RepSession } from "@peak-state/contracts";
 import { summarize } from "../src/progress/index.ts";
+import { buildInterpretRequest, DEFAULT_INTERPRET_MODEL, OPENAI_RESPONSES_URL, parseInterpretResponse, readInterpretBody } from "../src/voice/interpret.ts";
 
 // ── the D1 subset this file uses ────────────────────────────────────────────
 
@@ -20,6 +21,8 @@ export interface Database {
 }
 
 export interface Env {
+  /** Optional: the model that cleans up spoken answers (D-onboarding-028). Default gpt-5.4-mini. */
+  INTERPRET_MODEL?: string;
   DB: Database;
   /** Worker secret. Account creation and sign-in need it. */
   INVITE_CODE?: string;
@@ -43,6 +46,8 @@ export const MAX_WRONG_CODES_PER_DAY = 500;
 export const MAX_SIGN_INS_PER_EMAIL_PER_DAY = 10;
 export const MAX_REVISIONS_PER_STRATEGY = 2000;
 export const MAX_REPS_PER_ACCOUNT = 20000;
+/** Spoken answers cleaned up per account per day (D-onboarding-028). */
+export const MAX_INTERPRETS_PER_DAY = 3000;
 /** GPT live sessions started per account per day. */
 export const MAX_VOICE_SESSIONS_PER_DAY = 40;
 export const MAX_BODY_BYTES = 512 * 1024;
@@ -429,6 +434,37 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
     return json({ session: { id: typeof parsed.session?.id === "string" ? parsed.session.id : null, model }, transport: { type: "webrtc", sdp: answer } }, 201);
   }
 
+  // ── spoken answer clean-up (D-onboarding-028) ──
+
+  async function interpretAnswer(req: Request): Promise<Response> {
+    const me = await account(req);
+    if (!env.OPENAI_API_KEY) throw new HttpError(503, "GPT live is not set up on this server.");
+    const asked = readInterpretBody(await readBody(req));
+    if (!asked) throw new HttpError(400, "Send the heard words and the question.");
+    if ((await bump(`interpret:${me.id}`)) > MAX_INTERPRETS_PER_DAY) throw new HttpError(429, "That's the limit for today.");
+    const model = env.INTERPRET_MODEL && MODEL.test(env.INTERPRET_MODEL) ? env.INTERPRET_MODEL : DEFAULT_INTERPRET_MODEL;
+    let res: Response;
+    try {
+      res = await doFetch(OPENAI_RESPONSES_URL, {
+        method: "POST",
+        headers: { authorization: `Bearer ${env.OPENAI_API_KEY}`, "content-type": "application/json" },
+        body: JSON.stringify(buildInterpretRequest(model, asked.ctx, asked.heard)),
+      });
+    } catch {
+      throw new HttpError(502, "Could not reach OpenAI.");
+    }
+    if (!res.ok) throw new HttpError(502, `OpenAI refused the clean-up (${res.status}).`);
+    let parsed: unknown = null;
+    try {
+      parsed = JSON.parse(await res.text());
+    } catch {
+      // not JSON
+    }
+    const v = parseInterpretResponse(parsed);
+    if (!v) throw new HttpError(502, "OpenAI sent no usable clean-up.");
+    return json(v);
+  }
+
   // ── routing ──
 
   return async function handle(req: Request): Promise<Response> {
@@ -460,6 +496,8 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
           return await getProgress(req, url);
         case "POST /api/live/session":
           return await liveSession(req);
+        case "POST /api/answer/interpret":
+          return await interpretAnswer(req);
         default:
           return json({ error: "Not found." }, 404);
       }

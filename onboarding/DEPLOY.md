@@ -66,5 +66,6 @@ Secret. New migrations still need `npx wrangler d1 migrations apply peak-state -
 | `GET /api/reps`, `POST /api/reps` | The run log (contracts RepSession), idempotent by id |
 | `GET /api/progress?state=` | Times chosen, good reps, trend, day streak |
 | `POST /api/live/session` | `{session, sdp}`: starts a GPT live (gpt-live-1) WebRTC session with the server's key and returns the SDP answer; 40 a day per account (D-onboarding-025) |
+| `POST /api/answer/interpret` | `{question, choices, expects, heard}`: the best guess at a spoken answer, or "incomplete" / "noise" (D-onboarding-028); 3000 a day per account |
 
 Limits: 20 wrong invite codes per client per day; sessions last 90 days.
