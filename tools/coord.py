@@ -885,7 +885,9 @@ def validate(base=None):
 
     for did, record in sorted(decisions.items()):
         for ref in record.get("dependsOn", []) + record.get("supersedes", []):
-            if ref not in decisions:
+            if ref == did:
+                warnings.append(f"{did} references itself; supersede it if the link matters")
+            elif ref not in decisions:
                 warnings.append(f"{did} references {ref}, which is not on this branch (fine if it lives on another lane's branch)")
         for pattern in record.get("produces", []):
             if ".." in pattern.split("/"):
@@ -1026,6 +1028,9 @@ def cmd_decide(args):
         record["acceptedAt"] = record["createdAt"]
         record["acceptedBy"] = record["author"]
     errors = schema_errors(record, load_schema("decision"))
+    for field in ("dependsOn", "supersedes"):
+        if did in record[field]:
+            errors.append(f"--{'depends-on' if field == 'dependsOn' else 'supersedes'} names {did}, the id this decision is getting; point it at an earlier decision")
     if errors:
         raise CoordError("Decision not written:\n  " + "\n  ".join(errors))
     path = COORD / "decisions" / lane / f"{did}.json"

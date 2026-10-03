@@ -65,6 +65,15 @@ class DecisionTests(unittest.TestCase):
         self.assertEqual(coord.next_decision_id("reps", ids), "D-reps-001")
 
 
+class SelfReferenceTests(unittest.TestCase):
+    def test_decide_rejects_depending_on_itself(self):
+        did = coord.next_decision_id("coord", set(coord.local_decisions()))
+        args = coord.build_parser().parse_args(["decide", "--lane", "coord", "--title", "Self reference test", "--decision", "d", "--context", "c", "--depends-on", did])
+        with self.assertRaises(coord.CoordError):
+            coord.cmd_decide(args)
+        self.assertFalse((coord.COORD / "decisions" / "coord" / f"{did}.json").exists())
+
+
 class PushDetectionTests(unittest.TestCase):
     def test_detects_real_pushes(self):
         for command in (

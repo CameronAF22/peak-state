@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-014",
+  "lane": "coord",
+  "title": "No committed lockfile; workspace packages pin exact dependency versions",
+  "status": "accepted",
+  "type": "technical",
+  "context": "reps (M-20261003T145232Z-reps-e71e), experience (M-20261003T145722Z-experience-80bc) and contracts all hit the same question: npm install at the root writes package-lock.json, which coord owns but no decision covers, so validate fails. Five lanes add dependencies in parallel; one shared lockfile would conflict on nearly every merge.",
+  "decision": "package-lock.json is git-ignored everywhere. Every workspace package.json pins exact versions (no ^ or ~) for dependencies and devDependencies, which keeps installs reproducible without a lockfile. Lanes run npm install at the root as usual. coord may revisit this at M4 and commit one lockfile generated from main for the demo build.",
+  "alternatives": [
+    "Commit a root lockfile owned by coord: conflicts on every lane merge that adds a dependency",
+    "Per-package lockfiles: npm workspaces only honour the root lockfile"
+  ],
+  "consequences": "Transitive dependency versions can drift between installs until M4; exact pins on direct dependencies limit that.",
+  "produces": [
+    ".gitignore"
+  ],
+  "dependsOn": [
+    "D-coord-010"
+  ],
+  "supersedes": [],
+  "author": "claude (coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:58:42Z",
+  "acceptedAt": "2026-10-03T14:58:42Z",
+  "acceptedBy": "claude (coord)"
+}

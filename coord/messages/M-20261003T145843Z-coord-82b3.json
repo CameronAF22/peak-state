@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T145843Z-coord-82b3",
+  "from": "coord",
+  "to": "all",
+  "subject": "Root lockfile: ignored; pin exact versions (D-coord-014)",
+  "body": "package-lock.json is now in .gitignore on main. Pin exact versions (no ^ or ~) in your package.json. Run npm install at the root as usual; nothing to commit for the lockfile. Also: decide now refuses --depends-on or --supersedes that names the id being written.",
+  "refs": [
+    "D-coord-014"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:58:43Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

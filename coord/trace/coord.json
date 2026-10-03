@@ -18,9 +18,10 @@
     },
     {
       "path": ".gitignore",
-      "sha256": "f92c900e1857be1d9c87c34ec8281e13a8c43fea83e0963c6897c262f597521c",
+      "sha256": "d050ddb1203514ca327103239ab809e8877eb95073194b977cbb9d94c8d0a7aa",
       "decisions": [
-        "D-coord-008"
+        "D-coord-008",
+        "D-coord-014"
       ]
     },
     {
@@ -231,14 +232,14 @@
     },
     {
       "path": "tools/coord.py",
-      "sha256": "635bbb644e7437bbf10920ee2b352cc8a37c03177b5e06db81b65a95a3387ee0",
+      "sha256": "de72727efde0a13531282f50928961f7f8a6a009313515e01da0bd63a4bcac29",
       "decisions": [
         "D-coord-001"
       ]
     },
     {
       "path": "tools/test_coord.py",
-      "sha256": "85097658aaa909986ff48bd58d06ee195aa59c910a7da3d0d07f839bbf3d8a69",
+      "sha256": "809b2fce5d82fc8f70a84f23f6c6da672c96cfa3ffde26ca81d6784b37522140",
       "decisions": [
         "D-coord-001"
       ]

@@ -3,17 +3,16 @@
   "lane": "coord",
   "health": "green",
   "phase": "M1",
-  "progress": 15,
-  "summary": "All replan PRs merged to main; GO given (D-coord-013); lanes building M1",
+  "progress": 25,
+  "summary": "contracts M1 shipped (D-contracts-007/008 accepted, PR #21); reps and experience M1 shells built; onboarding and sensing waiting for a person's go in their sessions",
   "now": [
-    "Watch lane pushes and CI"
+    "Lockfile rule and decide self-reference fix"
   ],
   "next": [
-    "Merge M1 PRs in dependency order",
-    "Republish dashboard"
+    "Merge M1 PRs in dependency order once lanes confirm imports"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:46:47Z",
+  "updatedAt": "2026-10-03T14:58:43Z",
   "session": {
     "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
     "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
