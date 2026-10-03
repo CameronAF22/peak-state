@@ -32,6 +32,34 @@
       ]
     },
     {
+      "path": "onboarding/design/e2e/.gitignore",
+      "sha256": "bdf22dd7031b509eefe2f5e47e97e72e18dda07f533186c58dca6225474e02d9",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/index.html",
+      "sha256": "4c0759a872e4dd668279d5123c8267d81b51613bea32ccb9362b0d820efa1e0f",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/playwright.config.ts",
+      "sha256": "18e99dd7e629912c6420656dc8b532e4d4ddc66339f222a2925efed908d28c31",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/vite.config.ts",
+      "sha256": "981855c3f3b3b38188042a63431a807b3a8734dcac1b487ea28ebb6075f7d6f9",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
       "path": "onboarding/harness/index.html",
       "sha256": "cc518dcc3b32b25882c09b358de2a8b598b8be244b1485470674f5c72071ffd1",
       "decisions": [
@@ -54,9 +82,10 @@
     },
     {
       "path": "onboarding/package.json",
-      "sha256": "8335546eb5098806b81bb049de115f9e6844635f536525cdf8d9b65beeca26b1",
+      "sha256": "55deda0961db8ac028b3d7ef3b5be328c1f1cd8d482343a4a554ed7529fa4317",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-014"
       ]
     },
     {
@@ -281,9 +310,10 @@
     },
     {
       "path": "onboarding/tsconfig.json",
-      "sha256": "1afb58c64c91a473fdd1e8727ce99da6cb1adcb6d9f35c89c5844e920923a9c5",
+      "sha256": "032f4fdcdf5ef1ba470cc7d0248990ce6e5b9764cad500cc560078059cda80b7",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-014"
       ]
     },
     {

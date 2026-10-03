@@ -12,7 +12,9 @@
     "typecheck": "tsc -p tsconfig.json",
     "harness": "vite --host 127.0.0.1 --port 5174",
     "build:harness": "vite build",
-    "test:visual": "playwright test"
+    "test:visual": "playwright test",
+    "design": "vite --config design/vite.config.ts",
+    "test:design": "playwright test -c design/playwright.config.ts"
   },
   "dependencies": {
     "@peak-state/contracts": "0.1.0"

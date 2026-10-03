@@ -100,6 +100,21 @@ Turn a first conversation into a confirmed profile: find the person's three top 
 
 **Produces:** `.claude/settings.json`
 
+### D-onboarding-014 · Three white-light minimal-text design prototypes for the question harness
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01FpUSvVKQswepdzRd8iGswL) · branch `claude/project-thread-r75yty` · accepted by claude
+
+**Decision.** Build three self-contained prototype pages (orb, horizon, constellation) under onboarding/design/, each a dark full-screen view with one moving white light and one line of text, driven by the existing engine, hints, playback and voice modules unchanged. Each has its own Playwright screenshot run for content and destressed. The production harness page is not changed until Cam picks one.
+
+**Context.** Cam asked for a simple, attention-focusing visual for choosing a state and running the strategy questions, and asked for three versions to compare. Kept on branch claude/project-thread-r75yty so PR #23's harness code is untouched.
+
+**Alternatives considered.**
+
+- Restyle the existing harness page in place
+- Memory photo or self photo as the background
+
+**Produces:** `onboarding/design/`, `onboarding/package.json`, `onboarding/tsconfig.json`
+
 ## Proposed, awaiting acceptance
 
 ### D-onboarding-007 · Voice-first stack for onboarding: speech in and out primary, transcript, typed and scripted fallbacks
@@ -158,10 +173,14 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/state-change.md` | `6fb6b1df03c0` | D-coord-008 |
 | `onboarding/PLAN.md` | `7913904371a4` | D-onboarding-001, D-onboarding-011 |
 | `onboarding/README.md` | `406602332f4f` | D-onboarding-012 |
+| `onboarding/design/e2e/.gitignore` | `bdf22dd7031b` | D-onboarding-014 |
+| `onboarding/design/index.html` | `4c0759a872e4` | D-onboarding-014 |
+| `onboarding/design/playwright.config.ts` | `18e99dd7e629` | D-onboarding-014 |
+| `onboarding/design/vite.config.ts` | `981855c3f3b3` | D-onboarding-014 |
 | `onboarding/harness/index.html` | `cc518dcc3b32` | D-onboarding-012 |
 | `onboarding/harness/main.ts` | `684ae88ae42e` | D-onboarding-012 |
 | `onboarding/harness/styles.css` | `f63761742d57` | D-onboarding-012 |
-| `onboarding/package.json` | `8335546eb509` | D-onboarding-012 |
+| `onboarding/package.json` | `55deda0961db` | D-onboarding-012, D-onboarding-014 |
 | `onboarding/playwright.config.ts` | `78cc447f0630` | D-onboarding-012 |
 | `onboarding/script/questions.ts` | `779bd9a43021` | D-onboarding-003, D-onboarding-006, D-onboarding-010, D-onboarding-012 |
 | `onboarding/src/engine/hints.ts` | `d164d4ac154f` | D-onboarding-012 |
@@ -193,7 +212,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/test/unit/playback.test.ts` | `c76b8b12f289` | D-onboarding-012 |
 | `onboarding/test/unit/script.test.ts` | `473cf39343e8` | D-onboarding-012 |
 | `onboarding/test/unit/voice.test.ts` | `9440dc4b6e29` | D-onboarding-012 |
-| `onboarding/tsconfig.json` | `1afb58c64c91` | D-onboarding-012 |
+| `onboarding/tsconfig.json` | `032f4fdcdf5e` | D-onboarding-012, D-onboarding-014 |
 | `onboarding/vite.config.ts` | `f5643cec1115` | D-onboarding-012 |
 | `prompts/discovery.md` | `915c158676a3` | D-coord-008 |
 | `prompts/induction.md` | `9eac817f9540` | D-coord-008 |
