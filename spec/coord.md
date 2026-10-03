@@ -240,9 +240,9 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/hackathon/lanes/contracts.md` | `659077ebfecd` | D-coord-004, D-coord-009, D-coord-011 |
 | `docs/hackathon/lanes/coord.md` | `5caaf5d27508` | D-coord-004, D-coord-009, D-coord-011 |
 | `docs/hackathon/lanes/experience.md` | `194b7f5ecd0b` | D-coord-004, D-coord-009, D-coord-011 |
-| `docs/hackathon/lanes/onboarding.md` | `0e0157c74b1d` | D-coord-004, D-coord-009, D-coord-011 |
+| `docs/hackathon/lanes/onboarding.md` | `fe07f9ccf7bc` | D-coord-004, D-coord-009, D-coord-011 |
 | `docs/hackathon/lanes/reps.md` | `ce59e47ed3b5` | D-coord-004, D-coord-009, D-coord-011 |
-| `docs/hackathon/lanes/sensing.md` | `ae328a682ccc` | D-coord-004, D-coord-009, D-coord-011 |
+| `docs/hackathon/lanes/sensing.md` | `1baa6374eb75` | D-coord-004, D-coord-009, D-coord-011 |
 | `docs/hackathon/mvp.md` | `57cfa56c173e` | D-coord-005, D-coord-006, D-coord-007, D-coord-009, D-coord-011 |
 | `docs/on-aim-closed-loop.html` | `63ed5ec933fa` | D-coord-008 |
 | `docs/open-questions.md` | `32ec140a0c57` | D-coord-008 |
@@ -257,6 +257,6 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `schemas/coord/status.schema.json` | `4cf17ed9ef8e` | D-coord-001 |
 | `schemas/coord/trace.schema.json` | `414c0dbe867a` | D-coord-001 |
 | `site/dashboard.html` | `e50625a238b7` | D-coord-003 |
-| `tools/coord.py` | `f4c8912791b3` | D-coord-001 |
+| `tools/coord.py` | `635bbb644e74` | D-coord-001 |
 | `tools/test_coord.py` | `85097658aaa9` | D-coord-001 |
 | `tsconfig.base.json` | `9a0a4c80f350` | D-coord-010 |

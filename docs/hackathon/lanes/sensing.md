@@ -14,7 +14,7 @@
 | Gate | Deliverable |
 |---|---|
 | M1 | `sensing/PLAN.md`. A deterministic simulator that emits SignalFrames from a scenario file: baseline, then drift, then recovery. |
-| M2 | Personal baseline from calibration (HR and RMSSD per emotion versus neutral). Detector with gate: N consecutive windows, refractory period, sham rate. Emits DetectionEvents. Unit tests on scripted scenarios. |
+| M2 | Personal baseline from the playbook calibration: HR and RMSSD in the peak window (playbook 1.2 to 1.5) against the contrast window (3.1 to 3.2), see D-coord-012. Detector with gate: N consecutive windows, refractory period, sham rate. Emits DetectionEvents. Unit tests on scripted scenarios. |
 | M3 | Web Bluetooth adapter for the standard Heart Rate Service (0x180D, characteristic 0x2A37, HR plus RR intervals), and a manual "I'm off" trigger adapter. All share one interface. |
 | M4 | The demo scenario, pinned and timed with experience |
 

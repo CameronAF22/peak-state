@@ -1572,7 +1572,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_claim)
 
     p = sub.add_parser("decide", help="log a decision and rebuild the spec")
-    p.add_argument("--title")
+    p.add_argument("--title", help="4 to 120 characters")
     p.add_argument("--decision")
     p.add_argument("--context")
     p.add_argument("--type", choices=["scope", "product", "technical", "contract", "process", "research"])

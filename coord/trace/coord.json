@@ -102,7 +102,7 @@
     },
     {
       "path": "docs/hackathon/lanes/onboarding.md",
-      "sha256": "0e0157c74b1dc7e05e17a86c427f9746f86a52c8f1f2f85f38b95130df63bd83",
+      "sha256": "fe07f9ccf7bc6bd09ab58e7fa7b1edb3cee9129d7435812c6820a3f6edf57eea",
       "decisions": [
         "D-coord-004",
         "D-coord-009",
@@ -120,7 +120,7 @@
     },
     {
       "path": "docs/hackathon/lanes/sensing.md",
-      "sha256": "ae328a682ccc07fa35d4caf88833a23170d4de85064f14bb11bcd0a38c3efd74",
+      "sha256": "1baa6374eb75c06580a9d09907171f7c58250f8b709f27960d945e2a1ab33055",
       "decisions": [
         "D-coord-004",
         "D-coord-009",
@@ -231,7 +231,7 @@
     },
     {
       "path": "tools/coord.py",
-      "sha256": "f4c8912791b3e30e2a4638627fdeb760adedd8af7c831479a817c5b12fe7247b",
+      "sha256": "635bbb644e7437bbf10920ee2b352cc8a37c03177b5e06db81b65a95a3387ee0",
       "decisions": [
         "D-coord-001"
       ]

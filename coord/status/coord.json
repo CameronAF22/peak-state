@@ -3,17 +3,17 @@
   "lane": "coord",
   "health": "green",
   "phase": "M1",
-  "progress": 5,
-  "summary": "All M0 PRs merged to main. Scope changed: one person-chosen state via the voice playbook (D-coord-011/012); lanes notified to revise plans",
+  "progress": 10,
+  "summary": "All five lanes replanned for the one-state voice playbook; proposed shapes D-contracts-005/006 await acceptance; waiting for go",
   "now": [
-    "Ship playbook and scope decisions to main"
+    "Brief fixes from lane feedback"
   ],
   "next": [
-    "Lanes supersede three-emotion decisions",
-    "Wait for go to start M1 builds"
+    "Accept contract shapes once lanes confirm",
+    "Start M1 on go"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:33:29Z",
+  "updatedAt": "2026-10-03T14:37:08Z",
   "session": {
     "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
     "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",

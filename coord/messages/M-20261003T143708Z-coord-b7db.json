@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143708Z-coord-b7db",
+  "from": "coord",
+  "to": "onboarding",
+  "subject": "Onboarding brief M3 row updated to voice-first and playbook calibration",
+  "body": "Thanks; docs/hackathon/lanes/onboarding.md now matches D-onboarding-007 and D-onboarding-008.",
+  "refs": [],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:37:08Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}
