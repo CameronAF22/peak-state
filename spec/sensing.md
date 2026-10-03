@@ -16,7 +16,60 @@ Get signals in and decide when to fire a rep: a deterministic simulator for the 
 
 ## Decisions in force
 
-None yet.
+### D-sensing-001 · Sensing kickoff: lane plan for M1 to M4
+
+`accepted` · process · 2026-10-03 · [session](https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd) · branch `lane/sensing` · accepted by claude
+
+**Decision.** Build sensing as TypeScript modules under sensing/: a deterministic simulator first, then the personal-baseline detector and gate, then Web Bluetooth and manual adapters behind one SignalSource interface. Plan is in sensing/PLAN.md. Build against contracts/ fixtures; no local copy of any shared shape.
+
+**Context.** Gate M0. Brief docs/hackathon/lanes/sensing.md; D-coord-007 fixes the input order (simulator, strap, manual).
+
+**Produces:** `sensing/PLAN.md`  
+**Depends on:** D-coord-006, D-coord-007, D-coord-009
+
+### D-sensing-002 · Simulator scenarios are seeded JSON segment lists
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd) · branch `lane/sensing` · accepted by claude
+
+**Decision.** A scenario is JSON: {id, seed, hopMs, profileRef, segments:[{label: baseline|drift|recovery|artifact, durationS, hr:{from,to}, rmssd:{from,to}, quality}], expect:[{t, kind}]}. The simulator expands segments into RR intervals with a seeded PRNG (mulberry32), derives hr per frame, and emits SignalFrames on a virtual clock that can run in real time or as fast as possible. Same seed, same frames, byte for byte. expect[] lists when the detector must fire, so the scenario doubles as a test fixture.
+
+**Context.** The demo must fire exactly when scripted, and M2 unit tests need the same scenarios. Generating RR (not just HR) lets the detector compute RMSSD the same way for simulator and strap.
+
+**Alternatives considered.**
+
+- Replay recorded strap CSVs: realistic but not scriptable and needs hardware first
+- Emit HR only: simpler, but RMSSD path would be untested until the strap
+
+**Produces:** `sensing/scenarios/`, `sensing/src/simulator.ts`, `sensing/src/prng.ts`  
+**Depends on:** D-coord-007
+
+### D-sensing-003 · Detector: personal drift score with a 3-window gate, refractory and seeded sham
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd) · branch `lane/sensing` · accepted by claude
+
+**Decision.** Windows of 20 s with a 5 s hop. Per window compute mean HR and RMSSD from RR. Drift score = distance from the person's calibrated on-state for the target emotion (z-scores of HR and ln RMSSD against calibration mean and SD, combined and squashed to 0..1 as confidence). Gate opens when confidence > threshold (default 0.8) on 3 consecutive windows AND signal quality ok AND not inside the refractory period. Refractory defaults to 60 s in demo mode (10 min in the research design; configurable). On each gate opening, a seeded PRNG assigns sham with rate 0.25 and sets DetectionEvent.gate.sham; reps withholds the cue on sham. Manual triggers bypass the gate and are never sham. False fires per minute are counted on baseline segments and reported.
+
+**Context.** Gate design in docs/on-aim-closed-loop.html (P > threshold x 3, refractory, sham 0.25). The demo is about 3 minutes, so a 10-minute refractory would allow only one fire. No universal BPM or HRV cutoff (docs/oura-constraints.md); everything is relative to the person.
+
+**Alternatives considered.**
+
+- Fixed population HR threshold: rejected, no universal cutoff
+- Random sham per call with Math.random: rejected, breaks determinism
+- reps decides sham: rejected, the gate owns the trial log and DetectionEvent already carries gate.sham
+
+**Produces:** `sensing/src/baseline.ts`, `sensing/src/detector.ts`, `sensing/src/gate.ts`, `sensing/test/`  
+**Depends on:** D-coord-007
+
+### D-sensing-004 · One SignalSource interface for simulator, BLE strap and manual
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd) · branch `lane/sensing` · accepted by claude
+
+**Decision.** All inputs implement SignalSource {id, start(onFrame), stop()}. The BLE adapter uses navigator.bluetooth.requestDevice({filters:[{services:[0x180D]}]}), subscribes to 0x2A37 notifications and parses the flags byte (bit0 HR uint8/uint16, bit3 energy expended present, bit4 RR present; RR in 1/1024 s converted to ms). Manual is a source that emits a DetectionEvent kind manual straight to onEvent. Oura is never a live source; context only.
+
+**Context.** Brief M3 and D-coord-007. Web Bluetooth needs Chrome, HTTPS or localhost, and a user gesture; the app must call connect from a button.
+
+**Produces:** `sensing/src/source.ts`, `sensing/src/adapters/`, `docs/trigger-flow.md`  
+**Depends on:** D-coord-007
 
 ## Proposed, awaiting acceptance
 
@@ -37,4 +90,5 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | File | sha256 | Decisions |
 |---|---|---|
 | `docs/oura-constraints.md` | `fe13e0a9d24b` | D-coord-008 |
-| `docs/trigger-flow.md` | `4ab4f10fb9ea` | D-coord-008 |
+| `docs/trigger-flow.md` | `4ab4f10fb9ea` | D-coord-008, D-sensing-004 |
+| `sensing/PLAN.md` | `ee911a7d44f1` | D-sensing-001 |

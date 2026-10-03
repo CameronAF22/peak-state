@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-sensing-001",
+  "lane": "sensing",
+  "title": "Sensing kickoff: lane plan for M1 to M4",
+  "status": "accepted",
+  "type": "process",
+  "context": "Gate M0. Brief docs/hackathon/lanes/sensing.md; D-coord-007 fixes the input order (simulator, strap, manual).",
+  "decision": "Build sensing as TypeScript modules under sensing/: a deterministic simulator first, then the personal-baseline detector and gate, then Web Bluetooth and manual adapters behind one SignalSource interface. Plan is in sensing/PLAN.md. Build against contracts/ fixtures; no local copy of any shared shape.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "sensing/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-coord-006",
+    "D-coord-007",
+    "D-coord-009"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01VAT2w9TTWLQAeoV81MAgwd",
+    "url": "https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd",
+    "branch": "lane/sensing"
+  },
+  "createdAt": "2026-10-03T14:02:32Z",
+  "acceptedAt": "2026-10-03T14:02:32Z",
+  "acceptedBy": "claude"
+}

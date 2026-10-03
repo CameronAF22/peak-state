@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "D-sensing-003",
+  "lane": "sensing",
+  "title": "Detector: personal drift score with a 3-window gate, refractory and seeded sham",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Gate design in docs/on-aim-closed-loop.html (P > threshold x 3, refractory, sham 0.25). The demo is about 3 minutes, so a 10-minute refractory would allow only one fire. No universal BPM or HRV cutoff (docs/oura-constraints.md); everything is relative to the person.",
+  "decision": "Windows of 20 s with a 5 s hop. Per window compute mean HR and RMSSD from RR. Drift score = distance from the person's calibrated on-state for the target emotion (z-scores of HR and ln RMSSD against calibration mean and SD, combined and squashed to 0..1 as confidence). Gate opens when confidence > threshold (default 0.8) on 3 consecutive windows AND signal quality ok AND not inside the refractory period. Refractory defaults to 60 s in demo mode (10 min in the research design; configurable). On each gate opening, a seeded PRNG assigns sham with rate 0.25 and sets DetectionEvent.gate.sham; reps withholds the cue on sham. Manual triggers bypass the gate and are never sham. False fires per minute are counted on baseline segments and reported.",
+  "alternatives": [
+    "Fixed population HR threshold: rejected, no universal cutoff",
+    "Random sham per call with Math.random: rejected, breaks determinism",
+    "reps decides sham: rejected, the gate owns the trial log and DetectionEvent already carries gate.sham"
+  ],
+  "consequences": "",
+  "produces": [
+    "sensing/src/baseline.ts",
+    "sensing/src/detector.ts",
+    "sensing/src/gate.ts",
+    "sensing/test/"
+  ],
+  "dependsOn": [
+    "D-coord-007"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01VAT2w9TTWLQAeoV81MAgwd",
+    "url": "https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd",
+    "branch": "lane/sensing"
+  },
+  "createdAt": "2026-10-03T14:02:32Z",
+  "acceptedAt": "2026-10-03T14:02:32Z",
+  "acceptedBy": "claude"
+}

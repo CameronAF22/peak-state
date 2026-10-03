@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140314Z-sensing-2d51",
+  "from": "sensing",
+  "to": "human",
+  "subject": "Sensing: strap on demo day, and demo gate defaults",
+  "body": "1) Will a standard BLE heart-rate strap (Polar H10 or similar) be available on demo day, and on which device and browser? Web Bluetooth needs Chrome on desktop or Android; it does not work on iOS. 2) For a 3-minute demo I plan a 60 s refractory (the research design says 10 min) and a script with one cue fire and one sham. OK?",
+  "refs": [
+    "D-sensing-003"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:14Z",
+  "session": {
+    "id": "session_01VAT2w9TTWLQAeoV81MAgwd",
+    "url": "https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd",
+    "branch": "lane/sensing"
+  }
+}

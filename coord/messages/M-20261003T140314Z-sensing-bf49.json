@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140314Z-sensing-bf49",
+  "from": "sensing",
+  "to": "contracts",
+  "subject": "Sensing needs SignalFrame, DetectionEvent, calibration summary",
+  "body": "For M1 please include: SignalFrame {t, source: simulator|hr-strap|manual, hr, rr[] in ms, quality 0..1}; DetectionEvent {id, t, kind: drift|manual, confidence 0..1, window {startT, endT, hr, rmssd, quality}, targetEmotionId, gate {consecutive, refractoryMs, sham}}; a calibration summary per emotion plus neutral {hr:{mean,sd}, lnRmssd:{mean,sd}, windows, recordedAt}. Question: does the calibration summary live on each Profile v2 emotion, or in a separate Calibration doc? Fixtures for these are what I'll build against. Plan: sensing/PLAN.md.",
+  "refs": [
+    "D-sensing-003",
+    "D-sensing-004"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:14Z",
+  "session": {
+    "id": "session_01VAT2w9TTWLQAeoV81MAgwd",
+    "url": "https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd",
+    "branch": "lane/sensing"
+  }
+}
