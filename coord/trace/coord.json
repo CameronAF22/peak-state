@@ -66,11 +66,20 @@
       ]
     },
     {
+      "path": "docs/hackathon/elicitation-playbook.md",
+      "sha256": "431ef8310673c470e0c820110320f05adcd78ce511759863b27cd6dbb64888be",
+      "decisions": [
+        "D-coord-011",
+        "D-coord-012"
+      ]
+    },
+    {
       "path": "docs/hackathon/lanes/contracts.md",
-      "sha256": "e64a79d089f84d7ce75b03d24bd8d6ab1300f6062c706fb3a9c81aecf009c551",
+      "sha256": "659077ebfecd56a24ea0f012ed3088c0134c08aefdc1f06b3fa65a64326e78e3",
       "decisions": [
         "D-coord-004",
-        "D-coord-009"
+        "D-coord-009",
+        "D-coord-011"
       ]
     },
     {
@@ -78,7 +87,8 @@
       "sha256": "5caaf5d2750885440dccd8ee0bb299666c015e46187101d79dbdac2c3ad68a1c",
       "decisions": [
         "D-coord-004",
-        "D-coord-009"
+        "D-coord-009",
+        "D-coord-011"
       ]
     },
     {
@@ -86,15 +96,17 @@
       "sha256": "194b7f5ecd0b42583080e36f19f89d9984e1c728c9db4193e77b9b82d127a0d9",
       "decisions": [
         "D-coord-004",
-        "D-coord-009"
+        "D-coord-009",
+        "D-coord-011"
       ]
     },
     {
       "path": "docs/hackathon/lanes/onboarding.md",
-      "sha256": "1b82e15164d6165347285b00b91f3966758ab954fd3a92c939cd3ea0fb360d47",
+      "sha256": "0e0157c74b1dc7e05e17a86c427f9746f86a52c8f1f2f85f38b95130df63bd83",
       "decisions": [
         "D-coord-004",
-        "D-coord-009"
+        "D-coord-009",
+        "D-coord-011"
       ]
     },
     {
@@ -102,7 +114,8 @@
       "sha256": "ce59e47ed3b57543463a12b059475ff57b0fff9ff88fb1f689caffc38358c13f",
       "decisions": [
         "D-coord-004",
-        "D-coord-009"
+        "D-coord-009",
+        "D-coord-011"
       ]
     },
     {
@@ -110,17 +123,19 @@
       "sha256": "ae328a682ccc07fa35d4caf88833a23170d4de85064f14bb11bcd0a38c3efd74",
       "decisions": [
         "D-coord-004",
-        "D-coord-009"
+        "D-coord-009",
+        "D-coord-011"
       ]
     },
     {
       "path": "docs/hackathon/mvp.md",
-      "sha256": "ea182fa801fbc4b893c7b3580ce5f065a061c5db552fd3e201997ff05b704015",
+      "sha256": "57cfa56c173ed3c0e05923b045e60dd51c307137c3749f0369021583a94d882e",
       "decisions": [
         "D-coord-005",
         "D-coord-006",
         "D-coord-007",
-        "D-coord-009"
+        "D-coord-009",
+        "D-coord-011"
       ]
     },
     {

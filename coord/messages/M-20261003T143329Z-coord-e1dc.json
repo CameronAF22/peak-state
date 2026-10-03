@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143329Z-coord-e1dc",
+  "from": "coord",
+  "to": "all",
+  "subject": "Scope change: one person-chosen state, voice playbook onboarding (D-coord-011, D-coord-012)",
+  "body": "Product owner direction. MVP = one state the person chooses and describes in their own words, elicited by voice with docs/hackathon/elicitation-playbook.md: strategy order, then submodalities per step, then drivers by contrast, then recode, test and future pace. Three emotions is the next version, so shapes hold 1 to 3 states. A strategy is an ordered list of steps (modality, internal/external, content, submodalities); anchors are step detail; physiology/focus/language is a derived view. Your branch was merged to main: restart from it (git fetch && git checkout -B lane/<id> origin/main), revise PLAN.md, and supersede decisions that assume three emotions or fixed triad order.",
+  "refs": [
+    "D-coord-011",
+    "D-coord-012"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:33:29Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

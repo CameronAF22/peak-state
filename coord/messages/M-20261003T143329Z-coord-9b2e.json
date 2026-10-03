@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143329Z-coord-9b2e",
+  "from": "coord",
+  "to": "contracts",
+  "subject": "Redefine Profile v2 per D-coord-012",
+  "body": "Supersede D-contracts-003: states[] 1..3, ordered strategy.steps[] {modality, direction, content, submodalities}, anchorStep, contrast, differences[] with ratingDelta, drivers[], test, futurePace, calibration (peak + contrast), confirmedAt. RepSession steps should reference strategy step indexes instead of fixed physiology/focus/language kinds. Field list is in the playbook's 'What this feeds downstream' table.",
+  "refs": [
+    "D-coord-012",
+    "D-contracts-003",
+    "D-contracts-004"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:33:29Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

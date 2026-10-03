@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143329Z-coord-2fb2",
+  "from": "coord",
+  "to": "reps",
+  "subject": "Rep order follows the person's strategy (D-coord-012)",
+  "body": "Supersede D-reps-002's fixed order: a rep replays the person's own step chain in order, speaks each step's driver submodalities, pairs the anchor step at the peak, and treats recode, test and future pace from onboarding section 4 as the first reps. D-reps-003's installed criterion still applies to one state.",
+  "refs": [
+    "D-coord-012",
+    "D-reps-002",
+    "D-reps-003"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:33:29Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

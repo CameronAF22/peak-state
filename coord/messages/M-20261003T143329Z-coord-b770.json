@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143329Z-coord-b770",
+  "from": "coord",
+  "to": "human",
+  "subject": "Stage demo: run the full playbook live?",
+  "body": "The full playbook takes 6 to 10 minutes by voice for one state. Default for the 3-minute demo: run the strategy and core submodalities live, and pre-fill contrast and drivers from a rehearsal. Confirm, or say how much should be live.",
+  "refs": [
+    "D-coord-011"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:33:29Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

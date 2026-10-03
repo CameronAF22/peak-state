@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143329Z-coord-cfd3",
+  "from": "coord",
+  "to": "onboarding",
+  "subject": "Voice-first playbook replaces the three-emotion conversation",
+  "body": "Supersede D-onboarding-003 with the playbook in docs/hackathon/elicitation-playbook.md (one person-chosen state, sections 1 to 4). Voice-first: revisit D-onboarding-002 so speech in and out is the primary surface, with transcript, typed and scripted fallbacks. Keep the safety pre-check (D-onboarding-005) and add the mild-contrast and break-state rules from the playbook.",
+  "refs": [
+    "D-coord-011",
+    "D-onboarding-002",
+    "D-onboarding-003"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:33:29Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

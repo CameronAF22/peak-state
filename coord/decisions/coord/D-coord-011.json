@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-011",
+  "lane": "coord",
+  "title": "MVP: one person-chosen state, elicited by voice; three emotions next version",
+  "status": "accepted",
+  "type": "scope",
+  "context": "The product owner directed that initial onboarding runs a voice playbook from Robbins' Unlimited Power (strategy order, then submodalities, then drivers by contrast, then recode, test and rehearse), and that for now the person chooses the content of the state, with choosing among three emotions deferred to a later version. D-coord-005 had fixed exactly three emotions with a physiology, focus and language triad each.",
+  "decision": "The MVP targets one state per person, named and described by the person in their own words. Onboarding is a voice-first session (speak and listen, live transcript, typed and scripted fallbacks) that runs docs/hackathon/elicitation-playbook.md. Shapes hold 1 to 3 states so the next version, choosing among three emotions and running the playbook once per emotion, adds no contract change. Everything else from D-coord-005 stands: detect drift, run a rep, log it, installed when the anchor alone brings the state back, Robbins steps treated as hypotheses measured with sham trials, and the safety boundary.",
+  "alternatives": [
+    "Keep three emotions in the MVP: triples a 6 to 10 minute voice playbook",
+    "Hard-code a menu of states: the owner wants the person to choose the content"
+  ],
+  "consequences": "D-contracts-003 (exactly three emotions) and D-onboarding-003 (three-emotion conversation) need superseding by their lanes. The demo onboarding step grows to about 90 s and pre-fills contrast and drivers unless a person decides otherwise.",
+  "produces": [
+    "docs/hackathon/elicitation-playbook.md",
+    "docs/hackathon/mvp.md",
+    "docs/hackathon/lanes/"
+  ],
+  "dependsOn": [
+    "D-coord-004"
+  ],
+  "supersedes": [
+    "D-coord-005"
+  ],
+  "author": "product owner (via coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:33:07Z",
+  "acceptedAt": "2026-10-03T14:33:07Z",
+  "acceptedBy": "product owner (via coord)"
+}
