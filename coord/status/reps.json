@@ -2,17 +2,19 @@
   "schemaVersion": 1,
   "lane": "reps",
   "health": "green",
-  "phase": "M0",
-  "progress": 10,
-  "summary": "Plan revised for one-state scope: own step order + drivers, anchor step at peak (D-reps-005 supersedes 002), onboarding reps (D-reps-006)",
+  "phase": "M1",
+  "progress": 35,
+  "summary": "M1 built: @peak-state/reps package, script generator (own step order, drivers, anchor at peak, 20-40 s), RepSession recorder, fromOnboarding; 38 tests pass",
   "now": [
-    "Revision 2 pushed; waiting for contracts' new state shape and a person's go for M1"
+    "Pushing M1 and opening PR to main"
   ],
   "next": [
-    "M1: script generator from the contracts one-state fixture"
+    "M2: timed runner with browser speech and stop; switch to @peak-state/contracts when it ships"
   ],
-  "blockers": [],
-  "updatedAt": "2026-10-03T14:36:08Z",
+  "blockers": [
+    "Shapes mirror proposed D-contracts-005/006 until contracts ships its package and fixtures"
+  ],
+  "updatedAt": "2026-10-03T14:53:03Z",
   "session": {
     "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
     "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",

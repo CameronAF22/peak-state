@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "D-reps-007",
+  "lane": "reps",
+  "title": "Rep script wording and timing rules",
+  "status": "accepted",
+  "type": "product",
+  "context": "D-reps-005 sets the order and bounds; this records the concrete rules the generator and its tests follow.",
+  "decision": "Script text is the person's words inside fixed templates: step lead by modality and direction (See/Picture/Hear/Say to yourself/Feel/Smell/Taste + content), drivers of the step's modality spoken via a per-attribute template table with fallback 'Make it {peak}.', one core submodality when a step has no driver, auditory-internal steps add a 2 s repeat silence. Speech time is estimated at 2.2 words per second plus a 1.5 s pause per step. Timed steps fill a 32 s target (configurable within 20 to 40 s): spare time is shared in proportion to each step's floor; if floors exceed the target the script runs at the floor; with five or more steps, or if floors exceed 40 s, only the top driver per step is spoken; above 40 s steps are scaled down to 40 s and the runner cuts speech (M2). The anchor-only test is the anchor step's text plus its submodalities and 10 s of silence. scriptHash is FNV-1a over the step kinds and texts. Draft profiles (confirmedAt null) are refused.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "reps/src/"
+  ],
+  "dependsOn": [
+    "D-reps-005"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  },
+  "createdAt": "2026-10-03T14:49:04Z",
+  "acceptedAt": "2026-10-03T14:49:04Z",
+  "acceptedBy": "claude"
+}

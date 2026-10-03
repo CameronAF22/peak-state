@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-reps-010",
+  "lane": "reps",
+  "title": "Rep script wording and timing rules (speech estimate 2.6 words/s, 1.0 s pause)",
+  "status": "accepted",
+  "type": "product",
+  "context": "With D-reps-007's constants the demo profile's rep needed 38.9 s, near the 40 s cap and well over the 30 s demo slot. Browser speech at rate 1 runs about 2.5 to 3 words per second, so 2.2 overestimated; at 2.6 and a 1.0 s pause the same rep fits about 32 s.",
+  "decision": "Same rules as D-reps-007, with the speech estimate changed from 2.2 to 2.6 words per second and the pause after each step from 1.5 s to 1.0 s. Script text is the person's words inside fixed templates; drivers of the step's modality are spoken via a per-attribute template table with fallback 'Make it {peak}.'; one core submodality when a step has no driver; auditory-internal steps add a 2 s repeat silence. Timed steps fill a 32 s target (configurable within 20 to 40 s); spare time is shared in proportion to each step's floor; if floors exceed the target the script runs at the floor; with five or more steps, or floors above 40 s, only the top driver per step is spoken; above 40 s steps are scaled to 40 s and the runner cuts speech (M2). The anchor-only test is the anchor step's text plus its submodalities and 10 s of silence. scriptHash is FNV-1a over step kinds and texts. Draft profiles are refused.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "reps/src/"
+  ],
+  "dependsOn": [
+    "D-reps-005"
+  ],
+  "supersedes": [
+    "D-reps-007"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  },
+  "createdAt": "2026-10-03T14:52:05Z",
+  "acceptedAt": "2026-10-03T14:52:05Z",
+  "acceptedBy": "claude"
+}
