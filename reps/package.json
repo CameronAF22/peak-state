@@ -2,7 +2,7 @@
   "name": "@peak-state/reps",
   "version": "0.1.0",
   "private": true,
-  "description": "Peak State rep and conditioning engine: rep scripts from the person's own strategy, and the RepSession log.",
+  "description": "Peak State rep and conditioning engine: rep scripts from the person's own strategy, the RepSession log, and conditioning status.",
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -16,8 +16,11 @@
     "test": "node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc -p tsconfig.json"
   },
+  "dependencies": {
+    "@peak-state/contracts": "0.1.0"
+  },
   "devDependencies": {
-    "@types/node": "^22.0.0",
-    "typescript": "^7.0.2"
+    "@types/node": "22.20.5",
+    "typescript": "7.0.2"
   }
 }

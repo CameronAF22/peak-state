@@ -20,7 +20,7 @@ Every screen shows one state. Layouts leave room for 1 to 3, so the next version
 
 ## The five screens
 
-Navigation is a linear flow with a step bar: `onboard → calibrate → live → rep → progress`. Demo mode can jump to any screen with fixture data. A persistent safety footer (the stop line from `README.md`) and a **Stop** button are on every screen.
+Navigation is a linear flow with a step bar: `onboard → calibrate → live → rep → progress`. At `/demo/`, the flow is `onboard → rep → progress` for now; see Status below (D-onboarding-023). Demo mode can jump to any screen with fixture data. A persistent safety footer (the stop line from `README.md`) and a **Stop** button are on every screen.
 
 | Screen | What it shows | Module / contract | Fixture fallback |
 |---|---|---|---|
@@ -68,18 +68,26 @@ The app owns the speech adapter (browser speech for now, and whatever D-onboardi
 | **M3** | Real voice onboarding through the playbook, calibration from the playbook windows, the strap when present (simulator fallback), and the profile and log in `localStorage`. |
 | **M4** | `demo/`: the script, the pinned scenario timed with sensing, prefilled contrast and driver results from a rehearsal, a fallback recording, pitch notes, and safety copy on screen. |
 
-## M1 status: how to run it
+## Status: the /demo/ walkthrough (D-onboarding-023)
+
+The onboarding harness stays the main live app at `/`. This app is the walkthrough at `/demo/`, served by the same Cloudflare Worker from the harness's static assets.
 
 ```bash
-npm install            # from the repo root (workspaces); no lockfile is committed
-npm run dev -w app     # http://localhost:5173
-npm test -w app        # Vitest: onboarding script + reducer, simulator gate timing, rep order, sham, installed
-npm run build -w app   # static dist/, no external URLs
+npm install                                       # from the repo root (workspaces); no lockfile is committed
+npm run dev -w @peak-state/app                    # http://localhost:5173/demo/
+npm test -w @peak-state/app                       # Vitest (vitest.config.ts)
+npm run typecheck -w @peak-state/app
+# Build order matters: the harness build empties onboarding/dist-harness/, so build it first.
+npm run build:harness -w @peak-state/onboarding   # → onboarding/dist-harness/
+npm run build -w @peak-state/app                  # → onboarding/dist-harness/demo/ (empties only demo/)
 ```
 
-- Every module runs on its fixture stub today. The top bar shows `onboarding: stub`, `sensing: stub` and `reps: stub`. `?<module>=real` switches as each lane's package is wired into `src/modules.ts`.
-- `?screen=live` (or `calibrate`, `rep`, `progress`) jumps straight to a screen with the demo profile. The top bar also has Speed (1×, 2×, 4×, 10×) and a Voice toggle, which is off by default.
-- Shared shapes come from `src/contracts.ts`, a temporary mirror of D-contracts-005/006 (D-experience-006). It becomes a re-export of `@peak-state/contracts` when that package merges.
+- **Flow:** onboard → rep → progress. Calibrate and Live are hidden from the step bar until sensing ships (it is plan only for now). `?screen=calibrate` or `?screen=live` still opens them, running on the sensing stub.
+- **Onboard:** uses the strategy the harness saved, when there is one. It also links to `/` ("Capture my strategy with the voice guide"), and offers three other paths. "Answer the questions here" drives `@peak-state/onboarding`'s `createEngine` headlessly with typed answers, quick-pick choices, and voice when Voice is on. "Watch the scripted demo" replays `contracts/fixtures/onboarding.events.demo.json`. "Use sample profile" loads `profileDemo`. A strategy confirmed here is saved under the harness's key.
+- **Rep:** the **I'm off** button is the manual trigger. There is also a practice rep, and an anchor-only test once conditioning is ready for it. `@peak-state/reps` (`buildScript` + `createRecorder`) builds the script and records the session, and `src/real/reps.ts` plays it through the host. Every RepSession is appended to `peak-state.harness.runs`, the same log the harness uses.
+- **Progress:** comes from reps' `progress()` and `conditioning()` (D-reps-003). For the sample profile it shows the seeded `repLogDemo` with the logged reps on top. The seeded history is shown and never stored.
+- **Modules** (`src/modules.ts`, slot types in `src/slots.ts`): onboarding is real (`?onboarding=stub` replays the script), reps is real, and sensing is the stub. Each slot type is the contracts module interface plus optional trailing UI options, so every implementation still satisfies `@peak-state/contracts`.
+- **Shapes and fixtures:** `src/contracts.ts` re-exports `@peak-state/contracts` and adds only view helpers. The app's fixture copies are gone.
 
 ## Three-minute demo outline
 

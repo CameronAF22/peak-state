@@ -21,7 +21,7 @@
   "dependsOn": [
     "D-onboarding-019",
     "D-onboarding-025",
-    "D-onboarding-023"
+    "D-onboarding-027"
   ],
   "supersedes": [],
   "author": "claude",

@@ -1,12 +1,19 @@
 import { strict as assert } from "node:assert";
-import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
+
+import { profileDemo, validateRepSession } from "@peak-state/contracts";
 
 import { buildScript, createRecorder, fromOnboarding, nextRepIndex, RecorderError } from "../src/index.ts";
 import type { Clock, ProfileV2, RepRecorder, RepSession } from "../src/index.ts";
 
-const fixture: ProfileV2 = JSON.parse(readFileSync(new URL("./fixtures/profile.demo.json", import.meta.url), "utf8"));
+const fixture: ProfileV2 = profileDemo;
 const STATE = "calm-before-pitch";
+
+/** Every session reps writes must pass contracts' validator against the profile it came from. */
+function assertContract(session: RepSession, profile: ProfileV2 = fixture) {
+  const result = validateRepSession(session, profile);
+  assert.ok(result.ok, result.errors.join("\n"));
+}
 
 function fakeClock(startIso = "2026-10-03T10:00:00.000Z"): Clock & { advance(ms: number): void } {
   let t = Date.parse(startIso);
@@ -33,15 +40,19 @@ describe("RepSession recorder", () => {
     rec.rateAfter(8);
     rec.recovery({ recoverySeconds: 41, censored: false, source: "simulator" });
     const s = rec.finish("completed");
+    assertContract(s);
 
     assert.equal(s.schemaVersion, 1);
     assert.deepEqual([s.id, s.profileId, s.stateId, s.repIndex, s.kind, s.arm], ["rep_1", "profile_demo_ada", STATE, 4, "full", "cue"]);
     assert.deepEqual(s.trigger, { kind: "detection", detectionId: "det_1" });
     assert.equal(s.startedAt, "2026-10-03T10:00:00.000Z");
-    assert.ok(Date.parse(s.endedAt) - Date.parse(s.startedAt) >= script.totalMs);
+    assert.equal(s.phase, null);
+    assert.ok(Date.parse(s.endedAt!) - Date.parse(s.startedAt) >= script.totalMs);
     assert.deepEqual(s.steps.map((x) => x.kind), script.steps.map((x) => x.kind));
     assert.ok(s.steps.every((x) => x.delivered && x.startedAt && x.endedAt));
-    assert.deepEqual(s.steps[1].driverIndexes, [0, 1]);
+    assert.deepEqual(s.steps[1].driversSpoken, [2, 3]);
+    assert.deepEqual(s.steps.map((x) => x.plannedMs === null), script.steps.map((x) => !x.timed));
+    assert.deepEqual(s.steps.at(-2)!.stepIndex, fixture.states[0].anchorStep);
     assert.deepEqual([s.intensityBefore, s.intensityAfter], [4, 8]);
     assert.deepEqual([s.recoverySeconds, s.recoveryCensored, s.signalSource], [41, false, "simulator"]);
     assert.equal(s.anchorPaired, true);
@@ -57,6 +68,7 @@ describe("RepSession recorder", () => {
     rec.rateAfter(5);
     rec.recovery({ recoverySeconds: null, censored: true, source: "simulator" });
     const s = rec.finish("completed");
+    assertContract(s);
     assert.equal(s.arm, "sham");
     assert.deepEqual(s.steps.map((x) => x.kind), ["rate", "rate"]);
     assert.equal(s.anchorPaired, false);
@@ -78,6 +90,7 @@ describe("RepSession recorder", () => {
     clock.advance(2_000);
     rec.stepEnded(1, false);
     const s = rec.finish("user-stop");
+    assertContract(s);
     assert.equal(s.endedBy, "user-stop");
     assert.equal(s.anchorPaired, false);
     assert.equal(s.steps.filter((x) => x.delivered).length, 0);
@@ -93,8 +106,9 @@ describe("RepSession recorder", () => {
     playAll(rec, clock);
     rec.rateAfter(7);
     const s = rec.finish("completed");
+    assertContract(s);
     assert.equal(s.kind, "anchor-only");
-    assert.deepEqual(s.steps.map((x) => [x.kind, x.strategyStepIndex]), [["rate", undefined], ["anchor", 0], ["rate", undefined]]);
+    assert.deepEqual(s.steps.map((x) => [x.kind, x.stepIndex]), [["rate", undefined], ["anchor", 0], ["rate", undefined]]);
     assert.equal(s.anchorPaired, false);
   });
 
@@ -108,6 +122,18 @@ describe("RepSession recorder", () => {
     assert.throws(() => rec.stepStarted(0), RecorderError);
   });
 
+  it("refuses a detection trigger without its detectionId, and a negative repIndex", () => {
+    assert.throws(() => createRecorder(buildScript(fixture, STATE), { trigger: { kind: "detection" }, repIndex: 1 }), RecorderError);
+    assert.throws(() => createRecorder(buildScript(fixture, STATE), { trigger: { kind: "manual" }, repIndex: -1 }), RecorderError);
+  });
+
+  it("takes the app's host clock as well as a Date factory", () => {
+    const rec = createRecorder(buildScript(fixture, STATE), { trigger: { kind: "practice" }, repIndex: 1, clock: { now: () => Date.parse("2026-10-05T08:00:00Z") } });
+    const s = rec.finish("completed");
+    assert.equal(s.startedAt, "2026-10-05T08:00:00.000Z");
+    assertContract(s);
+  });
+
   it("produces JSON-serialisable sessions", () => {
     const rec = createRecorder(buildScript(fixture, STATE), { trigger: { kind: "manual" }, repIndex: 1 });
     const s = rec.finish("completed");
@@ -118,9 +144,10 @@ describe("RepSession recorder", () => {
 describe("onboarding as the first reps (D-reps-006)", () => {
   const sessions = fromOnboarding(fixture, STATE);
 
-  it("logs recode, test and future pace in order as reps 1 to 3", () => {
-    assert.deepEqual(sessions.map((s) => [s.repIndex, s.id.split("onboarding-")[1]]), [[1, "recode"], [2, "test"], [3, "future-pace"]]);
+  it("logs recode, test and future pace in order as reps 0 to 2, each passing the contract", () => {
+    assert.deepEqual(sessions.map((s) => [s.repIndex, s.phase]), [[0, "recode"], [1, "test"], [2, "future-pace"]]);
     for (const s of sessions) {
+      assertContract(s);
       assert.deepEqual([s.trigger.kind, s.arm, s.kind, s.signalSource, s.recoverySeconds, s.endedBy], ["onboarding", "cue", "full", "none", null, "completed"]);
     }
   });
@@ -139,9 +166,9 @@ describe("onboarding as the first reps (D-reps-006)", () => {
   });
 
   it("feeds nextRepIndex, which continues after them", () => {
-    assert.equal(nextRepIndex(sessions, STATE), 4);
-    assert.equal(nextRepIndex([], STATE), 1);
+    assert.equal(nextRepIndex(sessions, STATE), 3);
+    assert.equal(nextRepIndex([], STATE), 0);
     const other: RepSession = { ...sessions[0], stateId: "other", repIndex: 12 };
-    assert.equal(nextRepIndex([...sessions, other], STATE), 4);
+    assert.equal(nextRepIndex([...sessions, other], STATE), 3);
   });
 });

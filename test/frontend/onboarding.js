@@ -185,12 +185,12 @@ async function partStrategy() {
   const next = SHORT_VERSION ? {} : NEXT_CHOICES;
 
   setProgress(SHORT_VERSION ? 1 : 0);
-  const momentQuestion = await phraseGuide("moment", answers, STRATEGY.moment(answers.state));
+  const momentQuestion = STRATEGY.moment(answers.state);
   answers.moment = await ask("The moment", momentQuestion, ["I'm there"]);
   await guideSays("The moment", momentQuestion, answers.moment, "Good. Stay there for a moment. See what you saw. Hear what you heard.", 2500);
 
   if (SHORT_VERSION) setProgress(2);
-  const firstQuestion = await phraseGuide("first_trigger", answers, STRATEGY.firstTrigger(answers.state));
+  const firstQuestion = STRATEGY.firstTrigger(answers.state);
   answers.steps.push(await askStep("The first trigger", firstQuestion, first));
   showPath();
   await guideSays("The first trigger", firstQuestion, answers.steps[0].text, "Good.", 800);
@@ -200,7 +200,6 @@ async function partStrategy() {
   showPath();
 
   // Write the sequence down in order. The order matters as much as the parts.
-  const [a, b] = answers.steps;
   if (SHORT_VERSION) {
     // Read it back as a statement, not a question, to keep it to 4 questions.
     // The AI walks through the path in its own words; without AI, the fixed sentence.

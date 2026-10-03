@@ -2,6 +2,18 @@
 // The app owns speech and time, so the demo can mute, fast-forward or script in one place.
 import type { ModuleHost } from "./contracts";
 
+/** The contracts ModuleHost plus a sleep on the same scaled clock, for the app's own runners and stubs. */
+export interface AppHost extends ModuleHost {
+  clock: ModuleHost["clock"] & { sleep(ms: number): Promise<void> };
+}
+
+/** Sleep on a module host's clock: real time divided by the demo speed. */
+export function sleepOn(host: ModuleHost, ms: number): Promise<void> {
+  const own = (host as Partial<AppHost>).clock?.sleep;
+  if (own) return own(ms);
+  return new Promise<void>((resolve) => setTimeout(resolve, ms / Math.max(0.25, host.clock.speed)));
+}
+
 export interface HostOptions {
   /** 1 = real time; 4 = four times faster. Stubs and modules sleep through host.clock. */
   speed: number;
@@ -32,7 +44,7 @@ export function speechAvailable(): { speak: boolean; listen: boolean } {
   };
 }
 
-export function createHost(opts: HostOptions): ModuleHost {
+export function createHost(opts: HostOptions): AppHost {
   const speed = Math.max(0.25, opts.speed);
   const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms / speed));
 

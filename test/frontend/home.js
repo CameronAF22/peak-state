@@ -95,7 +95,7 @@ function showView(name) {
 
 // The lines for one round: written by the AI guide, or by buildRound() if the AI is off.
 // Returns null if the AI says to stop for safety.
-async function roundLines(s, round, stressed, lastCheckin, stillRunning = () => true) {
+async function roundLines(s, round, stressed, lastCheckin) {
   $("label").textContent = `Round ${round} of ${MAX_ROUNDS}`;
   const reply = await askGuideAI("/api/ai/guide", {
     person: s,
@@ -106,7 +106,7 @@ async function roundLines(s, round, stressed, lastCheckin, stillRunning = () => 
   });
   if (reply?.stop_for_safety) return null;
   if (reply?.lines?.length) return reply.lines.map((l) => ({ text: l.text, pause: l.pause_seconds * 1000 }));
-  return buildRound(s, round, stressed, lastCheckin, stillRunning);
+  return buildRound(s, round, stressed, lastCheckin);
 }
 
 async function runSession(stateName, stressed) {
@@ -125,8 +125,7 @@ async function runSession(stateName, stressed) {
   let lastCheckin = null; // the person's last check-in answer, so the next round can respond to it
   for (; round <= MAX_ROUNDS; round++) {
     // Guide through the person's own steps.
-    show(`Round ${round} of ${MAX_ROUNDS}`, "Preparing your guide…");
-    const lines = await roundLines(s, round, stressed, lastCheckin, stillRunning);
+    const lines = await roundLines(s, round, stressed, lastCheckin);
     if (!stillRunning()) return;
     if (!lines) {
       result = "stopped for safety";

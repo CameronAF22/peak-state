@@ -202,16 +202,20 @@ Turn a first conversation into a confirmed profile: find the person's three top 
 
 **Produces:** `tools/test_coord.py`
 
-### D-onboarding-023 · Deployed site serves the three redesign prototypes at /design/ beside the harness
+### D-onboarding-023 · Integration: harness is the live app, reps on contracts, app shell at /demo, sensing plan only
 
-`accepted` · technical · 2026-10-03 · session `32d60a9b-b6fa-430d-8874-8454b73678f3` · branch `integration/all` · accepted by claude
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD) · branch `claude/strategy-storage-cloudflare-txlooc` · accepted by claude
 
-**Decision.** npm run build:harness also builds onboarding/design/ into dist-harness/design (base /design/), so the Worker serves /design/orb/, /design/horizon/ and /design/constellation/ next to the harness at /. The prototypes pass the harness's signed-in account header to GPT live (same-origin storage), so live voice works on them after signing in on the harness page. The front page stays the harness until Cameron picks one design to make the default.
+**Decision.** The onboarding harness (Horizon) stays the one live front end at /. reps moves onto @peak-state/contracts and adds conditioning status (D-reps-003) and progress; the harness uses it for an I'm off rep and an installed badge. The experience app shell gets the real onboarding and reps modules in its slots, keeps the sensing stub, hides calibrate and live, and is served by the same Worker at /demo/ as the five-screen walkthrough. Sensing stays plan only.
 
-**Context.** Cameron: use the redesign from the numbered PRs, not the molly-onboardingui test/ app. D-onboarding-019 kept the production page unchanged until a design is picked.
+**Context.** Cam: merge and integrate all main flows and put them live; sensing not plugged in for now; make other decisions simply.
 
-**Produces:** `onboarding/package.json`, `onboarding/design/orb/main.ts`, `onboarding/design/horizon/main.ts`, `onboarding/design/constellation/main.ts`  
-**Depends on:** D-onboarding-019, D-onboarding-025
+**Alternatives considered.**
+
+- Make the React app shell the only front end and drop the harness
+- Merge the app shell unwired and not served
+
+**Produces:** `onboarding/`, `reps/`, `app/`
 
 ### D-onboarding-025 · GPT live targets gpt-live-1 via the GPT-Live API, through the local dev proxy or the Worker's /api/live/session
 
@@ -240,6 +244,19 @@ Turn a first conversation into a confirmed profile: find the person's three top 
 **Produces:** `onboarding/src/harness/main.ts`, `onboarding/src/harness/view/voice.ts`, `onboarding/package.json`, `onboarding/test/e2e/online.spec.ts`, `onboarding/DEPLOY.md`  
 **Depends on:** D-onboarding-021, D-onboarding-025  
 **Supersedes:** D-onboarding-024
+
+### D-onboarding-027 · Deployed site serves the three redesign prototypes at /design/ beside the harness
+
+`accepted` · technical · 2026-10-03 · session `32d60a9b-b6fa-430d-8874-8454b73678f3` · branch `integration/all` · accepted by claude
+
+**Decision.** npm run build:harness also builds onboarding/design/ into dist-harness/design (base /design/), so the Worker serves /design/orb/, /design/horizon/ and /design/constellation/ next to the harness at /. The prototypes pass the harness's signed-in account header to GPT live (same-origin storage), so live voice works on them after signing in on the harness page. The front page stays the harness until Cameron picks one design to make the default.
+
+**Context.** Cameron: use the redesign from the numbered PRs, not the molly-onboardingui test/ app. D-onboarding-019 kept the production page unchanged until a design is picked.
+
+**Consequences.** Renumbered from D-onboarding-023 when merging main, which had used 023.
+
+**Produces:** `onboarding/package.json`, `onboarding/design/orb/main.ts`, `onboarding/design/horizon/main.ts`, `onboarding/design/constellation/main.ts`  
+**Depends on:** D-onboarding-019, D-onboarding-025
 
 ## Proposed, awaiting acceptance
 
@@ -299,94 +316,95 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 |---|---|---|
 | `docs/elicitation.md` | `8c568b386b97` | D-coord-008 |
 | `docs/state-change.md` | `6fb6b1df03c0` | D-coord-008 |
-| `onboarding/.dev.vars.example` | `9972ceaf7419` | D-onboarding-017 |
-| `onboarding/.gitignore` | `e080f460d184` | D-onboarding-018 |
-| `onboarding/DEPLOY.md` | `cc26b02a4626` | D-onboarding-017, D-onboarding-024, D-onboarding-025, D-onboarding-026 |
-| `onboarding/PLAN.md` | `7913904371a4` | D-onboarding-001, D-onboarding-011 |
-| `onboarding/README.md` | `cf7011ae9d91` | D-onboarding-012, D-onboarding-025 |
-| `onboarding/design/constellation/index.html` | `cd5706cb048d` | D-onboarding-019 |
-| `onboarding/design/constellation/main.ts` | `30961bf86c49` | D-onboarding-019, D-onboarding-023 |
-| `onboarding/design/constellation/sky.ts` | `e8c46e4cd649` | D-onboarding-019 |
-| `onboarding/design/constellation/styles.css` | `515506a0cced` | D-onboarding-019 |
-| `onboarding/design/e2e/.gitignore` | `5fbb93ecf8e0` | D-onboarding-019 |
-| `onboarding/design/e2e/constellation.spec.ts` | `488b06295e04` | D-onboarding-019 |
-| `onboarding/design/e2e/horizon.spec.ts` | `aa8b40273e8c` | D-onboarding-019 |
-| `onboarding/design/e2e/orb.spec.ts` | `c9a7424cd2f4` | D-onboarding-019 |
-| `onboarding/design/horizon/index.html` | `fa3f29ecf5d5` | D-onboarding-019 |
-| `onboarding/design/horizon/main.ts` | `342f71695f1c` | D-onboarding-019, D-onboarding-023, D-onboarding-024 |
-| `onboarding/design/horizon/signin.ts` | `15378d5eb38f` | D-onboarding-019, D-onboarding-024 |
-| `onboarding/design/horizon/sky.ts` | `8bcc8c712283` | D-onboarding-019 |
-| `onboarding/design/horizon/styles.css` | `7071701e75c3` | D-onboarding-019, D-onboarding-024 |
-| `onboarding/design/horizon/voice.ts` | `3ecef18281c0` | D-onboarding-019, D-onboarding-024 |
-| `onboarding/design/index.html` | `4c0759a872e4` | D-onboarding-019 |
-| `onboarding/design/orb/index.html` | `56e3afc03222` | D-onboarding-019 |
-| `onboarding/design/orb/main.ts` | `5930d9e97cde` | D-onboarding-019, D-onboarding-023 |
-| `onboarding/design/orb/sky.ts` | `a85393e3e7b4` | D-onboarding-019 |
-| `onboarding/design/orb/styles.css` | `b6e13b088176` | D-onboarding-019 |
-| `onboarding/design/playwright.config.ts` | `8d16fb7f4d1e` | D-onboarding-019 |
-| `onboarding/design/vite.config.ts` | `466fefeb1bab` | D-onboarding-019 |
-| `onboarding/harness/index.html` | `0d2fb069bf36` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/harness/live-proxy.ts` | `d45cd7f2261c` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-025 |
-| `onboarding/harness/main.ts` | `684ae88ae42e` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/harness/styles.css` | `565709af51f0` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/migrations/0001_init.sql` | `e3bddb9834f0` | D-onboarding-017 |
-| `onboarding/package.json` | `f2c4d894aae7` | D-onboarding-012, D-onboarding-019, D-onboarding-023, D-onboarding-024, D-onboarding-026 |
-| `onboarding/playwright.config.ts` | `78cc447f0630` | D-onboarding-012 |
-| `onboarding/script/questions.ts` | `779bd9a43021` | D-onboarding-003, D-onboarding-006, D-onboarding-010, D-onboarding-012 |
-| `onboarding/src/engine/hints.ts` | `d164d4ac154f` | D-onboarding-012 |
-| `onboarding/src/engine/index.ts` | `1acbe7959929` | D-onboarding-012 |
-| `onboarding/src/engine/parse.ts` | `c59f4d5ae33b` | D-onboarding-012 |
-| `onboarding/src/engine/safety.ts` | `8f4aafe9b9fa` | D-onboarding-012 |
-| `onboarding/src/harness/hints.ts` | `39a5fcdb4929` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/src/harness/main.ts` | `a98c1d322163` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-026 |
-| `onboarding/src/harness/view/account.ts` | `cd6708736c95` | D-onboarding-012, D-onboarding-017, D-onboarding-020, D-onboarding-021 |
-| `onboarding/src/harness/view/dom.ts` | `9f8bddc8c0f4` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/src/harness/view/horizon.ts` | `0ec1f0e599a2` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/src/harness/view/practice.ts` | `2275312321ce` | D-onboarding-012, D-onboarding-015, D-onboarding-020, D-onboarding-021 |
-| `onboarding/src/harness/view/question.ts` | `56af5bfae1ae` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/src/harness/view/saved.ts` | `f5c7a911d986` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/src/harness/view/spoken.ts` | `ab29570e3bda` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/src/harness/view/steps.ts` | `47460f49c48c` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/src/harness/view/voice.ts` | `82c155e8789f` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-026 |
-| `onboarding/src/index.ts` | `36e7de5bbe64` | D-onboarding-012 |
-| `onboarding/src/playback/index.ts` | `8c0aeb675e21` | D-onboarding-012 |
-| `onboarding/src/playback/runner.ts` | `df12e2c1a815` | D-onboarding-012 |
-| `onboarding/src/playback/script.ts` | `e28d09f1e709` | D-onboarding-012 |
-| `onboarding/src/playback/storage.ts` | `f656486e58d9` | D-onboarding-012 |
-| `onboarding/src/practice/loop.ts` | `92bc212b7780` | D-onboarding-012, D-onboarding-015 |
-| `onboarding/src/practice/rating.ts` | `21d6d4c873b7` | D-onboarding-012, D-onboarding-015 |
-| `onboarding/src/progress/index.ts` | `888798d27668` | D-onboarding-012, D-onboarding-016 |
-| `onboarding/src/store/index.ts` | `d52dc190cf91` | D-onboarding-012, D-onboarding-014 |
-| `onboarding/src/sync/index.ts` | `cb67ecab42d9` | D-onboarding-012, D-onboarding-017, D-onboarding-025 |
-| `onboarding/src/types.ts` | `e49cf6419a78` | D-onboarding-012, D-onboarding-021 |
-| `onboarding/src/voice/browser.ts` | `726127bed40c` | D-onboarding-012, D-onboarding-021 |
-| `onboarding/src/voice/emitter.ts` | `a7afda61cd14` | D-onboarding-012, D-onboarding-021 |
-| `onboarding/src/voice/gpt-live.ts` | `0214c9b1a5ab` | D-onboarding-012, D-onboarding-021, D-onboarding-025 |
-| `onboarding/src/voice/index.ts` | `02e846bcc28e` | D-onboarding-012, D-onboarding-021 |
-| `onboarding/src/voice/typed.ts` | `bee9740bc611` | D-onboarding-012, D-onboarding-021 |
-| `onboarding/src/voice/words.ts` | `fdb3d8d13f43` | D-onboarding-012, D-onboarding-021 |
-| `onboarding/test/e2e/.gitignore` | `83394a0aff29` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/test/e2e/harness.spec.ts` | `a6de1a68e7dc` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/test/e2e/online.spec.ts` | `be22d8a0007a` | D-onboarding-012, D-onboarding-018, D-onboarding-020, D-onboarding-021, D-onboarding-024, D-onboarding-026 |
-| `onboarding/test/e2e/screens-reporter.ts` | `dd1e91a8a298` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/test/e2e/spoken.spec.ts` | `80bb069316ca` | D-onboarding-012, D-onboarding-020, D-onboarding-021 |
-| `onboarding/test/unit/d1.ts` | `f2e83d0bc302` | D-onboarding-012, D-onboarding-018, D-onboarding-021 |
-| `onboarding/test/unit/engine.test.ts` | `9674be98ccc0` | D-onboarding-012, D-onboarding-021 |
-| `onboarding/test/unit/live-proxy.test.ts` | `6d1457845362` | D-onboarding-012, D-onboarding-021, D-onboarding-025 |
-| `onboarding/test/unit/playback.test.ts` | `c76b8b12f289` | D-onboarding-012, D-onboarding-021 |
-| `onboarding/test/unit/practice.test.ts` | `60f6b512c408` | D-onboarding-012, D-onboarding-015, D-onboarding-021 |
-| `onboarding/test/unit/progress.test.ts` | `6f70bc761af5` | D-onboarding-012, D-onboarding-016, D-onboarding-021 |
-| `onboarding/test/unit/script.test.ts` | `473cf39343e8` | D-onboarding-012, D-onboarding-021 |
-| `onboarding/test/unit/store.test.ts` | `bc8f3258f70d` | D-onboarding-012, D-onboarding-014, D-onboarding-021 |
-| `onboarding/test/unit/sync.test.ts` | `3b08f234eaa4` | D-onboarding-012, D-onboarding-017, D-onboarding-021 |
-| `onboarding/test/unit/voice.test.ts` | `d5bb476c719b` | D-onboarding-012, D-onboarding-021, D-onboarding-025 |
-| `onboarding/test/unit/words.test.ts` | `322647ed357a` | D-onboarding-012, D-onboarding-021 |
-| `onboarding/test/unit/worker.test.ts` | `04d9b409c611` | D-onboarding-012, D-onboarding-017, D-onboarding-021, D-onboarding-025 |
-| `onboarding/tsconfig.json` | `669742d19454` | D-onboarding-012, D-onboarding-019 |
-| `onboarding/vite.config.ts` | `a7a8c2477c86` | D-onboarding-012, D-onboarding-025 |
-| `onboarding/worker/api.ts` | `cf7891114bee` | D-onboarding-017, D-onboarding-025 |
-| `onboarding/worker/index.ts` | `a9411ea26eb2` | D-onboarding-017 |
-| `onboarding/wrangler.jsonc` | `283e44ae8885` | D-onboarding-017 |
+| `onboarding/.dev.vars.example` | `9972ceaf7419` | D-onboarding-017, D-onboarding-023 |
+| `onboarding/.gitignore` | `e080f460d184` | D-onboarding-018, D-onboarding-023 |
+| `onboarding/DEPLOY.md` | `e83feb5e0bdb` | D-onboarding-017, D-onboarding-023, D-onboarding-024, D-onboarding-025, D-onboarding-026 |
+| `onboarding/PLAN.md` | `7913904371a4` | D-onboarding-001, D-onboarding-011, D-onboarding-023 |
+| `onboarding/README.md` | `cf7011ae9d91` | D-onboarding-012, D-onboarding-023, D-onboarding-025 |
+| `onboarding/design/constellation/index.html` | `cd5706cb048d` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/constellation/main.ts` | `30961bf86c49` | D-onboarding-019, D-onboarding-023, D-onboarding-027 |
+| `onboarding/design/constellation/sky.ts` | `e8c46e4cd649` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/constellation/styles.css` | `515506a0cced` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/e2e/.gitignore` | `5fbb93ecf8e0` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/e2e/constellation.spec.ts` | `488b06295e04` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/e2e/horizon.spec.ts` | `aa8b40273e8c` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/e2e/orb.spec.ts` | `c9a7424cd2f4` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/horizon/index.html` | `fa3f29ecf5d5` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/horizon/main.ts` | `342f71695f1c` | D-onboarding-019, D-onboarding-023, D-onboarding-024, D-onboarding-027 |
+| `onboarding/design/horizon/signin.ts` | `15378d5eb38f` | D-onboarding-019, D-onboarding-023, D-onboarding-024 |
+| `onboarding/design/horizon/sky.ts` | `8bcc8c712283` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/horizon/styles.css` | `7071701e75c3` | D-onboarding-019, D-onboarding-023, D-onboarding-024 |
+| `onboarding/design/horizon/voice.ts` | `3ecef18281c0` | D-onboarding-019, D-onboarding-023, D-onboarding-024 |
+| `onboarding/design/index.html` | `4c0759a872e4` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/orb/index.html` | `56e3afc03222` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/orb/main.ts` | `5930d9e97cde` | D-onboarding-019, D-onboarding-023, D-onboarding-027 |
+| `onboarding/design/orb/sky.ts` | `a85393e3e7b4` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/orb/styles.css` | `b6e13b088176` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/playwright.config.ts` | `8d16fb7f4d1e` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/vite.config.ts` | `466fefeb1bab` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/harness/index.html` | `0d2fb069bf36` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/harness/live-proxy.ts` | `d45cd7f2261c` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023, D-onboarding-025 |
+| `onboarding/harness/main.ts` | `684ae88ae42e` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/harness/styles.css` | `565709af51f0` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/migrations/0001_init.sql` | `e3bddb9834f0` | D-onboarding-017, D-onboarding-023 |
+| `onboarding/package.json` | `f062ffcaed58` | D-onboarding-012, D-onboarding-019, D-onboarding-023, D-onboarding-024, D-onboarding-026, D-onboarding-027 |
+| `onboarding/playwright.config.ts` | `78cc447f0630` | D-onboarding-012, D-onboarding-023 |
+| `onboarding/script/questions.ts` | `779bd9a43021` | D-onboarding-003, D-onboarding-006, D-onboarding-010, D-onboarding-012, D-onboarding-023 |
+| `onboarding/src/engine/hints.ts` | `d164d4ac154f` | D-onboarding-012, D-onboarding-023 |
+| `onboarding/src/engine/index.ts` | `1acbe7959929` | D-onboarding-012, D-onboarding-023 |
+| `onboarding/src/engine/parse.ts` | `c59f4d5ae33b` | D-onboarding-012, D-onboarding-023 |
+| `onboarding/src/engine/safety.ts` | `8f4aafe9b9fa` | D-onboarding-012, D-onboarding-023 |
+| `onboarding/src/harness/hints.ts` | `39a5fcdb4929` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/harness/main.ts` | `4df2d9d58c87` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023, D-onboarding-026 |
+| `onboarding/src/harness/view/account.ts` | `cd6708736c95` | D-onboarding-012, D-onboarding-017, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/harness/view/dom.ts` | `9f8bddc8c0f4` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/harness/view/horizon.ts` | `0ec1f0e599a2` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/harness/view/practice.ts` | `2275312321ce` | D-onboarding-012, D-onboarding-015, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/harness/view/question.ts` | `56af5bfae1ae` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/harness/view/saved.ts` | `b4304c1e75f9` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/harness/view/spoken.ts` | `ab29570e3bda` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/harness/view/steps.ts` | `47460f49c48c` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/harness/view/voice.ts` | `82c155e8789f` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023, D-onboarding-026 |
+| `onboarding/src/index.ts` | `36e7de5bbe64` | D-onboarding-012, D-onboarding-023 |
+| `onboarding/src/playback/index.ts` | `8c0aeb675e21` | D-onboarding-012, D-onboarding-023 |
+| `onboarding/src/playback/runner.ts` | `43fd887ca878` | D-onboarding-012, D-onboarding-023 |
+| `onboarding/src/playback/script.ts` | `e28d09f1e709` | D-onboarding-012, D-onboarding-023 |
+| `onboarding/src/playback/storage.ts` | `f656486e58d9` | D-onboarding-012, D-onboarding-023 |
+| `onboarding/src/practice/loop.ts` | `92bc212b7780` | D-onboarding-012, D-onboarding-015, D-onboarding-023 |
+| `onboarding/src/practice/rating.ts` | `21d6d4c873b7` | D-onboarding-012, D-onboarding-015, D-onboarding-023 |
+| `onboarding/src/progress/index.ts` | `888798d27668` | D-onboarding-012, D-onboarding-016, D-onboarding-023 |
+| `onboarding/src/store/index.ts` | `d52dc190cf91` | D-onboarding-012, D-onboarding-014, D-onboarding-023 |
+| `onboarding/src/sync/index.ts` | `cb67ecab42d9` | D-onboarding-012, D-onboarding-017, D-onboarding-023, D-onboarding-025 |
+| `onboarding/src/types.ts` | `e49cf6419a78` | D-onboarding-012, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/voice/browser.ts` | `726127bed40c` | D-onboarding-012, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/voice/emitter.ts` | `a7afda61cd14` | D-onboarding-012, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/voice/gpt-live.ts` | `0214c9b1a5ab` | D-onboarding-012, D-onboarding-021, D-onboarding-023, D-onboarding-025 |
+| `onboarding/src/voice/index.ts` | `02e846bcc28e` | D-onboarding-012, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/voice/typed.ts` | `bee9740bc611` | D-onboarding-012, D-onboarding-021, D-onboarding-023 |
+| `onboarding/src/voice/words.ts` | `fdb3d8d13f43` | D-onboarding-012, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/e2e/.gitignore` | `83394a0aff29` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/e2e/harness.spec.ts` | `a6de1a68e7dc` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/e2e/online.spec.ts` | `be22d8a0007a` | D-onboarding-012, D-onboarding-018, D-onboarding-020, D-onboarding-021, D-onboarding-023, D-onboarding-024, D-onboarding-026 |
+| `onboarding/test/e2e/screens-reporter.ts` | `dd1e91a8a298` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/e2e/spoken.spec.ts` | `80bb069316ca` | D-onboarding-012, D-onboarding-020, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/unit/d1.ts` | `f2e83d0bc302` | D-onboarding-012, D-onboarding-018, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/unit/engine.test.ts` | `9674be98ccc0` | D-onboarding-012, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/unit/integration.test.ts` | `f00ed04b182d` | D-onboarding-012, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/unit/live-proxy.test.ts` | `6d1457845362` | D-onboarding-012, D-onboarding-021, D-onboarding-023, D-onboarding-025 |
+| `onboarding/test/unit/playback.test.ts` | `c76b8b12f289` | D-onboarding-012, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/unit/practice.test.ts` | `60f6b512c408` | D-onboarding-012, D-onboarding-015, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/unit/progress.test.ts` | `6f70bc761af5` | D-onboarding-012, D-onboarding-016, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/unit/script.test.ts` | `473cf39343e8` | D-onboarding-012, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/unit/store.test.ts` | `bc8f3258f70d` | D-onboarding-012, D-onboarding-014, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/unit/sync.test.ts` | `3b08f234eaa4` | D-onboarding-012, D-onboarding-017, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/unit/voice.test.ts` | `d5bb476c719b` | D-onboarding-012, D-onboarding-021, D-onboarding-023, D-onboarding-025 |
+| `onboarding/test/unit/words.test.ts` | `322647ed357a` | D-onboarding-012, D-onboarding-021, D-onboarding-023 |
+| `onboarding/test/unit/worker.test.ts` | `04d9b409c611` | D-onboarding-012, D-onboarding-017, D-onboarding-021, D-onboarding-023, D-onboarding-025 |
+| `onboarding/tsconfig.json` | `669742d19454` | D-onboarding-012, D-onboarding-019, D-onboarding-023 |
+| `onboarding/vite.config.ts` | `a7a8c2477c86` | D-onboarding-012, D-onboarding-023, D-onboarding-025 |
+| `onboarding/worker/api.ts` | `cf7891114bee` | D-onboarding-017, D-onboarding-023, D-onboarding-025 |
+| `onboarding/worker/index.ts` | `a9411ea26eb2` | D-onboarding-017, D-onboarding-023 |
+| `onboarding/wrangler.jsonc` | `283e44ae8885` | D-onboarding-017, D-onboarding-023 |
 | `prompts/discovery.md` | `915c158676a3` | D-coord-008 |
 | `prompts/induction.md` | `9eac817f9540` | D-coord-008 |
 | `prompts/intervention.md` | `cafae717f40d` | D-coord-008 |

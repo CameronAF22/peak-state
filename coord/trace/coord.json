@@ -349,7 +349,7 @@
     },
     {
       "path": "test/frontend/home.js",
-      "sha256": "52706524cb39ceac8d752c2dc637c0ce77d61eecb3403bd97314f51d1ed31e20",
+      "sha256": "46f1a60897ab12c9275a14e327671c0c9cf4e1ec7b96671d8b1c1212ae08ecf1",
       "decisions": [
         "D-coord-019",
         "D-coord-020",
@@ -373,7 +373,7 @@
     },
     {
       "path": "test/frontend/onboarding.js",
-      "sha256": "6ffc927be684ac5a3aa9edca9277844ebaa9dd3323304bfdf2e6a2cbe2d1ef4e",
+      "sha256": "157215be3f024ab540c471cbf7560e8598e383bef4abd202805425bb055498b4",
       "decisions": [
         "D-coord-019",
         "D-coord-022"

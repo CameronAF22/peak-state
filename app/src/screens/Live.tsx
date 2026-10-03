@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import type { DetectionEvent, GateState, ModuleHost, ProfileV2, SensingHandle, SensingModule, SignalFrame } from "../contracts";
+import type { DetectionEvent, ModuleHost, ProfileV2, SensingHandle, SignalFrame } from "../contracts";
 import { TraceChart } from "../components/TraceChart";
+import type { AppSensingModule, GateView } from "../slots";
+
+// Hidden from the /demo/ flow while sensing is plan only (D-onboarding-023); reachable with ?screen=live.
 
 export function LiveScreen({
   host,
@@ -14,11 +17,11 @@ export function LiveScreen({
   registerStop(h: () => void): () => void;
   profile: ProfileV2;
   stateId: string;
-  sensing: SensingModule;
+  sensing: AppSensingModule;
   onDetection(e: DetectionEvent): void;
 }) {
   const [frames, setFrames] = useState<SignalFrame[]>([]);
-  const [gate, setGate] = useState<GateState | null>(null);
+  const [gate, setGate] = useState<GateView | null>(null);
   const [fired, setFired] = useState<DetectionEvent | null>(null);
   const handle = useRef<SensingHandle | null>(null);
   const state = profile.states.find((s) => s.id === stateId) ?? profile.states[0];
@@ -26,13 +29,15 @@ export function LiveScreen({
   useEffect(() => {
     const h = sensing.start(
       profile,
+      stateId,
       (e) => {
         setFired(e);
         h.stop();
         // A beat so the judge sees the gate open before the rep starts.
         setTimeout(() => onDetection(e), 1500 / host.clock.speed);
       },
-      { host, stateId, onFrame: (f) => setFrames((prev) => [...prev.slice(-119), f]), onGate: setGate },
+      (f) => setFrames((prev) => [...prev.slice(-119), f]),
+      setGate,
     );
     handle.current = h;
     const unregister = registerStop(() => h.stop());

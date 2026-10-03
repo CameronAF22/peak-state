@@ -24,8 +24,8 @@ export function TraceChart({ frames, peak, contrast, markers = [] }: Props) {
   const visible = frames.slice(-WINDOW_S);
   const tEnd = visible.length ? visible[visible.length - 1].t : 0;
   const tStart = tEnd - (WINDOW_S - 1) * 1000;
-  const lo = Math.floor(Math.min(...[peak, contrast].filter(Boolean).map((c) => c!.stats.hr.mean - 3 * c!.stats.hr.sd), 60) / 5) * 5;
-  const hi = Math.ceil(Math.max(...[peak, contrast].filter(Boolean).map((c) => c!.stats.hr.mean + 3 * c!.stats.hr.sd), 90) / 5) * 5;
+  const lo = Math.floor(Math.min(...[peak, contrast].filter(Boolean).map((c) => c!.hr.mean - 3 * c!.hr.sd), 60) / 5) * 5;
+  const hi = Math.ceil(Math.max(...[peak, contrast].filter(Boolean).map((c) => c!.hr.mean + 3 * c!.hr.sd), 90) / 5) * 5;
 
   useEffect(() => {
     const canvas = ref.current;
@@ -59,8 +59,8 @@ export function TraceChart({ frames, peak, contrast, markers = [] }: Props) {
     // Bands: mean ± 2 sd of each calibration.
     const band = (c: CalibrationSummary | null, fill: string, label: string) => {
       if (!c) return;
-      const top = y(c.stats.hr.mean + 2 * c.stats.hr.sd);
-      const bot = y(c.stats.hr.mean - 2 * c.stats.hr.sd);
+      const top = y(c.hr.mean + 2 * c.hr.sd);
+      const bot = y(c.hr.mean - 2 * c.hr.sd);
       ctx.fillStyle = fill;
       ctx.fillRect(PAD.l, top, w - PAD.l - PAD.r, bot - top);
       ctx.fillStyle = cssVar(canvas, "--text-secondary");
@@ -128,7 +128,7 @@ export function TraceChart({ frames, peak, contrast, markers = [] }: Props) {
         />
         {hover && (
           <div className="tooltip" style={{ left: hover.x, top: hover.y }}>
-            {hover.f.hr ?? "—"} bpm · {Math.round((hover.f.t - tEnd) / 1000)} s · {hover.f.scenarioStep ?? hover.f.source}
+            {hover.f.hr ?? "—"} bpm · {Math.round((hover.f.t - tEnd) / 1000)} s · {hover.f.label ?? hover.f.source}
           </div>
         )}
       </div>

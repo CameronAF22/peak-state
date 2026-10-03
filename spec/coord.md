@@ -320,13 +320,11 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 
 ### D-coord-022 · Use OpenAI for grounded guide wording while keeping the scripted flow
 
-`accepted` · technical · 2026-10-03 · session `codex-01a10169-c218-77b3-9532-75e07c5cb774` · branch `codex/synthetic-calming-workflow` · accepted by OpenAI Codex
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD) · branch `claude/strategy-storage-cloudflare-txlooc` · accepted by claude
 
 **Decision.** Add a server-side OpenAI Responses phrasing endpoint with bounded structured context and fixed conversational goals. Rewrite follow-up questions and recalled cues naturally rather than interpolating whole answers; retain raw profile answers, question order, choices and session limits. Use concise scripted fallbacks when credentials or model output are unavailable.
 
-**Context.** The user asked to use OpenAI to fit answers into subsequent questions naturally. The current test app uses toYou plus literal full-answer interpolation. This extends the user-requested prototype in the coord-owned test app.
-
-**Consequences.** Renumbered from D-coord-019 when merging into integration/all, because main's molly-onboardingui had already used 019.
+**Context.** The user asked to use OpenAI to fit answers into subsequent questions naturally. The current test app uses toYou plus literal full-answer interpolation. This extends the user-requested prototype in the coord-owned test app. (Re-logged from codex/synthetic-calming-workflow, where it was D-coord-019; that id was already taken on main by the ElevenLabs sandbox decision. Merged for Cam's integration request, D-onboarding-023.)
 
 **Produces:** `test/backend/guide_ai.py`, `test/backend/main.py`, `test/backend/test_guide_ai.py`, `test/frontend/guide.js`, `test/frontend/onboarding.js`, `test/frontend/home.js`, `docs/ai-guide.md`
 
@@ -394,10 +392,10 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `test/frontend/app.js` | `953014455dd4` | D-coord-015, D-coord-017 |
 | `test/frontend/guide.js` | `a35f92c78df3` | D-coord-019, D-coord-020, D-coord-022 |
 | `test/frontend/home.html` | `acbdfd78bb19` | D-coord-019, D-coord-021 |
-| `test/frontend/home.js` | `52706524cb39` | D-coord-019, D-coord-020, D-coord-022 |
+| `test/frontend/home.js` | `46f1a60897ab` | D-coord-019, D-coord-020, D-coord-022 |
 | `test/frontend/index.html` | `d50bac581d0e` | D-coord-015, D-coord-017 |
 | `test/frontend/onboarding.html` | `137d76f707bd` | D-coord-015 |
-| `test/frontend/onboarding.js` | `6ffc927be684` | D-coord-019, D-coord-022 |
+| `test/frontend/onboarding.js` | `157215be3f02` | D-coord-019, D-coord-022 |
 | `test/frontend/styles.css` | `7211e2285b01` | D-coord-015, D-coord-017 |
 | `test/frontend/test-guide.cjs` | `a97c4dfe3456` | D-coord-020 |
 | `test/synthetic_lab/examples/calming-profile.json` | `b721a9499870` | D-coord-018 |

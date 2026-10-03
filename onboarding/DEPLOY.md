@@ -44,7 +44,7 @@ Workers & Pages → Create → Import a repository → `CameronAF22/peak-state`,
 - Project name: `peak-state` (must match `name` in wrangler.jsonc)
 - Production branch: the branch to serve
 - Root directory: `/`
-- Build command: `npm install && npm run build:harness -w @peak-state/onboarding`
+- Build command: `npm install && npm run build:all -w @peak-state/onboarding` (the harness at `/`, then the app walkthrough at `/demo/`)
 - Deploy command: `cd onboarding && npx wrangler deploy`
 
 Then the Worker's Settings → Variables and Secrets: add `INVITE_CODE` (and optionally `OPENAI_API_KEY`) as type

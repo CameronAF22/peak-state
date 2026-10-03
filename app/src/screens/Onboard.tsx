@@ -1,97 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  CORE_KEYS,
-  chain,
-  type Difference,
-  type ModuleHost,
-  type OnboardingEvent,
-  type OnboardingModule,
-  type ProfileV2,
-  type StrategyStep,
-} from "../contracts";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import type { Question, StepView } from "@peak-state/onboarding";
+import { chain, chainOf, SUBMODALITIES, type ModuleHost, type ProfileV2, type StepHead } from "../contracts";
 import { StepChain } from "../components/StepChain";
-import { speechAvailable } from "../host";
-
-interface Turn {
-  who: "guide" | "user";
-  text: string;
-  section?: string;
-  final: boolean;
-}
-
-interface View {
-  turns: Turn[];
-  label: string | null;
-  words: string | null;
-  steps: StrategyStep[];
-  activeIndex: number | null;
-  anchorStep: number | null;
-  contrastLabel: string | null;
-  differences: Difference[] | null;
-  drivers: number[] | null;
-  test: { before: number; after: number } | null;
-  window: "peak" | "contrast" | null;
-  confirmed: ProfileV2 | null;
-}
-
-const EMPTY: View = {
-  turns: [],
-  label: null,
-  words: null,
-  steps: [],
-  activeIndex: null,
-  anchorStep: null,
-  contrastLabel: null,
-  differences: null,
-  drivers: null,
-  test: null,
-  window: null,
-  confirmed: null,
-};
-
-/** Pure reducer from onboarding events to what the screen shows. Exported for tests. */
-export function reduce(v: View, e: OnboardingEvent): View {
-  switch (e.type) {
-    case "guideTurn":
-      return { ...v, turns: [...v.turns, { who: "guide", text: e.text, section: e.section, final: true }] };
-    case "userTurn": {
-      const turns = [...v.turns];
-      const last = turns[turns.length - 1];
-      if (last && last.who === "user" && !last.final) turns[turns.length - 1] = { who: "user", text: e.text, final: e.final };
-      else turns.push({ who: "user", text: e.text, final: e.final });
-      return { ...v, turns };
-    }
-    case "stateNamed":
-      return { ...v, label: e.label, words: e.words };
-    case "stepCaptured": {
-      const steps = [...v.steps];
-      steps[e.index] = e.step;
-      return { ...v, steps, activeIndex: e.index };
-    }
-    case "submodalityCaptured": {
-      const steps = [...v.steps];
-      const s = steps[e.index];
-      if (!s) return v;
-      const tier = s.submodalities[e.tier] ?? {};
-      steps[e.index] = { ...s, submodalities: { ...s.submodalities, [e.tier]: { ...tier, [e.key]: e.value } } };
-      return { ...v, steps, activeIndex: e.index };
-    }
-    case "anchorStepMarked":
-      return { ...v, anchorStep: e.index };
-    case "contrastCaptured":
-      return { ...v, contrastLabel: e.contrast.label };
-    case "driverFound":
-      return { ...v, differences: e.differences, drivers: e.drivers };
-    case "testRated":
-      return { ...v, test: { before: e.before, after: e.after } };
-    case "window":
-      return { ...v, window: e.open ? e.phase : null };
-    case "confirmed":
-      return { ...v, confirmed: e.profile, activeIndex: null };
-    case "stopped":
-      return v;
-  }
-}
+import { EMPTY_VIEW, reduce, type OnboardView } from "../onboardView";
+import { createAnswerChannel, type AppOnboardingModule } from "../slots";
+import { saveConfirmed, savedStrategy } from "../store";
 
 const KEY_LABEL: Record<string, string> = {
   location: "where it is",
@@ -106,158 +19,270 @@ const KEY_LABEL: Record<string, string> = {
   movement: "moving or still",
 };
 
+/** The harness at the site root: the full voice guide that captures and saves a strategy. */
+export const HARNESS_URL = "/";
+
+type Run = "engine" | "script";
+
+interface ChecklistRow {
+  label: string;
+  value: string | number | null;
+}
+
+/** The checklist for the step being asked about: the engine's own rows, or the core attributes from the events. */
+function checklist(view: OnboardView, live: StepView[], question: Question | null): { index: number; rows: ChecklistRow[] } | null {
+  if (live.length) {
+    const index = question?.target?.stepIndex ?? live.length - 1;
+    const step = live[index];
+    return step ? { index, rows: step.checklist.map((c) => ({ label: c.label, value: c.value })) } : null;
+  }
+  if (view.activeIndex === null) return null;
+  const step = view.steps[view.activeIndex];
+  if (!step || step.modality === "other") return null;
+  const core = (step.submodalities as { core?: Record<string, string | number> }).core ?? {};
+  const keys = Object.keys(SUBMODALITIES[step.modality].core);
+  return { index: view.activeIndex, rows: keys.map((k) => ({ label: KEY_LABEL[k] ?? k, value: core[k] ?? null })) };
+}
+
 export function OnboardScreen({
   host,
   registerStop,
   onboarding,
+  scripted,
   onDone,
   onUseSample,
 }: {
   host: ModuleHost;
   registerStop(h: () => void): () => void;
-  onboarding: OnboardingModule;
+  onboarding: AppOnboardingModule;
+  scripted: AppOnboardingModule;
   onDone(p: ProfileV2): void;
   onUseSample(): void;
 }) {
-  const [view, setView] = useState<View>(EMPTY);
-  const [running, setRunning] = useState(false);
+  const saved = useMemo(savedStrategy, []);
+  const [view, setView] = useState<OnboardView>(EMPTY_VIEW);
+  const [running, setRunning] = useState<Run | null>(null);
+  const [ran, setRan] = useState<Run | null>(null);
+  const [question, setQuestion] = useState<Question | null>(null);
+  const [live, setLive] = useState<StepView[]>([]);
+  const [typed, setTyped] = useState("");
+  const channel = useRef(createAnswerChannel());
   const abort = useRef<AbortController | null>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
-  const voice = speechAvailable();
 
   useEffect(() => () => abort.current?.abort(), []);
   useEffect(() => {
     transcriptRef.current?.scrollTo({ top: transcriptRef.current.scrollHeight });
   }, [view.turns]);
 
-  const start = async () => {
+  const start = async (kind: Run) => {
     abort.current?.abort();
     const ctl = new AbortController();
     abort.current = ctl;
     const unregister = registerStop(() => ctl.abort());
-    setView(EMPTY);
-    setRunning(true);
+    setView(EMPTY_VIEW);
+    setQuestion(null);
+    setLive([]);
+    setRunning(kind);
+    setRan(kind);
     try {
-      const result = await onboarding.run({
-        host,
-        mode: "scripted",
+      const result = await (kind === "engine" ? onboarding : scripted).run(host, {
+        mode: kind === "script" ? "script" : host.speech.muted ? "typed" : "voice",
         signal: ctl.signal,
-        onEvent: (e) => {
-          if (e.type === "stopped" && e.reason === "safety") host.onSafetyStop("safety");
-          setView((v) => reduce(v, e));
+        answers: channel.current,
+        onEvent: (e) => setView((v) => reduce(v, e)),
+        onQuestion: (q, steps) => {
+          setQuestion(q);
+          setLive(steps.filter((s) => s.content.length > 0));
         },
       });
+      // A strategy confirmed here is saved the way the harness saves one, so "/" and /demo/ share it.
+      if (result.status === "confirmed" && kind === "engine") saveConfirmed(result.profile);
       if (result.status === "stopped" && result.reason === "safety") host.onSafetyStop("safety");
     } finally {
       unregister();
-      setRunning(false);
+      setRunning(null);
     }
   };
 
-  const active = view.activeIndex !== null ? view.steps[view.activeIndex] : null;
-  const driverSet = new Set(view.drivers ?? []);
+  const send = (e: FormEvent) => {
+    e.preventDefault();
+    const text = typed.trim();
+    if (!text) return;
+    channel.current.push({ kind: "answer", answer: { text, via: "typed" } });
+    setTyped("");
+  };
+
+  const steps: StepHead[] = live.length ? live : view.steps;
+  const liveAnchor = live.findIndex((s) => s.isAnchor);
+  const anchorStep = live.length ? (liveAnchor >= 0 ? liveAnchor : null) : view.anchorStep;
+  const active = checklist(view, live, question);
+  const drivers = new Set(view.drivers);
+  const idle = running === null && !view.confirmed;
+  const savedState = saved?.profile.states[0];
 
   return (
     <section>
       <h1>Find your state</h1>
       <p className="lede">
-        One state you choose, in your own words. Peak State learns the steps you already run to get there.
+        One state you choose, in your own words. Peak State learns the steps you already run to get there, then helps you practise them.
       </p>
-      <div className="row" style={{ marginBottom: 16 }}>
-        <button className="primary big" onClick={start} disabled={running}>
-          {view.turns.length ? "Restart" : "Start"} (scripted)
-        </button>
-        <button onClick={onUseSample} disabled={running}>
-          Use sample profile
-        </button>
-        <span className="muted" style={{ fontSize: "0.85rem" }}>
-          Live voice: {voice.listen ? "available in this browser" : "not available here"}; arrives with the onboarding module.
-        </span>
-        {view.window && (
-          <span className={`window-pill ${view.window}`}>recording {view.window === "peak" ? "on-state" : "contrast"}…</span>
-        )}
-      </div>
 
-      <div className="grid two">
-        <div className="card">
-          <h2>Conversation</h2>
-          <div className="transcript" ref={transcriptRef} aria-live="polite">
-            {view.turns.length === 0 && <p className="muted">The transcript appears here as you talk.</p>}
-            {view.turns.map((t, i) => (
-              <div key={i} className={`turn ${t.who}${t.final ? "" : " interim"}`}>
-                {t.section && <span className="sec">§ {t.section}</span>}
-                {t.text}
-              </div>
-            ))}
+      {idle && saved && savedState && (
+        <div className="card grid" style={{ marginBottom: 16, gap: 8 }}>
+          <h2>
+            Your saved strategy: “{savedState.label}”{" "}
+            <span className="muted" style={{ fontWeight: 400 }}>{chain(savedState)}</span>
+          </h2>
+          <StepChain steps={savedState.strategy.steps} anchorStep={savedState.anchorStep} placeholder={false} />
+          <div className="row">
+            <button className="primary big" onClick={() => onDone(saved.profile)}>Practise this strategy →</button>
+            <span className="muted" style={{ fontSize: "0.85rem" }}>Saved {new Date(saved.savedAt).toLocaleString()}.</span>
           </div>
         </div>
+      )}
 
-        <div className="grid" style={{ alignContent: "start" }}>
-          <div className="card">
-            <h2>
-              {view.label ? <>“{view.label}”</> : "Your state"}
-              {view.steps.length > 0 && <span className="muted" style={{ fontWeight: 400, marginLeft: 8 }}>{chain({ strategy: { steps: view.steps, fullyInAt: null, confirmed: false } })}</span>}
-            </h2>
-            {view.words && <p className="muted" style={{ marginTop: 0 }}>{view.words}</p>}
-            <StepChain steps={view.steps} activeIndex={view.activeIndex} anchorStep={view.anchorStep} placeholder={!view.confirmed} />
+      {idle && (
+        <div className="row" style={{ marginBottom: 16 }}>
+          <a className="button" href={HARNESS_URL}>Capture my strategy with the voice guide ↗</a>
+          <button className={saved ? "" : "primary"} onClick={() => start("engine")}>Answer the questions here</button>
+          <button onClick={() => start("script")}>Watch the scripted demo</button>
+          <button onClick={onUseSample}>Use sample profile</button>
+        </div>
+      )}
+
+      {running && (
+        <div className="row" style={{ marginBottom: 16 }}>
+          <button onClick={() => abort.current?.abort()}>Cancel</button>
+          {view.calibrated.length > 0 && <span className="window-pill">calibrated: {view.calibrated.join(", ")}</span>}
+        </div>
+      )}
+
+      {(running || ran) && (
+        <div className="grid two">
+          <div className="grid" style={{ alignContent: "start" }}>
+            <div className="card">
+              <h2>Conversation</h2>
+              <div className="transcript" ref={transcriptRef} aria-live="polite">
+                {view.turns.length === 0 && <p className="muted">The transcript appears here as you answer.</p>}
+                {view.turns.map((t, i) => (
+                  <div key={i} className={`turn ${t.who}${t.final ? "" : " interim"}`}>
+                    {t.section && <span className="sec">§ {t.section}</span>}
+                    {t.text}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {running === "engine" && question && (
+              <div className="card grid" style={{ gap: 10 }}>
+                <div>{question.text}</div>
+                {question.choices.length > 0 && (
+                  <div className="choices" role="group" aria-label="Quick answers">
+                    {question.choices.map((c) => (
+                      <button
+                        key={c.value}
+                        onClick={() => channel.current.push({ kind: "answer", answer: { text: c.label, via: "choice", choiceValue: c.value } })}
+                      >
+                        {c.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <form className="answer-form" onSubmit={send}>
+                  <input
+                    value={typed}
+                    onChange={(e) => setTyped(e.target.value)}
+                    placeholder={`In your own words, e.g. “${question.suggestions[0]}”`}
+                    aria-label="Your answer"
+                    autoFocus
+                  />
+                  <button className="primary" type="submit">Answer</button>
+                  <button type="button" onClick={() => channel.current.push({ kind: "back" })}>Back</button>
+                </form>
+                {!host.speech.muted && <span className="muted" style={{ fontSize: "0.85rem" }}>Voice is on: you can also say your answer.</span>}
+              </div>
+            )}
           </div>
 
-          {active && (
+          <div className="grid" style={{ alignContent: "start" }}>
             <div className="card">
               <h2>
-                Step {view.activeIndex! + 1}: how it's represented
+                {view.label ? <>“{view.label}”</> : "Your state"}
+                {steps.length > 0 && <span className="muted" style={{ fontWeight: 400, marginLeft: 8 }}>{chainOf(steps)}</span>}
               </h2>
-              <ul className="checklist">
-                {CORE_KEYS[active.modality].map((k) => {
-                  const val = active.submodalities.core[k];
-                  return (
-                    <li key={k} className={val !== undefined ? "done" : ""}>
-                      <span className="tick">{val !== undefined ? "✓" : "○"}</span>
-                      <span>{KEY_LABEL[k] ?? k}</span>
-                      <span className="val">{val ?? ""}</span>
+              {view.words && view.words !== view.label && <p className="muted" style={{ marginTop: 0 }}>{view.words}</p>}
+              <StepChain steps={steps} activeIndex={running ? active?.index ?? null : null} anchorStep={anchorStep} placeholder={!view.confirmed} />
+            </div>
+
+            {active && running && (
+              <div className="card">
+                <h2>Step {active.index + 1}: how it's represented</h2>
+                <ul className="checklist">
+                  {active.rows.map((r) => (
+                    <li key={r.label} className={r.value !== null ? "done" : ""}>
+                      <span className="tick">{r.value !== null ? "✓" : "○"}</span>
+                      <span>{r.label}</span>
+                      <span className="val">{r.value ?? ""}</span>
                     </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
-
-          {view.differences && (
-            <div className="card">
-              <h2>What makes the difference{view.contrastLabel && <span className="muted" style={{ fontWeight: 400 }}> vs “{view.contrastLabel}”</span>}</h2>
-              <ul className="checklist">
-                {view.differences.map((d, i) => (
-                  <li key={i} className={driverSet.has(i) ? "done" : ""}>
-                    <span className="tick">{driverSet.has(i) ? "★" : "·"}</span>
-                    <span>
-                      {d.attribute}: {String(d.peak)} vs {String(d.contrast)}
-                    </span>
-                    <span className="val">{d.ratingDelta === null ? "" : `+${d.ratingDelta}`}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="hypothesis">★ drivers are hypotheses to test with you, not facts. Filled in from your rehearsal.</p>
-            </div>
-          )}
-
-          {view.test && (
-            <div className="card row">
-              <div className="stat">
-                <span className="v">
-                  {view.test.before} → {view.test.after}
-                </span>
-                <span className="l">Old situation, after giving it your drivers (0–10)</span>
+                  ))}
+                </ul>
               </div>
-            </div>
-          )}
+            )}
 
-          {view.confirmed && (
-            <button className="primary big" onClick={() => onDone(view.confirmed!)}>
-              Confirm and calibrate →
-            </button>
-          )}
+            {view.drivers.length > 0 && (
+              <div className="card">
+                <h2>
+                  What makes the difference
+                  {view.contrastLabel && <span className="muted" style={{ fontWeight: 400 }}> vs “{view.contrastLabel}”</span>}
+                </h2>
+                <ul className="checklist">
+                  {view.differences.map((d, i) =>
+                    d ? (
+                      <li key={i} className={drivers.has(i) ? "done" : ""}>
+                        <span className="tick">{drivers.has(i) ? "★" : "·"}</span>
+                        <span>
+                          {d.attribute}: {String(d.peak)} vs {String(d.contrast)}
+                        </span>
+                        <span className="val">{d.ratingDelta === null ? "" : `+${d.ratingDelta}`}</span>
+                      </li>
+                    ) : null,
+                  )}
+                </ul>
+                <p className="hypothesis">★ drivers are hypotheses to test with you, not facts. Filled in from a rehearsal.</p>
+              </div>
+            )}
+
+            {view.test && (
+              <div className="card row">
+                <div className="stat">
+                  <span className="v">
+                    {view.test.before} → {view.test.after}
+                  </span>
+                  <span className="l">Old situation, after giving it your drivers (0–10)</span>
+                </div>
+              </div>
+            )}
+
+            {view.confirmed && (
+              <div className="card grid" style={{ gap: 8 }}>
+                {ran === "engine" && <p className="muted" style={{ margin: 0 }}>Saved. The voice guide at “/” sees the same strategy.</p>}
+                <div className="row">
+                  <button className="primary big" onClick={() => onDone(view.confirmed!)}>Practise it now →</button>
+                  <button
+                    onClick={() => {
+                      setRan(null);
+                      setView(EMPTY_VIEW);
+                    }}
+                  >
+                    Back
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }
