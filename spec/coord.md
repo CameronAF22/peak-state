@@ -4,7 +4,7 @@
 
 Run the protocol: lanes, the decision log, the generated spec, the dashboard, hooks and CI. Integrate lane branches into main and keep the board honest.
 
-**Owns:** `README.md`, `LICENSE`, `.gitignore`, `CLAUDE.md`, `.claude/`, `.github/`, `coord/`, `tools/`, `site/`, `docs/`, `schemas/coord/`, `package.json`, `package-lock.json`, `tsconfig.base.json`  
+**Owns:** `README.md`, `LICENSE`, `.gitignore`, `CLAUDE.md`, `.claude/`, `.github/`, `coord/`, `tools/`, `site/`, `docs/`, `schemas/coord/`, `package.json`, `package-lock.json`, `tsconfig.base.json`, `test/`  
 **Depends on:** nothing  
 **Brief:** [docs/hackathon/lanes/coord.md](../docs/hackathon/lanes/coord.md)
 
@@ -247,6 +247,27 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 **Produces:** `.gitignore`  
 **Depends on:** D-coord-010
 
+### D-coord-015 · test/ sandbox app scaffold
+
+`accepted` · technical · 2026-10-03 · session `local-vikas` · branch `claude/project-thread-c4ldi5` · accepted by claude
+
+**Decision.** Add test/ with FastAPI backend serving vanilla JS: home with Login and Action buttons, blank onboarding and action pages.
+
+**Context.** User-requested local experiment outside main app lanes.
+
+**Produces:** `test/backend/main.py`, `test/backend/requirements.txt`, `test/frontend/index.html`, `test/frontend/onboarding.html`, `test/frontend/action.html`, `test/frontend/app.js`, `test/frontend/styles.css`
+
+### D-coord-016 · coord lane owns test/
+
+`accepted` · technical · 2026-10-03 · session `local-vikas` · branch `claude/project-thread-c4ldi5` · accepted by claude
+
+**Decision.** Add test/ to coord lane ownership in coord/lanes.json so the sandbox app can be committed.
+
+**Context.** Pre-push hook requires every path to be owned by a lane.
+
+**Produces:** `coord/lanes.json`  
+**Depends on:** D-coord-015
+
 ## Proposed, awaiting acceptance
 
 None.
@@ -268,7 +289,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `LICENSE` | `66934fca6625` | D-coord-008 |
 | `README.md` | `009ec0f47d26` | D-coord-008 |
 | `coord/README.md` | `6b4acf0bc3df` | D-coord-001 |
-| `coord/lanes.json` | `91abfa2f4a74` | D-coord-004 |
+| `coord/lanes.json` | `a231397884d9` | D-coord-004, D-coord-016 |
 | `docs/architecture.md` | `7a8ff3f2a3d2` | D-coord-008 |
 | `docs/hackathon/elicitation-playbook.md` | `431ef8310673` | D-coord-011, D-coord-012 |
 | `docs/hackathon/lanes/contracts.md` | `659077ebfecd` | D-coord-004, D-coord-009, D-coord-011 |
@@ -291,6 +312,13 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `schemas/coord/status.schema.json` | `4cf17ed9ef8e` | D-coord-001 |
 | `schemas/coord/trace.schema.json` | `414c0dbe867a` | D-coord-001 |
 | `site/dashboard.html` | `e50625a238b7` | D-coord-003 |
+| `test/backend/main.py` | `d8642072aa0a` | D-coord-015 |
+| `test/backend/requirements.txt` | `0ab58a941f97` | D-coord-015 |
+| `test/frontend/action.html` | `77e055f1d03c` | D-coord-015 |
+| `test/frontend/app.js` | `519d18c20ff2` | D-coord-015 |
+| `test/frontend/index.html` | `06797bb84a74` | D-coord-015 |
+| `test/frontend/onboarding.html` | `3f24e932222b` | D-coord-015 |
+| `test/frontend/styles.css` | `49193780c1f5` | D-coord-015 |
 | `tools/coord.py` | `de72727efde0` | D-coord-001 |
 | `tools/test_coord.py` | `809b2fce5d82` | D-coord-001 |
 | `tsconfig.base.json` | `9a0a4c80f350` | D-coord-010 |

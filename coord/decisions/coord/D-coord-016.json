@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-016",
+  "lane": "coord",
+  "title": "coord lane owns test/",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Pre-push hook requires every path to be owned by a lane.",
+  "decision": "Add test/ to coord lane ownership in coord/lanes.json so the sandbox app can be committed.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "coord/lanes.json"
+  ],
+  "dependsOn": [
+    "D-coord-015"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "local-vikas",
+    "url": null,
+    "branch": "claude/project-thread-c4ldi5"
+  },
+  "createdAt": "2026-10-03T16:30:12Z",
+  "acceptedAt": "2026-10-03T16:30:12Z",
+  "acceptedBy": "claude"
+}

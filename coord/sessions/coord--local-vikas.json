@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "sessionId": "local-vikas",
+  "url": null,
+  "lane": "coord",
+  "branch": "claude/project-thread-c4ldi5",
+  "purpose": "Standalone test/ FastAPI + vanilla JS scaffold",
+  "startedAt": "2026-10-03T16:28:15Z",
+  "lastSeenAt": "2026-10-03T16:30:12Z"
+}
