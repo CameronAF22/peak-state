@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "D-sensing-007",
+  "lane": "sensing",
+  "title": "Recovery signal for reps: onRecovered per detection",
+  "status": "accepted",
+  "type": "technical",
+  "context": "reps asked for a recovery signal per detection within a 180 s window (D-reps-004). Recovery is defined against the same peak/contrast axis as detection.",
+  "decision": "After each drift DetectionEvent (cue or sham), sensing watches the windows and calls onRecovered({detectionId, t, recoverySeconds, source, censored}) when confidence stays below 0.4 for 2 consecutive windows, or censored=true at 180 s. Manual detections get the same watch. reps writes recoverySeconds from it, so cue and sham trials are measured the same way.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "sensing/src/recovery.ts"
+  ],
+  "dependsOn": [
+    "D-reps-004"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01VAT2w9TTWLQAeoV81MAgwd",
+    "url": "https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd",
+    "branch": "lane/sensing"
+  },
+  "createdAt": "2026-10-03T14:35:05Z",
+  "acceptedAt": "2026-10-03T14:35:05Z",
+  "acceptedBy": "claude"
+}

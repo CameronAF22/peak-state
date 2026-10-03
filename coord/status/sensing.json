@@ -3,16 +3,16 @@
   "lane": "sensing",
   "health": "green",
   "phase": "M0",
-  "progress": 10,
-  "summary": "M0 done: lane claimed, guard verified, PLAN.md written, 4 decisions logged, deps messaged",
+  "progress": 15,
+  "summary": "Re-planned for one-state voice playbook: peak/contrast calibration (D-sensing-005), phase calibration API proposed (006), recovery for reps (007)",
   "now": [
-    "Waiting for go on M1; contracts fixtures pending"
+    "Waiting on onboarding+contracts for D-sensing-006; no M1 code yet"
   ],
   "next": [
-    "M1: seeded scenario simulator emitting SignalFrames (D-sensing-002)"
+    "M1: seeded simulator with peak/contrast/drift/recovery segments (D-sensing-002)"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:03:17Z",
+  "updatedAt": "2026-10-03T14:36:08Z",
   "session": {
     "id": "session_01VAT2w9TTWLQAeoV81MAgwd",
     "url": "https://claude.ai/code/session_01VAT2w9TTWLQAeoV81MAgwd",

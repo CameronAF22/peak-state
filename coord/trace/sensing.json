@@ -19,7 +19,7 @@
     },
     {
       "path": "sensing/PLAN.md",
-      "sha256": "ee911a7d44f17dbaebaa10b5bfc210b6c6b81fcac980da4c5814d8046d04a0c7",
+      "sha256": "9803422b37150403b23e27212190b929c097bddd5a686049d02d8e82a7036611",
       "decisions": [
         "D-sensing-001"
       ]
