@@ -196,21 +196,24 @@
       "path": "onboarding/harness/index.html",
       "sha256": "43399b706f074c16b815b1e74bb1ea5b0d01936446ee6bb010de0ada94a52cca",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
       "path": "onboarding/harness/main.ts",
       "sha256": "684ae88ae42e3ee82f4d7eb817dc80616ed919876391f011d61c5b0fcade2c20",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
       "path": "onboarding/harness/styles.css",
       "sha256": "8b27393249b60958bbf06b7033db8e17205b32e0d0d7da2ea3bb5464272068f3",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
@@ -277,14 +280,16 @@
       "path": "onboarding/src/harness/hints.ts",
       "sha256": "39a5fcdb49297628f1b721546c0810cac5ec86c5b72450f8724671ad5713d629",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
       "path": "onboarding/src/harness/main.ts",
       "sha256": "ff13a7408062ca84210807bff15b1782db8c76d5f73210d04d528c424d035a89",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
@@ -292,14 +297,16 @@
       "sha256": "8e7c64aa400cb27c2047efc6f4b3701b22942adc28b18fab53f985ef13f6d5bd",
       "decisions": [
         "D-onboarding-012",
-        "D-onboarding-017"
+        "D-onboarding-017",
+        "D-onboarding-020"
       ]
     },
     {
       "path": "onboarding/src/harness/view/dom.ts",
       "sha256": "9f8bddc8c0f4f8b493dec0516f5276729ca6b93b04a32af8683077596036e0b1",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
@@ -307,35 +314,40 @@
       "sha256": "b4026f32c3fffff339a708881a04ef8e5547a13458ca96662d4787fbf83819b3",
       "decisions": [
         "D-onboarding-012",
-        "D-onboarding-015"
+        "D-onboarding-015",
+        "D-onboarding-020"
       ]
     },
     {
       "path": "onboarding/src/harness/view/question.ts",
       "sha256": "0ea364f616edb758323c753ee6c3bd071bf41595165cd7563e2e66e5528fd61c",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
       "path": "onboarding/src/harness/view/saved.ts",
       "sha256": "e3d2a9054bc1b98be62e4532ef013662e1978aa1e0660e62ac0819f4d6e451b8",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
       "path": "onboarding/src/harness/view/steps.ts",
       "sha256": "a35116374f968482ec6fdfff29670a45ffdb64506f2c44dbba88295a63b9c4ba",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
       "path": "onboarding/src/harness/view/voice.ts",
       "sha256": "a46fb2d3912bebe07d950411d60ad65004f6a144aa78b50d9e48f6f7e9439e74",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
@@ -459,14 +471,16 @@
       "path": "onboarding/test/e2e/.gitignore",
       "sha256": "83394a0aff29ef47ff84180d3f8f40f7930e03c4e6fa5757b835a57df08e7e59",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
       "path": "onboarding/test/e2e/harness.spec.ts",
       "sha256": "a6de1a68e7dc407d7f697553a14f46ca499f613fd631a1928f58ee620311e2a9",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
@@ -474,14 +488,16 @@
       "sha256": "be22d8a0007a2d3bf982225ff4b1dbfe24d58371dceda9a305b6c141f285603b",
       "decisions": [
         "D-onboarding-012",
-        "D-onboarding-018"
+        "D-onboarding-018",
+        "D-onboarding-020"
       ]
     },
     {
       "path": "onboarding/test/e2e/screens-reporter.ts",
       "sha256": "dd1e91a8a298223380d65638a2ec2441b1a0395c241346c0206f7ba7447a974c",
       "decisions": [
-        "D-onboarding-012"
+        "D-onboarding-012",
+        "D-onboarding-020"
       ]
     },
     {
