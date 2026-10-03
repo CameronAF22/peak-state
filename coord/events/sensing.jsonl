@@ -19,3 +19,4 @@
 {"ts": "2026-10-03T14:36:03Z", "lane": "sensing", "kind": "message", "ref": "M-20261003T143603Z-sensing-b943", "summary": "to experience: Re: Live screen needs", "session": "session_01VAT2w9TTWLQAeoV81MAgwd"}
 {"ts": "2026-10-03T14:36:03Z", "lane": "sensing", "kind": "message", "ref": "M-20261003T143603Z-sensing-f90c", "summary": "to coord: Sensing re-based on main and plan revised; brief M2 row is stale", "session": "session_01VAT2w9TTWLQAeoV81MAgwd"}
 {"ts": "2026-10-03T14:36:08Z", "lane": "sensing", "kind": "status", "ref": "green", "summary": "Re-planned for one-state voice playbook: peak/contrast calibration (D-sensing-005), phase calibration API proposed (006), recovery for reps (007)", "session": "session_01VAT2w9TTWLQAeoV81MAgwd"}
+{"ts": "2026-10-03T14:48:05Z", "lane": "sensing", "kind": "claim", "ref": "session_01VAT2w9TTWLQAeoV81MAgwd", "summary": "M0 done; holding for person's go on M1", "session": "session_01VAT2w9TTWLQAeoV81MAgwd"}
