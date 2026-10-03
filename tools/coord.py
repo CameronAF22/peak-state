@@ -917,8 +917,8 @@ def validate(base=None):
     if stale:
         errors.append("Generated spec is out of date: " + ", ".join(stale) + ". Run: python3 tools/coord.py build")
 
-    if base:
-        errors += _immutability_errors(base)
+    for ref in ([base] if isinstance(base, str) else list(base or [])):
+        errors += [e for e in _immutability_errors(ref) if e not in errors]
     return errors, warnings
 
 
@@ -931,6 +931,7 @@ def _load_for_validation(path: str, errors: list):
 
 
 def _immutability_errors(base: str) -> list:
+    """Decisions present at the merge base with `base` may only change status."""
     merge_base = (git_ok("merge-base", "HEAD", base) or "").strip()
     if not merge_base:
         return []
@@ -976,6 +977,13 @@ def cmd_claim(args):
     print(f"Brief: docs/hackathon/lanes/{args.lane}.md · you own: {', '.join(lanes[args.lane]['owns'])}")
     for other in others:
         print(f"WARNING: session {other.get('url') or other.get('sessionId')} also worked this lane {ago(other.get('lastSeenAt'))} on branch {other.get('branch')}. Coordinate before you both write decisions.")
+    expected = f"{cfg['project']['laneBranchPrefix']}{args.lane}"
+    branch = current_branch()
+    if args.lane != "coord" and branch != expected:
+        print(
+            f"WARNING: you are on branch '{branch}', not '{expected}'. If your session was told to push to {expected}, "
+            f"switch first so your records name the right branch: git checkout -B {expected} && python3 tools/coord.py claim {args.lane}"
+        )
 
 
 def _field(args, fields, name, default=None):
@@ -1455,9 +1463,12 @@ def hook_pre_bash(payload: dict) -> int:
     cfg = load_lanes()
     problems = []
     changed = write_build(cfg)
-    if changed:
+    stages_and_commits = re.search(r"\bgit\s+add\b", command) and re.search(r"\bgit\s+commit\b", command)
+    if changed and not stages_and_commits:
         problems.append(f"Regenerated {len(changed)} spec file(s): {', '.join(changed)}. Commit them, then push again.")
-    errors, _ = validate()
+    # Decisions already on main, or already present when this session began, are append-only.
+    bases = [f"origin/{cfg['project']['defaultBranch']}", load_state().get("startHead")]
+    errors, _ = validate(base=[b for b in bases if b and git_ok("rev-parse", "--verify", "--quiet", b)])
     errors = [e for e in errors if not e.startswith("Generated spec is out of date")] if changed else errors
     if errors:
         problems.append("Coordination check failed:\n  - " + "\n  - ".join(errors[:15]))
@@ -1468,8 +1479,10 @@ def hook_pre_bash(payload: dict) -> int:
 
 
 def _session_changes(cfg: dict) -> list:
-    state = load_state()
-    start = state.get("startHead") or (git_ok("merge-base", "HEAD", f"origin/{cfg['project']['defaultBranch']}") or "").strip()
+    # startHead is recorded by the SessionStart hook. Without it, only
+    # uncommitted changes count, so a session that never ran the hook is not
+    # blamed for commits it inherited.
+    start = load_state().get("startHead")
     changed = set()
     if start:
         diff = git_ok("diff", "-z", "--name-only", start, "HEAD") or ""

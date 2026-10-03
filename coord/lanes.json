@@ -35,7 +35,10 @@
         "tools/",
         "site/",
         "docs/",
-        "schemas/coord/"
+        "schemas/coord/",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.base.json"
       ],
       "deliverables": [
         "Coordination protocol, hooks and CI that make decisions and status mandatory",

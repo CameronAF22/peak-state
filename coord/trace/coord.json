@@ -53,7 +53,7 @@
     },
     {
       "path": "coord/lanes.json",
-      "sha256": "4c072d2d976802b80f0d94a93b726c7dd0981a3fe44c790a9f6416e4317dbfa3",
+      "sha256": "91abfa2f4a74ffc5d11f65a885eaeea4104e4ff9bbdabc82063a104c7305a881",
       "decisions": [
         "D-coord-004"
       ]
@@ -145,6 +145,13 @@
       ]
     },
     {
+      "path": "package.json",
+      "sha256": "a453f72133646f89b970a76541ec62d7a3452862518aeac442fdc4ec0695d18e",
+      "decisions": [
+        "D-coord-010"
+      ]
+    },
+    {
       "path": "schemas/coord/decision.schema.json",
       "sha256": "3b0135d237611b1b07d5dfde0466b3f656dc59eb747c9ea1a8a463de9cbf9b9d",
       "decisions": [
@@ -209,7 +216,7 @@
     },
     {
       "path": "tools/coord.py",
-      "sha256": "9e4d7f2693e850271db27c472683699c0cd6234175d8a95520c63b00e24eca4f",
+      "sha256": "f4c8912791b3e30e2a4638627fdeb760adedd8af7c831479a817c5b12fe7247b",
       "decisions": [
         "D-coord-001"
       ]
@@ -219,6 +226,13 @@
       "sha256": "85097658aaa909986ff48bd58d06ee195aa59c910a7da3d0d07f839bbf3d8a69",
       "decisions": [
         "D-coord-001"
+      ]
+    },
+    {
+      "path": "tsconfig.base.json",
+      "sha256": "9a0a4c80f350501084432587b21aa8db831369f2f0a090d1c05d693e008619aa",
+      "decisions": [
+        "D-coord-010"
       ]
     }
   ]

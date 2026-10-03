@@ -3,18 +3,18 @@
   "lane": "coord",
   "health": "green",
   "phase": "M0",
-  "progress": 75,
-  "summary": "Setup merged-ready (PR #2), dashboard live as Artifact, five lane sessions running their M0 checks",
+  "progress": 80,
+  "summary": "Setup PR #2 open; lane sessions checking in (experience, sensing, contracts pushed); root npm workspace added",
   "now": [
-    "Waiting for lane M0 reports"
+    "Collect lane M0 reports"
   ],
   "next": [
-    "Review lane plans and route answers",
+    "Answer lane asks",
     "Merge setup PR, turn on Pages",
     "Republish dashboard Artifact"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:03:13Z",
+  "updatedAt": "2026-10-03T14:04:39Z",
   "session": {
     "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
     "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",

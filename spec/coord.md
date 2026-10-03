@@ -4,7 +4,7 @@
 
 Run the protocol: lanes, the decision log, the generated spec, the dashboard, hooks and CI. Integrate lane branches into main and keep the board honest.
 
-**Owns:** `README.md`, `LICENSE`, `.gitignore`, `CLAUDE.md`, `.claude/`, `.github/`, `coord/`, `tools/`, `site/`, `docs/`, `schemas/coord/`  
+**Owns:** `README.md`, `LICENSE`, `.gitignore`, `CLAUDE.md`, `.claude/`, `.github/`, `coord/`, `tools/`, `site/`, `docs/`, `schemas/coord/`, `package.json`, `package-lock.json`, `tsconfig.base.json`  
 **Depends on:** nothing  
 **Brief:** [docs/hackathon/lanes/coord.md](../docs/hackathon/lanes/coord.md)
 
@@ -176,6 +176,24 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 **Produces:** `docs/hackathon/mvp.md`, `docs/hackathon/lanes/`  
 **Depends on:** D-coord-004
 
+### D-coord-010 · Root npm workspace owned by coord; lanes are packages
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK) · branch `claude/awesome-wright-ciik1f` · accepted by claude (coord)
+
+**Decision.** coord owns the root package.json, package-lock.json and tsconfig.base.json. The root package.json declares npm workspaces contracts, onboarding, sensing, reps and app. Each lane owns its own <dir>/package.json and names its package @peak-state/<lane> (the app is @peak-state/app), extends ../tsconfig.base.json, and exposes test and typecheck scripts that the root runs with --workspaces --if-present. Lanes import each other by package name, never by relative path across lane folders. Changes to the root files go through a message to coord.
+
+**Context.** contracts (M-20261003T140326Z-contracts-8c23, D-contracts-002) made contracts/ a package named @peak-state/contracts and asked who owns a root package.json, since no lane did and lanes could only import it by relative path.
+
+**Alternatives considered.**
+
+- Relative imports across lane folders: breaks when folders move and hides cross-lane coupling
+- contracts owns the root package.json: every other lane would need contracts to add scripts and dependencies
+
+**Consequences.** npm install at the root links all lanes. A lane without its package.json yet is simply skipped by --if-present scripts; npm install warns until every workspace folder has one.
+
+**Produces:** `package.json`, `tsconfig.base.json`  
+**Depends on:** D-coord-006
+
 ## Proposed, awaiting acceptance
 
 None.
@@ -197,7 +215,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `LICENSE` | `66934fca6625` | D-coord-008 |
 | `README.md` | `009ec0f47d26` | D-coord-008 |
 | `coord/README.md` | `6b4acf0bc3df` | D-coord-001 |
-| `coord/lanes.json` | `4c072d2d9768` | D-coord-004 |
+| `coord/lanes.json` | `91abfa2f4a74` | D-coord-004 |
 | `docs/architecture.md` | `7a8ff3f2a3d2` | D-coord-008 |
 | `docs/hackathon/lanes/contracts.md` | `e64a79d089f8` | D-coord-004, D-coord-009 |
 | `docs/hackathon/lanes/coord.md` | `5caaf5d27508` | D-coord-004, D-coord-009 |
@@ -209,6 +227,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/on-aim-closed-loop.html` | `63ed5ec933fa` | D-coord-008 |
 | `docs/open-questions.md` | `32ec140a0c57` | D-coord-008 |
 | `docs/plan.md` | `d6259d0a40d3` | D-coord-008 |
+| `package.json` | `a453f7213364` | D-coord-010 |
 | `schemas/coord/decision.schema.json` | `3b0135d23761` | D-coord-001 |
 | `schemas/coord/event.schema.json` | `ecf3bcd28523` | D-coord-001 |
 | `schemas/coord/lanes.schema.json` | `8f8f79c17e9f` | D-coord-001 |
@@ -218,5 +237,6 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `schemas/coord/status.schema.json` | `4cf17ed9ef8e` | D-coord-001 |
 | `schemas/coord/trace.schema.json` | `414c0dbe867a` | D-coord-001 |
 | `site/dashboard.html` | `e50625a238b7` | D-coord-003 |
-| `tools/coord.py` | `9e4d7f2693e8` | D-coord-001 |
+| `tools/coord.py` | `f4c8912791b3` | D-coord-001 |
 | `tools/test_coord.py` | `85097658aaa9` | D-coord-001 |
+| `tsconfig.base.json` | `9a0a4c80f350` | D-coord-010 |
