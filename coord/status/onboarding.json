@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "lane": "onboarding",
+  "health": "green",
+  "phase": "M0",
+  "progress": 10,
+  "summary": "M0 done and pushed (draft PR #6): claimed, guard verified, PLAN.md, D-onboarding-001..005 (002 proposed), lanes messaged, sensing/experience replies agreed",
+  "now": [
+    "Waiting on a person for D-onboarding-002 and go for M1; waiting on contracts for Profile v2"
+  ],
+  "next": [
+    "M1: three-emotion elicitation prompt and scripted demo conversation"
+  ],
+  "blockers": [],
+  "updatedAt": "2026-10-03T14:04:58Z",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  }
+}

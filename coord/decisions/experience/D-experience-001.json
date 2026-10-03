@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-experience-001",
+  "lane": "experience",
+  "title": "Experience lane kickoff: five-screen app on fixture stubs, then real modules",
+  "status": "accepted",
+  "type": "scope",
+  "context": "M0 gate. contracts/ does not exist yet; build against mvp.md first-cut shapes behind one adapter and switch when contracts publishes.",
+  "decision": "Build the app as five screens (onboard, calibrate, live, rep, progress) in a linear flow with a demo-mode jump. Run end to end on fixture stubs of every module from M1, then swap in real onboarding, sensing and reps per module behind a stub/real switch. Demo runs from a pinned simulator scenario plus a seeded rep log, offline. Plan in app/PLAN.md.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "app/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-coord-005",
+    "D-coord-006",
+    "D-coord-009"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  },
+  "createdAt": "2026-10-03T14:02:52Z",
+  "acceptedAt": "2026-10-03T14:02:52Z",
+  "acceptedBy": "claude"
+}

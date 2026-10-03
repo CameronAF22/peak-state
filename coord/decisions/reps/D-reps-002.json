@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-reps-002",
+  "lane": "reps",
+  "title": "Rep script: anchor, physiology, focus, language, peak, rate; 32 s default within 20 to 40 s",
+  "status": "accepted",
+  "type": "product",
+  "context": "The brief fixes the order anchor, physiology, focus, language, rate and 20 to 40 s. Section 3 of the research page says an anchor must be paired with the peak state before it works as an interrupt; mvp.md says the anchor is paired with the peak of each rep.",
+  "decision": "A rep is generated from one emotion: rate-before (untimed, skippable on detection), anchor 3 s, physiology 9 s, focus 8 s (with the person's leverage line if present), language 8 s (said once, then a silence to repeat), peak 4 s (stack all three, then the anchor again), rate-after (untimed). Timed budget defaults to 32 s, hard bounds 20 to 40 s, step durations scale with speech length. Only the person's confirmed words are spoken, joined by neutral connectors. The anchor plays at the start as the interrupt and again at the peak as the conditioning pairing.",
+  "alternatives": [
+    "Anchor only at the start",
+    "Anchor only at the peak",
+    "60 to 120 s rep as in prompts/intervention.md"
+  ],
+  "consequences": "",
+  "produces": [
+    "reps/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-reps-001"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  },
+  "createdAt": "2026-10-03T14:03:43Z",
+  "acceptedAt": "2026-10-03T14:03:43Z",
+  "acceptedBy": "claude"
+}

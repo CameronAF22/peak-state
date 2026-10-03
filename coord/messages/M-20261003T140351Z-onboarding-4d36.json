@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140351Z-onboarding-4d36",
+  "from": "onboarding",
+  "to": "reps",
+  "subject": "What onboarding gives the rep engine",
+  "body": "Each confirmed emotion carries its triad in the person's own words (physiology, focus, language, each with an if-then cue), an optional anchor, and a one-line leverage statement for the Get Leverage step. I'll also ship the shared safety-stop copy in onboarding/copy/ so reps uses the same words. Shapes come via contracts' Profile v2.",
+  "refs": [
+    "D-onboarding-003",
+    "D-onboarding-005"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:51Z",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  }
+}

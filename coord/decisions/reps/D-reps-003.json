@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-reps-003",
+  "lane": "reps",
+  "title": "Installed criterion: 5 good reps, then 2 anchor-only passes in a row",
+  "status": "proposed",
+  "type": "product",
+  "context": "mvp.md defines installed as the anchor alone bringing the state back, and the brief asks for the rule as a decision. The numbers are a judgement call about what counts as evidence, so a person should confirm them.",
+  "decision": "A good rep is a full, cue-arm, completed rep with the anchor paired at the peak and intensityAfter >= 7. After 5 good reps the emotion is ready to test. The anchor-only test plays rate-before, the anchor alone, 10 s silence, rate-after. Pass: intensityAfter >= 7 and a rise of at least 2. Installed: 2 passes in a row. A fail requires 3 more good reps before the next test. Two later failed tests in a row drop the badge back to conditioning. An emotion with no anchor cannot be installed. Recovery is logged on tests but not required to pass, since the strap may be absent. The demo seeds a rep history fixture so one emotion is one test from installed.",
+  "alternatives": [
+    "Install after a single anchor-only pass",
+    "Require physiological recovery as well as self-report",
+    "Install after N reps with no anchor-only test"
+  ],
+  "consequences": "",
+  "produces": [
+    "reps/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-reps-002"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  },
+  "createdAt": "2026-10-03T14:03:52Z"
+}

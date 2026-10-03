@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-001",
+  "lane": "onboarding",
+  "title": "Onboarding lane plan for M1 to M4",
+  "status": "accepted",
+  "type": "process",
+  "context": "Gate M0. The brief, mvp.md, prompts/strategy-extraction.md (one state, three strategies) and docs/state-change.md (the triad) are the starting point. The existing prompts assume one peak state and GPT Live voice; the MVP needs three emotions in about 60 s of demo time.",
+  "decision": "Onboarding follows onboarding/PLAN.md: M1 an elicitation script for three emotions (name all three, then per emotion physiology, focus, language, anchor, leverage line, playback confirm); M2 a transcript-to-Profile-v2 extractor validated against contracts/ with a fixture conversation; M3 the live text conversation with optional browser speech plus a 20 s per emotion calibration through sensing.record(); M4 playback copy and a safety stop checked on every turn. Exposes onboarding.run() -> Profile.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-coord-005",
+    "D-coord-006",
+    "D-coord-008"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  },
+  "createdAt": "2026-10-03T14:02:38Z",
+  "acceptedAt": "2026-10-03T14:02:38Z",
+  "acceptedBy": "claude"
+}

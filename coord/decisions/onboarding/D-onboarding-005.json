@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-005",
+  "lane": "onboarding",
+  "title": "Safety stop checked on every turn, outside the model",
+  "status": "accepted",
+  "type": "product",
+  "context": "README.md safety boundary and mvp.md Safety section. A model-only stop can be missed or talked around; a deterministic pre-check also covers the scripted offline path where no model runs.",
+  "decision": "Every user turn, typed or spoken, passes a safety check before the conversation model sees it: a deterministic keyword and phrase screen in onboarding/safety/, plus the model's own stop instruction in every prompt. On a hit the guide stops elicitation, says it is not the right support, points to someone they trust or local emergency services, saves nothing from that turn, and ends the conversation with a stopped state the app can show. The check also refuses to store clinical labels. The stop text is shared copy so reps and experience can reuse it.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/safety/"
+  ],
+  "dependsOn": [
+    "D-onboarding-001"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  },
+  "createdAt": "2026-10-03T14:03:01Z",
+  "acceptedAt": "2026-10-03T14:03:01Z",
+  "acceptedBy": "claude"
+}

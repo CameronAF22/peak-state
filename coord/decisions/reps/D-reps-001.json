@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-reps-001",
+  "lane": "reps",
+  "title": "reps kickoff: lane plan for M1 to M4",
+  "status": "accepted",
+  "type": "scope",
+  "context": "Gate M0 asks every lane for a plan and a kickoff decision. The brief (docs/hackathon/lanes/reps.md) and the Robbins mapping in docs/on-aim-closed-loop.html sections 3 to 5 set the method; the MVP fixes three emotions and a browser-only demo (D-coord-005, D-coord-006).",
+  "decision": "Build the reps lane as in reps/PLAN.md: a pure TypeScript module under reps/ that generates a rep script from one Profile v2 emotion (M1), runs it with timed steps and browser speech and returns a RepSession (M2), adds the sham arm, conditioning count and anchor-only installed test (M3), and exposes progress aggregates (M4). Reps returns sessions and does not persist them; experience stores the log and passes it back.",
+  "alternatives": [
+    "Reps owns persistence in browser storage itself",
+    "Run reps as an LLM-voiced conversation like prompts/intervention.md instead of a fixed timed script"
+  ],
+  "consequences": "Reps depends on contracts for Profile v2 and RepSession, and on sensing for DetectionEvent.gate.sham and a recovery signal. Experience owns the rep log storage.",
+  "produces": [
+    "reps/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-coord-005",
+    "D-coord-006"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  },
+  "createdAt": "2026-10-03T14:03:43Z",
+  "acceptedAt": "2026-10-03T14:03:43Z",
+  "acceptedBy": "claude"
+}

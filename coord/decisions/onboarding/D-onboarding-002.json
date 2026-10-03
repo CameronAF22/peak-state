@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-002",
+  "lane": "onboarding",
+  "title": "Conversation model and voice stack for onboarding",
+  "status": "proposed",
+  "type": "technical",
+  "context": "D-coord-006 requires a browser-only demo that runs offline once loaded, so a live LLM cannot be the only path. mvp.md question 3 says the earlier docs assume GPT Live 1 and the default here is text plus browser speech with an LLM behind it. A person must pick the model and say how much of onboarding is scripted on stage.",
+  "decision": "Text chat is the primary surface. Claude (claude-sonnet-5-5, for turn latency) runs the conversation from prompts/onboarding-three-emotions.md through a structured tool call per confirmed field, so the model never speaks JSON. Browser Web Speech API (SpeechRecognition plus speechSynthesis) is optional on top, behind a toggle. The demo path is a deterministic scripted conversation that needs no network and no key; the live LLM path is opt-in (key entered at runtime or a thin proxy, to be agreed with experience). Both paths feed the same extractor, so they produce the same Profile v2.",
+  "alternatives": [
+    "GPT Live 1 realtime voice as the primary surface (earlier docs; needs network, a key and a server, and is hard to make deterministic for a demo)",
+    "Fully scripted, no LLM at all (safest demo, but does not show elicitation in the person's own words)",
+    "Claude Opus for higher elicitation quality at higher latency"
+  ],
+  "consequences": "",
+  "produces": [
+    "onboarding/conversation/",
+    "prompts/onboarding-three-emotions.md"
+  ],
+  "dependsOn": [
+    "D-coord-006",
+    "D-onboarding-001"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  },
+  "createdAt": "2026-10-03T14:03:00Z"
+}

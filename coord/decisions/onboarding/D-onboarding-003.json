@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-003",
+  "lane": "onboarding",
+  "title": "One conversation: name three emotions first, then one triad pass per emotion",
+  "status": "accepted",
+  "type": "product",
+  "context": "prompts/strategy-extraction.md has one state with two follow-ups per slot. Three emotions times four slots does not fit three minutes at two follow-ups, so follow-ups drop to one. Naming all three up front lets the person rank them and stops the conversation from fixating on the first one. The leverage line feeds the rep's Get Leverage step (mvp.md).",
+  "decision": "The conversation runs Frame -> name three emotions (a concrete moment each, a label in their words, ranked) -> for each emotion in turn: physiology, focus, language (one follow-up per slot, as an if-then cue), an anchor (sound, gesture or word; optional), one leverage line on why it matters -> per-emotion playback in their words with yes/partly/no. Partly replaces only the flat slot. An emotion is saved only after a yes. The profile is confirmed when all three are confirmed. If time runs out, unconfirmed slots stay empty; nothing is invented. Target under three minutes.",
+  "alternatives": [
+    "Run the full strategy-extraction flow three times in sequence (too long; the person often runs out of distinct moments)",
+    "Collect one triad and reuse it across three labels (fails the no-invented-strategies rule)"
+  ],
+  "consequences": "",
+  "produces": [
+    "prompts/onboarding-three-emotions.md",
+    "onboarding/script/"
+  ],
+  "dependsOn": [
+    "D-onboarding-001",
+    "D-coord-005"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  },
+  "createdAt": "2026-10-03T14:03:00Z",
+  "acceptedAt": "2026-10-03T14:03:00Z",
+  "acceptedBy": "claude"
+}
