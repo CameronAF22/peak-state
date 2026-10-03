@@ -18,7 +18,7 @@
       "binding": "DB",
       "database_name": "peak-state",
       // Replace with the id printed by `npx wrangler d1 create peak-state` before the first deploy.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "ad55b62e-45a3-4fbf-8afd-a04295fdae96",
       "migrations_dir": "migrations"
     }
   ]

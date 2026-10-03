@@ -26,13 +26,26 @@ Needs a Cloudflare account and either `npx wrangler login` or `CLOUDFLARE_API_TO
 
 ```bash
 cd onboarding
-npx wrangler d1 create peak-state          # copy the printed database_id into wrangler.jsonc
+npx wrangler d1 create peak-state          # already done: the id is in wrangler.jsonc and 0001 is applied
 npx wrangler secret put INVITE_CODE        # the invite code people type to create an account
 npx wrangler secret put OPENAI_API_KEY     # optional: enables GPT live through short-lived keys
 npm run worker:deploy                      # builds, applies migrations remotely, deploys
 ```
 
 The app is then at `https://peak-state.<your-subdomain>.workers.dev`.
+
+### Or from the Cloudflare dashboard (Workers Builds)
+
+Workers & Pages → Create → Import a repository → `CameronAF22/peak-state`, then:
+
+- Project name: `peak-state` (must match `name` in wrangler.jsonc)
+- Production branch: the branch to serve
+- Root directory: `/`
+- Build command: `npm install && npm run build:harness -w @peak-state/onboarding`
+- Deploy command: `cd onboarding && npx wrangler deploy`
+
+Then the Worker's Settings → Variables and Secrets: add `INVITE_CODE` (and optionally `OPENAI_API_KEY`) as type
+Secret. New migrations still need `npx wrangler d1 migrations apply peak-state --remote` from a machine with access.
 
 ## Later deploys
 

@@ -280,7 +280,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/vite.config.ts` | `f5643cec1115` | D-onboarding-012 |
 | `onboarding/worker/api.ts` | `cb8e26325a10` | D-onboarding-017 |
 | `onboarding/worker/index.ts` | `a9411ea26eb2` | D-onboarding-017 |
-| `onboarding/wrangler.jsonc` | `cb7e59e12aab` | D-onboarding-017 |
+| `onboarding/wrangler.jsonc` | `283e44ae8885` | D-onboarding-017 |
 | `prompts/discovery.md` | `915c158676a3` | D-coord-008 |
 | `prompts/induction.md` | `9eac817f9540` | D-coord-008 |
 | `prompts/intervention.md` | `cafae717f40d` | D-coord-008 |

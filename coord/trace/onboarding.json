@@ -449,7 +449,7 @@
     },
     {
       "path": "onboarding/wrangler.jsonc",
-      "sha256": "cb7e59e12aab569be66d7c4d8bc5b5fe048e21d3acff097c73af64dc0112ccb2",
+      "sha256": "283e44ae8885b0306f61111937515eb09dd17bf0647402be2a3100bc005aac4c",
       "decisions": [
         "D-onboarding-017"
       ]
