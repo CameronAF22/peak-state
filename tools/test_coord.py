@@ -67,7 +67,8 @@ class DecisionTests(unittest.TestCase):
 
 class SelfReferenceTests(unittest.TestCase):
     def test_decide_rejects_depending_on_itself(self):
-        did = coord.next_decision_id("coord", set(coord.local_decisions()))
+        known = set(coord.local_decisions()) | set(coord.collect(include_worktree=False)["decisions"])
+        did = coord.next_decision_id("coord", known)
         args = coord.build_parser().parse_args(["decide", "--lane", "coord", "--title", "Self reference test", "--decision", "d", "--context", "c", "--depends-on", did])
         with self.assertRaises(coord.CoordError):
             coord.cmd_decide(args)

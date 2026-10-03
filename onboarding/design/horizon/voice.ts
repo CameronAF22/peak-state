@@ -1,11 +1,11 @@
-// Corner voice control (Horizon style, D-onboarding-021): one quiet button showing the current voice and its state,
-// opening a small menu: Typed · Browser voice · GPT live, with the GPT live model, key and status.
+// A tiny corner control for the voice: one quiet button that shows the current voice and its state,
+// opening a small menu (Typed · Browser voice · GPT live, with the GPT live key and model).
 
-import type { VoiceKind, VoiceStatus } from "../../types.ts";
-import type { VoiceSettings } from "../../voice/index.ts";
-import { h, mount } from "./dom.ts";
+import type { VoiceKind, VoiceStatus } from "../../src/types.ts";
+import type { VoiceSettings } from "../../src/voice/index.ts";
+import { h, mount } from "../../src/harness/view/dom.ts";
 
-export interface VoiceControls {
+export interface VoiceToggle {
   setStatus(status: VoiceStatus): void;
   openSettings(): void;
 }
@@ -15,7 +15,7 @@ const SHORT: Record<VoiceKind, string> = { typed: "typing", browser: "voice", "g
 
 const MIC = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/></svg>`;
 
-export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, onChange: (s: VoiceSettings) => void): VoiceControls {
+export function createVoiceToggle(root: HTMLElement, initial: VoiceSettings, onChange: (s: VoiceSettings) => void): VoiceToggle {
   let settings: VoiceSettings = { ...initial };
 
   const icon = h("span", { class: "vt-icon" });
@@ -23,7 +23,7 @@ export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, o
   const label = h("span", { class: "vt-label" }, SHORT[settings.kind]);
   const button = h(
     "button",
-    { class: "vt", type: "button", "data-testid": "voice-toggle", "aria-haspopup": "menu", "aria-expanded": "false", "aria-controls": "voice-menu", "data-state": "ready", title: "Voice" },
+    { class: "vt", type: "button", "data-testid": "voice-toggle", "aria-haspopup": "true", "aria-expanded": "false", "data-state": "ready", title: "Voice" },
     icon,
     label,
   );
@@ -44,15 +44,14 @@ export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, o
 
   const model = h("input", { type: "text", "data-testid": "gpt-model", value: settings.model, autocomplete: "off", spellcheck: "false", "aria-label": "Model id" });
   const key = h("input", { type: "password", "data-testid": "gpt-key", value: settings.apiKey ?? "", autocomplete: "off", placeholder: "API key", "aria-label": "API key" });
-  const remember = h("input", { type: "checkbox", "data-testid": "gpt-remember", id: "gpt-remember" });
+  const remember = h("input", { type: "checkbox", "data-testid": "gpt-remember", id: "hz-remember" });
   remember.checked = settings.remember;
   const gpt = h(
     "div",
     { class: "vt-gpt", hidden: settings.kind !== "gpt-live" },
     model,
     key,
-    h("label", { class: "vt-check", for: "gpt-remember" }, remember, "remember the key in this browser"),
-    h("p", { class: "vt-note" }, "The key goes only to the realtime endpoint. Signed in, the account can supply it."),
+    h("label", { class: "vt-check", for: "hz-remember" }, remember, "remember key here"),
     h(
       "button",
       {
@@ -68,8 +67,8 @@ export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, o
       "save",
     ),
   );
-  const status = h("p", { class: "vt-status", "data-testid": "voice-status", role: "status" }, "");
-  const menu = h("div", { class: "vt-menu", id: "voice-menu", "data-testid": "voice-settings", role: "menu", "aria-label": "Voice", hidden: true }, option("typed"), option("browser"), option("gpt-live"), gpt, status);
+  const status = h("p", { class: "vt-status", "data-testid": "voice-status" }, "");
+  const menu = h("div", { class: "vt-menu", role: "menu", hidden: true }, option("typed"), option("browser"), option("gpt-live"), gpt, status);
 
   const syncOptions = (): void => {
     for (const b of menu.querySelectorAll<HTMLElement>(".vt-opt")) b.setAttribute("aria-checked", b.dataset.testid === `voice-${settings.kind}` ? "true" : "false");
@@ -87,9 +86,11 @@ export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, o
   function choose(kind: VoiceKind): void {
     settings = { ...settings, kind };
     syncOptions();
-    // GPT live without a key keeps the menu open on the key field; a signed-in account may supply the key instead.
-    if (kind === "gpt-live" && !settings.apiKey) key.focus();
-    else close();
+    if (kind === "gpt-live" && !settings.apiKey) {
+      key.focus();
+      return; // wait for save
+    }
+    close();
     onChange(settings);
   }
 

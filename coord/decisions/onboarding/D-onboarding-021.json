@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-021",
+  "lane": "onboarding",
+  "title": "Harness page uses the Horizon design with a highlight on the spoken word",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Cam picked Horizon in the light-designs thread and asked for a colour overlay on the word being spoken for focus.",
+  "decision": "The question harness page adopts the Horizon design from D-onboarding-019 instead of Orb: dark screen, a band of white light low on the screen that rises as the state builds, one line of question text, each step a labelled point on the horizon, playback sweeping point to point. While the guide speaks a question or playback line, the word being spoken carries a soft light colour overlay. Word timing comes from the voice adapter when it reports it (browser speech boundary events, GPT live transcript deltas) and otherwise from a paced estimate (2.6 words/s, as in D-reps-010). Controller logic, practice, account and sync from PR #24 are unchanged.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/harness/",
+    "onboarding/src/harness/",
+    "onboarding/src/voice/",
+    "onboarding/src/types.ts",
+    "onboarding/test/"
+  ],
+  "dependsOn": [
+    "D-onboarding-019"
+  ],
+  "supersedes": [
+    "D-onboarding-020"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_01FpUSvVKQswepdzRd8iGswL",
+    "url": "https://claude.ai/code/session_01FpUSvVKQswepdzRd8iGswL",
+    "branch": "claude/project-thread-r75yty"
+  },
+  "createdAt": "2026-10-03T18:41:52Z",
+  "acceptedAt": "2026-10-03T18:41:52Z",
+  "acceptedBy": "claude"
+}

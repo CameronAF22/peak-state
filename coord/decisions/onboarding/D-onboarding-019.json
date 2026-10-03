@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-019",
+  "lane": "onboarding",
+  "title": "Three white-light minimal-text design prototypes for the question harness",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Cam asked for a simple, attention-focusing visual for choosing a state and running the strategy questions, and asked for three versions to compare. Kept on branch claude/project-thread-r75yty so PR #23's harness code is untouched. Renumbered from D-onboarding-014, which PR #24's branch had already used for a different decision; the content is unchanged.",
+  "decision": "Build three self-contained prototype pages (orb, horizon, constellation) under onboarding/design/, each a dark full-screen view with one moving white light and one line of text, driven by the existing engine, hints, playback and voice modules unchanged. Each has its own Playwright screenshot run for content and destressed. The production harness page is not changed until Cam picks one.",
+  "alternatives": [
+    "Restyle the existing harness page in place",
+    "Memory photo or self photo as the background"
+  ],
+  "consequences": "",
+  "produces": [
+    "onboarding/design/",
+    "onboarding/package.json",
+    "onboarding/tsconfig.json"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01FpUSvVKQswepdzRd8iGswL",
+    "url": "https://claude.ai/code/session_01FpUSvVKQswepdzRd8iGswL",
+    "branch": "claude/project-thread-r75yty"
+  },
+  "createdAt": "2026-10-03T17:46:20Z",
+  "acceptedAt": "2026-10-03T17:46:20Z",
+  "acceptedBy": "claude"
+}

@@ -1,10 +1,11 @@
 // The practice panel (D-onboarding-015): one prompt at a time from the practice loop, with the person's saved
-// answer under it, the 0..10 pad for the rating, choices for the strategy question, and a box for their own words.
-// Built from the existing card, choice, rating and playback-step styles so a restyle of those carries over.
+// answer under it, the 0..10 pad for the rating, choices for the strategy question, and an underline for their own
+// words. Horizon style (D-onboarding-021): the step being recalled is lit on the horizon, the prompt's spoken word glows.
 
 import type { PracticeSnapshot } from "../../practice/loop.ts";
 import type { Answer, StepView } from "../../types.ts";
-import { h, ICONS, mount, SENSE_LABEL, svg } from "./dom.ts";
+import { h, mount, SENSE_LABEL } from "./dom.ts";
+import { followSpoken } from "./spoken.ts";
 
 export interface PracticeHandlers {
   answer(answer: Answer): void;
@@ -20,9 +21,9 @@ export interface PracticeView {
 }
 
 export function createPracticeView(handlers: PracticeHandlers): PracticeView {
-  const el = h("div", { class: "card playback practice", "data-testid": "practice-panel", role: "region", "aria-labelledby": "practice-title" });
+  const el = h("section", { class: "practice", "data-testid": "practice-panel", role: "region", "aria-labelledby": "practice-title" });
   let renderedKey = "";
-  let input: HTMLTextAreaElement | null = null;
+  let input: HTMLInputElement | null = null;
 
   const send = (): void => {
     const text = input?.value.trim() ?? "";
@@ -39,46 +40,28 @@ export function createPracticeView(handlers: PracticeHandlers): PracticeView {
       renderedKey = key;
       input = null;
 
-      const recallStep = snap.phase === "recall" && snap.recallAt !== null ? snap.recallOrder[snap.recallAt] : null;
-      const chips = h(
-        "ol",
-        { class: "playback-steps" },
-        steps.map((s) => {
-          const pos = snap.recallOrder.indexOf(s.index);
-          const done = snap.phase !== "recall" || (snap.recallAt !== null && pos >= 0 && pos < snap.recallAt);
-          return h(
-            "li",
-            {
-              class: "playback-step",
-              "data-testid": "practice-step",
-              "data-index": s.index,
-              "data-modality": s.modality,
-              "data-active": recallStep === s.index ? "true" : "false",
-              "data-done": done ? "true" : "false",
-              "aria-current": recallStep === s.index ? "step" : null,
-            },
-            svg(ICONS[s.modality]),
-            `${s.index + 1}. ${SENSE_LABEL[s.modality]}`,
-            s.isAnchor ? h("span", { "aria-hidden": "true" }, " ⚓") : "",
-            s.isAnchor ? h("span", { class: "visually-hidden" }, " (anchor)") : "",
-          );
-        }),
+      // The step being recalled is lit on the horizon; this names it for the label.
+      const recallStep = snap.phase === "recall" && snap.recallAt !== null ? steps.find((s) => s.index === snap.recallOrder[snap.recallAt as number]) : undefined;
+      const titleText = snap.phase === "done" ? "Practice done" : snap.phase === "stopped" ? "Practice stopped" : `Practice  ·  try ${snap.attempt} of ${snap.maxTries}`;
+      const label = h(
+        "p",
+        { class: "section-label fade-in" },
+        h("span", { id: "practice-title", class: "practice-title" }, titleText),
+        recallStep ? `  ·  step ${recallStep.index + 1}  ·  ${SENSE_LABEL[recallStep.modality].toLowerCase()}${recallStep.isAnchor ? "  ·  anchor" : ""}` : "",
       );
-
-      const title = h(
+      const finished = snap.phase === "done" || snap.phase === "stopped";
+      const actions = h(
         "div",
-        { class: "card-title" },
-        h("h2", { id: "practice-title", class: "practice-title" }, snap.phase === "done" ? "Practice done" : snap.phase === "stopped" ? "Practice stopped" : `Practice · try ${snap.attempt} of ${snap.maxTries}`),
-        snap.phase === "done" || snap.phase === "stopped"
-          ? h("button", { class: "btn ghost", type: "button", "data-testid": "practice-close", onclick: () => handlers.close() }, "Close")
-          : h("button", { class: "btn ghost", type: "button", "data-testid": "practice-stop", onclick: () => handlers.stop() }, "Stop"),
+        { class: "quiet-row" },
+        finished
+          ? h("button", { class: "quiet", type: "button", "data-testid": "practice-close", onclick: () => handlers.close() }, "close")
+          : h("button", { class: "quiet", type: "button", "data-testid": "practice-stop", onclick: () => handlers.stop() }, "stop"),
       );
-      const notice = snap.notice ? h("p", { class: "practice-notice", "data-testid": "practice-notice", role: "status" }, snap.notice) : null;
+      const notice = snap.notice ? h("p", { class: "practice-notice fade-in", "data-testid": "practice-notice", role: "status" }, snap.notice) : null;
 
       if (!p && snap.safetyStopped) {
         mount(
           el,
-          title,
           h(
             "div",
             { class: "stop-banner", "data-testid": "stop-banner", role: "alert" },
@@ -86,6 +69,7 @@ export function createPracticeView(handlers: PracticeHandlers): PracticeView {
             h("p", {}, snap.stopReason ?? "Peak State is not the right support for this."),
             h("p", {}, "If you are in distress, reach out to someone you trust or local emergency services."),
           ),
+          actions,
         );
         return;
       }
@@ -102,11 +86,11 @@ export function createPracticeView(handlers: PracticeHandlers): PracticeView {
               ];
         mount(
           el,
-          title,
-          chips,
+          label,
           notice,
-          h("p", { class: "playback-line", "data-testid": "practice-summary" }, lines.filter(Boolean).join(" ")),
-          reminder ? h("p", { class: "practice-reminder", "data-testid": "practice-reminder" }, reminder) : null,
+          h("h2", { class: "practice-line fade-in", "data-testid": "practice-summary" }, lines.filter(Boolean).join(" ")),
+          reminder ? h("p", { class: "practice-reminder fade-in", "data-testid": "practice-reminder" }, reminder) : null,
+          actions,
         );
         return;
       }
@@ -119,41 +103,60 @@ export function createPracticeView(handlers: PracticeHandlers): PracticeView {
               h(
                 "div",
                 { class: "rating-pad" },
-                p.choices.map((c) => h("button", { class: "rate-btn", type: "button", "data-testid": `practice-rate-${c.value}`, "aria-label": `${c.value} out of 10`, onclick: () => handlers.answer({ text: c.label, via: "choice", choiceValue: c.value }) }, c.label)),
+                p.choices.map((c, i) =>
+                  h(
+                    "button",
+                    { class: "rate-btn", type: "button", style: `animation-delay:${200 + i * 40}ms`, "data-testid": `practice-rate-${c.value}`, "aria-label": `${c.value} out of 10`, onclick: () => handlers.answer({ text: c.label, via: "choice", choiceValue: c.value }) },
+                    c.label,
+                  ),
+                ),
               ),
-              h("div", { class: "rating-scale" }, h("span", {}, "0 · not at all"), h("span", {}, "10 · completely")),
+              h("div", { class: "rating-scale" }, h("span", {}, "not at all"), h("span", {}, "completely")),
             )
           : h(
               "div",
-              { class: "choices", role: "group", "aria-label": p.text },
-              p.choices.map((c) => h("button", { class: "choice", type: "button", "data-testid": "practice-choice", "data-value": c.value, onclick: () => handlers.answer({ text: c.label, via: "choice", choiceValue: c.value }) }, c.label)),
+              { class: `choices${p.choices.length > 4 ? " many" : ""}`, role: "group", "aria-label": p.text },
+              p.choices.map((c, i) =>
+                h(
+                  "button",
+                  { class: "choice fade-in", style: `animation-delay:${250 + i * 60}ms`, type: "button", "data-testid": "practice-choice", "data-value": c.value, onclick: () => handlers.answer({ text: c.label, via: "choice", choiceValue: c.value }) },
+                  c.label,
+                ),
+              ),
             );
 
-      input = h("textarea", {
+      const row = h("div", { class: "answer-row fade-in" });
+      input = h("input", {
+        type: "text",
         class: "answer-input",
         "data-testid": "practice-input",
-        rows: 2,
-        placeholder: p.kind === "rate" ? "Or say a number…" : p.kind === "recall" ? "Say what comes back, or press Next…" : "Or say it in your own words…",
+        autocomplete: "off",
+        enterkeyhint: "send",
+        placeholder: p.kind === "rate" ? "or say a number" : p.kind === "recall" ? "say what comes back, or press Next" : "or in your own words",
         "aria-label": "Your answer",
+        oninput: () => row.classList.toggle("filled", Boolean(input?.value.trim())),
         onkeydown: (e: Event) => {
           const ke = e as KeyboardEvent;
-          if (ke.key === "Enter" && !ke.shiftKey && !ke.isComposing) {
+          if (ke.key === "Enter" && !ke.isComposing) {
             ke.preventDefault();
             send();
           }
         },
       });
+      mount(row, input, h("button", { class: "send-btn", type: "button", "data-testid": "practice-send", "aria-label": "Send", title: "Send", onclick: send }, "→"));
 
+      const question = h("h2", { class: `practice-line fade-in${p.text.length > 110 ? " long" : ""}`, "data-testid": "practice-question", "aria-live": "polite" }, p.text);
       mount(
         el,
-        title,
-        chips,
+        label,
         notice,
-        h("p", { class: "playback-line", "data-testid": "practice-question", "aria-live": "polite" }, p.text),
-        p.remembered ? h("p", { class: "practice-remembered", "data-testid": "practice-remembered" }, h("span", { class: "section-label" }, "Last time"), " ", p.remembered) : null,
+        question,
+        p.remembered ? h("p", { class: "practice-remembered fade-in", "data-testid": "practice-remembered" }, h("span", { class: "remembered-label" }, "Last time"), " ", p.remembered) : null,
         choices,
-        h("div", { class: "answer-row" }, input, h("div", { class: "answer-actions" }, h("span", { class: "spacer" }), h("button", { class: "btn primary", type: "button", "data-testid": "practice-send", onclick: send }, "Send"))),
+        row,
+        actions,
       );
+      followSpoken(question, p.text);
     },
     setDraft(text) {
       if (input) input.value = text;

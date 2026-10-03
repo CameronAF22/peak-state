@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-020",
+  "lane": "onboarding",
+  "title": "Harness page uses the Orb design with labelled step points",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Cam told the coordinator to make remaining decisions simply; the recommended Orb plus Horizon's labelled steps was chosen. Stacked on PR #24's branch because that is the version going online.",
+  "decision": "The question harness page (onboarding/harness and src/harness/view) adopts the Orb design from D-onboarding-019: dark full screen, one breathing white light, one line of question text, two faint hints after the delay, steps as labelled points of light in order (from Horizon), playback lighting each point. The controller logic, practice loop, account and sync from PR #24 stay as they are; only the views and styles change.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/harness/",
+    "onboarding/src/harness/",
+    "onboarding/test/e2e/"
+  ],
+  "dependsOn": [
+    "D-onboarding-019"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01FpUSvVKQswepdzRd8iGswL",
+    "url": "https://claude.ai/code/session_01FpUSvVKQswepdzRd8iGswL",
+    "branch": "claude/project-thread-r75yty"
+  },
+  "createdAt": "2026-10-03T18:39:44Z",
+  "acceptedAt": "2026-10-03T18:39:44Z",
+  "acceptedBy": "claude"
+}

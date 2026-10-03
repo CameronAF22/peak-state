@@ -128,6 +128,12 @@ export interface VoiceAdapter {
   /** Partial and final transcripts of what the person says. Returns an unsubscribe. */
   onTranscript(cb: (text: string, final: boolean) => void): () => void;
   onStatus(cb: (status: VoiceStatus) => void): () => void;
+  /**
+   * Optional word progress while speaking (D-onboarding-021): `index` is the word now being spoken in `text`, the line
+   * passed to speak(), split as splitWords() in src/voice/words.ts does. Adapters without timing leave it out and the
+   * page estimates the pace instead.
+   */
+  onWord?(cb: (index: number, text: string) => void): () => void;
 }
 
 export interface GptLiveConfig {

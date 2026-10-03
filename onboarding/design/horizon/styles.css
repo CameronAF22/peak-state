@@ -1,45 +1,23 @@
-/* Peak State · question harness, Horizon design (D-onboarding-021, from design/horizon/).
-   A dark screen, one soft band of white light low down that rises as the state builds, one line of text above it. */
-
-@property --rise {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0.2;
-}
-@property --glow {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0.2;
-}
-@property --boost {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
+/* Horizon: dark sky, one soft band of white light low on the screen, one line of text above it. */
 
 :root {
   color-scheme: dark;
   --bg: #030405;
-  --ink: rgba(246, 247, 249, 0.92);
-  --soft: rgba(240, 242, 246, 0.64);
-  --dim: rgba(240, 242, 246, 0.46);
-  --faint: rgba(240, 242, 246, 0.34);
-  --hair: rgba(255, 255, 255, 0.18);
-  --warm: #fff6e8;
-  --rise: 0.2;
-  --glow: 0.2;
+  --ink: rgba(246, 247, 249, 0.9);
+  --soft: rgba(240, 242, 246, 0.62);
+  --dim: rgba(240, 242, 246, 0.44);
+  --faint: rgba(240, 242, 246, 0.3);
+  --hair: rgba(255, 255, 255, 0.16);
+  /* 0..1 set by sky.ts: how far the state has built. */
+  --rise: 0.1;
+  --glow: 0.1;
   --boost: 0;
   --ease: cubic-bezier(0.22, 0.7, 0.18, 1);
   --font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
-  transition: --rise 3.2s var(--ease), --glow 3.2s var(--ease), --boost 2.4s var(--ease);
 }
 
 * {
   box-sizing: border-box;
-}
-
-[hidden] {
-  display: none !important;
 }
 
 html,
@@ -54,43 +32,30 @@ body {
   color: var(--ink);
   font-family: var(--font);
   font-weight: 300;
-  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-button,
-input,
-textarea {
+button {
   font: inherit;
   color: inherit;
-}
-
-button {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 
-button:disabled {
-  cursor: default;
-}
-
 :focus-visible {
-  outline: 1px solid rgba(255, 255, 255, 0.55);
+  outline: 1px solid rgba(255, 255, 255, 0.5);
   outline-offset: 4px;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
-.visually-hidden {
-  position: absolute !important;
+.sr-only {
+  position: absolute;
   width: 1px;
   height: 1px;
-  margin: -1px;
-  padding: 0;
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
-  border: 0;
 }
 
 /* ── the sky ─────────────────────────────────────────────────────────────── */
@@ -109,7 +74,7 @@ button:disabled {
   right: 0;
   height: 0;
   top: calc(82% - var(--rise) * 13% - var(--boost) * 4%);
-  transition: filter 2s var(--ease);
+  transition: top 3.2s var(--ease);
 }
 
 .horizon > div {
@@ -117,6 +82,7 @@ button:disabled {
   pointer-events: none;
 }
 
+/* The wide glow over the whole sky, strongest at the horizon. */
 .aura {
   left: -25%;
   width: 150%;
@@ -124,8 +90,10 @@ button:disabled {
   height: 85vh;
   background: radial-gradient(50% 100% at 50% 100%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 34%, rgba(255, 255, 255, 0.01) 60%, transparent 78%);
   opacity: calc(0.3 + 0.6 * var(--glow) + 0.25 * var(--boost));
+  transition: opacity 3.2s var(--ease);
 }
 
+/* The band itself: a soft, wide, slightly flattened glow sitting on the line. */
 .band {
   left: -10%;
   width: 120%;
@@ -135,8 +103,10 @@ button:disabled {
   filter: blur(14px);
   opacity: calc(0.25 + 0.6 * var(--glow) + 0.3 * var(--boost));
   transform: scaleY(calc(0.6 + 0.5 * var(--glow) + 0.45 * var(--boost)));
+  transition: opacity 3.2s var(--ease), transform 3.2s var(--ease);
 }
 
+/* Two slow drifting brightnesses: the shimmer of light along the horizon. */
 .drift {
   top: -3.2vh;
   height: 6.4vh;
@@ -144,6 +114,7 @@ button:disabled {
   filter: blur(8px);
   mix-blend-mode: screen;
   opacity: calc(0.35 + 0.55 * var(--glow));
+  transition: opacity 3.2s var(--ease);
 }
 
 .drift-a {
@@ -173,6 +144,7 @@ button:disabled {
   100% { transform: translateX(-70%); opacity: 0.3; }
 }
 
+/* The horizon line: a hairline that is brightest in the middle and fades to nothing at the edges. */
 .line {
   left: 0;
   right: 0;
@@ -181,9 +153,10 @@ button:disabled {
   background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.12) 12%, rgba(255, 255, 255, 0.5) 32%, rgba(255, 255, 255, 0.95) 50%, rgba(255, 255, 255, 0.5) 68%, rgba(255, 255, 255, 0.12) 88%, transparent 100%);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
   opacity: calc(0.45 + 0.55 * var(--glow));
+  transition: opacity 3.2s var(--ease);
 }
 
-/* The dawn rim: a thin bright wash just above the line. */
+/* The dawn rim: a thin, bright wash of light just above the line. */
 .line::before {
   content: "";
   position: absolute;
@@ -195,8 +168,10 @@ button:disabled {
   opacity: calc(0.35 + 0.65 * var(--glow) + 0.3 * var(--boost));
   transform-origin: 50% 100%;
   transform: scaleY(calc(0.7 + 0.5 * var(--glow) + 0.5 * var(--boost)));
+  transition: opacity 3.2s var(--ease), transform 3.2s var(--ease);
 }
 
+/* The dark ground below the line, with the faintest reflection. */
 .ground {
   left: 0;
   right: 0;
@@ -222,12 +197,12 @@ button:disabled {
   width: 22vw;
   min-width: 160px;
   height: 14vh;
-  left: 50%;
   transform: translateX(-50%);
   background: radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.22) 30%, rgba(255, 255, 255, 0.05) 55%, transparent 72%);
   filter: blur(6px);
   mix-blend-mode: screen;
   opacity: 0;
+  left: 50%;
   transition: left 1.3s cubic-bezier(0.45, 0, 0.2, 1), opacity 1.2s var(--ease);
   z-index: 2;
 }
@@ -236,23 +211,7 @@ button:disabled {
   opacity: 1;
 }
 
-body:has([data-testid="stop-banner"]) .horizon {
-  filter: brightness(0.45);
-}
-
-body:has([data-testid="stop-banner"]) .drift {
-  animation-duration: 120s;
-}
-
 /* ── points of light, one per step ───────────────────────────────────────── */
-
-.side-col {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index: 3;
-}
 
 .points {
   position: absolute;
@@ -262,6 +221,7 @@ body:has([data-testid="stop-banner"]) .drift {
   margin: 0;
   padding: 0;
   list-style: none;
+  z-index: 3;
 }
 
 .pt {
@@ -272,7 +232,7 @@ body:has([data-testid="stop-banner"]) .drift {
   transition: left 1.8s var(--ease);
 }
 
-.pt > span:not(.visually-hidden) {
+.pt > span {
   position: absolute;
   left: 0;
   transform: translateX(-50%);
@@ -298,7 +258,7 @@ body:has([data-testid="stop-banner"]) .drift {
   border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
-.pt[data-full="true"] > .pt-dot {
+.pt[data-full="true"] .pt-dot {
   box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.9), 0 0 34px 10px rgba(255, 255, 255, 0.26);
 }
 
@@ -306,7 +266,7 @@ body:has([data-testid="stop-banner"]) .drift {
   top: -30px;
   width: 13px;
   height: 13px;
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.4);
   transition: color 1s var(--ease);
 }
 
@@ -323,7 +283,7 @@ body:has([data-testid="stop-banner"]) .drift {
   line-height: 1.45;
   letter-spacing: 0.02em;
   text-align: center;
-  color: rgba(240, 242, 246, 0.38);
+  color: rgba(240, 242, 246, 0.36);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -337,14 +297,14 @@ body:has([data-testid="stop-banner"]) .drift {
 }
 
 .pt[data-active="true"] .pt-sense {
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .pt[data-active="true"] .pt-words {
-  color: rgba(245, 246, 248, 0.85);
+  color: rgba(245, 246, 248, 0.82);
 }
 
-.pt.born > .pt-dot {
+.pt.born .pt-dot {
   animation: born 1.6s var(--ease) both;
 }
 
@@ -354,28 +314,11 @@ body:has([data-testid="stop-banner"]) .drift {
 }
 
 @keyframes born {
-  0% { opacity: 0.35; transform: scale(0.3); box-shadow: 0 0 60px 30px rgba(255, 255, 255, 0.5); }
+  0% { opacity: 0; transform: scale(0.1); box-shadow: 0 0 60px 30px rgba(255, 255, 255, 0.5); }
   100% { opacity: 1; }
 }
 
-/* The chain notation, faint, under the points. */
-.side-col > .chain {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 64px;
-  margin: 0;
-  text-align: center;
-  font-size: 0.72rem;
-  letter-spacing: 0.24em;
-  color: var(--faint);
-}
-
-.side-col[data-count="0"] > .chain {
-  display: none;
-}
-
-/* ── the stage: one line of text at a time ───────────────────────────────── */
+/* ── the words ───────────────────────────────────────────────────────────── */
 
 .stage {
   position: fixed;
@@ -383,51 +326,26 @@ body:has([data-testid="stop-banner"]) .drift {
   right: 0;
   top: 0;
   height: 63%;
-  padding: 4.4rem 1.5rem 1.2rem;
+  padding: 4.2rem 1.5rem 1.5rem;
   display: flex;
+  align-items: center;
   justify-content: center;
   overflow-y: auto;
   z-index: 4;
-  scrollbar-width: none;
 }
 
-.main-col {
+.q {
   width: 100%;
-  max-width: 46rem;
-  margin: auto 0;
+  max-width: 44rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  margin: auto 0;
 }
 
-/* The transcript stays for screen readers; on screen there is only the current line. */
-.main-col > .card:has(> .transcript) {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-}
-
-/* While a run or practice is open, only it shows. */
-.main-col:has(> .playback:not([data-finished])) > :is(.saved-card, .run-log-wrap),
-.main-col:has(> .practice) > :is(.saved-card, .run-log-wrap, .playback) {
-  display: none;
-}
-
-.question-card,
-.saved-card,
-.playback,
-.practice {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.section-label {
-  margin: 0 0 1.4rem;
+.q-label {
+  margin: 0 0 1.5rem;
   font-size: 0.7rem;
   font-weight: 400;
   letter-spacing: 0.3em;
@@ -436,11 +354,7 @@ body:has([data-testid="stop-banner"]) .drift {
   min-height: 1em;
 }
 
-.question-text,
-.saved-title,
-.playback-line,
-.practice-line,
-.stop-banner > p:first-of-type {
+.q-text {
   margin: 0;
   max-width: 33ch;
   font-size: clamp(1.5rem, 1.05rem + 1.85vw, 2.4rem);
@@ -452,52 +366,27 @@ body:has([data-testid="stop-banner"]) .drift {
   text-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
 }
 
-.question-text.long,
-.playback-line.long,
-.practice-line.long,
-.stop-banner > p:first-of-type {
+.q-text.long {
   max-width: 38ch;
   font-size: clamp(1.2rem, 0.95rem + 1.05vw, 1.7rem);
   line-height: 1.45;
 }
 
-.stop-banner > p:first-of-type {
-  max-width: 40ch;
-  font-size: clamp(1.15rem, 0.95rem + 0.7vw, 1.45rem);
-  line-height: 1.55;
-  color: rgba(246, 247, 249, 0.86);
+.q-sub {
+  margin: 1.3rem 0 0;
+  max-width: 34rem;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--soft);
 }
 
-/* ── the spoken-word highlight ───────────────────────────────────────────── */
-
-.speaking .w {
-  color: rgba(240, 242, 246, 0.6);
-  border-radius: 0.3em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  transition: color 0.35s ease, text-shadow 0.35s ease, background-color 0.35s ease, box-shadow 0.35s ease;
-}
-
-.speaking .w.said {
-  color: inherit;
-}
-
-.speaking .w.now {
-  color: var(--warm);
-  background-color: transparent;
-  background-image: radial-gradient(closest-side, rgba(255, 228, 188, 0.2), rgba(255, 228, 188, 0.06) 70%, transparent);
-  text-shadow: 0 0 18px rgba(255, 228, 188, 0.85), 0 0 3px rgba(255, 244, 226, 0.55);
-}
-
-/* ── choices, answer, hints ──────────────────────────────────────────────── */
-
-.choices {
-  margin-top: 1.9rem;
+.q-choices {
+  margin-top: 2rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.2rem 1.4rem;
-  max-width: 42rem;
+  max-width: 40rem;
 }
 
 .choice {
@@ -519,78 +408,74 @@ body:has([data-testid="stop-banner"]) .drift {
   text-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
 }
 
-.choices.big {
+.q-choices.big {
   gap: 0.4rem 3rem;
 }
 
-.choices.big .choice {
+.q-choices.big .choice {
   font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
   font-weight: 200;
-  padding: 0.4rem;
-  color: rgba(244, 246, 248, 0.8);
+  padding: 0.4rem 0.4rem;
+  color: rgba(244, 246, 248, 0.78);
 }
 
-.choices.many .choice {
+.q-choices.many .choice {
   font-size: 0.95rem;
 }
 
-.answer-row {
+.q-answer {
   position: relative;
-  margin-top: 2rem;
+  margin-top: 2.1rem;
   width: min(27rem, 100%);
 }
 
-.answer-input {
+.q-input {
   width: 100%;
   padding: 0.6rem 2.2rem 0.55rem;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 0;
   color: var(--ink);
-  font-size: 1.12rem;
-  font-weight: 300;
+  font: 300 1.12rem/1.4 var(--font);
   text-align: center;
   caret-color: #fff;
-  transition: border-color 0.6s var(--ease);
+  transition: border-color 0.6s var(--ease), box-shadow 0.6s var(--ease);
 }
 
-.answer-input::placeholder {
-  color: rgba(240, 242, 246, 0.3);
+.q-input::placeholder {
+  color: rgba(240, 242, 246, 0.26);
+  font-weight: 300;
 }
 
-.answer-input:focus {
+.q-input:focus {
   outline: none;
-  border-bottom-color: rgba(255, 255, 255, 0.55);
+  border-bottom-color: rgba(255, 255, 255, 0.5);
 }
 
-.send-btn {
+.q-send {
   position: absolute;
   right: 0;
   bottom: 0.3rem;
   width: 2rem;
   height: 2rem;
-  padding: 0;
   background: none;
   border: 0;
   border-radius: 50%;
   font-size: 1.05rem;
-  color: rgba(255, 255, 255, 0.26);
+  color: rgba(255, 255, 255, 0.22);
   transition: color 0.5s var(--ease), text-shadow 0.5s var(--ease);
 }
 
-.answer-row.filled .send-btn,
-.send-btn:hover {
-  color: rgba(255, 255, 255, 0.92);
+.q-answer.filled .q-send,
+.q-send:hover {
+  color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 0 14px rgba(255, 255, 255, 0.6);
 }
 
-.hint-slot {
-  margin-top: 1.2rem;
+.q-hints {
+  margin-top: 1.3rem;
   min-height: 4.2rem;
-}
-
-.suggestions {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -606,7 +491,7 @@ body:has([data-testid="stop-banner"]) .drift {
   font-weight: 300;
   font-style: italic;
   line-height: 1.45;
-  color: rgba(240, 242, 246, 0.46);
+  color: rgba(240, 242, 246, 0.42);
   animation: hint-in 2s var(--ease) both;
   transition: color 0.5s var(--ease);
 }
@@ -621,7 +506,7 @@ body:has([data-testid="stop-banner"]) .drift {
 
 .hint:hover,
 .hint:focus-visible {
-  color: rgba(250, 251, 252, 0.9);
+  color: rgba(250, 251, 252, 0.88);
 }
 
 @keyframes hint-in {
@@ -629,12 +514,12 @@ body:has([data-testid="stop-banner"]) .drift {
   to { opacity: 1; transform: none; filter: none; }
 }
 
-.quiet-row {
-  margin: 0.6rem 0 0;
+.q-actions {
+  margin: 1.4rem 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.3rem;
+  gap: 0.4rem;
   color: var(--faint);
 }
 
@@ -651,117 +536,47 @@ body:has([data-testid="stop-banner"]) .drift {
 
 .quiet:hover,
 .quiet:focus-visible {
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .quiet:disabled {
   display: none;
 }
 
-.sep {
-  opacity: 0.6;
-}
+/* ── saved, run ──────────────────────────────────────────────────────────── */
 
-/* ── safety stop ─────────────────────────────────────────────────────────── */
-
-.stop-banner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  animation: fade-up 1.4s var(--ease) both;
-}
-
-.stop-banner h2 {
-  margin: 0 0 1.4rem;
-  font-size: 0.7rem;
-  font-weight: 400;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-
-.stop-banner p {
+.chain {
   margin: 1.1rem 0 0;
-  max-width: 36rem;
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--soft);
-}
-
-.stop-banner > p:first-of-type {
-  margin-top: 0;
-}
-
-.stop-banner .btn {
-  margin-top: 1.4rem;
-  background: none;
-  border: 0;
-  padding: 0.4rem 0.6rem;
-  font-size: 0.82rem;
-  letter-spacing: 0.05em;
-  text-transform: lowercase;
+  font-size: 0.86rem;
+  letter-spacing: 0.22em;
   color: var(--dim);
 }
 
-.stop-banner .btn:hover {
-  color: #fff;
-}
-
-/* ── saved strategy, run, log ────────────────────────────────────────────── */
-
-.saved-meta {
-  margin: 1rem 0 0;
-  font-size: 0.8rem;
-  letter-spacing: 0.06em;
-  color: var(--faint);
-}
-
-.chain-text {
-  letter-spacing: 0.2em;
-  color: var(--dim);
-}
-
-.practice-reminder {
-  margin: 1rem 0 0;
-  max-width: 34rem;
-  font-size: 0.95rem;
-  line-height: 1.55;
-  color: var(--soft);
-}
-
-.saved-run {
-  margin-top: 2rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.8rem 1.4rem;
-}
-
-.run-btn {
+.run {
+  margin-top: 2.2rem;
   display: inline-flex;
   align-items: center;
   gap: 0.8rem;
-  padding: 0.9rem 2.1rem 0.9rem 1.8rem;
+  padding: 0.95rem 2.1rem 0.95rem 1.8rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.035);
   color: #fff;
-  font-size: 1.06rem;
+  font-size: 1.08rem;
   font-weight: 300;
   letter-spacing: 0.04em;
   box-shadow: 0 0 46px -12px rgba(255, 255, 255, 0.4), inset 0 0 18px -10px rgba(255, 255, 255, 0.5);
-  transition: background 0.5s var(--ease), border-color 0.5s var(--ease), box-shadow 0.5s var(--ease), opacity 0.5s;
+  transition: background 0.5s var(--ease), border-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
 }
 
-.run-btn:hover:not(:disabled),
-.run-btn:focus-visible {
+.run:hover,
+.run:focus-visible {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.6);
   box-shadow: 0 0 60px -8px rgba(255, 255, 255, 0.5), inset 0 0 18px -8px rgba(255, 255, 255, 0.6);
 }
 
-.run-btn .play {
+.run-glyph {
   width: 9px;
   height: 11px;
   background: #fff;
@@ -769,88 +584,34 @@ body:has([data-testid="stop-banner"]) .drift {
   filter: drop-shadow(0 0 4px #fff);
 }
 
-.practice-btn {
-  background: none;
-  border: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-  padding: 0.45rem 0.2rem;
-  font-size: 0.92rem;
-  letter-spacing: 0.03em;
-  color: var(--soft);
-  transition: color 0.4s var(--ease), border-color 0.4s var(--ease);
+.sep {
+  opacity: 0.6;
 }
 
-.practice-btn:hover:not(:disabled) {
-  color: #fff;
-  border-bottom-color: rgba(255, 255, 255, 0.5);
-}
-
-.run-btn:disabled,
-.practice-btn:disabled {
-  opacity: 0.4;
-}
-
-.run-log-wrap {
-  margin-top: 1rem;
-}
-
-.run-log {
+.runlog {
   list-style: none;
-  margin: 0;
+  margin: 1.5rem 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  font-size: 0.76rem;
+  gap: 0.25rem;
+  font-size: 0.78rem;
   letter-spacing: 0.06em;
   color: var(--faint);
 }
 
-.run-log li {
+.runlog li {
   display: flex;
   gap: 1.1rem;
   justify-content: center;
 }
 
-.run-log li:nth-child(n + 4) {
-  display: none;
-}
-
-.run-log .delta {
+.runlog .delta {
   color: var(--soft);
 }
 
-.playback[data-finished] {
-  margin-top: 1.4rem;
-}
-
-.playback[data-finished] .section-label {
-  display: none;
-}
-
-.playback[data-finished] .playback-line {
-  font-size: 0.95rem;
-  font-weight: 300;
-  color: var(--ink);
-  text-shadow: none;
-}
-
-.playback[data-finished] .quiet-row {
-  display: none;
-}
-
-/* ── rating ──────────────────────────────────────────────────────────────── */
-
 .rating-slot:not(:empty) {
-  margin-top: 2.1rem;
-}
-
-.rating {
-  margin-top: 1.8rem;
-}
-
-.rating-slot .rating {
-  margin-top: 0;
+  margin-top: 2.2rem;
 }
 
 .rating-pad {
@@ -859,12 +620,12 @@ body:has([data-testid="stop-banner"]) .drift {
   gap: 0.3rem;
 }
 
-.rate-btn {
+.rate {
   width: min(2.7rem, calc((100vw - 3.4rem - 30px) / 11));
   aspect-ratio: 1;
   padding: 0;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.13);
   background: transparent;
   font-size: 0.98rem;
   font-weight: 300;
@@ -873,13 +634,12 @@ body:has([data-testid="stop-banner"]) .drift {
   transition: color 0.4s var(--ease), border-color 0.4s var(--ease), background 0.4s var(--ease), box-shadow 0.4s var(--ease);
 }
 
-.rate-btn:hover,
-.rate-btn:focus-visible {
+.rate:hover,
+.rate:focus-visible {
   color: #fff;
   border-color: rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.07);
   box-shadow: 0 0 22px -4px rgba(255, 255, 255, 0.45);
-  outline: none;
 }
 
 .rating-scale {
@@ -887,173 +647,29 @@ body:has([data-testid="stop-banner"]) .drift {
   justify-content: space-between;
   margin-top: 0.7rem;
   padding: 0 0.3rem;
-  font-size: 0.66rem;
+  font-size: 0.68rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--faint);
 }
 
-/* ── practice ────────────────────────────────────────────────────────────── */
+/* ── corners and the safety note ─────────────────────────────────────────── */
 
-.practice-notice {
-  margin: -0.4rem 0 1rem;
-  font-size: 0.95rem;
-  font-style: italic;
-  color: var(--soft);
-}
-
-.practice-remembered {
-  margin: 1rem 0 0;
-  max-width: 34rem;
-  font-size: 0.92rem;
-  line-height: 1.5;
-  color: var(--dim);
-}
-
-.remembered-label {
-  font-size: 0.66rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--faint);
-  margin-right: 0.4rem;
-}
-
-.practice .stop-banner {
-  margin-bottom: 0.6rem;
-}
-
-/* ── corners: account and voice ──────────────────────────────────────────── */
-
-.corners {
+.corner {
   position: fixed;
-  top: max(0.8rem, env(safe-area-inset-top));
-  right: 1rem;
+  top: max(0.9rem, env(safe-area-inset-top));
   z-index: 6;
-}
-
-.corner-controls {
   display: flex;
   align-items: center;
   gap: 0.2rem;
 }
 
-.account,
-.voice {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.1rem;
+.corner-left {
+  left: 1rem;
 }
 
-.account .status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.4rem 0.3rem;
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  color: var(--faint);
-}
-
-.account .dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
-}
-
-.account .status[data-state="connecting"] .dot {
-  animation: breathe 1.6s ease-in-out infinite;
-}
-
-.panel,
-.vt-menu {
-  position: absolute;
-  right: 0;
-  top: 2.4rem;
-  width: 17rem;
-  padding: 0.9rem 1rem;
-  border-radius: 14px;
-  background: rgba(12, 14, 18, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  text-align: left;
-}
-
-.panel-title {
-  margin: 0 0 0.2rem;
-  font-size: 0.86rem;
-  font-weight: 400;
-  color: var(--ink);
-}
-
-.panel .field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
-
-.panel input,
-.vt-gpt input[type="text"],
-.vt-gpt input[type="password"] {
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--ink);
-  font-size: 0.88rem;
-  letter-spacing: 0.01em;
-  text-transform: none;
-  padding: 0.35rem 0;
-}
-
-.panel input:focus,
-.vt-gpt input:focus {
-  outline: none;
-  border-bottom-color: rgba(255, 255, 255, 0.55);
-}
-
-.panel .note,
-.vt-note {
-  margin: 0;
-  font-size: 0.72rem;
-  line-height: 1.5;
-  color: var(--faint);
-}
-
-.panel .note[data-testid="account-error"]:not(:empty) {
-  color: rgba(255, 214, 196, 0.85);
-}
-
-.panel .row {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 0.2rem;
-}
-
-.pill,
-.vt-save {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 999px;
-  padding: 0.3rem 0.95rem;
-  font-size: 0.8rem;
-  color: var(--ink);
-}
-
-.pill:hover,
-.vt-save:hover {
-  border-color: rgba(255, 255, 255, 0.6);
+.corner-right {
+  right: 1rem;
 }
 
 .vt {
@@ -1070,10 +686,8 @@ body:has([data-testid="stop-banner"]) .drift {
 }
 
 .vt:hover,
-.vt[aria-expanded="true"],
-.vt[data-state="listening"],
-.vt[data-state="speaking"] {
-  color: rgba(255, 255, 255, 0.88);
+.vt[aria-expanded="true"] {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .vt-icon svg {
@@ -1082,18 +696,36 @@ body:has([data-testid="stop-banner"]) .drift {
   height: 14px;
 }
 
+.vt[data-state="listening"],
+.vt[data-state="speaking"] {
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .vt[data-state="listening"] .vt-icon {
   animation: breathe 2.4s ease-in-out infinite;
 }
 
 .vt[data-state="error"] {
-  color: rgba(255, 200, 176, 0.75);
+  color: rgba(255, 196, 170, 0.7);
 }
 
 .vt-menu {
+  position: absolute;
+  right: 0;
+  top: 2.4rem;
+  width: 15.5rem;
   padding: 0.45rem;
-  gap: 0;
-  width: 16rem;
+  border-radius: 14px;
+  background: rgba(12, 14, 18, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+}
+
+.vt-menu[hidden] {
+  display: none;
 }
 
 .vt-opt {
@@ -1130,8 +762,27 @@ body:has([data-testid="stop-banner"]) .drift {
 .vt-gpt {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.4rem;
   padding: 0.4rem 0.7rem 0.2rem;
+}
+
+.vt-gpt[hidden] {
+  display: none;
+}
+
+.vt-gpt input[type="text"],
+.vt-gpt input[type="password"] {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--ink);
+  font: 300 0.84rem var(--font);
+  padding: 0.35rem 0;
+}
+
+.vt-gpt input:focus {
+  outline: none;
+  border-bottom-color: rgba(255, 255, 255, 0.5);
 }
 
 .vt-check {
@@ -1144,42 +795,61 @@ body:has([data-testid="stop-banner"]) .drift {
 
 .vt-save {
   align-self: flex-end;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 0.25rem 0.9rem;
+  font-size: 0.78rem;
 }
 
 .vt-status {
-  margin: 0.3rem 0.7rem;
+  margin: 0.3rem 0.7rem 0.3rem;
   font-size: 0.72rem;
   line-height: 1.45;
   color: var(--faint);
 }
 
-/* ── safety note ─────────────────────────────────────────────────────────── */
-
 .safety {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: max(0.8rem, env(safe-area-inset-bottom));
+  bottom: max(0.9rem, env(safe-area-inset-bottom));
   margin: 0 auto;
-  max-width: 72rem;
+  max-width: 44rem;
   padding: 0 1.5rem;
   text-align: center;
   font-size: 0.72rem;
   line-height: 1.5;
   letter-spacing: 0.03em;
-  color: rgba(240, 242, 246, 0.42);
+  color: rgba(240, 242, 246, 0.4);
   z-index: 4;
+}
+
+/* ── moods ───────────────────────────────────────────────────────────────── */
+
+body[data-mood="swell"] .horizon {
+  --boost: 1;
+}
+
+body[data-mood="stopped"] .drift {
+  opacity: 0.12;
+  animation-duration: 90s;
+}
+
+body[data-mood="stopped"] .points {
+  opacity: 0.35;
+  transition: opacity 2s var(--ease);
 }
 
 /* ── motion ──────────────────────────────────────────────────────────────── */
 
 .fade-in {
-  animation: fade-up 0.8s var(--ease) both;
+  animation: fade-up 1.2s var(--ease) both;
 }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: none; }
+  from { opacity: 0; transform: translateY(6px); filter: blur(2px); }
+  to { opacity: 1; transform: none; filter: none; }
 }
 
 @keyframes fade {
@@ -1192,19 +862,16 @@ body:has([data-testid="stop-banner"]) .drift {
   50% { opacity: 1; }
 }
 
-/* Reduced motion: the light stays still, things only fade; the spoken word is still marked, without animation. */
+/* Reduced motion: the light stays still; things only fade. */
 @media (prefers-reduced-motion: reduce) {
-  :root {
-    transition: none;
-  }
   .horizon {
-    top: 76%;
+    top: calc(76% - var(--boost) * 0%);
+    transition: none;
   }
   .drift {
     animation: none !important;
   }
-  .band,
-  .line::before {
+  .band {
     transform: none;
   }
   .pt,
@@ -1212,16 +879,13 @@ body:has([data-testid="stop-banner"]) .drift {
     transition: opacity 1.2s ease;
   }
   .fade-in,
-  .hint,
-  .stop-banner,
-  .pt.born > .pt-dot {
+  .hint {
     animation-name: fade;
   }
-  .speaking .w {
-    transition: none;
+  .pt.born .pt-dot {
+    animation-name: fade;
   }
-  .vt[data-state="listening"] .vt-icon,
-  .account .status[data-state="connecting"] .dot {
+  .vt[data-state="listening"] .vt-icon {
     animation: none;
   }
 }
@@ -1231,13 +895,13 @@ body:has([data-testid="stop-banner"]) .drift {
 @media (max-width: 640px) {
   .stage {
     height: 64%;
-    padding: 3.8rem 1.25rem 1rem;
+    padding: 3.6rem 1.25rem 1rem;
   }
-  .section-label {
+  .q-label {
     margin-bottom: 1.1rem;
     letter-spacing: 0.24em;
   }
-  .choices.big {
+  .q-choices.big {
     gap: 0.2rem 1.8rem;
   }
   .pt-words {
@@ -1245,27 +909,22 @@ body:has([data-testid="stop-banner"]) .drift {
     font-size: 0.68rem;
   }
   .safety {
-    font-size: 0.66rem;
+    font-size: 0.68rem;
     padding: 0 1.25rem;
   }
-  .corners {
-    right: 0.5rem;
+  .corner-left {
+    left: 0.5rem;
   }
-  .panel,
-  .vt-menu {
-    position: fixed;
-    left: 0.75rem;
-    right: 0.75rem;
-    width: auto;
-    top: 3.2rem;
+  .corner-right {
+    right: 0.5rem;
   }
 }
 
 @media (max-height: 640px) {
-  .section-label {
+  .q-label {
     margin-bottom: 0.8rem;
   }
-  .answer-row {
+  .q-answer {
     margin-top: 1.3rem;
   }
 }
