@@ -308,7 +308,8 @@ export function createGptLiveVoice(config: GptLiveVoiceConfig, deps: GptLiveDeps
       p.word = word;
       em.emitWord(word, p.text);
     }
-    const finishAt = Math.max(t + speakQuietMs, p.firstOutputAt + estimateSpeechMs(p.text));
+    // Once the whole line has been heard, finish soon after the voice goes quiet; until then the estimate is a floor.
+    const finishAt = word >= total - 1 ? t + speakQuietMs : Math.max(t + speakQuietMs, p.firstOutputAt + estimateSpeechMs(p.text));
     clearTimer(p.timer);
     p.timer = setT(() => settle(p), finishAt - t);
   }

@@ -14,7 +14,7 @@ import {
 import { inferModality, isCoreValue, parseAnchor, parseStateChoice, parseSubmodality, parseYesNo } from "../../src/engine/parse.ts";
 import { screenAnswer } from "../../src/engine/safety.ts";
 
-const KEYS: SuggestionSetKey[] = ["content", "destressed", "generic"];
+const KEYS: SuggestionSetKey[] = ["content", "excited", "generic"];
 const MODALITIES: SensoryModality[] = ["visual", "auditory", "kinesthetic"];
 
 test("every question has exactly two non-empty, distinct suggestions", () => {
@@ -38,7 +38,7 @@ test("question ids are stable and kinds match the flow", () => {
   assert.equal(buildQuestion({ kind: "choose-state" }).text, "What state do you want to choose?");
   assert.deepEqual(
     buildQuestion({ kind: "choose-state" }).choices.map((c) => c.value),
-    ["content", "destressed"],
+    ["content", "excited"],
   );
   assert.match(buildQuestion({ kind: "memory", state }).text, /felt totally content\?/);
   assert.equal(buildQuestion({ kind: "next-step", state, stepIndex: 2 }).id, "next-step:2");
@@ -121,7 +121,7 @@ test("modality, yes/no, anchor and state suggestions parse", () => {
     for (const a of s.anchor) assert.notEqual(parseAnchor(a, steps), null, a);
   }
   const chosen = buildQuestion({ kind: "choose-state" }).suggestions.map((t) => parseStateChoice(t)?.id);
-  assert.deepEqual(chosen, ["content", "destressed"]);
+  assert.deepEqual(chosen, ["content", "excited"]);
 });
 
 test("playback reflects the person's own words in order", () => {

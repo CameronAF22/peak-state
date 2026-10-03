@@ -1,4 +1,4 @@
-// Visual test of the Horizon design prototype (design/horizon/): the whole flow for "content" and "destressed",
+// Visual test of the Horizon design prototype (design/horizon/): the whole flow for "content" and "excited",
 // a safety stop, and a phone-width question screen. Screenshots land in design/e2e/screens/horizon/.
 // Run: cd onboarding && DESIGN_PORT=5182 npx playwright test -c design/playwright.config.ts horizon.spec.ts
 
@@ -22,7 +22,7 @@ const STRATEGY_KEY = "peak-state.harness.strategy";
 const RUNS_KEY = "peak-state.harness.runs";
 const HINT_DELAY = 5000;
 const MAX_ITERATIONS = 80;
-const TARGET_STEPS: Record<PresetState, number> = { content: 2, destressed: 3 };
+const TARGET_STEPS: Record<PresetState, number> = { content: 2, excited: 3 };
 /** Lets fades (1.2 s) and the horizon's slow rise settle before a screenshot. */
 const SETTLE_MS = 1700;
 
@@ -94,7 +94,7 @@ function readRuns(page: Page): Promise<RepSession[]> {
   return page.evaluate((k) => JSON.parse(localStorage.getItem(k) ?? "[]") as RepSession[], RUNS_KEY);
 }
 
-for (const state of ["content", "destressed"] as const) {
+for (const state of ["content", "excited"] as const) {
   test(`horizon: ${state}`, async ({ page }) => {
     test.setTimeout(180_000);
     const target = TARGET_STEPS[state];
@@ -102,7 +102,7 @@ for (const state of ["content", "destressed"] as const) {
     const stateWord = new RegExp(state, "i");
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
-    // "content" proves the real 5 s hint delay; "destressed" runs with a shorter one.
+    // "content" proves the real 5 s hint delay; "excited" runs with a shorter one.
     const delay = state === "content" ? HINT_DELAY : 4000;
     const query = state === "content" ? "?voice=typed&speed=fast" : `?voice=typed&speed=fast&hint=${delay}`;
 
@@ -116,7 +116,7 @@ for (const state of ["content", "destressed"] as const) {
     expect(s.question?.kind).toBe("choose-state");
     await expect(page.getByTestId("question")).toHaveText(/what state/i);
     await expect(page.locator('[data-testid="choice"][data-value="content"]')).toBeVisible();
-    await expect(page.locator('[data-testid="choice"][data-value="destressed"]')).toBeVisible();
+    await expect(page.locator('[data-testid="choice"][data-value="excited"]')).toBeVisible();
     await expect(page.getByTestId("answer-input")).toBeVisible();
     await expect(page.getByTestId("safety-note")).toBeVisible();
     await expect(page.getByTestId("voice-toggle")).toBeVisible();

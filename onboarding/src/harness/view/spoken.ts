@@ -18,6 +18,9 @@ interface Current {
 
 /** How long to wait for the adapter's first word before estimating instead. */
 const ADAPTER_GRACE_MS = 1600;
+/** GPT live starts later (the line is sent, then spoken, often after a soft "Mm.") and speaks slowly (D-onboarding-028). */
+const GPT_LIVE_GRACE_MS = 3500;
+const GPT_LIVE_WORDS_PER_SECOND = 2;
 
 let voice: VoiceAdapter | null = null;
 let current: Current | null = null;
@@ -59,7 +62,8 @@ function finish(c: Current): void {
 }
 
 function estimate(c: Current, startedAt: number): void {
-  const timeline = wordTimeline(c.spans.map((s) => s.textContent ?? ""));
+  const pace = voice?.kind === "gpt-live" ? { wordsPerSecond: GPT_LIVE_WORDS_PER_SECOND } : {};
+  const timeline = wordTimeline(c.spans.map((s) => s.textContent ?? ""), pace);
   const tick = (): void => {
     if (current !== c || c.live) return;
     const elapsed = performance.now() - startedAt;
@@ -88,7 +92,7 @@ export function followSpoken(el: HTMLElement, text: string): void {
   // A real voice: wait for its word events, and estimate if none come (speech unavailable, no boundary events).
   c.timer = setTimeout(() => {
     if (current === c && !c.live) estimate(c, performance.now());
-  }, ADAPTER_GRACE_MS);
+  }, voice.kind === "gpt-live" ? GPT_LIVE_GRACE_MS : ADAPTER_GRACE_MS);
 }
 
 /** Stop highlighting (the line was replaced or the run ended). */

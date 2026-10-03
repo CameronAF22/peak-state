@@ -29,5 +29,7 @@ export function parseRating(text: string): number | null {
   }
   const word = /\b(zero|nought|one|two|three|four|five|six|seven|eight|nine|ten)\b/.exec(t.replace(/\bnot one\b|\bno one\b|\bsomeone\b|\banyone\b|\bthat one\b|\bthis one\b/g, " "));
   if (word) return WORDS[word[1]];
+  // "nothing", "not at all", "none" with no number: a zero, not a missing answer.
+  if (/\b(nothing|none|not at all|no feeling|not even a little)\b/.test(t)) return 0;
   return null;
 }

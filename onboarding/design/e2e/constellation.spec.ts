@@ -1,5 +1,5 @@
 // Visual test of the Constellation design prototype (design/constellation/): the whole question flow for
-// "content" and "destressed", with full-page screenshots at each checkpoint in design/e2e/screens/constellation/.
+// "content" and "excited", with full-page screenshots at each checkpoint in design/e2e/screens/constellation/.
 // Driven by window.__harness.snapshot().question.kind, so it follows whatever path the engine takes.
 // Run: cd onboarding && DESIGN_PORT=5183 npx playwright test -c design/playwright.config.ts constellation.spec.ts
 
@@ -26,7 +26,7 @@ const BEFORE_HINT_CHECK = 3800;
 /** Words fade in over ~1.1 s; hints over ~2 s. Screenshots wait for them. */
 const FADE = 1300;
 const MAX_ITERATIONS = 80;
-const TARGET_STEPS: Record<PresetState, number> = { content: 2, destressed: 3 };
+const TARGET_STEPS: Record<PresetState, number> = { content: 2, excited: 3 };
 
 /** When the current question was first seen (the hint countdown starts then). */
 let questionAt = 0;
@@ -98,7 +98,7 @@ async function fresh(page: Page, query = "?voice=typed&speed=fast"): Promise<voi
   await page.waitForFunction(() => typeof window.__harness?.snapshot === "function");
 }
 
-for (const state of ["content", "destressed"] as const) {
+for (const state of ["content", "excited"] as const) {
   test(`constellation: ${state}`, async ({ page }, testInfo) => {
     const target = TARGET_STEPS[state];
     const stateWord = new RegExp(state, "i");
@@ -109,7 +109,7 @@ for (const state of ["content", "destressed"] as const) {
     // The quiet safety line is always there.
     await expect(page.getByTestId("safety-note")).toBeVisible();
     await expect(page.getByTestId("safety-note")).toContainText(/not therapy/i);
-    await expect(page.getByTestId("voice-toggle")).toBeVisible();
+    await expect(page.locator(".voice-toggle")).toBeVisible(); // the prototype's own toggle; the harness menu inside its panel has the same test id
 
     // 01 · choose state: two presets and a field for your own
     let s = await snap(page);
@@ -117,7 +117,7 @@ for (const state of ["content", "destressed"] as const) {
     await expect(page.getByTestId("question")).toHaveText(/what state/i);
     await expect(page.getByTestId("question")).toHaveCount(1);
     await expect(page.locator('[data-testid="choice"][data-value="content"]')).toBeVisible();
-    await expect(page.locator('[data-testid="choice"][data-value="destressed"]')).toBeVisible();
+    await expect(page.locator('[data-testid="choice"][data-value="excited"]')).toBeVisible();
     await expect(page.getByTestId("answer-input")).toHaveAttribute("placeholder", /your own/i);
     await expect(page.getByTestId("suggestion")).toHaveCount(0);
     await expect(page.getByTestId("step")).toHaveCount(0);

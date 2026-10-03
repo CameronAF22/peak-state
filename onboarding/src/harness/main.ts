@@ -15,7 +15,9 @@ import { loadRecord, newRecord, saveRecord, type StrategyRecord } from "../store
 import { createApi, pushRecord, syncAll, type ServerInfo } from "../sync/index.ts";
 import type { Answer, EngineSnapshot, VoiceAdapter, VoiceKind, VoiceStatus } from "../types.ts";
 import { createVoice, loadVoiceSettings, saveVoiceSettings, type VoiceSettings } from "../voice/index.ts";
-import { createInterpreter, type AnswerContext } from "../voice/interpret.ts";
+import { createInterpreter, type AnswerContext, type Interpretation } from "../voice/interpret.ts";
+import { screenAnswer, STOP_MESSAGE } from "../engine/safety.ts";
+import { parseRating } from "../practice/rating.ts";
 import { splitWords, wordTimeline } from "../voice/words.ts";
 import { createHintTimer, hintDelayFromUrl } from "./hints.ts";
 import { createAccountControls } from "./view/account.ts";
@@ -26,6 +28,7 @@ import { createQuestionView } from "./view/question.ts";
 import { createPlaybackPanel, renderRunLog, renderSavedCard, type PlaybackPanel } from "./view/saved.ts";
 import { chainFromProfile, renderSteps, stepViewsFromProfile } from "./view/steps.ts";
 import { createVoiceControls } from "./view/voice.ts";
+import { createOuraWidget } from "./view/oura.ts";
 
 /** Exposed on window.__harness for tests and debugging. */
 export interface HarnessApi {
@@ -131,7 +134,12 @@ async function switchVoice(start: boolean): Promise<void> {
 
 // What the guide is waiting for, so GPT live waits the right time and the clean-up has context (D-onboarding-028).
 const CHOICE_KINDS = new Set(["choose-state", "modality", "submodality", "fully-in", "anchor", "confirm"]);
-const interpret = createInterpreter({ headers: () => api.authHeaders() });
+const cleanup = createInterpreter({ headers: () => api.authHeaders() });
+/** The safety screen sees what was actually heard: words it flags skip the clean-up and go straight to the engine. */
+function interpret(ctx: AnswerContext, heard: string): Promise<Interpretation> {
+  if (!screenAnswer(heard).ok) return Promise.resolve({ verdict: "answer", text: heard.trim() });
+  return cleanup(ctx, heard);
+}
 
 function answerContext(): AnswerContext | null {
   if (mode === "saved") {
@@ -150,14 +158,6 @@ function speak(text: string): void {
   voice.speak(text).catch(() => {});
 }
 
-const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
-function spokenNumber(text: string): number | null {
-  const digits = text.match(/\b(10|[0-9])\b/);
-  if (digits) return Number(digits[1]);
-  const lower = text.toLowerCase();
-  const i = NUMBER_WORDS.findIndex((w) => new RegExp(`\\b${w}\\b`).test(lower));
-  return i >= 0 ? i : null;
-}
 
 function onTranscript(text: string, final: boolean): void {
   if (mode === "saved" && practice && practice.snapshot().prompt) {
@@ -166,8 +166,15 @@ function onTranscript(text: string, final: boolean): void {
     return;
   }
   if (mode === "saved") {
-    if (final && panel) {
-      const n = spokenNumber(text);
+    if (!final) return;
+    // Voice during a run is screened too; a stop line ends the run and shows the help message.
+    if (!screenAnswer(text).ok) {
+      stopRequested = true;
+      showSafetyStop();
+      return;
+    }
+    if (panel) {
+      const n = parseRating(text);
       if (n !== null) panel.answerRating(n);
     }
     return;
@@ -190,8 +197,8 @@ const hints = createHintTimer(hintDelay, (qid) => {
 
 const questionView = createQuestionView({
   answer: (a) => answer(a),
-  back: () => apply(engine.back()),
-  reset: () => apply(engine.reset()),
+  back: () => goBack(),
+  reset: () => startOver(),
   activity: () => hints.activity(),
 });
 
@@ -205,15 +212,56 @@ function questionKey(s: EngineSnapshot): string {
 
 let lastKey = "";
 
+// ── the first session survives a reload (draft of the engine's answer log) ──
+
+const DRAFT_KEY = "peak-state.harness.draft";
+const DRAFT_MAX_AGE_MS = 14 * 86_400_000;
+let draft: Answer[] = [];
+
+function saveDraft(): void {
+  try {
+    if (draft.length) localStorage.setItem(DRAFT_KEY, JSON.stringify({ answers: draft, savedAt: Date.now() }));
+    else localStorage.removeItem(DRAFT_KEY);
+  } catch {
+    /* storage blocked: the draft lives for this page only */
+  }
+}
+
+function loadDraft(): Answer[] {
+  try {
+    const v = JSON.parse(localStorage.getItem(DRAFT_KEY) ?? "null") as { answers?: Answer[]; savedAt?: number } | null;
+    if (!v || !Array.isArray(v.answers) || Date.now() - (v.savedAt ?? 0) > DRAFT_MAX_AGE_MS) return [];
+    return v.answers.filter((a) => a && typeof a.text === "string" && typeof a.via === "string");
+  } catch {
+    return [];
+  }
+}
+
 function answer(a: Answer): void {
   hints.cancel();
+  draft.push(a);
   apply(engine.answer(a));
+  saveDraft();
+}
+
+function goBack(): void {
+  draft.pop();
+  apply(engine.back());
+  saveDraft();
+}
+
+function startOver(): void {
+  draft = [];
+  apply(engine.reset());
+  saveDraft();
 }
 
 function apply(next: EngineSnapshot): void {
   snap = next;
   if (snap.status === "confirmed" && snap.profile) {
     hints.cancel();
+    draft = [];
+    saveDraft();
     saved = saveRecord(newRecord(snap.profile));
     void pushStrategy();
     mode = "saved";
@@ -250,7 +298,7 @@ function renderStop(): void {
       h("h2", {}, "Let's stop here"),
       h("p", {}, snap.stopReason ?? "Peak State is not the right support for this."),
       h("p", {}, "If you are in distress, reach out to someone you trust or local emergency services."),
-      h("div", {}, h("button", { class: "btn", type: "button", "data-testid": "reset", onclick: () => apply(engine.reset()) }, "Start over")),
+      h("div", {}, h("button", { class: "btn", type: "button", "data-testid": "reset", onclick: () => startOver() }, "Start over")),
     ),
   );
 }
@@ -336,9 +384,28 @@ function renderSavedMode(): void {
   });
 }
 
+/** Set when voice during a run hit the safety screen; shown above the saved view until the next run or new strategy. */
+let safetyStop = false;
+
+function showSafetyStop(): void {
+  safetyStop = true;
+  speak(STOP_MESSAGE);
+  render();
+}
+
 function render(): void {
   if (mode === "saved") renderSavedMode();
   else renderElicit();
+  if (mode === "saved" && safetyStop) {
+    mainCol.prepend(
+      h(
+        "div",
+        { class: "stop-banner", "data-testid": "stop-banner", role: "alert" },
+        h("h2", {}, "Let's stop here"),
+        h("p", {}, STOP_MESSAGE),
+      ),
+    );
+  }
 }
 
 function download(): void {
@@ -356,13 +423,14 @@ function download(): void {
 function newStrategy(): void {
   if (running || practiceOpen()) return;
   clearStrategy();
+  safetyStop = false;
   saved = null;
   panel = null;
   practice = null;
   activeStep = null;
   mode = "elicit";
   lastKey = "";
-  apply(engine.reset());
+  startOver();
 }
 
 /** How long to leave a line on screen when nothing is spoken (typed voice): the paced word estimate, so the
@@ -388,6 +456,7 @@ async function run(mode: { trigger?: RepSession["trigger"]; kind?: RepSession["k
   const st = savedState();
   if (running || practiceOpen() || !saved || !st) return;
   practice = null;
+  safetyStop = false;
   const profile = saved.profile;
   running = true;
   stopRequested = false;
@@ -505,7 +574,8 @@ function startPractice(): void {
     record: saved,
     stateId: st.stateId,
     priorRuns: runs.length,
-    questionOffset: runs.filter((r) => r.trigger.kind === "practice" && r.endedBy === "completed").length,
+    // Only practice-loop tries move the detail rotation (their ids end in the try number); plain runs do not.
+    questionOffset: runs.filter((r) => r.trigger.kind === "practice" && r.endedBy === "completed" && /_\d+$/.test(r.id)).length,
     onChange: (record) => {
       saved = saveRecord(record);
       void pushStrategy();
@@ -605,6 +675,8 @@ async function pushRuns(runs: RepSession[]): Promise<void> {
   }
 }
 
+let syncedOnce = false;
+
 async function sync(): Promise<void> {
   if (!api.account() || syncing) return;
   syncing = true;
@@ -612,9 +684,17 @@ async function sync(): Promise<void> {
   try {
     const result = await syncAll(api);
     syncNote = null;
-    if (!running && !practiceOpen() && result.record) {
-      const untouched = !snap.transcript.some((t) => t.who === "person");
-      if (mode === "saved" || untouched) {
+    const first = !syncedOnce;
+    syncedOnce = true;
+    if (!running && !practiceOpen() && result.record && (mode === "saved" || first)) {
+      // On arrival, the account's saved strategy wins over an unfinished first session on this device, so a second
+      // device never replaces it by accident; the draft is dropped. Later syncs leave a new strategy in progress alone.
+      if (mode !== "saved") {
+        draft = [];
+        saveDraft();
+        snap = engine.reset();
+      }
+      {
         saved = result.record;
         mode = "saved";
         render();
@@ -643,6 +723,26 @@ const harnessApi: HarnessApi = {
 };
 (window as unknown as { __harness: HarnessApi }).__harness = harnessApi;
 
+// The mocked Oura Ring trigger for the demo (D-onboarding-029). ?oura=off hides it.
+if (params.get("oura") !== "off") document.body.append(createOuraWidget());
+
+// Send what did not reach the account when the connection or the tab comes back.
+addEventListener("online", () => void sync());
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && server) void sync();
+});
+
+// Pick up an unfinished first session where it was left (the engine is a pure function of its answers).
+if (mode === "elicit") {
+  for (const a of loadDraft()) {
+    const next = engine.answer(a);
+    if (next.status === "stopped") break;
+    draft.push(a);
+    snap = next;
+  }
+  if (snap.status === "confirmed") apply(snap);
+}
+
 render();
 void switchVoice(settings.kind === "typed");
 void api.health().then((info) => {
@@ -654,7 +754,8 @@ void api.health().then((info) => {
 // Speech and microphones need a user gesture: start a remembered non-typed voice on the first interaction.
 if (settings.kind !== "typed") {
   const startOnGesture = (e: Event): void => {
-    if ((e.target as Element | null)?.closest?.("#voice-root")) return; // the voice controls handle themselves
+    // The voice controls handle themselves; opening the Oura card is not a cue to start the voice.
+    if ((e.target as Element | null)?.closest?.("#voice-root, .oura")) return;
     window.removeEventListener("pointerdown", startOnGesture, true);
     window.removeEventListener("keydown", startOnGesture, true);
     if (voiceStarted) return;

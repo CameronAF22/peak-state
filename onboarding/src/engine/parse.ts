@@ -273,7 +273,7 @@ export interface StateChoice {
   words: string;
 }
 
-const PRESET_LABEL: Record<PresetState, string> = { content: "Content", destressed: "Destressed" };
+const PRESET_LABEL: Record<PresetState, string> = { content: "Content", excited: "Excited" };
 
 /** A state id from a label: lower-case, dashes, starts with a letter, at most 32 characters. */
 export function slugify(label: string): StateId {
@@ -287,7 +287,7 @@ export function slugify(label: string): StateId {
 
 function presetFrom(lead: string): PresetState | null {
   if (/^content(ed)?\b/.test(lead)) return "content";
-  if (/^(de-?stress(ed)?|un-?stressed|stress[- ]free)\b/.test(lead)) return "destressed";
+  if (/^(excited|exciting|energi[sz]ed|pumped|buzzing|fired[- ]up|thrilled)\b/.test(lead)) return "excited";
   return null;
 }
 
@@ -297,7 +297,7 @@ function presetFrom(lead: string): PresetState | null {
  */
 export function parseStateChoice(text: string, choiceValue?: string): StateChoice | null {
   const words = text.trim();
-  if (choiceValue === "content" || choiceValue === "destressed") {
+  if (choiceValue === "content" || choiceValue === "excited") {
     return { preset: choiceValue, id: choiceValue, label: PRESET_LABEL[choiceValue], phrase: choiceValue, words: words || PRESET_LABEL[choiceValue] };
   }
   const lead = words

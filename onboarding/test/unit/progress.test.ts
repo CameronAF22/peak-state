@@ -39,7 +39,7 @@ test("summarize counts times chosen, good reps, trend and the day streak", () =>
     rep({ startedAt: "2026-10-03T11:00:00.000Z", endedBy: "user-stop", intensityAfter: null }),
     rep({ startedAt: "2026-10-03T12:00:00.000Z", stateId: "other" }),
   ];
-  const p = summarize(runs, "content");
+  const p = summarize(runs, "content", Date.parse("2026-10-03T20:00:00.000Z"));
   assert.equal(p.timesChosen, 4);
   assert.equal(p.goodReps, 2);
   assert.deepEqual(p.trend, [5, 7, 9, 8]);
@@ -56,4 +56,13 @@ test("reminder wording for none, one and all-good", () => {
   assert.equal(reminderLine(summarize([rep({ intensityAfter: 4 })], "content"), "content"), "You've chosen to feel content once.");
   const two = [rep({ startedAt: "2026-10-01T09:00:00.000Z" }), rep({ startedAt: "2026-10-01T10:00:00.000Z" })];
   assert.equal(reminderLine(summarize(two, "content"), "content"), "You've chosen to feel content twice. Every one took you to 7 out of 10 or higher.");
+});
+
+test("day streak counts back from today in local days; an old run of days is not a streak", () => {
+  const now = Date.parse("2026-10-03T20:00:00.000Z");
+  const at = (daysAgo: number) => new Date(now - daysAgo * 86_400_000).toISOString();
+  const recent = [rep({ startedAt: at(0) }), rep({ startedAt: at(1) }), rep({ startedAt: at(2) })];
+  assert.equal(summarize(recent, "content", now).dayStreak, 3);
+  assert.equal(summarize(recent, "content", now + 86_400_000).dayStreak, 3, "a run yesterday keeps it alive");
+  assert.equal(summarize(recent, "content", now + 3 * 86_400_000).dayStreak, 0, "three days later it has lapsed");
 });

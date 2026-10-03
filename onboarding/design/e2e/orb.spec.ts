@@ -1,4 +1,4 @@
-// Visual test of the Orb prototype (design/orb/): the full flow for "content" and "destressed", one safety stop,
+// Visual test of the Orb prototype (design/orb/): the full flow for "content" and "excited", one safety stop,
 // and a phone-width question screen. Screenshots land in design/e2e/screens/orb/.
 // Run: cd onboarding && DESIGN_PORT=5181 npx playwright test -c design/playwright.config.ts orb.spec.ts
 
@@ -21,7 +21,7 @@ const SHOTS = join(dirname(fileURLToPath(import.meta.url)), "screens", "orb");
 const STRATEGY_KEY = "peak-state.harness.strategy";
 const RUNS_KEY = "peak-state.harness.runs";
 const HINT_DELAY = 5000;
-const TARGET_STEPS: Record<PresetState, number> = { content: 2, destressed: 3 };
+const TARGET_STEPS: Record<PresetState, number> = { content: 2, excited: 3 };
 /** Lets fades settle before a screenshot. */
 const SETTLE = 1700;
 
@@ -90,7 +90,7 @@ async function fresh(page: Page, query = "?voice=typed"): Promise<void> {
   await page.waitForFunction(() => typeof window.__harness?.snapshot === "function");
 }
 
-for (const state of ["content", "destressed"] as const) {
+for (const state of ["content", "excited"] as const) {
   test(`orb: ${state}`, async ({ page }) => {
     const target = TARGET_STEPS[state];
     const name = (nn: number, label: string) => `${state}-${String(nn).padStart(2, "0")}-${label}`;
@@ -99,7 +99,7 @@ for (const state of ["content", "destressed"] as const) {
 
     await fresh(page);
     await expect(page.getByTestId("safety-note")).toBeVisible();
-    await expect(page.getByTestId("voice-toggle")).toBeVisible();
+    await expect(page.locator(".voice-toggle")).toBeVisible(); // the prototype's own toggle; the harness menu inside its panel has the same test id
 
     // 01 · choose a state: two words and an underline for your own
     let s = await snap(page);
@@ -107,7 +107,7 @@ for (const state of ["content", "destressed"] as const) {
     await expect(page.getByTestId("question")).toHaveText(/what state/i);
     await expect(page.getByTestId("question")).toHaveCount(1);
     await expect(page.locator('[data-testid="choice"][data-value="content"]')).toBeVisible();
-    await expect(page.locator('[data-testid="choice"][data-value="destressed"]')).toBeVisible();
+    await expect(page.locator('[data-testid="choice"][data-value="excited"]')).toBeVisible();
     await expect(page.getByTestId("answer-input")).toHaveAttribute("placeholder", /your own/);
     await expect(page.getByTestId("satellite")).toHaveCount(0);
     await shot(page, name(1, "choose-state"));

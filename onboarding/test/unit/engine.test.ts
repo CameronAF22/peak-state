@@ -45,13 +45,13 @@ function assertEventsValid(events: OnboardingEvent[]) {
   }
 }
 
-test("first question is choose-state with Content and Destressed", () => {
+test("first question is choose-state with Content and Excited", () => {
   const { engine, events } = setup();
   const s = engine.snapshot();
   assert.equal(s.status, "asking");
   assert.equal(s.question?.kind, "choose-state");
   assert.equal(s.question?.text, "What state do you want to choose?");
-  assert.deepEqual(s.question?.choices.map((c) => c.label), ["Content", "Destressed"]);
+  assert.deepEqual(s.question?.choices.map((c) => c.label), ["Content", "Excited"]);
   assert.equal(events[0].type, "guideTurn");
   assert.deepEqual(s.transcript, [{ who: "guide", text: "What state do you want to choose?" }]);
 });
@@ -134,24 +134,24 @@ test("content: two steps, answered only with suggestions and choices, reaches a 
   assert.equal(confirmQ, "So first you saw the evening light on the water, and then you felt your shoulders drop. Is that the order?");
 });
 
-test("destressed: three steps, answered only with suggestions and choices, reaches a valid confirmed profile", () => {
+test("excited: three steps, answered only with suggestions and choices, reaches a valid confirmed profile", () => {
   const { engine, events } = setup();
   const snap = drive(engine, (q) => {
     switch (q.kind) {
       case "choose-state":
-        return suggestion(q, 1); // "Destressed, like the weight is off"
+        return suggestion(q, 1); // "Excited, like something great is about to happen"
       case "memory":
         return suggestion(q, 1);
       case "first-step":
-        return suggestion(q, 1); // heard the rain
+        return suggestion(q, 1); // heard the opening beat
       case "next-step":
-        return suggestion(q, 0); // said to myself / felt my jaw unclench
+        return suggestion(q, 0); // said to myself / felt a buzz
       case "submodality":
         return q.target?.attribute === "volume" ? suggestion(q, 0) : suggestion(q, 1);
       case "fully-in":
         if (q.id === "fully-in:0") return suggestion(q, 1); // "No, there was a next thing"
         if (q.id === "fully-in:1") return choice(q, "no");
-        return suggestion(q, 0); // "Yes, fully destressed right there"
+        return suggestion(q, 0); // "Yes, fully excited right there"
       case "anchor":
         return suggestion(q, 1); // "The last one, ..."
       case "confirm":
@@ -166,17 +166,17 @@ test("destressed: three steps, answered only with suggestions and choices, reach
   const r = validateProfile(snap.profile);
   assert.ok(r.ok, r.errors.join("\n"));
   const st = snap.profile.states[0];
-  assert.equal(st.id, "destressed");
-  assert.equal(st.label, "Destressed");
-  assert.equal(st.words, "Destressed, like the weight is off");
+  assert.equal(st.id, "excited");
+  assert.equal(st.label, "Excited");
+  assert.equal(st.words, "Excited, like something great is about to happen");
   assert.equal(snap.chain, "Ae → Ai → Ki");
   assert.equal(st.strategy.steps.length, 3);
   assert.equal(st.strategy.fullyInAt, 2);
   assert.equal(st.anchorStep, 2);
   const [a0, a1, k2] = st.strategy.steps;
-  assert.deepEqual(coreOf(a0), { source: "The rain on the window", volume: "quiet", location: "behind" });
-  assert.deepEqual(coreOf(a1), { source: "The rain on the window", volume: "quiet", location: "behind" });
-  assert.deepEqual(coreOf(k2), { bodyLocation: "whole-body", intensity: 5, movement: "still" });
+  assert.deepEqual(coreOf(a0), { source: "My own voice saying, let's go", volume: "loud", location: "front" });
+  assert.deepEqual(coreOf(a1), { source: "My own voice saying, let's go", volume: "loud", location: "front" });
+  assert.deepEqual(coreOf(k2), { bodyLocation: "arms", intensity: 7, movement: "still" });
   assertEventsValid(events);
   assert.equal(events.at(-1)?.type, "confirmed");
 });
@@ -271,7 +271,7 @@ test("back() undoes the last answer and reset() starts over", () => {
   assert.equal(s.question?.kind, "choose-state");
   assert.equal(s.stateId, null);
   assert.equal(engine.back().question?.kind, "choose-state");
-  engine.answer({ text: "Destressed", via: "choice", choiceValue: "destressed" });
+  engine.answer({ text: "Excited", via: "choice", choiceValue: "excited" });
   s = engine.reset();
   assert.equal(s.question?.kind, "choose-state");
   assert.equal(s.transcript.length, 1);
@@ -316,7 +316,7 @@ test("maxSteps caps the step loop and treats the last step as fully in", () => {
   assert.ok(validateProfile(snap.profile).ok);
 
   const def = setup();
-  const s6 = drive(def.engine, (q) => (q.kind === "choose-state" ? choice(q, "destressed") : q.kind === "fully-in" ? choice(q, "no") : q.kind === "anchor" ? choice(q, "3") : q.kind === "confirm" ? choice(q, "yes") : suggestion(q, 1)));
+  const s6 = drive(def.engine, (q) => (q.kind === "choose-state" ? choice(q, "excited") : q.kind === "fully-in" ? choice(q, "no") : q.kind === "anchor" ? choice(q, "3") : q.kind === "confirm" ? choice(q, "yes") : suggestion(q, 1)));
   assert.equal(s6.profile?.states[0].strategy.steps.length, 6);
   assert.equal(s6.fullyInAt, 5);
   assert.ok(validateProfile(s6.profile).ok);

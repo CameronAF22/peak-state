@@ -187,7 +187,7 @@ test("answer interpret: needs an account and the server key, sends the Responses
     const out = { output: [{ type: "message", content: [{ type: "output_text", text: '{"verdict":"answer","text":"Content"}' }] }] };
     return new Response(JSON.stringify(out), { status: 200 });
   }) as unknown as typeof fetch;
-  const asked = { question: "What state do you want to choose?", choices: ["Content", "Destressed"], expects: "choice", heard: "uh con tent" };
+  const asked = { question: "What state do you want to choose?", choices: ["Content", "Excited"], expects: "choice", heard: "uh con tent" };
 
   const off = server();
   const tOff = (await off.call("POST", "/api/accounts", { email: "a@example.com", code: CODE })).body.token;

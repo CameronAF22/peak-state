@@ -300,3 +300,11 @@ test("labels in the person's words are spoken in the guide's voice", () => {
   while (s.phase === "recall") s = l.answer({ text: "next", via: "choice", choiceValue: "next" });
   assert.equal(s.prompt!.text, "How close did you get to feeling playful with your kids, from 0 to 10?");
 });
+
+test("ratings: 'nothing' or 'not at all' with no number is a zero", async () => {
+  const { parseRating } = await import("../../src/practice/rating.ts");
+  assert.equal(parseRating("nothing really"), 0);
+  assert.equal(parseRating("not at all"), 0);
+  assert.equal(parseRating("none of it, maybe a six"), 6);
+  assert.equal(parseRating("out of 10, I'd say 7"), 7);
+});

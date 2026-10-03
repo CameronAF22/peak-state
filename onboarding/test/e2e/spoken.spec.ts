@@ -55,7 +55,7 @@ test("spoken-word highlight under reduced motion: still marked, no transition", 
   const page = await ctx.newPage();
   await page.goto(`${HARNESS_PATH}?voice=typed&hint=60000`);
   await page.waitForFunction(() => typeof (window as unknown as { __harness?: unknown }).__harness === "object");
-  await page.locator('[data-testid="choice"][data-value="destressed"]').click();
+  await page.locator('[data-testid="choice"][data-value="excited"]').click();
   const now = page.getByTestId("question").locator(".w.now");
   await expect(now).toHaveCount(1);
   expect(await now.evaluate((e) => getComputedStyle(e).transitionDuration)).toBe("0s");
