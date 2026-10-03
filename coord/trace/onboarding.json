@@ -18,9 +18,10 @@
     },
     {
       "path": "onboarding/PLAN.md",
-      "sha256": "1185ceb4485676807923a40020e5e2aecd64cf4a1766831575d827249ca075c8",
+      "sha256": "7913904371a4b00080c0195c0300ff6664e688c7dbe58f12d52af3a31c28017a",
       "decisions": [
-        "D-onboarding-001"
+        "D-onboarding-001",
+        "D-onboarding-011"
       ]
     },
     {

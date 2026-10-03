@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-006",
+  "lane": "onboarding",
+  "title": "Onboarding runs the voice playbook for one person-chosen state, repeatable up to three times",
+  "status": "accepted",
+  "type": "product",
+  "context": "D-coord-011 and D-coord-012 changed scope from three emotions with fixed triad slots to one state elicited as ordered steps with submodalities. D-onboarding-003 assumed three emotions and physiology, focus, language slots.",
+  "decision": "The onboarding conversation is docs/hackathon/elicitation-playbook.md, sections 1 to 4, for one state the person names in their own words (no menu): 1 strategy steps in order (first trigger, then each next step until fully in) with playback of the order; 2 core submodalities per step for that step's modality only (extended only if time), plus the anchor-step question; 3 a mild contrast, the same submodality questions, a break state, the computed differences, one-at-a-time rating deltas, and 1 to 3 drivers read back as hypotheses; 4 recode, test (before/after 0-10), future pace and a final playback, which sets confirmedAt. The script is data, a list of phases and questions parameterised by state, so the next version loops it once per emotion with no code change. Nothing is saved that the person did not say and confirm; the guide only offers a modality menu and accepts any answer.",
+  "alternatives": [
+    "Keep the triad slots and map them later (loses step order, which the method says matters)",
+    "Run all three emotions now (triples a 6 to 10 minute session; deferred by D-coord-011)"
+  ],
+  "consequences": "",
+  "produces": [
+    "prompts/playbook-voice.md",
+    "onboarding/script/"
+  ],
+  "dependsOn": [
+    "D-coord-011",
+    "D-coord-012"
+  ],
+  "supersedes": [
+    "D-onboarding-003"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  },
+  "createdAt": "2026-10-03T14:35:01Z",
+  "acceptedAt": "2026-10-03T14:35:01Z",
+  "acceptedBy": "claude"
+}

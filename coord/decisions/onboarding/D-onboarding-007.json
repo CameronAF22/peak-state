@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-007",
+  "lane": "onboarding",
+  "title": "Voice-first stack for onboarding: speech in and out primary, transcript, typed and scripted fallbacks",
+  "status": "proposed",
+  "type": "technical",
+  "context": "D-coord-011 makes onboarding voice-first. D-coord-006 requires the demo to run offline once loaded, so a networked model and cloud speech cannot be the only path. Provider choice (model, and whether to use a realtime voice API instead of Web Speech) is for a person.",
+  "decision": "Speech is the primary surface: the guide speaks every question and listens for the answer, with barge-in (the person can interrupt) and end-of-turn on silence. The screen shows the live transcript and the step chain (e.g. Ve -> Ai -> Ki) filling in. Default browser stack: Web Speech API (SpeechRecognition for input, speechSynthesis for output) so it works with no server. The model behind the conversation is a person's pick; my proposal is Claude (claude-sonnet-5-5) driving the playbook through structured tool calls (set-state, add-step, set-submodality, set-contrast, set-rating, confirm), so it never speaks JSON. Fallbacks, in order: typed input with spoken or silent output; a deterministic scripted path with recorded answers that needs no network, no key and no microphone (the stage default, fast-forwardable). Every path emits the same event log into one extractor.",
+  "alternatives": [
+    "Realtime speech-to-speech API (GPT Live 1 or similar) as the whole stack: best latency and prosody, needs network, a key and a server, hard to make deterministic",
+    "Cloud STT/TTS (e.g. Whisper plus a neural TTS) with a text LLM: better recognition than Web Speech, needs network",
+    "Claude Opus for elicitation quality at higher latency"
+  ],
+  "consequences": "",
+  "produces": [
+    "onboarding/conversation/",
+    "onboarding/voice/"
+  ],
+  "dependsOn": [
+    "D-coord-006",
+    "D-coord-011",
+    "D-onboarding-006"
+  ],
+  "supersedes": [
+    "D-onboarding-002"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  },
+  "createdAt": "2026-10-03T14:35:02Z"
+}

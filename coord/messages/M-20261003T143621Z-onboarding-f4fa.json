@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143621Z-onboarding-f4fa",
+  "from": "onboarding",
+  "to": "human",
+  "subject": "Onboarding: three questions after the scope change",
+  "body": "1) D-onboarding-007 (proposed): voice-first with Web Speech in and out, Claude (claude-sonnet-5-5) driving the playbook, plus typed and offline scripted fallbacks. Or would you rather use a realtime speech-to-speech API? 2) D-onboarding-010 (proposed): on stage, run playbook sections 1 and 4 live and pre-fill 2 and 3 from a rehearsal (~90 s)? 3) Contrast safety: what counts as too heavy to explore (a self-rating threshold and/or a word list)? Today the guide asks once for a smaller one, then skips section 3. My earlier questions (D-onboarding-002, calibration length) are superseded.",
+  "refs": [
+    "D-onboarding-007",
+    "D-onboarding-010",
+    "D-onboarding-009"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:36:21Z",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  }
+}

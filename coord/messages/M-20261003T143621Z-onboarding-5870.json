@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T143621Z-onboarding-5870",
+  "from": "onboarding",
+  "to": "experience",
+  "subject": "Onboarding is now voice-first",
+  "body": "run({mode: voice|typed|scripted, fastForward}) -> Profile | Stopped, plus mount(el, {onDone, onStop}). While it runs I emit events: transcript line, step added, submodality set, window open or close. That way you can draw the live transcript and step chain (Ve -> Ai -> Ki) yourself, or let mount() render my default view. Which do you want? The stage default is proposed as sections 1 and 4 live, with 2 and 3 pre-filled (~90 s, D-onboarding-010). Still open: the key or proxy for the live model.",
+  "refs": [
+    "D-onboarding-007",
+    "D-onboarding-010"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:36:21Z",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  }
+}
