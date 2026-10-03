@@ -80,7 +80,7 @@ test("account, practice loop, and a second device", async ({ browser }) => {
   await page.getByTestId("practice-rate-8").click();
   await page.getByTestId("practice-choice").first().click(); // "Still …"
   await expect(page.getByTestId("practice-summary")).toContainText("You got to 8 out of 10");
-  await expect(page.getByTestId("practice-reminder")).toHaveText(/You've chosen to feel calm before a pitch 2 times\. One of those took you to 7 or higher\./);
+  await expect(page.getByTestId("practice-reminder")).toHaveText(/You've chosen to feel calm before a pitch twice\. One of those took you to 7 out of 10 or higher\./);
   await shot(page, "05-done");
   await page.getByTestId("practice-close").click();
   await expect(page.getByTestId("reminder")).toBeVisible();
@@ -112,6 +112,14 @@ test("account, practice loop, and a second device", async ({ browser }) => {
     expect(rv.ok, rv.errors.join("\n")).toBe(true);
     expect(r.trigger.kind).toBe("practice");
   }
+
+  // 7 · the safety screen stops practice with the help line and no rep count
+  await phone.getByTestId("practice").click();
+  await phone.getByTestId("practice-input").fill("I want to kill myself");
+  await phone.getByTestId("practice-send").click();
+  await expect(phone.getByTestId("stop-banner")).toContainText("reach out to someone you trust");
+  await expect(phone.getByTestId("practice-reminder")).toHaveCount(0);
+  await shot(phone, "07-safety-stop");
   await ctx.close();
   await ctx2.close();
 });

@@ -7,6 +7,8 @@ import { loadRuns, RUNS_KEY } from "../playback/storage.ts";
 import { loadRecord, newer, saveRecord, toRecord, type StrategyRecord } from "../store/index.ts";
 
 export const ACCOUNT_KEY = "peak-state.account";
+/** Where a local strategy goes when the account's copy replaces it, so nothing is lost silently. */
+export const PREVIOUS_STRATEGY_KEY = "peak-state.harness.strategy.previous";
 
 export interface AccountSession {
   email: string;
@@ -70,8 +72,11 @@ export interface Api {
   signIn(email: string, code: string): Promise<AccountSession>;
   signOut(): Promise<void>;
   getStrategy(): Promise<StrategyRecord | null>;
-  /** Returns the server's copy after the write; a 409 resolves with the server's newer copy instead of throwing. */
-  putStrategy(record: StrategyRecord): Promise<{ record: StrategyRecord | null; conflict: boolean }>;
+  /**
+   * Returns the server's copy after the write; a 409 resolves with the server's copy instead of throwing.
+   * A different strategy than the account's current one must name it in `replaces`.
+   */
+  putStrategy(record: StrategyRecord, replaces?: { profileId: string; revision: number } | null): Promise<{ record: StrategyRecord | null; conflict: boolean }>;
   getReps(): Promise<RepSession[]>;
   postReps(reps: RepSession[]): Promise<number>;
   realtimeKey(model: string): Promise<string>;
@@ -149,9 +154,9 @@ export function createApi(opts: ApiOptions = {}): Api {
       const data = await call("GET", "/api/strategy");
       return toRecord(data.record);
     },
-    async putStrategy(record) {
+    async putStrategy(record, replaces) {
       try {
-        const data = await call("PUT", "/api/strategy", { record });
+        const data = await call("PUT", "/api/strategy", { record, ...(replaces ? { replaces } : {}) });
         return { record: toRecord(data.record), conflict: false };
       } catch (err) {
         if (err instanceof ApiError && err.status === 409) return { record: toRecord(err.body.record), conflict: true };
@@ -177,6 +182,43 @@ export function createApi(opts: ApiOptions = {}): Api {
 
 // ── sync ────────────────────────────────────────────────────────────────────
 
+function backup(record: StrategyRecord, store: KeyValueStore | null): void {
+  try {
+    store?.setItem(PREVIOUS_STRATEGY_KEY, JSON.stringify(record));
+  } catch {
+    /* storage blocked */
+  }
+}
+
+/**
+ * Send this browser's record to the account and settle on one copy. The newer record wins: the same strategy at a
+ * higher revision, or a different strategy saved later (it then names the account's current one as replaced). When
+ * the account's copy wins, the local one is kept under PREVIOUS_STRATEGY_KEY. Saves the result locally and returns it.
+ */
+export async function pushRecord(api: Api, record: StrategyRecord, store: KeyValueStore | null = defaultStore(), remote?: StrategyRecord | null): Promise<StrategyRecord> {
+  let server = remote;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    let replaces: { profileId: string; revision: number } | null = null;
+    if (server) {
+      const sameStrategy = server.profile.profileId === record.profile.profileId;
+      // Same strategy: the account's copy wins at an equal or higher revision. Different: the later save wins.
+      const serverWins = sameStrategy ? server.revision >= record.revision : newer(record, server) === server;
+      if (serverWins) {
+        if (JSON.stringify(server) !== JSON.stringify(record)) backup(record, store);
+        record = server;
+        break;
+      }
+      if (!sameStrategy) replaces = { profileId: server.profile.profileId, revision: server.revision };
+    }
+    const put = await api.putStrategy(record, replaces);
+    if (!put.conflict) break;
+    server = put.record; // the account moved on: decide again against its copy
+    if (!server) break;
+  }
+  saveRecord(record, store);
+  return record;
+}
+
 export interface SyncResult {
   record: StrategyRecord | null;
   runs: RepSession[];
@@ -184,21 +226,15 @@ export interface SyncResult {
 }
 
 /**
- * Bring this browser and the account into line: the newer strategy record wins (the account's copy when the two
- * are different strategies), runs are merged by id, and anything the server lacks is pushed. Saves the result locally.
+ * Bring this browser and the account into line: the newer strategy record wins (see pushRecord), runs are merged
+ * by id, and anything the server lacks is pushed. Saves the result locally.
  */
 export async function syncAll(api: Api, store: KeyValueStore | null = defaultStore()): Promise<SyncResult> {
   const local = loadRecord(store);
   const remote = await api.getStrategy();
-  let record: StrategyRecord | null;
-  if (local && remote && local.profile.profileId !== remote.profile.profileId) record = remote;
-  else record = newer(local, remote);
-
-  if (record && record !== remote && (!remote || record.revision > remote.revision || record.profile.profileId !== remote.profile.profileId)) {
-    const put = await api.putStrategy(record);
-    if (put.conflict && put.record) record = put.record;
-  }
-  if (record) saveRecord(record, store);
+  let record: StrategyRecord | null = null;
+  if (local) record = await pushRecord(api, local, store, remote);
+  else if (remote) record = saveRecord(remote, store);
 
   const localRuns = loadRuns(store);
   const remoteRuns = await api.getReps();

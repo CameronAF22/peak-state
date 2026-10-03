@@ -125,6 +125,14 @@ export function applyChange(record: StrategyRecord, input: ChangeInput, now: () 
     else delete words[attr]; // the old phrasing described the old value
     sub.words = words;
     if (Object.keys(sub.words).length === 0) delete sub.words;
+    // A driver measured against the old peak value now points at the new one; its effect is untested again.
+    const st = getState(profile, input.stateId)!;
+    for (const d of st.differences) {
+      if (d.stepIndex === input.stepIndex && d.modality === s.modality && d.attribute === attr) {
+        d.peak = input.to;
+        d.ratingDelta = null;
+      }
+    }
   } else {
     throw new Error(`unknown field ${input.field}`);
   }
@@ -136,7 +144,7 @@ export function applyChange(record: StrategyRecord, input: ChangeInput, now: () 
     field: input.field,
     from,
     to: input.to,
-    ...(input.words?.trim() ? { words: input.words.trim() } : {}),
+    ...(input.words?.trim() && input.field !== "content" ? { words: input.words.trim() } : {}),
     rating: input.rating,
     revision,
     at,

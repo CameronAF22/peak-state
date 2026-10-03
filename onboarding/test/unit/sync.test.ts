@@ -5,7 +5,7 @@ import { test } from "node:test";
 import type { ProfileV2 } from "@peak-state/contracts";
 import { appendRun, loadRuns, runStrategy, type KeyValueStore } from "../../src/playback/index.ts";
 import { applyChange, loadRecord, newRecord, readField, saveRecord } from "../../src/store/index.ts";
-import { createApi as createClient, loadAccount, syncAll, type FetchLike } from "../../src/sync/index.ts";
+import { createApi as createClient, loadAccount, PREVIOUS_STRATEGY_KEY, syncAll, type FetchLike } from "../../src/sync/index.ts";
 import { createApi as createServer } from "../../worker/api.ts";
 import { fakeD1 } from "./d1.ts";
 
@@ -89,4 +89,51 @@ test("a dead session signs the page out", async () => {
   const client = createClient({ fetch: wire(), store });
   await assert.rejects(client.getStrategy(), /Sign in again|Sign in first/);
   assert.equal(client.account(), null);
+});
+
+test("a newer different strategy made offline wins on sign-in; a losing local copy is backed up", async () => {
+  const fetch = wire();
+  const laptopStore = memoryStore();
+  const laptop = createClient({ fetch, store: laptopStore });
+  saveRecord(newRecord(profile, () => Date.parse("2026-10-03T10:00:00Z")), laptopStore);
+  await laptop.createAccount("cam@example.com", CODE);
+  await syncAll(laptop, laptopStore);
+
+  // The phone built a brand-new strategy before signing in.
+  const phoneStore = memoryStore();
+  const phone = createClient({ fetch, store: phoneStore });
+  const fresh = newRecord({ ...profile, profileId: "prof_phone" }, () => Date.parse("2026-10-03T12:00:00Z"));
+  saveRecord(fresh, phoneStore);
+  await phone.signIn("cam@example.com", CODE);
+  const r = await syncAll(phone, phoneStore);
+  assert.equal(r.record?.profile.profileId, "prof_phone");
+  assert.equal((await phone.getStrategy())?.profile.profileId, "prof_phone", "pushed, replacing the old one");
+
+  // The laptop changed the old strategy offline (rev 2); the account's newer different strategy wins, and the
+  // laptop's change is kept under the backup key rather than lost.
+  const offline = applyChange(loadRecord(laptopStore)!, { stateId: "calm-before-pitch", stepIndex: 0, field: "core.size", to: "small", rating: 6 }, () => Date.parse("2026-10-03T11:00:00Z"));
+  saveRecord(offline, laptopStore);
+  const l = await syncAll(laptop, laptopStore);
+  assert.equal(l.record?.profile.profileId, "prof_phone");
+  assert.equal(JSON.parse(laptopStore.getItem(PREVIOUS_STRATEGY_KEY)!).revision, 2);
+});
+
+test("two devices that both made revision 2 offline: the account's copy wins, the other is backed up", async () => {
+  const fetch = wire();
+  const aStore = memoryStore();
+  const bStore = memoryStore();
+  const a = createClient({ fetch, store: aStore });
+  const b = createClient({ fetch, store: bStore });
+  saveRecord(newRecord(profile), aStore);
+  await a.createAccount("cam@example.com", CODE);
+  await syncAll(a, aStore);
+  await b.signIn("cam@example.com", CODE);
+  await syncAll(b, bStore);
+  const base = loadRecord(aStore)!;
+  saveRecord(applyChange(base, { stateId: "calm-before-pitch", stepIndex: 0, field: "core.size", to: "small", rating: 6 }), aStore);
+  saveRecord(applyChange(base, { stateId: "calm-before-pitch", stepIndex: 0, field: "core.size", to: "medium", rating: 6 }), bStore);
+  await syncAll(a, aStore);
+  const rb = await syncAll(b, bStore);
+  assert.equal(readField(rb.record!.profile.states[0].strategy.steps[0], "core.size"), "small");
+  assert.equal(readField(JSON.parse(bStore.getItem(PREVIOUS_STRATEGY_KEY)!).profile.states[0].strategy.steps[0], "core.size"), "medium");
 });

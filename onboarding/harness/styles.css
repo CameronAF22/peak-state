@@ -277,6 +277,7 @@ button {
 }
 
 .popover input[type="text"],
+.popover input[type="email"],
 .popover input[type="password"] {
   border: 1px solid var(--border);
   background: var(--surface-2);
@@ -1092,4 +1093,9 @@ button {
 
 .account {
   margin-left: auto;
+}
+
+.practice-title {
+  font: inherit;
+  margin: 0;
 }

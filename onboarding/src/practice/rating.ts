@@ -2,7 +2,7 @@
 // "7", "seven", "about a seven", "7 out of 10", "out of ten I'd say six", "6.5" (rounds to 7). Null when no number.
 
 const WORDS: Record<string, number> = {
-  zero: 0, nought: 0, nothing: 0, none: 0,
+  zero: 0, nought: 0,
   one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
 };
 
@@ -11,15 +11,18 @@ export function parseRating(text: string): number | null {
     .toLowerCase()
     .replace(/[’‘]/g, "'")
     // Drop the scale itself so "out of 10" or "from 0 to 10" is never read as the answer.
-    .replace(/\b(?:out of|from)\s+(?:0|zero)\s+to\s+(?:10|ten)\b/g, " ")
+    .replace(/\b(?:out of|from|scale of|scale from|between)\s+(?:0|1|zero|one)\s+(?:to|and)\s+(?:10|ten)\b/g, " ")
+    .replace(/\b(?:on a|on the)\s+scale\b/g, " ")
     .replace(/\bout of\s+(?:10|ten)\b/g, " ")
     .replace(/\/\s*10\b/g, " ");
+  // "one hundred", "100%": not a 0 to 10 answer.
+  if (/\b(hundred|thousand|percent)\b|%|\b\d{3,}\b/.test(t)) return null;
   const digit = /(?<![\d.])(10|\d)(?:[.,](\d+))?(?![\d])/.exec(t);
   if (digit) {
     const n = Number(`${digit[1]}.${digit[2] ?? "0"}`);
     return n >= 0 && n <= 10 ? Math.round(n) : null;
   }
-  const word = /\b(zero|nought|nothing|none|one|two|three|four|five|six|seven|eight|nine|ten)\b/.exec(t);
+  const word = /\b(zero|nought|one|two|three|four|five|six|seven|eight|nine|ten)\b/.exec(t.replace(/\bnot one\b|\bno one\b|\bsomeone\b|\banyone\b|\bthat one\b|\bthis one\b/g, " "));
   if (word) return WORDS[word[1]];
   return null;
 }

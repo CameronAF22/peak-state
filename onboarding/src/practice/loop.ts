@@ -53,7 +53,10 @@ export interface PracticeSnapshot {
   changes: StrategyChange[];
   /** Every try logged in this session, oldest first. */
   runs: RepSession[];
+  /** The stop message to show and speak (never the screened category). */
   stopReason: string | null;
+  /** True when the safety screen ended the session, so the page shows the help line. */
+  safetyStopped: boolean;
 }
 
 export interface PracticeOptions {
@@ -110,7 +113,7 @@ const SUBJECT: Record<string, string> = {
   source: "the voice was",
   volume: "the sound was",
   "auditory.location": "the sound was",
-  bodyLocation: "you felt it in",
+  bodyLocation: "you felt it",
   intensity: "the feeling was",
   movement: "the feeling was",
 };
@@ -119,17 +122,19 @@ const VALUE_WORDS: Record<string, Record<string, string>> = {
   perspective: { associated: "in it, through your own eyes", dissociated: "watching yourself" },
   location: {
     center: "in the center", left: "on the left", right: "on the right", above: "above you", below: "below you",
-    "upper-left": "upper left", "upper-right": "upper right", "lower-left": "lower left", "lower-right": "lower right",
+    "upper-left": "in the upper left", "upper-right": "in the upper right", "lower-left": "in the lower left", "lower-right": "in the lower right",
     "all-around": "all around you", "inside-head": "inside your head", front: "in front of you", behind: "behind you",
   },
-  size: { "life-size": "life-size", "larger-than-life": "larger than life" },
   distance: { "arm-length": "an arm's length away", "across-room": "across the room", far: "far off" },
-  movement: { still: "still", moving: "moving" },
+  movement: { still: "not moving", moving: "moving" },
+  brightness: { normal: "normal brightness" },
+  volume: { normal: "a normal volume" },
+  size: { medium: "medium-sized", "life-size": "life-size", "larger-than-life": "larger than life" },
 };
 
 function valueWords(attr: string, value: string | number): string {
   if (typeof value === "number") return attr === "intensity" ? `${value} out of 10` : String(value);
-  if (attr === "bodyLocation") return value === "whole-body" ? "your whole body" : `your ${value.replace(/-/g, " ")}`;
+  if (attr === "bodyLocation") return value === "whole-body" ? "through your whole body" : `in your ${value.replace(/-/g, " ")}`;
   return VALUE_WORDS[attr]?.[value] ?? toSecondPerson(value.replace(/-/g, " "));
 }
 
@@ -183,7 +188,12 @@ function questionPrompt(state: State, target: Target, attempt: number): Practice
   const modality = step.modality as SensoryModality;
   const now = current === null ? "" : valueWords(attr, current);
   const subject = SUBJECT[modality === "auditory" && attr === "location" ? "auditory.location" : attr] ?? `the ${attr} was`;
-  const text = `Last time, with ${shortContent(step)}, ${subject} ${now}. Bringing it back now, is it still ${now}, or is it different?`;
+  const text =
+    attr === "perspective"
+      ? `Last time, with ${shortContent(step)}, ${subject} ${now}. Bringing it back now, are you still ${now}, or is it different?`
+      : attr === "bodyLocation"
+        ? `Last time, with ${shortContent(step)}, ${subject} ${now}. Bringing it back now, do you still feel it ${now}, or somewhere else?`
+        : `Last time, with ${shortContent(step)}, ${subject} ${now}. Bringing it back now, is it still ${now}, or is it different?`;
   const vocab = (SUBMODALITIES[modality].core as Record<string, readonly string[] | null>)[attr];
   const others: Choice[] = Array.isArray(vocab) ? vocab.filter((v) => v !== current).map((v) => ({ value: v, label: valueWords(attr, v) })) : [];
   return {
@@ -199,26 +209,62 @@ function questionPrompt(state: State, target: Target, attempt: number): Practice
 }
 
 const SAME = /\b(same|still|unchanged|no change|hasn't changed|has not changed|didn't change|did not change|keep it|it's fine|that's right|yes|yeah|yep)\b/i;
+/** Words that turn "still close" into "not close any more", or "bright" into "bright but further". */
+const NEGATION = /\b(not|no longer|anymore|any more|less|but|changed|different|instead)\b|n't\b/i;
+/** A bare no: it says something changed but not what, so the question is asked again. */
+const BARE_NO = /^\W*(no|nope|nah|different|changed|it changed|it's changed|it'?s different( now)?|not really|not the same|not anymore|not any more|it's not|it isn't)\W*$/i;
 
 type Read = { kind: "same" } | { kind: "change"; to: string | number; words?: string } | { kind: "unclear" };
+
+function short(text: string): boolean {
+  return text.split(/\s+/).length <= 4;
+}
+
+/** The last 0..10 number in the text: "it went from 8 to 9" is 9. */
+function lastNumber(text: string): number | null {
+  const words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+  const all = [...text.toLowerCase().matchAll(/\b(10|[0-9]|zero|one|two|three|four|five|six|seven|eight|nine|ten)\b/g)];
+  const last = all[all.length - 1]?.[1];
+  if (last === undefined) return null;
+  return /^\d+$/.test(last) ? Number(last) : words.indexOf(last);
+}
 
 /** What the answer to a strategy question says: the same, a new value, or unclear. */
 export function readQuestionAnswer(step: Step, field: string, answer: Answer): Read {
   const current = readField(step, field);
   if (answer.choiceValue === "same") return { kind: "same" };
   const text = answer.text.trim();
+  const fromChoice = answer.choiceValue !== undefined;
+  if (!fromChoice && BARE_NO.test(text)) return { kind: "unclear" };
+  const negated = NEGATION.test(text);
+  const words = fromChoice || answer.via === "choice" ? undefined : text;
+
   if (field === "content" || step.modality === "other") {
-    if (answer.choiceValue === undefined && (!text || (SAME.test(text) && text.split(/\s+/).length <= 4))) return { kind: "same" };
-    return text && text !== current ? { kind: "change", to: text } : { kind: "same" };
+    if (!text || (SAME.test(text) && !negated && short(text))) return { kind: "same" };
+    return text !== current ? { kind: "change", to: text } : { kind: "same" };
   }
+
   const attr = field.slice(5);
-  const value = parseSubmodality(step.modality, attr, text, answer.choiceValue);
-  if (value === null || value === current) {
-    // A free-value attribute (auditory source) reads any words as the value, so check "same" first.
-    return SAME.test(text) || value === current ? { kind: "same" } : { kind: "unclear" };
+  const modality = step.modality;
+  const vocab = (SUBMODALITIES[modality].core as Record<string, readonly string[] | null>)[attr];
+
+  if (vocab === null && attr !== "intensity") {
+    // Free text (whose voice): any words are the value, so a short "yes, still" is the same.
+    if (!fromChoice && SAME.test(text) && !negated && short(text)) return { kind: "same" };
+    const v = parseSubmodality(modality, attr, text, answer.choiceValue);
+    return v === null || v === current ? { kind: "same" } : { kind: "change", to: v, ...(words ? { words } : {}) };
   }
-  if (attr === "source" && SAME.test(text) && text.split(/\s+/).length <= 4) return { kind: "same" };
-  const words = answer.via === "choice" || answer.choiceValue !== undefined ? undefined : text;
+
+  let value = attr === "intensity" && !fromChoice ? lastNumber(text) : parseSubmodality(modality, attr, text, answer.choiceValue);
+  if (value === current && negated && typeof current === "string") {
+    // "not in the center, it's on the left": drop the old value's words and read again.
+    const without = text.replace(new RegExp(`\\b${current.replace(/-/g, "[- ]")}\\b`, "gi"), " ");
+    const again = parseSubmodality(modality, attr, without);
+    value = again !== null && again !== current ? again : null;
+    if (value === null) return { kind: "unclear" };
+  }
+  if (value === null) return SAME.test(text) && !negated ? { kind: "same" } : { kind: "unclear" };
+  if (value === current) return { kind: "same" };
   return { kind: "change", to: value, ...(words ? { words } : {}) };
 }
 
@@ -238,6 +284,7 @@ export function createPracticeLoop(options: PracticeOptions): PracticeLoop {
   let notice: string | null = null;
   let rating: number | null = null;
   let stopReason: string | null = null;
+  let safetyStopped = false;
   const changes: StrategyChange[] = [];
   const runs: RepSession[] = [];
 
@@ -277,7 +324,7 @@ export function createPracticeLoop(options: PracticeOptions): PracticeLoop {
   }
 
   function ratePrompt(): PracticePrompt {
-    const text = `How close did you get to feeling ${state().label}, from 0 to 10?`;
+    const text = `How close did you get to feeling ${toSecondPerson(state().label)}, from 0 to 10?`;
     return {
       id: `rate:${attempt}`,
       kind: "rate",
@@ -367,13 +414,15 @@ export function createPracticeLoop(options: PracticeOptions): PracticeLoop {
       changes: [...changes],
       runs: [...runs],
       stopReason,
+      safetyStopped,
     };
   }
 
-  function safetyStop(reason: string): PracticeSnapshot {
+  function safetyStop(): PracticeSnapshot {
     logTry("safety-stop");
     phase = "stopped";
-    stopReason = reason;
+    stopReason = STOP_MESSAGE;
+    safetyStopped = true;
     notice = null;
     return snapshot();
   }
@@ -383,7 +432,7 @@ export function createPracticeLoop(options: PracticeOptions): PracticeLoop {
     const text = a.text ?? "";
     if (text.trim() && a.via !== "choice") {
       const screen = screenAnswer(text);
-      if (!screen.ok) return safetyStop(screen.reason || STOP_MESSAGE);
+      if (!screen.ok) return safetyStop();
     }
     const shownAt = promptStartedAt;
     promptStartedAt = iso();

@@ -68,14 +68,14 @@
     },
     {
       "path": "onboarding/harness/styles.css",
-      "sha256": "4c303396ae9502a752c92c1dae306ae15bd2ff21eda7465d465fff8d5b71105e",
+      "sha256": "8b27393249b60958bbf06b7033db8e17205b32e0d0d7da2ea3bb5464272068f3",
       "decisions": [
         "D-onboarding-012"
       ]
     },
     {
       "path": "onboarding/migrations/0001_init.sql",
-      "sha256": "c5cf68e010daf5a5764617cb9a1d69679d11798109a15224898d191d3b95501e",
+      "sha256": "e3bddb9834f09554d11a8b6600a73674e262f1db6593e1581a046fe31849aac5",
       "decisions": [
         "D-onboarding-017"
       ]
@@ -120,7 +120,7 @@
     },
     {
       "path": "onboarding/src/engine/parse.ts",
-      "sha256": "b2ee919a19dd9304dacdd7ce72ce724d01d7b3b6fd8698a5b00d6dd304533c98",
+      "sha256": "c59f4d5ae33b7609d5cfb2a4455a82c288905dee2b0baabef22372b1998124e9",
       "decisions": [
         "D-onboarding-012"
       ]
@@ -141,14 +141,14 @@
     },
     {
       "path": "onboarding/src/harness/main.ts",
-      "sha256": "9dfa4b57a5ee671c6d432b5c5e740416c8dcf573264acf1f07452a871e40c03f",
+      "sha256": "37abb60c956cbc08cd8d873a52b7871cdee67b34e05d1cc1101fbef3b90eb5ef",
       "decisions": [
         "D-onboarding-012"
       ]
     },
     {
       "path": "onboarding/src/harness/view/account.ts",
-      "sha256": "99aee18b4ddb520629a97b12c4324a53a50c6e941be2e322c25f36d4b26a597c",
+      "sha256": "8e7c64aa400cb27c2047efc6f4b3701b22942adc28b18fab53f985ef13f6d5bd",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-017"
@@ -163,7 +163,7 @@
     },
     {
       "path": "onboarding/src/harness/view/practice.ts",
-      "sha256": "d0f156446a10a57bd560963bb27cfa6581ca17ef8baabb85b577a35335a73501",
+      "sha256": "b4026f32c3fffff339a708881a04ef8e5547a13458ca96662d4787fbf83819b3",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-015"
@@ -234,7 +234,7 @@
     },
     {
       "path": "onboarding/src/practice/loop.ts",
-      "sha256": "9c0de055acd6ebf6c6413fd815df7a11eda4d40ff5cb3c65b67e39d496a2f656",
+      "sha256": "b91312a35fd6df5cafc785966b151620a56b65e4a9bb9fb11630c0e06a424096",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-015"
@@ -242,7 +242,7 @@
     },
     {
       "path": "onboarding/src/practice/rating.ts",
-      "sha256": "b5b686cfbe4f35e68fedc7704d56d26d9fe04e9af4fed9d09ff75007729e7cf1",
+      "sha256": "03184e9f45e5c73f0d9696d6e2a9b6a2bdd9036a001569cc0436a178bf0a267e",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-015"
@@ -250,7 +250,7 @@
     },
     {
       "path": "onboarding/src/progress/index.ts",
-      "sha256": "cf7e4cfeecde445ce920e2c509864255dd2e7e2f49d5e9ccf82d3bdbadfb2b82",
+      "sha256": "888798d276680c6c84d33801fb47e8a98b866c802e25f52379470f5e09d36611",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-016"
@@ -258,7 +258,7 @@
     },
     {
       "path": "onboarding/src/store/index.ts",
-      "sha256": "9f37d719a480a41a6123c336bd7785b5e914e75fe071931f307d1a03a99fa05d",
+      "sha256": "c4c1c0c7f0445851dcd2d6e25a96d760f1b42bce06b3a72a00f8e23679576cf7",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-014"
@@ -266,7 +266,7 @@
     },
     {
       "path": "onboarding/src/sync/index.ts",
-      "sha256": "aceb4c93f32591ca909e06e126e72be2f900934b5116dface162f84a15c48cfa",
+      "sha256": "8c27445aa608e59157161738cf0c08289996638946babaa7cc90bcaa4ef9a6e1",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-017"
@@ -330,7 +330,7 @@
     },
     {
       "path": "onboarding/test/e2e/online.spec.ts",
-      "sha256": "f5ff63bd7afa907662b2471fc29a18e9ac71b45b55b233fa6387ac9a10095268",
+      "sha256": "be22d8a0007a2d3bf982225ff4b1dbfe24d58371dceda9a305b6c141f285603b",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-018"
@@ -345,7 +345,7 @@
     },
     {
       "path": "onboarding/test/unit/d1.ts",
-      "sha256": "3a68c1d164b909e8a0519e1cace9d967b4b3c23c95917a82764ddde8c9efa999",
+      "sha256": "f2e83d0bc302a0f5c00c048fe674b22f065426ab0240ab8d63b05dc174d72c51",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-018"
@@ -367,7 +367,7 @@
     },
     {
       "path": "onboarding/test/unit/practice.test.ts",
-      "sha256": "adf598d8cb69f4317ba9a1d123c61b1c97c671e72f011fae731cfd26f9979846",
+      "sha256": "e516068a6a78e5caef1925646966b3adb7b2f36c4664d511e10822d72b0c660b",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-015"
@@ -375,7 +375,7 @@
     },
     {
       "path": "onboarding/test/unit/progress.test.ts",
-      "sha256": "0c905e6b11115fb9b717a7eeaf7b2bc9fdd3a4f7687c714424eb2a5b161b0a5a",
+      "sha256": "6f70bc761af5e2cee6819f4f51cf8c05fba71ceaa52330ba54607997c609084b",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-016"
@@ -398,7 +398,7 @@
     },
     {
       "path": "onboarding/test/unit/sync.test.ts",
-      "sha256": "5fb3e0b1940515c842c29d5997fa7c70b272f52497c9fabcfedc5c7e3e622d1e",
+      "sha256": "77f5ce03cb60fb290511f869ebd7aa057b36a311f29df30129cc433513b3916b",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-017"
@@ -413,7 +413,7 @@
     },
     {
       "path": "onboarding/test/unit/worker.test.ts",
-      "sha256": "568ae8bbddd5259a970bf5a3c59f5f952cacfc9ae840b2809dcbf3be4342579a",
+      "sha256": "43f3ec45db3e46f6c2f2b7347bb0d13c4930c5533d2ee6758e4989c3e34cd4cd",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-017"
@@ -435,7 +435,7 @@
     },
     {
       "path": "onboarding/worker/api.ts",
-      "sha256": "9bc07267930242361ecb69c52937c01ddd3bacb8ee1e726c97060d1c119fca06",
+      "sha256": "cb8e26325a10661750f3a237aac48d98e642e814c12a9fec7a758ed4eb3f2e68",
       "decisions": [
         "D-onboarding-017"
       ]
@@ -449,7 +449,7 @@
     },
     {
       "path": "onboarding/wrangler.jsonc",
-      "sha256": "d0760025731b82e4b1f5bcc04736bc11e021143d02b391cddc8362305d7eeb55",
+      "sha256": "cb7e59e12aab569be66d7c4d8bc5b5fe048e21d3acff097c73af64dc0112ccb2",
       "decisions": [
         "D-onboarding-017"
       ]

@@ -37,8 +37,19 @@ export function createAccountControls(root: HTMLElement, handlers: AccountHandle
   };
 
   const popover = h(
-    "div",
-    { class: "popover", "data-testid": "account-form", role: "dialog", "aria-label": "Your account", hidden: true },
+    "form",
+    {
+      class: "popover",
+      id: "account-form",
+      "data-testid": "account-form",
+      role: "dialog",
+      "aria-label": "Your account",
+      hidden: true,
+      onsubmit: (e: Event) => {
+        e.preventDefault();
+        void submit("signIn");
+      },
+    },
     h("h2", {}, "Save your strategy to an account"),
     h("label", { class: "field", for: "account-email" }, "Email", email),
     h("label", { class: "field", for: "account-code" }, "Invite code", code),
@@ -47,7 +58,7 @@ export function createAccountControls(root: HTMLElement, handlers: AccountHandle
     h(
       "div",
       { class: "row" },
-      h("button", { class: "btn ghost", type: "button", "data-testid": "account-sign-in", onclick: () => void submit("signIn") }, "Sign in"),
+      h("button", { class: "btn ghost", type: "submit", "data-testid": "account-sign-in" }, "Sign in"),
       h("button", { class: "btn primary", type: "button", "data-testid": "account-create", onclick: () => void submit("create") }, "Create account"),
     ),
   );
@@ -74,11 +85,11 @@ export function createAccountControls(root: HTMLElement, handlers: AccountHandle
       if (state.email) {
         mount(
           root,
-          h("span", { class: "status", "data-testid": "account-status", "data-state": state.syncing ? "connecting" : "ready", title: state.note ?? "Saved to your account" }, h("span", { class: "dot" }), state.email),
+          h("span", { class: "status", "data-testid": "account-status", "data-state": state.syncing ? "connecting" : "ready", title: state.note ?? "Saved to your account" }, h("span", { class: "dot" }), state.email, state.syncing ? h("span", { class: "visually-hidden" }, " (syncing)") : null),
           h("button", { class: "btn ghost", type: "button", "data-testid": "account-sign-out", onclick: () => void handlers.signOut() }, "Sign out"),
         );
       } else {
-        mount(root, h("button", { class: "btn", type: "button", "data-testid": "account-open", onclick: open }, "Sign in"), popover);
+        mount(root, h("button", { class: "btn", type: "button", "data-testid": "account-open", "aria-controls": "account-form", "aria-haspopup": "dialog", onclick: open }, "Sign in"), popover);
       }
     },
     open,

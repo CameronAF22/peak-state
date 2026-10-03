@@ -79,7 +79,7 @@ const SUB_RULES: Record<SensoryModality, Record<string, readonly Rule<string>[]>
       ["close", /\bclose\b|\bnear\b|\bup close\b|\bright in front\b|\btouching distance\b/],
       ["arm-length", /\barm'?s'? ?length\b|\barm length\b|\bwithin reach\b|\ban arm away\b/],
       ["across-room", /\bacross (the|a) room\b|\bfew (feet|metres|meters|steps)\b|\bacross the table\b|\bother side of the room\b|\bmiddle distance\b/],
-      ["far", /\bfar\b|\bdistant\b|\bin the distance\b|\bhorizon\b|\bmiles\b|\bway off\b/],
+      ["far", /\bfar\b|\bfurther\b|\bfarther\b|\bdistant\b|\bin the distance\b|\bhorizon\b|\bmiles\b|\bway off\b/],
     ],
     brightness: [
       ["bright", /\bbright\w*\b|\bvivid\b|\bdaylight\b|\bsunny\b|\bsunlit\b|\bglow\w*\b|\bbrilliant\b|\bdazzling\b|\blit up\b/],

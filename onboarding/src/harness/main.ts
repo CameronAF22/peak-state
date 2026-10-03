@@ -6,11 +6,11 @@
 
 import type { OnboardingEvent, RepSession } from "@peak-state/contracts";
 import { createEngine } from "../engine/index.ts";
-import { appendRun, clearStrategy, DEFAULT_PAUSE_MS, loadRuns, runsFor, runStrategy } from "../playback/index.ts";
+import { appendRun, clearStrategy, DEFAULT_PAUSE_MS, runsFor, runStrategy, toSecondPerson } from "../playback/index.ts";
 import { createPracticeLoop, type PracticeLoop, type PracticeSnapshot } from "../practice/loop.ts";
 import { reminderLine, summarize } from "../progress/index.ts";
 import { loadRecord, newRecord, saveRecord, type StrategyRecord } from "../store/index.ts";
-import { createApi, syncAll, type ServerInfo } from "../sync/index.ts";
+import { createApi, pushRecord, syncAll, type ServerInfo } from "../sync/index.ts";
 import type { Answer, EngineSnapshot, VoiceAdapter, VoiceKind, VoiceStatus } from "../types.ts";
 import { createVoice, loadVoiceSettings, saveVoiceSettings, type VoiceSettings } from "../voice/index.ts";
 import { createHintTimer, hintDelayFromUrl } from "./hints.ts";
@@ -274,7 +274,7 @@ function renderSavedMode(): void {
   const steps = stepViewsFromProfile(saved.profile, st.stateId);
   const chain = chainFromProfile(saved.profile, st.stateId);
   const runs = runsFor(saved.profile.profileId, st.stateId);
-  const reminder = reminderLine(summarize(runs, st.stateId), st.label);
+  const reminder = reminderLine(summarize(runs, st.stateId), toSecondPerson(st.label));
   if (practice) practiceView.render(practice.snapshot(), steps, reminder);
   mount(
     mainCol,
@@ -411,6 +411,7 @@ const practiceView = createPracticeView({
   close: () => {
     practice = null;
     render();
+    (mainCol.querySelector('[data-testid="practice"]') as HTMLElement | null)?.focus({ preventScroll: true });
   },
 });
 
@@ -422,7 +423,7 @@ function practiceOpen(): boolean {
 function currentReminder(): string | null {
   const st = savedState();
   if (!saved || !st) return null;
-  return reminderLine(summarize(runsFor(saved.profile.profileId, st.stateId), st.stateId), st.label);
+  return reminderLine(summarize(runsFor(saved.profile.profileId, st.stateId), st.stateId), toSecondPerson(st.label));
 }
 
 function speakPractice(p: PracticeSnapshot): void {
@@ -512,11 +513,13 @@ function renderAccount(): void {
 
 async function pushStrategy(): Promise<void> {
   if (!saved || !api.account()) return;
+  const mine = saved;
   try {
-    const res = await api.putStrategy(saved);
+    // Without a remote copy in hand, pushRecord learns it from the first 409 and decides again.
+    const result = await pushRecord(api, mine, undefined, undefined);
     syncNote = null;
-    if (res.conflict && res.record && !running && !practiceOpen()) {
-      saved = saveRecord(res.record);
+    if (result !== mine && saved === mine && !running && !practiceOpen()) {
+      saved = result;
       render();
     }
   } catch (err) {

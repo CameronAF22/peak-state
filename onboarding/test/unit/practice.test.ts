@@ -3,9 +3,10 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 import { validateProfile, validateRepSession, type ProfileV2, type RepSession } from "@peak-state/contracts";
-import { createPracticeLoop, questionTargets, TRY_AGAIN_LINE } from "../../src/practice/loop.ts";
+import { STOP_MESSAGE } from "../../src/engine/safety.ts";
+import { createPracticeLoop, questionTargets, readQuestionAnswer, TRY_AGAIN_LINE } from "../../src/practice/loop.ts";
 import { parseRating } from "../../src/practice/rating.ts";
-import { newRecord, readField, type StrategyRecord } from "../../src/store/index.ts";
+import { applyChange, newRecord, readField, type StrategyRecord } from "../../src/store/index.ts";
 
 const profile = JSON.parse(readFileSync(new URL("../../../contracts/fixtures/profile.demo.json", import.meta.url), "utf8")) as ProfileV2;
 const state = profile.states[0];
@@ -195,4 +196,74 @@ test("stop logs the try in progress as a user stop; the safety screen ends with 
   assert.ok(s.stopReason);
   assert.equal(b.runs.length, 0, "nothing was delivered, so nothing is logged");
   assert.equal(b.l.answer({ text: "next", via: "typed" }).phase, "stopped");
+});
+
+test("review findings: scales, number words inside words, and hundreds are not ratings", () => {
+  const cases: [string, number | null][] = [
+    ["on a scale of 1 to 10, 7", 7],
+    ["scale of one to ten I'd say eight", 8],
+    ["one hundred", null],
+    ["100%", null],
+    ["none of it, maybe a six", 6],
+    ["not one bit", null],
+    ["I'm at 0", 0],
+    ["10/10", 10],
+  ];
+  for (const [text, want] of cases) assert.equal(parseRating(text), want, text);
+});
+
+test("review findings: bare no, negations and 'but' are never read as the same answer", () => {
+  const step = (i: number) => state.strategy.steps[i];
+  const read = (i: number, field: string, text: string) => readQuestionAnswer(step(i), field, { text, via: "voice" });
+  // whose voice (free text): a bare no is unclear, not the new value
+  for (const t of ["no", "nope", "different", "Different.", "it's different now"]) assert.equal(read(1, "core.source", t).kind, "unclear", t);
+  assert.equal(read(1, "core.source", "yes, still mine").kind, "same");
+  assert.deepEqual(read(1, "core.source", "my coach's voice"), { kind: "change", to: "my coach's voice", words: "my coach's voice" });
+  // step words: a bare no is unclear
+  for (const t of ["no", "different"]) assert.equal(read(0, "content", t).kind, "unclear", t);
+  // negations
+  assert.equal(read(0, "core.location", "not the same").kind, "unclear");
+  assert.equal(read(0, "core.location", "no it's not in the center anymore").kind, "unclear");
+  assert.deepEqual(read(0, "core.location", "not in the center, it's on the left").kind, "change");
+  assert.equal((read(0, "core.location", "not in the center, it's on the left") as { to: string }).to, "left");
+  assert.equal(read(0, "core.distance", "not close anymore").kind, "unclear");
+  assert.equal((read(0, "core.distance", "it's further away now") as { to: string }).to, "far");
+  assert.equal(read(0, "core.brightness", "still bright but further").kind, "unclear");
+  assert.equal(read(0, "core.brightness", "less bright now").kind, "unclear");
+  assert.equal(read(0, "core.brightness", "still bright").kind, "same");
+  // intensity takes the last number
+  assert.equal((read(2, "core.intensity", "it went from 8 to 9") as { to: number }).to, 9);
+  assert.equal((read(2, "core.intensity", "less than 8, more like 6") as { to: number }).to, 6);
+  assert.equal(read(2, "core.intensity", "still 8").kind, "same");
+});
+
+test("review findings: a changed detail moves its driver's peak; content changes carry no words", () => {
+  const d = state.differences.findIndex((x) => x.modality === "visual" && x.attribute === "distance");
+  assert.ok(d >= 0, "demo has a distance driver");
+  const next = applyChange(newRecord(profile), { stateId: state.id, stepIndex: state.differences[d].stepIndex, field: "core.distance", to: "arm-length", rating: 5 });
+  assert.equal(next.profile.states[0].differences[d].peak, "arm-length");
+  assert.equal(next.profile.states[0].differences[d].ratingDelta, null);
+  const v = validateProfile(next.profile);
+  assert.ok(v.ok, v.errors.join("\n"));
+  const c = applyChange(newRecord(profile), { stateId: state.id, stepIndex: 2, field: "content", to: "x", words: "hello", rating: null });
+  assert.equal(c.changes[0].words, undefined);
+});
+
+test("review findings: the safety stop shows the stop message, never the screened category", () => {
+  const { l } = loop();
+  const s = l.answer({ text: "I want to kill myself", via: "voice" });
+  assert.equal(s.safetyStopped, true);
+  assert.equal(s.stopReason, STOP_MESSAGE);
+  const u = loop();
+  u.l.answer({ text: "next", via: "typed" });
+  assert.equal(u.l.stop().safetyStopped, false);
+});
+
+test("labels in the person's words are spoken in the guide's voice", () => {
+  const p = JSON.parse(JSON.stringify(profile)) as ProfileV2;
+  p.states[0].label = "playful with my kids";
+  const l = createPracticeLoop({ record: newRecord(p) });
+  let s = l.snapshot();
+  while (s.phase === "recall") s = l.answer({ text: "next", via: "choice", choiceValue: "next" });
+  assert.equal(s.prompt!.text, "How close did you get to feeling playful with your kids, from 0 to 10?");
 });

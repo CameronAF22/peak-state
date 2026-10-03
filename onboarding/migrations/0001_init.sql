@@ -25,7 +25,13 @@ CREATE TABLE strategies (
   profile_json TEXT NOT NULL,
   PRIMARY KEY (account_id, profile_id, revision)
 );
-CREATE INDEX strategies_latest ON strategies(account_id, saved_at);
+-- Which strategy is the account's current one. Moved only by a conditional update, so two devices cannot both win.
+CREATE TABLE current_strategy (
+  account_id TEXT PRIMARY KEY REFERENCES accounts(id) ON DELETE CASCADE,
+  profile_id TEXT NOT NULL,
+  revision INTEGER NOT NULL,
+  updated_at TEXT NOT NULL
+);
 
 -- Every changed answer, keyed by the revision it produced.
 CREATE TABLE strategy_changes (

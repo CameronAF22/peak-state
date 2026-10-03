@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 import type { ProfileV2, RepSession } from "@peak-state/contracts";
-import { createApi, MAX_FAILED_CODES_PER_DAY, REALTIME_SECRETS_URL } from "../../worker/api.ts";
+import { createApi, MAX_CODE_ATTEMPTS_PER_DAY, MAX_SIGN_INS_PER_EMAIL_PER_DAY, REALTIME_SECRETS_URL } from "../../worker/api.ts";
 import { applyChange, newRecord } from "../../src/store/index.ts";
 import { fakeD1 } from "./d1.ts";
 
@@ -55,11 +55,21 @@ test("accounts need the invite code, are keyed by email, and sign in again on an
   assert.equal((await call("GET", "/api/me", undefined, "x".repeat(43))).status, 401);
 });
 
-test("wrong codes are limited per client per day", async () => {
+test("code attempts are limited per client per day, IPv6 by /64, even in parallel", async () => {
   const { call } = server();
-  for (let i = 0; i < MAX_FAILED_CODES_PER_DAY; i++) assert.equal((await call("POST", "/api/accounts", { email: "a@b.co", code: "x" })).status, 403);
+  const statuses = await Promise.all(Array.from({ length: MAX_CODE_ATTEMPTS_PER_DAY + 20 }, () => call("POST", "/api/accounts", { email: "a@b.co", code: "x" })));
+  assert.equal(statuses.filter((r) => r.status === 403).length, MAX_CODE_ATTEMPTS_PER_DAY);
   assert.equal((await call("POST", "/api/accounts", { email: "a@b.co", code: CODE })).status, 429);
   assert.equal((await call("POST", "/api/accounts", { email: "a@b.co", code: CODE }, undefined, "5.6.7.8")).status, 201, "another client is not blocked");
+  for (let i = 0; i < MAX_CODE_ATTEMPTS_PER_DAY; i++) await call("POST", "/api/sessions", { email: "z@b.co", code: "x" }, undefined, `2001:db8:1:2:${i.toString(16)}::1`);
+  assert.equal((await call("POST", "/api/sessions", { email: "z@b.co", code: "x" }, undefined, "2001:db8:1:2:ffff::9")).status, 429, "same /64");
+});
+
+test("sign-ins are limited per email per day", async () => {
+  const { call } = server();
+  await call("POST", "/api/accounts", { email: "a@b.co", code: CODE });
+  for (let i = 0; i < MAX_SIGN_INS_PER_EMAIL_PER_DAY; i++) assert.equal((await call("POST", "/api/sessions", { email: "a@b.co", code: CODE }, undefined, `10.0.0.${i}`)).status, 200);
+  assert.equal((await call("POST", "/api/sessions", { email: "a@b.co", code: CODE }, undefined, "10.0.1.1")).status, 429);
 });
 
 test("no invite code configured means no accounts", async () => {
@@ -91,10 +101,19 @@ test("strategy revisions: newer saves, older is refused with the server's copy, 
   assert.deepEqual(got.body.record, JSON.parse(JSON.stringify(r2)));
   assert.deepEqual((await call("GET", "/api/strategy", undefined, b)).body, { record: null }, "b sees nothing of a");
 
-  // A new strategy (different profileId) replaces the latest even at revision 1.
-  const fresh = newRecord({ ...profile, profileId: "prof_new" }, () => Date.parse("2026-10-03T19:00:00Z"));
-  assert.equal((await call("PUT", "/api/strategy", { record: fresh }, a)).status, 200);
+  // A different strategy must name the one it replaces; a far-future savedAt changes nothing.
+  const fresh = newRecord({ ...profile, profileId: "prof_new" }, () => Date.parse("2099-01-01T00:00:00Z"));
+  const blind = await call("PUT", "/api/strategy", { record: fresh }, a);
+  assert.equal(blind.status, 409);
+  assert.equal(blind.body.record.profile.profileId, profile.profileId);
+  assert.equal((await call("PUT", "/api/strategy", { record: fresh, replaces: { profileId: profile.profileId, revision: 1 } }, a)).status, 409, "must name the current revision");
+  assert.equal((await call("PUT", "/api/strategy", { record: fresh, replaces: { profileId: profile.profileId, revision: 2 } }, a)).status, 200);
   assert.equal((await call("GET", "/api/strategy", undefined, a)).body.record.profile.profileId, "prof_new");
+  // The old strategy cannot sneak back in or overwrite its stored revisions.
+  assert.equal((await call("PUT", "/api/strategy", { record: r2 }, a)).status, 409);
+  const r3 = applyChange(fresh, { stateId: "calm-before-pitch", stepIndex: 0, field: "core.size", to: "small", rating: 5 });
+  assert.equal((await call("PUT", "/api/strategy", { record: r3 }, a)).status, 200);
+  assert.equal((await call("GET", "/api/strategy", undefined, a)).body.record.revision, 2);
 
   assert.equal((await call("PUT", "/api/strategy", { record: { ...r2, revision: 0 } }, a)).status, 400);
   assert.equal((await call("PUT", "/api/strategy", { record: { ...r2, profile: { ...profile, confirmedAt: null } } }, a)).status, 400);
@@ -150,4 +169,28 @@ test("unknown routes and bad bodies answer as JSON", async () => {
   const res = await handle(new Request("https://peak.test/api/accounts", { method: "POST", body: "{not json" }));
   assert.equal(res.status, 400);
   assert.match((await res.json() as { error: string }).error, /JSON/);
+});
+
+test("parallel saves of the same revision: exactly one wins, the rest get the winner", async () => {
+  const { call } = server();
+  const a = (await call("POST", "/api/accounts", { email: "a@example.com", code: CODE })).body.token;
+  const r1 = newRecord(profile);
+  assert.equal((await call("PUT", "/api/strategy", { record: r1 }, a)).status, 200);
+  const sizes = ["small", "medium", "larger-than-life", "small", "medium", "larger-than-life", "small", "medium"];
+  const results = await Promise.all(sizes.map((to) => call("PUT", "/api/strategy", { record: applyChange(r1, { stateId: "calm-before-pitch", stepIndex: 0, field: "core.size", to, rating: 5 }) }, a)));
+  assert.equal(results.filter((r) => r.status === 200).length, 1);
+  const winner = (await call("GET", "/api/strategy", undefined, a)).body.record;
+  assert.equal(winner.revision, 2);
+  for (const r of results) if (r.status === 409) assert.deepEqual(r.body.record, winner);
+  // Racing different revisions leaves no orphan rows: rev 3 can still be saved normally after.
+  const w = { ...winner };
+  const r3 = applyChange(w, { stateId: "calm-before-pitch", stepIndex: 0, field: "core.distance", to: "far", rating: 6 });
+  const r4 = applyChange(r3, { stateId: "calm-before-pitch", stepIndex: 0, field: "core.distance", to: "close", rating: 6 });
+  const [x, y] = await Promise.all([call("PUT", "/api/strategy", { record: r4 }, a), call("PUT", "/api/strategy", { record: r3 }, a)]);
+  assert.deepEqual([x.status, y.status].sort(), [200, 409]);
+});
+
+test("/api with no slash and doubled slashes reach the API", async () => {
+  const { call } = server();
+  assert.equal((await call("GET", "/api//health")).status, 200);
 });

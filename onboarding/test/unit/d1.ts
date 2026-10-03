@@ -12,7 +12,10 @@ export function fakeD1(): Database {
     bind: (...v: unknown[]) => statement(sql, v),
     first: async <T>() => (db.prepare(sql).get(...(values as never[])) as T | undefined) ?? null,
     all: async <T>() => ({ results: db.prepare(sql).all(...(values as never[])) as T[] }),
-    run: async () => db.prepare(sql).run(...(values as never[])),
+    run: async () => {
+      const r = db.prepare(sql).run(...(values as never[]));
+      return { meta: { changes: Number(r.changes) } };
+    },
   });
   return {
     prepare: (sql) => statement(sql),

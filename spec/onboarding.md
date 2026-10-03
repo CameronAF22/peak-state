@@ -228,20 +228,20 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/README.md` | `375a56d82a77` | D-onboarding-012 |
 | `onboarding/harness/index.html` | `43399b706f07` | D-onboarding-012 |
 | `onboarding/harness/main.ts` | `684ae88ae42e` | D-onboarding-012 |
-| `onboarding/harness/styles.css` | `4c303396ae95` | D-onboarding-012 |
-| `onboarding/migrations/0001_init.sql` | `c5cf68e010da` | D-onboarding-017 |
+| `onboarding/harness/styles.css` | `8b27393249b6` | D-onboarding-012 |
+| `onboarding/migrations/0001_init.sql` | `e3bddb9834f0` | D-onboarding-017 |
 | `onboarding/package.json` | `0b60c5d2362d` | D-onboarding-012 |
 | `onboarding/playwright.config.ts` | `78cc447f0630` | D-onboarding-012 |
 | `onboarding/script/questions.ts` | `779bd9a43021` | D-onboarding-003, D-onboarding-006, D-onboarding-010, D-onboarding-012 |
 | `onboarding/src/engine/hints.ts` | `d164d4ac154f` | D-onboarding-012 |
 | `onboarding/src/engine/index.ts` | `1acbe7959929` | D-onboarding-012 |
-| `onboarding/src/engine/parse.ts` | `b2ee919a19dd` | D-onboarding-012 |
+| `onboarding/src/engine/parse.ts` | `c59f4d5ae33b` | D-onboarding-012 |
 | `onboarding/src/engine/safety.ts` | `8f4aafe9b9fa` | D-onboarding-012 |
 | `onboarding/src/harness/hints.ts` | `39a5fcdb4929` | D-onboarding-012 |
-| `onboarding/src/harness/main.ts` | `9dfa4b57a5ee` | D-onboarding-012 |
-| `onboarding/src/harness/view/account.ts` | `99aee18b4ddb` | D-onboarding-012, D-onboarding-017 |
+| `onboarding/src/harness/main.ts` | `37abb60c956c` | D-onboarding-012 |
+| `onboarding/src/harness/view/account.ts` | `8e7c64aa400c` | D-onboarding-012, D-onboarding-017 |
 | `onboarding/src/harness/view/dom.ts` | `9f8bddc8c0f4` | D-onboarding-012 |
-| `onboarding/src/harness/view/practice.ts` | `d0f156446a10` | D-onboarding-012, D-onboarding-015 |
+| `onboarding/src/harness/view/practice.ts` | `b4026f32c3ff` | D-onboarding-012, D-onboarding-015 |
 | `onboarding/src/harness/view/question.ts` | `0ea364f616ed` | D-onboarding-012 |
 | `onboarding/src/harness/view/saved.ts` | `e3d2a9054bc1` | D-onboarding-012 |
 | `onboarding/src/harness/view/steps.ts` | `a35116374f96` | D-onboarding-012 |
@@ -251,11 +251,11 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/src/playback/runner.ts` | `df12e2c1a815` | D-onboarding-012 |
 | `onboarding/src/playback/script.ts` | `e28d09f1e709` | D-onboarding-012 |
 | `onboarding/src/playback/storage.ts` | `f656486e58d9` | D-onboarding-012 |
-| `onboarding/src/practice/loop.ts` | `9c0de055acd6` | D-onboarding-012, D-onboarding-015 |
-| `onboarding/src/practice/rating.ts` | `b5b686cfbe4f` | D-onboarding-012, D-onboarding-015 |
-| `onboarding/src/progress/index.ts` | `cf7e4cfeecde` | D-onboarding-012, D-onboarding-016 |
-| `onboarding/src/store/index.ts` | `9f37d719a480` | D-onboarding-012, D-onboarding-014 |
-| `onboarding/src/sync/index.ts` | `aceb4c93f325` | D-onboarding-012, D-onboarding-017 |
+| `onboarding/src/practice/loop.ts` | `b91312a35fd6` | D-onboarding-012, D-onboarding-015 |
+| `onboarding/src/practice/rating.ts` | `03184e9f45e5` | D-onboarding-012, D-onboarding-015 |
+| `onboarding/src/progress/index.ts` | `888798d27668` | D-onboarding-012, D-onboarding-016 |
+| `onboarding/src/store/index.ts` | `c4c1c0c7f044` | D-onboarding-012, D-onboarding-014 |
+| `onboarding/src/sync/index.ts` | `8c27445aa608` | D-onboarding-012, D-onboarding-017 |
 | `onboarding/src/types.ts` | `f227fc9cc173` | D-onboarding-012 |
 | `onboarding/src/voice/browser.ts` | `61d7d92e0b70` | D-onboarding-012 |
 | `onboarding/src/voice/emitter.ts` | `df88e51d4d0e` | D-onboarding-012 |
@@ -264,23 +264,23 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/src/voice/typed.ts` | `bee9740bc611` | D-onboarding-012 |
 | `onboarding/test/e2e/.gitignore` | `83394a0aff29` | D-onboarding-012 |
 | `onboarding/test/e2e/harness.spec.ts` | `a6de1a68e7dc` | D-onboarding-012 |
-| `onboarding/test/e2e/online.spec.ts` | `f5ff63bd7afa` | D-onboarding-012, D-onboarding-018 |
+| `onboarding/test/e2e/online.spec.ts` | `be22d8a0007a` | D-onboarding-012, D-onboarding-018 |
 | `onboarding/test/e2e/screens-reporter.ts` | `dd1e91a8a298` | D-onboarding-012 |
-| `onboarding/test/unit/d1.ts` | `3a68c1d164b9` | D-onboarding-012, D-onboarding-018 |
+| `onboarding/test/unit/d1.ts` | `f2e83d0bc302` | D-onboarding-012, D-onboarding-018 |
 | `onboarding/test/unit/engine.test.ts` | `9674be98ccc0` | D-onboarding-012 |
 | `onboarding/test/unit/playback.test.ts` | `c76b8b12f289` | D-onboarding-012 |
-| `onboarding/test/unit/practice.test.ts` | `adf598d8cb69` | D-onboarding-012, D-onboarding-015 |
-| `onboarding/test/unit/progress.test.ts` | `0c905e6b1111` | D-onboarding-012, D-onboarding-016 |
+| `onboarding/test/unit/practice.test.ts` | `e516068a6a78` | D-onboarding-012, D-onboarding-015 |
+| `onboarding/test/unit/progress.test.ts` | `6f70bc761af5` | D-onboarding-012, D-onboarding-016 |
 | `onboarding/test/unit/script.test.ts` | `473cf39343e8` | D-onboarding-012 |
 | `onboarding/test/unit/store.test.ts` | `bc8f3258f70d` | D-onboarding-012, D-onboarding-014 |
-| `onboarding/test/unit/sync.test.ts` | `5fb3e0b19405` | D-onboarding-012, D-onboarding-017 |
+| `onboarding/test/unit/sync.test.ts` | `77f5ce03cb60` | D-onboarding-012, D-onboarding-017 |
 | `onboarding/test/unit/voice.test.ts` | `9440dc4b6e29` | D-onboarding-012 |
-| `onboarding/test/unit/worker.test.ts` | `568ae8bbddd5` | D-onboarding-012, D-onboarding-017 |
+| `onboarding/test/unit/worker.test.ts` | `43f3ec45db3e` | D-onboarding-012, D-onboarding-017 |
 | `onboarding/tsconfig.json` | `20b7c5aaec94` | D-onboarding-012 |
 | `onboarding/vite.config.ts` | `f5643cec1115` | D-onboarding-012 |
-| `onboarding/worker/api.ts` | `9bc072679302` | D-onboarding-017 |
+| `onboarding/worker/api.ts` | `cb8e26325a10` | D-onboarding-017 |
 | `onboarding/worker/index.ts` | `a9411ea26eb2` | D-onboarding-017 |
-| `onboarding/wrangler.jsonc` | `d0760025731b` | D-onboarding-017 |
+| `onboarding/wrangler.jsonc` | `cb7e59e12aab` | D-onboarding-017 |
 | `prompts/discovery.md` | `915c158676a3` | D-coord-008 |
 | `prompts/induction.md` | `9eac817f9540` | D-coord-008 |
 | `prompts/intervention.md` | `cafae717f40d` | D-coord-008 |

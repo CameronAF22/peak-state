@@ -48,12 +48,17 @@ export function summarize(runs: readonly RepSession[], stateId: StateId): Progre
   };
 }
 
-/** The spoken and shown reminder: how many times they chose to feel this way. */
+/**
+ * The spoken and shown reminder: how many times they chose to feel this way. Pass the state label in the guide's
+ * voice (toSecondPerson), so "playful with my kids" reads "playful with your kids".
+ */
 export function reminderLine(p: ProgressSummary, stateLabel: string): string {
+  const high = `${GOOD_REP_MIN} out of 10 or higher`;
   if (p.timesChosen === 0) return `Every run counts as a time you chose to feel ${stateLabel}. This is your first.`;
-  const times = p.timesChosen === 1 ? "once" : `${p.timesChosen} times`;
+  if (p.timesChosen === 1) return `You've chosen to feel ${stateLabel} once${p.goodReps ? `, and it took you to ${high}` : ""}.`;
+  const times = p.timesChosen === 2 ? "twice" : `${p.timesChosen} times`;
   const parts = [`You've chosen to feel ${stateLabel} ${times}.`];
-  if (p.goodReps > 0) parts.push(p.goodReps === p.timesChosen && p.timesChosen > 1 ? `Every one took you to ${GOOD_REP_MIN} or higher.` : `${p.goodReps === 1 ? "One" : p.goodReps} of those took you to ${GOOD_REP_MIN} or higher.`);
+  if (p.goodReps > 0) parts.push(p.goodReps === p.timesChosen ? `Every one took you to ${high}.` : `${p.goodReps === 1 ? "One" : p.goodReps} of those took you to ${high}.`);
   if (p.dayStreak >= 2) parts.push(`That's ${p.dayStreak} days in a row.`);
   return parts.join(" ");
 }

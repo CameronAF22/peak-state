@@ -11,7 +11,7 @@ export interface Statement {
   bind(...values: unknown[]): Statement;
   first<T = Record<string, unknown>>(): Promise<T | null>;
   all<T = Record<string, unknown>>(): Promise<{ results: T[] }>;
-  run(): Promise<unknown>;
+  run(): Promise<{ meta?: { changes?: number } }>;
 }
 
 export interface Database {
@@ -35,7 +35,14 @@ export interface ApiDeps {
 }
 
 export const SESSION_DAYS = 90;
-export const MAX_FAILED_CODES_PER_DAY = 20;
+/** Sign-up and sign-in attempts per client per day (right or wrong code). */
+export const MAX_CODE_ATTEMPTS_PER_DAY = 30;
+/** Wrong codes across every client per day, so spreading guesses over many addresses does not help. */
+export const MAX_WRONG_CODES_PER_DAY = 500;
+/** Sign-ins per email per day. */
+export const MAX_SIGN_INS_PER_EMAIL_PER_DAY = 10;
+export const MAX_REVISIONS_PER_STRATEGY = 2000;
+export const MAX_REPS_PER_ACCOUNT = 20000;
 export const MAX_VOICE_KEYS_PER_DAY = 40;
 export const MAX_BODY_BYTES = 512 * 1024;
 export const REALTIME_SECRETS_URL = "https://api.openai.com/v1/realtime/client_secrets";
@@ -111,25 +118,27 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
   const iso = (ms = now()): string => new Date(ms).toISOString();
   const today = (): string => iso().slice(0, 10);
 
+  /** Count one more for today and return the new count, in one statement, so parallel requests cannot slip past. */
   async function bump(key: string): Promise<number> {
-    const day = today();
-    await db.prepare("INSERT INTO counters (key, day, count) VALUES (?, ?, 1) ON CONFLICT(key, day) DO UPDATE SET count = count + 1").bind(key, day).run();
-    const row = await db.prepare("SELECT count FROM counters WHERE key = ? AND day = ?").bind(key, day).first<{ count: number }>();
-    return row?.count ?? 0;
+    const row = await db
+      .prepare("INSERT INTO counters (key, day, count) VALUES (?, ?, 1) ON CONFLICT(key, day) DO UPDATE SET count = count + 1 RETURNING count")
+      .bind(key, today())
+      .first<{ count: number }>();
+    return row?.count ?? Number.MAX_SAFE_INTEGER;
   }
 
-  async function countToday(key: string): Promise<number> {
-    const row = await db.prepare("SELECT count FROM counters WHERE key = ? AND day = ?").bind(key, today()).first<{ count: number }>();
-    return row?.count ?? 0;
+  /** The client's address, with IPv6 grouped by /64 (one home or phone network). */
+  function clientKey(req: Request): string {
+    const ip = req.headers.get("cf-connecting-ip") ?? "local";
+    return ip.includes(":") ? ip.split(":").slice(0, 4).join(":") : ip;
   }
 
   async function checkCode(req: Request, code: unknown): Promise<void> {
-    const client = `code:${req.headers.get("cf-connecting-ip") ?? "local"}`;
-    if ((await countToday(client)) >= MAX_FAILED_CODES_PER_DAY) throw new HttpError(429, "Too many wrong codes today. Try again tomorrow.");
     const expected = env.INVITE_CODE ?? "";
     if (!expected) throw new HttpError(503, "Accounts are not set up on this server yet.");
+    if ((await bump(`code:${clientKey(req)}`)) > MAX_CODE_ATTEMPTS_PER_DAY) throw new HttpError(429, "Too many tries today. Try again tomorrow.");
     if (typeof code !== "string" || !(await sameSecret(code.trim(), expected))) {
-      await bump(client);
+      if ((await bump("code:wrong:all")) > MAX_WRONG_CODES_PER_DAY) throw new HttpError(429, "Too many tries today. Try again tomorrow.");
       throw new HttpError(403, "That code is not right.");
     }
   }
@@ -180,6 +189,7 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
     const body = await readBody(req);
     await checkCode(req, body.code);
     const email = readEmail(body.email);
+    if ((await bump(`signin:${email}`)) > MAX_SIGN_INS_PER_EMAIL_PER_DAY) throw new HttpError(429, "Too many sign-ins for this email today. Try again tomorrow.");
     const row = await db.prepare("SELECT id FROM accounts WHERE email = ?").bind(email).first<{ id: string }>();
     if (!row) throw new HttpError(404, "No account for that email yet. Create one.");
     return json({ email, token: await newSession(row.id) });
@@ -202,7 +212,9 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
 
   async function latest(accountId: string): Promise<Row | null> {
     return db
-      .prepare("SELECT profile_id, revision, saved_at, profile_json FROM strategies WHERE account_id = ? ORDER BY saved_at DESC, revision DESC LIMIT 1")
+      .prepare(
+        "SELECT s.profile_id AS profile_id, s.revision AS revision, s.saved_at AS saved_at, s.profile_json AS profile_json FROM current_strategy c JOIN strategies s ON s.account_id = c.account_id AND s.profile_id = c.profile_id AND s.revision = c.revision WHERE c.account_id = ?",
+      )
       .bind(accountId)
       .first<Row>();
   }
@@ -251,25 +263,66 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
     return { profileId: profile.profileId, revision: revision as number, savedAt, profile, changes };
   }
 
+  /**
+   * Save a new revision. The same strategy must move to a higher revision; a different strategy must name the
+   * current one it replaces (`replaces: {profileId, revision}`). Anything else, or losing a race to another
+   * device, is a 409 with the server's copy. Revisions are never overwritten.
+   */
   async function putStrategy(req: Request): Promise<Response> {
     const me = await account(req);
     const body = await readBody(req);
     const rec = checkRecord(body.record);
-    const current = await latest(me.id);
-    if (current && current.profile_id === rec.profileId && rec.revision <= current.revision) {
-      return json({ error: "The server has a newer or equal revision of this strategy.", record: await recordFrom(me.id, current) }, 409);
+    const replaces = body.replaces as { profileId?: unknown; revision?: unknown } | null | undefined;
+    const conflict = async (why: string): Promise<Response> => {
+      const row = await latest(me.id);
+      return json({ error: why, record: row ? await recordFrom(me.id, row) : null }, 409);
+    };
+    const current = await db
+      .prepare("SELECT profile_id, revision FROM current_strategy WHERE account_id = ?")
+      .bind(me.id)
+      .first<{ profile_id: string; revision: number }>();
+    if (current) {
+      if (current.profile_id === rec.profileId) {
+        if (rec.revision <= current.revision) return conflict("The server has a newer or equal revision of this strategy.");
+      } else if (!replaces || replaces.profileId !== current.profile_id || replaces.revision !== current.revision) {
+        return conflict("The account's current strategy is a different one. Say which one this replaces.");
+      }
     }
+    const count = await db
+      .prepare("SELECT COUNT(*) AS n FROM strategies WHERE account_id = ? AND profile_id = ?")
+      .bind(me.id, rec.profileId)
+      .first<{ n: number }>();
+    if ((count?.n ?? 0) >= MAX_REVISIONS_PER_STRATEGY) throw new HttpError(413, "This strategy has too many saved versions. Start a new one.");
+
+    const stamp = iso();
+    const move = current
+      ? db
+          .prepare("UPDATE current_strategy SET profile_id = ?, revision = ?, updated_at = ? WHERE account_id = ? AND profile_id = ? AND revision = ?")
+          .bind(rec.profileId, rec.revision, stamp, me.id, current.profile_id, current.revision)
+      : db.prepare("INSERT INTO current_strategy (account_id, profile_id, revision, updated_at) VALUES (?, ?, ?, ?)").bind(me.id, rec.profileId, rec.revision, stamp);
+    // Rows are written only if the move above landed, so a device that lost the race leaves nothing behind.
+    const moved = "EXISTS (SELECT 1 FROM current_strategy WHERE account_id = ? AND profile_id = ? AND revision = ?)";
     const stmts: Statement[] = [
+      move,
       db
-        .prepare("INSERT OR REPLACE INTO strategies (account_id, profile_id, revision, saved_at, profile_json) VALUES (?, ?, ?, ?, ?)")
-        .bind(me.id, rec.profileId, rec.revision, rec.savedAt, JSON.stringify(rec.profile)),
+        .prepare(`INSERT INTO strategies (account_id, profile_id, revision, saved_at, profile_json) SELECT ?, ?, ?, ?, ? WHERE ${moved}`)
+        .bind(me.id, rec.profileId, rec.revision, rec.savedAt, JSON.stringify(rec.profile), me.id, rec.profileId, rec.revision),
     ];
     for (const c of rec.changes) {
       stmts.push(
-        db.prepare("INSERT OR IGNORE INTO strategy_changes (account_id, profile_id, revision, change_json) VALUES (?, ?, ?, ?)").bind(me.id, rec.profileId, c.revision, JSON.stringify(c)),
+        db
+          .prepare(`INSERT OR IGNORE INTO strategy_changes (account_id, profile_id, revision, change_json) SELECT ?, ?, ?, ? WHERE ${moved}`)
+          .bind(me.id, rec.profileId, c.revision, JSON.stringify(c), me.id, rec.profileId, rec.revision),
       );
     }
-    await db.batch(stmts);
+    let results: { meta?: { changes?: number } }[];
+    try {
+      results = (await db.batch(stmts)) as { meta?: { changes?: number } }[];
+    } catch {
+      // A duplicate revision or a second first-save: another device got there first. The batch rolled back.
+      return conflict("Another device saved this revision first.");
+    }
+    if ((results[0]?.meta?.changes ?? 0) !== 1) return conflict("Another device moved the strategy on first.");
     const row = await latest(me.id);
     return json({ record: row ? await recordFrom(me.id, row) : null });
   }
@@ -294,6 +347,8 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
     const reps = body.reps;
     if (!Array.isArray(reps) || reps.length > 500) throw new HttpError(400, "reps must be a list of at most 500 runs.");
     const checked = reps.map(checkRep);
+    const have = await db.prepare("SELECT COUNT(*) AS n FROM reps WHERE account_id = ?").bind(me.id).first<{ n: number }>();
+    if ((have?.n ?? 0) + checked.length > MAX_REPS_PER_ACCOUNT) throw new HttpError(413, "This account has reached its run log limit.");
     if (checked.length) {
       await db.batch(
         checked.map((r) =>
@@ -335,9 +390,7 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
     if (!env.OPENAI_API_KEY) throw new HttpError(503, "GPT live is not set up on this server.");
     const body = await readBody(req);
     const model = typeof body.model === "string" && MODEL.test(body.model.trim()) ? body.model.trim() : DEFAULT_REALTIME_MODEL;
-    const key = `voice:${me.id}`;
-    if ((await countToday(key)) >= MAX_VOICE_KEYS_PER_DAY) throw new HttpError(429, "That's the voice limit for today. Use browser or typed voice.");
-    await bump(key);
+    if ((await bump(`voice:${me.id}`)) > MAX_VOICE_KEYS_PER_DAY) throw new HttpError(429, "That's the voice limit for today. Use browser or typed voice.");
     let res: Response;
     try {
       res = await doFetch(REALTIME_SECRETS_URL, {
@@ -366,7 +419,7 @@ export function createApi(env: Env, deps: ApiDeps = {}): (req: Request) => Promi
 
   return async function handle(req: Request): Promise<Response> {
     const url = new URL(req.url);
-    const route = `${req.method} ${url.pathname.replace(/\/+$/, "")}`;
+    const route = `${req.method} ${url.pathname.replace(/\/{2,}/g, "/").replace(/\/+$/, "")}`;
     try {
       switch (route) {
         case "GET /api/health":

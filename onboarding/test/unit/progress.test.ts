@@ -48,12 +48,12 @@ test("summarize counts times chosen, good reps, trend and the day streak", () =>
   assert.equal(p.dayStreak, 3);
   assert.equal(p.lastAt, "2026-10-03T10:00:00.000Z");
   assert.equal(isGoodRep(runs[3]), false);
-  assert.equal(reminderLine(p, "content"), "You've chosen to feel content 4 times. 2 of those took you to 7 or higher. That's 3 days in a row.");
+  assert.equal(reminderLine(p, "content"), "You've chosen to feel content 4 times. 2 of those took you to 7 out of 10 or higher. That's 3 days in a row.");
 });
 
 test("reminder wording for none, one and all-good", () => {
   assert.match(reminderLine(summarize([], "content"), "content"), /This is your first\.$/);
   assert.equal(reminderLine(summarize([rep({ intensityAfter: 4 })], "content"), "content"), "You've chosen to feel content once.");
   const two = [rep({ startedAt: "2026-10-01T09:00:00.000Z" }), rep({ startedAt: "2026-10-01T10:00:00.000Z" })];
-  assert.equal(reminderLine(summarize(two, "content"), "content"), "You've chosen to feel content 2 times. Every one took you to 7 or higher.");
+  assert.equal(reminderLine(summarize(two, "content"), "content"), "You've chosen to feel content twice. Every one took you to 7 out of 10 or higher.");
 });
