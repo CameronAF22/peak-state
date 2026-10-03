@@ -11,7 +11,7 @@
     "test": "node --test --disable-warning=ExperimentalWarning \"test/unit/**/*.test.ts\"",
     "typecheck": "tsc -p tsconfig.json",
     "harness": "vite --host 127.0.0.1 --port 5174",
-    "build:harness": "vite build",
+    "build:harness": "vite build && vite build --config design/vite.config.ts --base /design/ --outDir ../dist-harness/design --emptyOutDir false",
     "test:visual": "playwright test",
     "worker:dev": "npm run build:harness && wrangler d1 migrations apply peak-state --local && wrangler dev --ip 127.0.0.1 --port 8787",
     "worker:deploy": "npm run build:harness && wrangler d1 migrations apply peak-state --remote && wrangler deploy",

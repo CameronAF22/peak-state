@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-023",
+  "lane": "onboarding",
+  "title": "Deployed site serves the three redesign prototypes at /design/ beside the harness",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Cameron: use the redesign from the numbered PRs, not the molly-onboardingui test/ app. D-onboarding-019 kept the production page unchanged until a design is picked.",
+  "decision": "npm run build:harness also builds onboarding/design/ into dist-harness/design (base /design/), so the Worker serves /design/orb/, /design/horizon/ and /design/constellation/ next to the harness at /. The prototypes pass the harness's signed-in account header to GPT live (same-origin storage), so live voice works on them after signing in on the harness page. The front page stays the harness until Cameron picks one design to make the default.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/package.json",
+    "onboarding/design/orb/main.ts",
+    "onboarding/design/horizon/main.ts",
+    "onboarding/design/constellation/main.ts"
+  ],
+  "dependsOn": [
+    "D-onboarding-019",
+    "D-onboarding-020"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "32d60a9b-b6fa-430d-8874-8454b73678f3",
+    "url": null,
+    "branch": "integration/all"
+  },
+  "createdAt": "2026-10-03T19:24:40Z",
+  "acceptedAt": "2026-10-03T19:24:40Z",
+  "acceptedBy": "claude"
+}
