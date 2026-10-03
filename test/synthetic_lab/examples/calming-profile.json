@@ -1,0 +1,13 @@
+{
+  "profile_id": "demo-person",
+  "display_name": "Demo person",
+  "synthetic": true,
+  "baseline": {
+    "hr": { "value": 62, "unit": "bpm", "context": "awake", "sample_count": 60 },
+    "hrv": { "value": 52, "unit": "ms", "context": "synthetic_intraday", "sample_count": 60 }
+  },
+  "preferences": ["funny_video", "meditation_music", "breathing"],
+  "blocked_kinds": [],
+  "paused": false,
+  "feedback": []
+}

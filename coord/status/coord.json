@@ -2,20 +2,20 @@
   "schemaVersion": 1,
   "lane": "coord",
   "health": "green",
-  "phase": "M1",
+  "phase": "review",
   "progress": 100,
-  "summary": "test/ home auth with JSON user store and localStorage session",
+  "summary": "OpenAI guide phrasing implemented with bounded context, scripted fallback and cancellation guards; seven backend and six frontend tests pass.",
   "now": [
-    "Auth UI and API shipped"
+    "Updating the requested prototype PR"
   ],
   "next": [
-    "Integrate onboarding flow when ready"
+    "Configure OPENAI_API_KEY to verify live wording quality"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T16:35:40Z",
+  "updatedAt": "2026-10-03T18:48:24Z",
   "session": {
-    "id": "local-vikas",
+    "id": "codex-01a10169-c218-77b3-9532-75e07c5cb774",
     "url": null,
-    "branch": "claude/project-thread-c4ldi5"
+    "branch": "codex/synthetic-calming-workflow"
   }
 }

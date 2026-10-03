@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-022",
+  "lane": "coord",
+  "title": "Use OpenAI for grounded guide wording while keeping the scripted flow",
+  "status": "accepted",
+  "type": "technical",
+  "context": "The user asked to use OpenAI to fit answers into subsequent questions naturally. The current test app uses toYou plus literal full-answer interpolation. This extends the user-requested prototype in the coord-owned test app.",
+  "decision": "Add a server-side OpenAI Responses phrasing endpoint with bounded structured context and fixed conversational goals. Rewrite follow-up questions and recalled cues naturally rather than interpolating whole answers; retain raw profile answers, question order, choices and session limits. Use concise scripted fallbacks when credentials or model output are unavailable.",
+  "alternatives": [],
+  "consequences": "Renumbered from D-coord-019 when merging into integration/all, because main's molly-onboardingui had already used 019.",
+  "produces": [
+    "test/backend/guide_ai.py",
+    "test/backend/main.py",
+    "test/backend/test_guide_ai.py",
+    "test/frontend/guide.js",
+    "test/frontend/onboarding.js",
+    "test/frontend/home.js",
+    "docs/ai-guide.md"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "OpenAI Codex",
+  "session": {
+    "id": "codex-01a10169-c218-77b3-9532-75e07c5cb774",
+    "url": null,
+    "branch": "codex/synthetic-calming-workflow"
+  },
+  "createdAt": "2026-10-03T18:36:50Z",
+  "acceptedAt": "2026-10-03T18:36:50Z",
+  "acceptedBy": "OpenAI Codex"
+}

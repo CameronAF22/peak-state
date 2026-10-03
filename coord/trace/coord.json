@@ -19,10 +19,11 @@
     },
     {
       "path": ".gitignore",
-      "sha256": "d050ddb1203514ca327103239ab809e8877eb95073194b977cbb9d94c8d0a7aa",
+      "sha256": "7b734bb44610a84d5e61f265ee2cc59945d29bed7f376ef1af49a8bf1fdd05ab",
       "decisions": [
         "D-coord-008",
-        "D-coord-014"
+        "D-coord-014",
+        "D-coord-018"
       ]
     },
     {
@@ -41,9 +42,10 @@
     },
     {
       "path": "README.md",
-      "sha256": "009ec0f47d26bd007d9460c54cee4ca5b1c29c95903d9789c122079cd0d3e49c",
+      "sha256": "b2171daf1e62abc9cdb0b970102b5883c5d5065511924d6cc7fcdad04046e711",
       "decisions": [
-        "D-coord-008"
+        "D-coord-008",
+        "D-coord-018"
       ]
     },
     {
@@ -59,6 +61,14 @@
       "decisions": [
         "D-coord-004",
         "D-coord-016"
+      ]
+    },
+    {
+      "path": "docs/ai-guide.md",
+      "sha256": "5abe486f0c1e0d06c89cce4a2a8d9ab1293a00680bf4577ed292e095de521fb3",
+      "decisions": [
+        "D-coord-020",
+        "D-coord-022"
       ]
     },
     {
@@ -156,10 +166,24 @@
       ]
     },
     {
+      "path": "docs/oura-import-plan.md",
+      "sha256": "eb3166588ff3d556c34500a46a2ee05250fa1ab2b2ce157fc41818fc040760fa",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
       "path": "docs/plan.md",
       "sha256": "d6259d0a40d3e6184e3af4fc4ea5fd19f615e114d0bf2d72cdea3bf687eed87d",
       "decisions": [
         "D-coord-008"
+      ]
+    },
+    {
+      "path": "docs/synthetic-workflow.md",
+      "sha256": "aa83dde55335bf053c34c06e8b7ae36e2e0d257123f6e4741a4234956896d149",
+      "decisions": [
+        "D-coord-018"
       ]
     },
     {
@@ -254,11 +278,20 @@
       ]
     },
     {
+      "path": "test/backend/guide_ai.py",
+      "sha256": "97f4abe8a3763d1652dd4f87befbb50741733ee574f7a6f56240d4d5fa189fca",
+      "decisions": [
+        "D-coord-020",
+        "D-coord-022"
+      ]
+    },
+    {
       "path": "test/backend/main.py",
-      "sha256": "0171841042181c2dc8f570bc7f25dcb8fb7a8e9ac5c5a2b260edb35aa5c51db2",
+      "sha256": "36309b722a76ffae24a458491e22026d9db8b0cb8eda297f25d364dd6a72a5c6",
       "decisions": [
         "D-coord-015",
-        "D-coord-017"
+        "D-coord-017",
+        "D-coord-022"
       ]
     },
     {
@@ -266,6 +299,13 @@
       "sha256": "9b44749768c376f2d31fcadc5623ad505889dd1451cc2a62c758c4e8c72fc568",
       "decisions": [
         "D-coord-015"
+      ]
+    },
+    {
+      "path": "test/backend/test_guide_ai.py",
+      "sha256": "d7ce4def716ca2f596641d862bb69796d77e73829baf0c2aeaf71321385a552a",
+      "decisions": [
+        "D-coord-022"
       ]
     },
     {
@@ -292,23 +332,28 @@
     },
     {
       "path": "test/frontend/guide.js",
-      "sha256": "20d75c7c603cba24de164e71ce4067ef1c58e5b34d6f3b16b63db6606d1415e0",
+      "sha256": "a35f92c78df317a655b5904cb7850cb35c1e04b2a30f385c6c63a362bd3e7784",
       "decisions": [
-        "D-coord-019"
+        "D-coord-019",
+        "D-coord-020",
+        "D-coord-022"
       ]
     },
     {
       "path": "test/frontend/home.html",
       "sha256": "acbdfd78bb191a780aabfe1dbe01479b7f06b0ba59595b9322b1878a5738f16b",
       "decisions": [
-        "D-coord-019"
+        "D-coord-019",
+        "D-coord-021"
       ]
     },
     {
       "path": "test/frontend/home.js",
-      "sha256": "98c7044fddeace5d42927bc46abd6a766cb3fe75361102977ae94bbbecdaabf7",
+      "sha256": "52706524cb39ceac8d752c2dc637c0ce77d61eecb3403bd97314f51d1ed31e20",
       "decisions": [
-        "D-coord-019"
+        "D-coord-019",
+        "D-coord-020",
+        "D-coord-022"
       ]
     },
     {
@@ -328,9 +373,10 @@
     },
     {
       "path": "test/frontend/onboarding.js",
-      "sha256": "4d0e2e4e57d5965130853485360f3295840d7b9cea68545180292899ddd9afd8",
+      "sha256": "6ffc927be684ac5a3aa9edca9277844ebaa9dd3323304bfdf2e6a2cbe2d1ef4e",
       "decisions": [
-        "D-coord-019"
+        "D-coord-019",
+        "D-coord-022"
       ]
     },
     {
@@ -339,6 +385,132 @@
       "decisions": [
         "D-coord-015",
         "D-coord-017"
+      ]
+    },
+    {
+      "path": "test/frontend/test-guide.cjs",
+      "sha256": "a97c4dfe34563b15e6c2d4f6d66d75e28ba2a1a72ee004d829f0f68606b02303",
+      "decisions": [
+        "D-coord-020"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/examples/calming-profile.json",
+      "sha256": "b721a9499870f662facf53ffcb973b33cbfe086f60a22ac95e8a41212ea74e51",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/examples/synthetic/declined.json",
+      "sha256": "310d754a5a28fd6ab82d9e84be91f0bac220d974831c995952334bbd4e858910",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/examples/synthetic/hr_only.json",
+      "sha256": "036930d834b07355ab0798d31e7a9d716e6c484ba586ab556f223f2e5771dfc8",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/examples/synthetic/hrv_only.json",
+      "sha256": "555edb4b98dc6d37026e863a3847c998f84cf0a8d5c8b119be4506d24f48ffac",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/examples/synthetic/missing_data.json",
+      "sha256": "cc32bce0d2fb330ca23ebbc59a2146ac11b0c9e8d44aaf1b41d1b17e0fef8166",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/examples/synthetic/no_recovery.json",
+      "sha256": "298f4b0e5092e96fe570f585f25ddab09cf8b611380126e671a4c2d1e082564f",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/examples/synthetic/recovery.json",
+      "sha256": "c5295293955d3e040a14bbe61e5b3453642a0888ff1597fddda04d0f72f5b9f3",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/examples/synthetic/sleep_hrv.json",
+      "sha256": "3370cf0b261ca14389326286778f81f1583b7841bc9e3149746dc4789066c27c",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/examples/synthetic/spike.json",
+      "sha256": "d314a3984737eee0b629ffb44be2dcd0441341c3189a7854d0ba35951e435326",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/examples/synthetic/workout.json",
+      "sha256": "9cdd456d240e7273f92ac525b41b95bcc8f1bba162de57c28c90893fafa58c7a",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/peak_state/__init__.py",
+      "sha256": "002f3858627e0f8d3e62bec79baf9b42b26b4597c643c22194a774331022884c",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/peak_state/__main__.py",
+      "sha256": "2e311a44ecbd46c6dc28dcdca1ad086f9484eae27adce0931bed38478ad3e21f",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/peak_state/demo.html",
+      "sha256": "9000579e10080201f438eca12ab461ba40eed72707b3be1c9f73839d7c1a9df3",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/peak_state/scenarios.py",
+      "sha256": "20657bae50d56be8388f9a0d689a5d49999f7fb1ce2dd603bc50dd7adad61430",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/peak_state/server.py",
+      "sha256": "678ad2efae528fabf84a805d3662925f225b47370fd2bdfa2bf401d47196577a",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/peak_state/workflow.py",
+      "sha256": "c21ce8c3315c70aa584808575d0dbd50d7aaef85767fd52a1c3edcfd8ce0f919",
+      "decisions": [
+        "D-coord-018"
+      ]
+    },
+    {
+      "path": "test/synthetic_lab/tests/test_workflow.py",
+      "sha256": "8db6fbf96dbece46aee9701fd9df4b24c821448eebeeced9f8885873ea48bc49",
+      "decisions": [
+        "D-coord-018"
       ]
     },
     {

@@ -1,0 +1,86 @@
+{
+  "scenario": "spike",
+  "description": "A single elevated reading; no offer",
+  "synthetic": true,
+  "profile": {
+    "profile_id": "demo-person",
+    "display_name": "Demo person",
+    "synthetic": true,
+    "baseline": {
+      "hr": {
+        "value": 62,
+        "unit": "bpm",
+        "context": "awake",
+        "sample_count": 60
+      },
+      "hrv": {
+        "value": 52,
+        "unit": "ms",
+        "context": "synthetic_intraday",
+        "sample_count": 60
+      }
+    },
+    "preferences": [
+      "funny_video",
+      "meditation_music",
+      "breathing"
+    ],
+    "blocked_kinds": [],
+    "paused": false,
+    "feedback": []
+  },
+  "inputs": [
+    {
+      "type": "sample",
+      "observed_at": "2026-10-03T14:00:00+00:00",
+      "received_at": "2026-10-03T14:00:30+00:00",
+      "hr_bpm": 62,
+      "hrv_ms": 52,
+      "source": "awake",
+      "hrv_context": "synthetic_intraday",
+      "activity": "rest",
+      "quality": "good",
+      "available": true,
+      "provenance": "synthetic"
+    },
+    {
+      "type": "sample",
+      "observed_at": "2026-10-03T14:05:00+00:00",
+      "received_at": "2026-10-03T14:05:30+00:00",
+      "hr_bpm": 81,
+      "hrv_ms": 33,
+      "source": "awake",
+      "hrv_context": "synthetic_intraday",
+      "activity": "rest",
+      "quality": "good",
+      "available": true,
+      "provenance": "synthetic"
+    },
+    {
+      "type": "sample",
+      "observed_at": "2026-10-03T14:10:00+00:00",
+      "received_at": "2026-10-03T14:10:30+00:00",
+      "hr_bpm": 63,
+      "hrv_ms": 51,
+      "source": "awake",
+      "hrv_context": "synthetic_intraday",
+      "activity": "rest",
+      "quality": "good",
+      "available": true,
+      "provenance": "synthetic"
+    },
+    {
+      "type": "sample",
+      "observed_at": "2026-10-03T14:15:00+00:00",
+      "received_at": "2026-10-03T14:15:30+00:00",
+      "hr_bpm": 62,
+      "hrv_ms": 52,
+      "source": "awake",
+      "hrv_context": "synthetic_intraday",
+      "activity": "rest",
+      "quality": "good",
+      "available": true,
+      "provenance": "synthetic"
+    }
+  ]
+}
