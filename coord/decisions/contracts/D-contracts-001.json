@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-contracts-001",
+  "lane": "contracts",
+  "title": "contracts kickoff: lane plan for M1 to M4",
+  "status": "accepted",
+  "type": "process",
+  "context": "Contracts is first in the dependency order; every other lane builds against its fixtures (D-coord-006).",
+  "decision": "Follow contracts/PLAN.md: ship Profile v2, Calibration, SignalFrame, DetectionEvent and RepSession schemas with TS types, fixtures, tests and API.md at M1; freeze at M4; every later change is a --type contract decision with a message to each consumer.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "contracts/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-coord-005",
+    "D-coord-006",
+    "D-coord-009"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  },
+  "createdAt": "2026-10-03T14:03:11Z",
+  "acceptedAt": "2026-10-03T14:03:11Z",
+  "acceptedBy": "claude"
+}

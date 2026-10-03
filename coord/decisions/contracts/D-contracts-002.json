@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "D-contracts-002",
+  "lane": "contracts",
+  "title": "JSON Schema is the source of truth; contracts is a standalone TS package",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Lanes must not declare their own shapes. Schemas give CI-checkable validation; TS types give lanes compile-time safety. A test keeps the two in step.",
+  "decision": "Schemas are JSON Schema 2020-12 files in schemas/. contracts/ is a standalone package @peak-state/contracts with hand-written TS types in contracts/src that mirror the schemas, JSON fixtures in contracts/fixtures, and a test that validates every fixture with Ajv and type-checks it with tsc. v1 schemas and examples/ stay untouched.",
+  "alternatives": [
+    "Generate TS from schemas with json-schema-to-typescript (extra dep, worse names for unions)",
+    "Zod as the source of truth, emit JSON Schema (schemas/ would become derived)"
+  ],
+  "consequences": "",
+  "produces": [
+    "contracts/package.json",
+    "contracts/tsconfig.json",
+    "contracts/src/",
+    "contracts/test/"
+  ],
+  "dependsOn": [
+    "D-coord-006"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  },
+  "createdAt": "2026-10-03T14:03:11Z",
+  "acceptedAt": "2026-10-03T14:03:11Z",
+  "acceptedBy": "claude"
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "lane": "contracts",
+  "health": "green",
+  "phase": "M0",
+  "progress": 10,
+  "summary": "M0 done: claimed, guard verified, PLAN.md written, 4 decisions, lanes messaged, sensing+experience inputs folded into plan",
+  "now": [
+    "Waiting on onboarding and reps to confirm D-contracts-003/004; human questions open"
+  ],
+  "next": [
+    "M1 (after a person says go): schemas, TS types, fixtures, tests, API.md; supersede D-contracts-004 with sensing's fields"
+  ],
+  "blockers": [],
+  "updatedAt": "2026-10-03T14:03:54Z",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  }
+}

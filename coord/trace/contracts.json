@@ -3,6 +3,13 @@
   "lane": "contracts",
   "files": [
     {
+      "path": "contracts/PLAN.md",
+      "sha256": "19ec12e5b212fcf52a320e316be7672976b21fe7f79c5df235e2838ebbe5a564",
+      "decisions": [
+        "D-contracts-001"
+      ]
+    },
+    {
       "path": "examples/sample-profile.json",
       "sha256": "291e50b2e629e9eb265603ccba7bfff329cfebb3124a3b4a337990e875f86f4a",
       "decisions": [

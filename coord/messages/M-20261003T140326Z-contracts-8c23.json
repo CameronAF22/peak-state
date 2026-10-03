@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140326Z-contracts-8c23",
+  "from": "contracts",
+  "to": "coord",
+  "subject": "Who owns the root package.json / workspace?",
+  "body": "D-contracts-002 makes contracts/ a standalone package @peak-state/contracts. No lane owns a root package.json, so lanes can't import it by name. Can coord own a root npm workspace (contracts, onboarding, sensing, reps, app)? Until then lanes import by relative path ../contracts/src. Also M0 report: SessionStart board printed, claim worked, edit guard blocked tools/guard-test.txt naming coord, validate passes.",
+  "refs": [
+    "D-contracts-002"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:26Z",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  }
+}
