@@ -16,11 +16,75 @@ Install each state as measurable reps: a short rep script per emotion (anchor, p
 
 ## Decisions in force
 
-None yet.
+### D-reps-001 · reps kickoff: lane plan for M1 to M4
+
+`accepted` · scope · 2026-10-03 · [session](https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW) · branch `lane/reps` · accepted by claude
+
+**Decision.** Build the reps lane as in reps/PLAN.md: a pure TypeScript module under reps/ that generates a rep script from one Profile v2 emotion (M1), runs it with timed steps and browser speech and returns a RepSession (M2), adds the sham arm, conditioning count and anchor-only installed test (M3), and exposes progress aggregates (M4). Reps returns sessions and does not persist them; experience stores the log and passes it back.
+
+**Context.** Gate M0 asks every lane for a plan and a kickoff decision. The brief (docs/hackathon/lanes/reps.md) and the Robbins mapping in docs/on-aim-closed-loop.html sections 3 to 5 set the method; the MVP fixes three emotions and a browser-only demo (D-coord-005, D-coord-006).
+
+**Alternatives considered.**
+
+- Reps owns persistence in browser storage itself
+- Run reps as an LLM-voiced conversation like prompts/intervention.md instead of a fixed timed script
+
+**Consequences.** Reps depends on contracts for Profile v2 and RepSession, and on sensing for DetectionEvent.gate.sham and a recovery signal. Experience owns the rep log storage.
+
+**Produces:** `reps/PLAN.md`  
+**Depends on:** D-coord-005, D-coord-006
+
+### D-reps-002 · Rep script: anchor, physiology, focus, language, peak, rate; 32 s default within 20 to 40 s
+
+`accepted` · product · 2026-10-03 · [session](https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW) · branch `lane/reps` · accepted by claude
+
+**Decision.** A rep is generated from one emotion: rate-before (untimed, skippable on detection), anchor 3 s, physiology 9 s, focus 8 s (with the person's leverage line if present), language 8 s (said once, then a silence to repeat), peak 4 s (stack all three, then the anchor again), rate-after (untimed). Timed budget defaults to 32 s, hard bounds 20 to 40 s, step durations scale with speech length. Only the person's confirmed words are spoken, joined by neutral connectors. The anchor plays at the start as the interrupt and again at the peak as the conditioning pairing.
+
+**Context.** The brief fixes the order anchor, physiology, focus, language, rate and 20 to 40 s. Section 3 of the research page says an anchor must be paired with the peak state before it works as an interrupt; mvp.md says the anchor is paired with the peak of each rep.
+
+**Alternatives considered.**
+
+- Anchor only at the start
+- Anchor only at the peak
+- 60 to 120 s rep as in prompts/intervention.md
+
+**Produces:** `reps/PLAN.md`  
+**Depends on:** D-reps-001
+
+### D-reps-004 · Sham arm: sensing's gate decides, reps honours it; default rate 0.25, detection triggers only
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW) · branch `lane/reps` · accepted by claude
+
+**Decision.** The sham flag is rolled once by the sensing gate and carried in DetectionEvent.gate.sham. Reps never rolls its own. On a sham, no rep plays; the rate-after prompt appears after the same total time a cue rep would take, so the rating is identical in both arms. Manual and practice triggers are always cue. Default sham rate 0.25 (research page); the demo may set 0 or pin one sham in the scripted scenario, and the arm field stays in the log either way. Progress compares median recoverySeconds cue vs sham per signal source, for detection triggers only, and shows no number with fewer than 3 shams.
+
+**Context.** Section 4 of the research page: loops end by themselves, so without withheld-cue trials every intervention looks effective. One random draw in one place keeps the trial assignment auditable.
+
+**Alternatives considered.**
+
+- Reps rolls the sham itself
+- No sham arm in the MVP
+
+**Produces:** `reps/PLAN.md`  
+**Depends on:** D-reps-001
 
 ## Proposed, awaiting acceptance
 
-None.
+### D-reps-003 · Installed criterion: 5 good reps, then 2 anchor-only passes in a row
+
+`proposed` · product · 2026-10-03 · [session](https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW) · branch `lane/reps`
+
+**Decision.** A good rep is a full, cue-arm, completed rep with the anchor paired at the peak and intensityAfter >= 7. After 5 good reps the emotion is ready to test. The anchor-only test plays rate-before, the anchor alone, 10 s silence, rate-after. Pass: intensityAfter >= 7 and a rise of at least 2. Installed: 2 passes in a row. A fail requires 3 more good reps before the next test. Two later failed tests in a row drop the badge back to conditioning. An emotion with no anchor cannot be installed. Recovery is logged on tests but not required to pass, since the strap may be absent. The demo seeds a rep history fixture so one emotion is one test from installed.
+
+**Context.** mvp.md defines installed as the anchor alone bringing the state back, and the brief asks for the rule as a decision. The numbers are a judgement call about what counts as evidence, so a person should confirm them.
+
+**Alternatives considered.**
+
+- Install after a single anchor-only pass
+- Require physiological recovery as well as self-report
+- Install after N reps with no anchor-only test
+
+**Produces:** `reps/PLAN.md`  
+**Depends on:** D-reps-002
 
 ## Superseded and rejected
 
@@ -30,4 +94,6 @@ None.
 
 Every file this lane owns, the first 12 hex digits of its SHA-256 at build time, and the decisions that cover it.
 
-No files yet.
+| File | sha256 | Decisions |
+|---|---|---|
+| `reps/PLAN.md` | `33b22050e4b4` | D-reps-001, D-reps-002, D-reps-003, D-reps-004 |

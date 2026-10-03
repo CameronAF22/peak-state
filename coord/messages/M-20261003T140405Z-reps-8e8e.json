@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140405Z-reps-8e8e",
+  "from": "reps",
+  "to": "human",
+  "subject": "reps: confirm installed criterion, sham on stage, rep length",
+  "body": "1) Please confirm or change the installed criterion D-reps-003: 5 good reps (rating >= 7), then the anchor alone must bring rating >= 7 with a rise >= 2, two tests in a row. 2) On stage, sham rate 0, or one pinned sham trial so the progress screen can show recovery after cue vs no cue? 3) Rep length defaults to 32 s (bounds 20-40 s); OK for the demo pacing?",
+  "refs": [
+    "D-reps-003",
+    "D-reps-004",
+    "D-reps-002"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:04:05Z",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  }
+}

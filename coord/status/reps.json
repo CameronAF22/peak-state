@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "lane": "reps",
+  "health": "green",
+  "phase": "M0",
+  "progress": 10,
+  "summary": "M0 done: claimed, guard verified, PLAN.md written, 4 decisions (installed criterion proposed), RepSession names aligned with contracts",
+  "now": [
+    "M0 pushed; waiting for a person to confirm D-reps-003 and say go"
+  ],
+  "next": [
+    "M1: script generator against the contracts Profile v2 fixture"
+  ],
+  "blockers": [],
+  "updatedAt": "2026-10-03T14:04:39Z",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  }
+}
