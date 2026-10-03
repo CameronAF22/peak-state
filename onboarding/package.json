@@ -1,0 +1,26 @@
+{
+  "name": "@peak-state/onboarding",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Peak State onboarding: the question harness that elicits one state's strategy and plays it back.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "node --test --disable-warning=ExperimentalWarning \"test/unit/**/*.test.ts\"",
+    "typecheck": "tsc -p tsconfig.json",
+    "harness": "vite --host 127.0.0.1 --port 5174",
+    "build:harness": "vite build",
+    "test:visual": "playwright test"
+  },
+  "dependencies": {
+    "@peak-state/contracts": "0.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "@types/node": "22.10.0",
+    "typescript": "5.9.3",
+    "vite": "8.3.2"
+  }
+}

@@ -74,6 +74,22 @@ Turn a first conversation into a confirmed profile: find the person's three top 
 **Depends on:** D-onboarding-006, D-onboarding-007, D-onboarding-008, D-onboarding-009  
 **Supersedes:** D-onboarding-001
 
+### D-onboarding-012 · Question harness MVP: deterministic question engine, swappable voice, one-click playback
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU) · branch `claude/project-thread-c4ldi5` · accepted by claude
+
+**Decision.** Ship @peak-state/onboarding with a question bank as data (onboarding/script/), a deterministic engine that cycles playbook section 1 plus core submodalities and builds a confirmed Profile v2 (onboarding/src/engine/), voice adapters typed, browser speech and an OpenAI realtime adapter with an editable model id (onboarding/src/voice/), a harness page with a 5 s two-suggestion hint (onboarding/harness/, onboarding/src/harness/), a one-click playback logged as a RepSession (onboarding/src/playback/), and a Playwright visual test (onboarding/test/). Contrast and drivers are out of scope for the harness; contrast stays null. The engine, not the model, picks the next question.
+
+**Context.** Cam asked for a working question harness: choose a state (content or destressed in testing), cycle Robbins' strategy questions until the state is fully captured, suggest two phrasings after 5 s of silence, save the strategy, and one click to run it back, with a visual test.
+
+**Alternatives considered.**
+
+- Let the realtime model drive the questions itself (less testable, order not guaranteed)
+- Build the harness inside app/ (experience lane owns it and its contracts mirror is incompatible)
+
+**Produces:** `onboarding/package.json`, `onboarding/tsconfig.json`, `onboarding/script/`, `onboarding/src/`, `onboarding/harness/`, `onboarding/test/`, `onboarding/README.md`, `onboarding/playwright.config.ts`, `onboarding/vite.config.ts`  
+**Depends on:** D-contracts-007, D-contracts-008
+
 ## Proposed, awaiting acceptance
 
 ### D-onboarding-007 · Voice-first stack for onboarding: speech in and out primary, transcript, typed and scripted fallbacks
@@ -131,6 +147,12 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/elicitation.md` | `8c568b386b97` | D-coord-008 |
 | `docs/state-change.md` | `6fb6b1df03c0` | D-coord-008 |
 | `onboarding/PLAN.md` | `7913904371a4` | D-onboarding-001, D-onboarding-011 |
+| `onboarding/package.json` | `8335546eb509` | D-onboarding-012 |
+| `onboarding/src/types.ts` | `f227fc9cc173` | D-onboarding-012 |
+| `onboarding/src/voice/browser.ts` | `803ac3c9c652` | D-onboarding-012 |
+| `onboarding/src/voice/emitter.ts` | `df88e51d4d0e` | D-onboarding-012 |
+| `onboarding/src/voice/typed.ts` | `bee9740bc611` | D-onboarding-012 |
+| `onboarding/tsconfig.json` | `1afb58c64c91` | D-onboarding-012 |
 | `prompts/discovery.md` | `915c158676a3` | D-coord-008 |
 | `prompts/induction.md` | `9eac817f9540` | D-coord-008 |
 | `prompts/intervention.md` | `cafae717f40d` | D-coord-008 |

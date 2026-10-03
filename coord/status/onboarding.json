@@ -3,19 +3,19 @@
   "lane": "onboarding",
   "health": "green",
   "phase": "M0",
-  "progress": 10,
-  "summary": "Replanned for voice playbook (D-coord-011/012): PLAN.md revised, D-onboarding-006..011 supersede 001-005; 007 voice stack and 010 demo split proposed",
+  "progress": 30,
+  "summary": "Question harness MVP (D-onboarding-012) on claude/project-thread-c4ldi5: engine, voice, harness page, playback and Playwright visual test being built in parallel on contracts M1",
   "now": [
-    "Waiting on a person for D-onboarding-007/010 and go for M1; on contracts for the playbook profile shape"
+    "Building engine, voice adapters, harness page and visual test"
   ],
   "next": [
-    "M1: prompts/playbook-voice.md and the playbook script as data"
+    "Run visual test, open draft PR"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:36:28Z",
+  "updatedAt": "2026-10-03T15:29:51Z",
   "session": {
-    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
-    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
-    "branch": "lane/onboarding"
+    "id": "session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "url": "https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "branch": "claude/project-thread-c4ldi5"
   }
 }

@@ -25,6 +25,48 @@
       ]
     },
     {
+      "path": "onboarding/package.json",
+      "sha256": "8335546eb5098806b81bb049de115f9e6844635f536525cdf8d9b65beeca26b1",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/types.ts",
+      "sha256": "f227fc9cc173f457c10a94d9fc701ae71f1f8f891a3a9ce96b2c7d1de8e4e5fa",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/voice/browser.ts",
+      "sha256": "803ac3c9c652186a1690ead4b0b9f2d9aaab8a0dbc6206f98341520cda21eea7",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/voice/emitter.ts",
+      "sha256": "df88e51d4d0e6b7dbcd7ceaa9adfb8c2f7f9a7042d4807b847a1c43b216c43d8",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/src/voice/typed.ts",
+      "sha256": "bee9740bc611c3ad3f1acfc91d9d8a1998449b30e1f3ffebfaf5c644812b76e2",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
+      "path": "onboarding/tsconfig.json",
+      "sha256": "1afb58c64c91a473fdd1e8727ce99da6cb1adcb6d9f35c89c5844e920923a9c5",
+      "decisions": [
+        "D-onboarding-012"
+      ]
+    },
+    {
       "path": "prompts/discovery.md",
       "sha256": "915c158676a35f1cc2cc2818875495b64bd86205514c206aa470862c3500ef6e",
       "decisions": [
