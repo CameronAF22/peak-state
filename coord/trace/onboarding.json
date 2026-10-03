@@ -141,7 +141,7 @@
     },
     {
       "path": "onboarding/src/harness/main.ts",
-      "sha256": "37abb60c956cbc08cd8d873a52b7871cdee67b34e05d1cc1101fbef3b90eb5ef",
+      "sha256": "ff13a7408062ca84210807bff15b1782db8c76d5f73210d04d528c424d035a89",
       "decisions": [
         "D-onboarding-012"
       ]
@@ -234,7 +234,7 @@
     },
     {
       "path": "onboarding/src/practice/loop.ts",
-      "sha256": "b91312a35fd6df5cafc785966b151620a56b65e4a9bb9fb11630c0e06a424096",
+      "sha256": "92bc212b77809a7793247fa3459a78a024cc6b14f565fd39d6a4e7828817bc5c",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-015"
@@ -242,7 +242,7 @@
     },
     {
       "path": "onboarding/src/practice/rating.ts",
-      "sha256": "03184e9f45e5c73f0d9696d6e2a9b6a2bdd9036a001569cc0436a178bf0a267e",
+      "sha256": "21d6d4c873b761253d55e83698cb2243476ea3ca68840e953ccdbd05d46f87ba",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-015"
@@ -258,7 +258,7 @@
     },
     {
       "path": "onboarding/src/store/index.ts",
-      "sha256": "c4c1c0c7f0445851dcd2d6e25a96d760f1b42bce06b3a72a00f8e23679576cf7",
+      "sha256": "d52dc190cf9114b8118331eefc0b56a068009c597621762b85e2df47e225fa93",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-014"
@@ -266,7 +266,7 @@
     },
     {
       "path": "onboarding/src/sync/index.ts",
-      "sha256": "8c27445aa608e59157161738cf0c08289996638946babaa7cc90bcaa4ef9a6e1",
+      "sha256": "37df9200483d5fa4e20223a483f49a48f5600a2caf0ed61ae8e3ee97cc79a86b",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-017"
@@ -367,7 +367,7 @@
     },
     {
       "path": "onboarding/test/unit/practice.test.ts",
-      "sha256": "e516068a6a78e5caef1925646966b3adb7b2f36c4664d511e10822d72b0c660b",
+      "sha256": "60f6b512c408f7c15133650643bb473aad53387ce035ee0c10edc6fd87fc63eb",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-015"
@@ -398,7 +398,7 @@
     },
     {
       "path": "onboarding/test/unit/sync.test.ts",
-      "sha256": "77f5ce03cb60fb290511f869ebd7aa057b36a311f29df30129cc433513b3916b",
+      "sha256": "3b08f234eaa4caf8c75561b27aba49d37a89b9843d75b7db62c1a686e3393022",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-017"

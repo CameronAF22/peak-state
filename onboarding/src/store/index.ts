@@ -126,13 +126,21 @@ export function applyChange(record: StrategyRecord, input: ChangeInput, now: () 
     sub.words = words;
     if (Object.keys(sub.words).length === 0) delete sub.words;
     // A driver measured against the old peak value now points at the new one; its effect is untested again.
+    // When the new peak equals the contrast there is nothing left to change, so that difference and its driver go.
     const st = getState(profile, input.stateId)!;
-    for (const d of st.differences) {
+    const kept: number[] = [];
+    st.differences = st.differences.filter((d, i) => {
       if (d.stepIndex === input.stepIndex && d.modality === s.modality && d.attribute === attr) {
+        if (d.contrast === input.to) return false;
         d.peak = input.to;
         d.ratingDelta = null;
       }
-    }
+      kept.push(i);
+      return true;
+    });
+    const remap = (ids: number[]) => ids.filter((i) => kept.includes(i)).map((i) => kept.indexOf(i));
+    st.drivers = remap(st.drivers);
+    if (st.recode) st.recode.appliedDrivers = remap(st.recode.appliedDrivers);
   } else {
     throw new Error(`unknown field ${input.field}`);
   }

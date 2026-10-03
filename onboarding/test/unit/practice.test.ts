@@ -228,13 +228,46 @@ test("review findings: bare no, negations and 'but' are never read as the same a
   assert.equal((read(0, "core.location", "not in the center, it's on the left") as { to: string }).to, "left");
   assert.equal(read(0, "core.distance", "not close anymore").kind, "unclear");
   assert.equal((read(0, "core.distance", "it's further away now") as { to: string }).to, "far");
-  assert.equal(read(0, "core.brightness", "still bright but further").kind, "unclear");
+  assert.equal(read(0, "core.brightness", "still bright but further").kind, "same");
   assert.equal(read(0, "core.brightness", "less bright now").kind, "unclear");
   assert.equal(read(0, "core.brightness", "still bright").kind, "same");
   // intensity takes the last number
   assert.equal((read(2, "core.intensity", "it went from 8 to 9") as { to: number }).to, 9);
   assert.equal((read(2, "core.intensity", "less than 8, more like 6") as { to: number }).to, 6);
   assert.equal(read(2, "core.intensity", "still 8").kind, "same");
+});
+
+test("second review: no-change phrases, negated other values, scales and free text", () => {
+  const step = (i: number) => state.strategy.steps[i];
+  const read = (i: number, field: string, text: string) => readQuestionAnswer(step(i), field, { text, via: "voice" });
+  for (const t of ["it hasn't changed", "didn't change", "it's the same, nothing changed", "nothing's different", "still close, isn't it?", "it's not far, still close", "still close but brighter"]) {
+    assert.equal(read(0, "core.distance", t).kind, "same", t);
+  }
+  assert.equal(read(0, "core.location", "it's still in the center, hasn't moved").kind, "same");
+  assert.equal(read(0, "core.location", "not on the left, still in the center").kind, "same");
+  assert.notEqual(read(0, "core.brightness", "it's not dim").kind, "change");
+  assert.equal(read(0, "core.brightness", "it doesn't feel dim, still bright").kind, "same");
+  assert.equal((read(0, "core.distance", "it was close, now it's far") as { to: string }).to, "far");
+  // intensity: the scale is never the answer
+  assert.equal(read(2, "core.intensity", "8/10").kind, "same");
+  assert.equal(read(2, "core.intensity", "same as last time, 8 out of 10").kind, "same");
+  assert.equal((read(2, "core.intensity", "about a nine out of ten") as { to: number }).to, 9);
+  // whose voice: same-answers are never saved as the new source
+  for (const t of ["yes it's still my own voice", "same voice as before, yes", "still my own voice, but louder", "it hasn't changed", "it's my own voice"]) {
+    assert.equal(read(1, "core.source", t).kind, "same", t);
+  }
+  // step words: no-change answers keep the words
+  for (const t of ["it hasn't changed", "nothing changed", "yes, still the face in the room"]) assert.equal(read(0, "content", t).kind, "same", t);
+  assert.equal(read(0, "content", "a new face, my daughter's").kind, "change");
+});
+
+test("second review: a peak moved onto its contrast drops that difference and its driver", () => {
+  const next = applyChange(newRecord(profile), { stateId: state.id, stepIndex: 0, field: "core.distance", to: "far", rating: 5 });
+  const st = next.profile.states[0];
+  assert.equal(st.differences.some((d) => d.attribute === "distance"), false);
+  assert.deepEqual(st.drivers.map((i) => st.differences[i].attribute), ["brightness", "volume"]);
+  const v = validateProfile(next.profile);
+  assert.ok(v.ok, v.errors.join("\n"));
 });
 
 test("review findings: a changed detail moves its driver's peak; content changes carry no words", () => {

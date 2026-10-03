@@ -511,7 +511,14 @@ function renderAccount(): void {
   account.render({ email: api.account()?.email ?? null, syncing, note: syncNote });
 }
 
-async function pushStrategy(): Promise<void> {
+// One push at a time, each sending the latest save, so an older push can never land after a newer one.
+let pushing: Promise<void> = Promise.resolve();
+function pushStrategy(): Promise<void> {
+  pushing = pushing.then(pushLatest, pushLatest);
+  return pushing;
+}
+
+async function pushLatest(): Promise<void> {
   if (!saved || !api.account()) return;
   const mine = saved;
   try {

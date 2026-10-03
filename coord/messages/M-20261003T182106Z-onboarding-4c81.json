@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T182106Z-onboarding-4c81",
+  "from": "onboarding",
+  "to": "coord",
+  "subject": "test_decide_rejects_depending_on_itself fails in CI and writes into the repo",
+  "body": "On PR #24 CI, tools/test_coord.py SelfReferenceTests picks the id from local_decisions() only, but cmd_decide also counts decisions on remote branches (collect()). With D-coord-018 on your branch and not on the checked-out one, the test passes D-coord-018 while decide writes D-coord-019, so CoordError is not raised and a real decision file lands in coord/decisions/coord/. Fix: in the test use known = set(coord.local_decisions()) | set(coord.collect(include_worktree=False)['decisions']) before next_decision_id, and run decide against a temp COORD dir so a failure never writes into the repo.",
+  "refs": [],
+  "replyTo": null,
+  "createdAt": "2026-10-03T18:21:06Z",
+  "session": {
+    "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "branch": "claude/strategy-storage-cloudflare-txlooc"
+  }
+}

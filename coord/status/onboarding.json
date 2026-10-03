@@ -3,18 +3,18 @@
   "lane": "onboarding",
   "health": "green",
   "phase": "M0",
-  "progress": 90,
-  "summary": "Practice loop, strategy revisions, rep reminders and a Cloudflare Worker (D1, invite-code accounts, short-lived GPT live keys) built on top of PR #23; 66 unit tests, visual and online browser tests pass under wrangler dev",
+  "progress": 92,
+  "summary": "Practice loop, strategy revisions, rep reminders and a Cloudflare Worker (D1, invite-code accounts, short-lived voice keys); second review fixes in",
   "now": [
-    "Review agents probing the loop, API and safety copy"
+    "Waiting on Cloudflare access to deploy"
   ],
   "next": [
-    "Fix findings, open draft PR, deploy when Cam connects Cloudflare"
+    "wrangler d1 create, secrets, deploy"
   ],
   "blockers": [
     "Deploy needs Cam's Cloudflare access and the OpenAI key as a Worker secret"
   ],
-  "updatedAt": "2026-10-03T18:06:16Z",
+  "updatedAt": "2026-10-03T18:21:06Z",
   "session": {
     "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
     "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",

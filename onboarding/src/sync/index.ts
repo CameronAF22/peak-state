@@ -196,6 +196,7 @@ function backup(record: StrategyRecord, store: KeyValueStore | null): void {
  * the account's copy wins, the local one is kept under PREVIOUS_STRATEGY_KEY. Saves the result locally and returns it.
  */
 export async function pushRecord(api: Api, record: StrategyRecord, store: KeyValueStore | null = defaultStore(), remote?: StrategyRecord | null): Promise<StrategyRecord> {
+  const sent = record;
   let server = remote;
   for (let attempt = 0; attempt < 3; attempt++) {
     let replaces: { profileId: string; revision: number } | null = null;
@@ -215,7 +216,10 @@ export async function pushRecord(api: Api, record: StrategyRecord, store: KeyVal
     server = put.record; // the account moved on: decide again against its copy
     if (!server) break;
   }
-  saveRecord(record, store);
+  // Write only over the record this push started from: a newer save made while it was in flight stays.
+  const now = loadRecord(store);
+  const untouched = !now || JSON.stringify(now) === JSON.stringify(sent) || (now.profile.profileId === record.profile.profileId && now.revision < record.revision);
+  if (untouched) saveRecord(record, store);
   return record;
 }
 

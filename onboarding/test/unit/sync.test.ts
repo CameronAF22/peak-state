@@ -5,7 +5,7 @@ import { test } from "node:test";
 import type { ProfileV2 } from "@peak-state/contracts";
 import { appendRun, loadRuns, runStrategy, type KeyValueStore } from "../../src/playback/index.ts";
 import { applyChange, loadRecord, newRecord, readField, saveRecord } from "../../src/store/index.ts";
-import { createApi as createClient, loadAccount, PREVIOUS_STRATEGY_KEY, syncAll, type FetchLike } from "../../src/sync/index.ts";
+import { createApi as createClient, loadAccount, PREVIOUS_STRATEGY_KEY, pushRecord, syncAll, type FetchLike } from "../../src/sync/index.ts";
 import { createApi as createServer } from "../../worker/api.ts";
 import { fakeD1 } from "./d1.ts";
 
@@ -136,4 +136,31 @@ test("two devices that both made revision 2 offline: the account's copy wins, th
   const rb = await syncAll(b, bStore);
   assert.equal(readField(rb.record!.profile.states[0].strategy.steps[0], "core.size"), "small");
   assert.equal(readField(JSON.parse(bStore.getItem(PREVIOUS_STRATEGY_KEY)!).profile.states[0].strategy.steps[0], "core.size"), "medium");
+});
+
+test("a slow push of revision 2 never overwrites revision 3 saved while it was in flight", async () => {
+  const inner = wire();
+  let release: () => void = () => {};
+  const gate = new Promise<void>((r) => (release = r));
+  let slowNext = false;
+  const fetch: FetchLike = async (url, init) => {
+    if (slowNext && init?.method === "PUT") {
+      slowNext = false;
+      await gate;
+    }
+    return inner(url, init);
+  };
+  const store = memoryStore();
+  const api = createClient({ fetch, store });
+  saveRecord(newRecord(profile), store);
+  await api.createAccount("slow@example.com", CODE);
+  await syncAll(api, store);
+  const rev2 = saveRecord(applyChange(loadRecord(store)!, { stateId: "calm-before-pitch", stepIndex: 0, field: "core.size", to: "small", rating: 6 }), store);
+  slowNext = true;
+  const pending = pushRecord(api, rev2, store);
+  const rev3 = saveRecord(applyChange(rev2, { stateId: "calm-before-pitch", stepIndex: 0, field: "core.distance", to: "arm-length", rating: 6 }), store);
+  release();
+  await pending;
+  assert.equal(loadRecord(store)!.revision, 3);
+  assert.deepEqual(loadRecord(store), rev3);
 });

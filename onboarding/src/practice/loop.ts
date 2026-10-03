@@ -9,7 +9,7 @@ import { screenAnswer, STOP_MESSAGE } from "../engine/safety.ts";
 import { scriptHash, stepLine, stripPerception, toSecondPerson, type PlaybackLine } from "../playback/script.ts";
 import { applyChange, readField, type StrategyChange, type StrategyRecord } from "../store/index.ts";
 import type { Answer, Choice } from "../types.ts";
-import { parseRating } from "./rating.ts";
+import { parseRating, stripScale } from "./rating.ts";
 
 export const DEFAULT_MAX_TRIES = 3;
 export const TRY_AGAIN_LINE = "Okay, let's try again.";
@@ -208,25 +208,42 @@ function questionPrompt(state: State, target: Target, attempt: number): Practice
   };
 }
 
-const SAME = /\b(same|still|unchanged|no change|hasn't changed|has not changed|didn't change|did not change|keep it|it's fine|that's right|yes|yeah|yep)\b/i;
-/** Words that turn "still close" into "not close any more", or "bright" into "bright but further". */
-const NEGATION = /\b(not|no longer|anymore|any more|less|but|changed|different|instead)\b|n't\b/i;
+const SAME = /\b(same|still|unchanged|keep it|it's fine|that's right|yes|yeah|yep)\b/i;
+/** Says outright that nothing changed. Read before any negation, so "it hasn't changed" is never a "not". */
+const NO_CHANGE = /\b(?:(?:has|have|is|did|does)(?:n't| not) (?:changed|moved|shifted)|(?:didn't|did not|doesn't|does not) (?:change|move|shift)|nothing(?:'s| has| is)? (?:changed|different|moved)|no change|unchanged|(?:the )?same(?: as (?:before|last time))?)\b/gi;
+const NOT_SAME = /\bnot (?:quite |really )?(?:the )?same\b/i;
+/** A clause holding one of these says what it is not: "not far", "it isn't dim", "no longer in the center". */
+const NEGATED = /\b(?:not|no longer|never|anymore|any more|less)\b|n't\b/i;
+/** Words that mark a new answer in free text: "still a face, but now it's my daughter". */
+const SHIFT = /\b(but|now|instead|actually|different|changed)\b/i;
 /** A bare no: it says something changed but not what, so the question is asked again. */
 const BARE_NO = /^\W*(no|nope|nah|different|changed|it changed|it's changed|it'?s different( now)?|not really|not the same|not anymore|not any more|it's not|it isn't)\W*$/i;
 
 type Read = { kind: "same" } | { kind: "change"; to: string | number; words?: string } | { kind: "unclear" };
 
-function short(text: string): boolean {
-  return text.split(/\s+/).length <= 4;
+/** The answer in clauses, with "it hasn't changed" phrases taken out and noted. */
+function clauses(text: string): { saysSame: boolean; rest: string; positive: string[] } {
+  const notSame = NOT_SAME.test(text);
+  let saysSame = false;
+  const cleaned = text.replace(NOT_SAME, " ").replace(NO_CHANGE, () => {
+    saysSame = true;
+    return " ";
+  });
+  const parts = cleaned.split(/[,;.!?]|\b(?:but|and|though|although|so)\b/i).map((c) => c.trim()).filter(Boolean);
+  return { saysSame: saysSame && !notSame, rest: cleaned, positive: parts.filter((c) => !NEGATED.test(c)) };
 }
 
-/** The last 0..10 number in the text: "it went from 8 to 9" is 9. */
+/** The last 0..10 number in the text, with any "out of 10" scale taken out: "it went from 8 to 9" is 9. */
 function lastNumber(text: string): number | null {
   const words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
-  const all = [...text.toLowerCase().matchAll(/\b(10|[0-9]|zero|one|two|three|four|five|six|seven|eight|nine|ten)\b/g)];
+  const all = [...stripScale(text).matchAll(/\b(10|[0-9]|zero|one|two|three|four|five|six|seven|eight|nine|ten)\b/g)];
   const last = all[all.length - 1]?.[1];
   if (last === undefined) return null;
   return /^\d+$/.test(last) ? Number(last) : words.indexOf(last);
+}
+
+function normal(v: string): string {
+  return v.toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9' ]+/g, " ").replace(/\s+/g, " ").trim();
 }
 
 /** What the answer to a strategy question says: the same, a new value, or unclear. */
@@ -236,36 +253,41 @@ export function readQuestionAnswer(step: Step, field: string, answer: Answer): R
   const text = answer.text.trim();
   const fromChoice = answer.choiceValue !== undefined;
   if (!fromChoice && BARE_NO.test(text)) return { kind: "unclear" };
-  const negated = NEGATION.test(text);
   const words = fromChoice || answer.via === "choice" ? undefined : text;
+  const attr = field.startsWith("core.") ? field.slice(5) : null;
+  const vocab = attr && step.modality !== "other" ? (SUBMODALITIES[step.modality].core as Record<string, readonly string[] | null>)[attr] : undefined;
 
-  if (field === "content" || step.modality === "other") {
-    if (!text || (SAME.test(text) && !negated && short(text))) return { kind: "same" };
-    return text !== current ? { kind: "change", to: text } : { kind: "same" };
-  }
-
-  const attr = field.slice(5);
-  const modality = step.modality;
-  const vocab = (SUBMODALITIES[modality].core as Record<string, readonly string[] | null>)[attr];
-
-  if (vocab === null && attr !== "intensity") {
-    // Free text (whose voice): any words are the value, so a short "yes, still" is the same.
-    if (!fromChoice && SAME.test(text) && !negated && short(text)) return { kind: "same" };
-    const v = parseSubmodality(modality, attr, text, answer.choiceValue);
+  if (!attr || step.modality === "other" || (vocab === null && attr !== "intensity")) {
+    // Free text (the step's words, or whose voice): the answer itself is the new value, unless it says it is the same.
+    if (!text) return { kind: "same" };
+    if (fromChoice && attr) {
+      const v = parseSubmodality(step.modality as Exclude<Step["modality"], "other">, attr, text, answer.choiceValue);
+      return v === null || v === current ? { kind: "same" } : { kind: "change", to: v };
+    }
+    const { saysSame, rest } = clauses(text);
+    const now = typeof current === "string" ? normal(current) : "";
+    if (now && normal(text).includes(now)) return { kind: "same" };
+    if ((saysSame || SAME.test(text)) && !NOT_SAME.test(text)) return SHIFT.test(rest) ? { kind: "unclear" } : { kind: "same" };
+    if (!attr) return { kind: "change", to: text };
+    const v = parseSubmodality(step.modality as Exclude<Step["modality"], "other">, attr, text, answer.choiceValue);
     return v === null || v === current ? { kind: "same" } : { kind: "change", to: v, ...(words ? { words } : {}) };
   }
 
-  let value = attr === "intensity" && !fromChoice ? lastNumber(text) : parseSubmodality(modality, attr, text, answer.choiceValue);
-  if (value === current && negated && typeof current === "string") {
-    // "not in the center, it's on the left": drop the old value's words and read again.
-    const without = text.replace(new RegExp(`\\b${current.replace(/-/g, "[- ]")}\\b`, "gi"), " ");
-    const again = parseSubmodality(modality, attr, without);
-    value = again !== null && again !== current ? again : null;
-    if (value === null) return { kind: "unclear" };
+  const modality = step.modality as Exclude<Step["modality"], "other">;
+  if (fromChoice) {
+    const v = parseSubmodality(modality, attr, text, answer.choiceValue);
+    return v === null || v === current ? { kind: "same" } : { kind: "change", to: v };
   }
-  if (value === null) return SAME.test(text) && !negated ? { kind: "same" } : { kind: "unclear" };
-  if (value === current) return { kind: "same" };
-  return { kind: "change", to: value, ...(words ? { words } : {}) };
+
+  // Read only what the answer says it is, never what it says it is not: "not far, still close" is close.
+  const { saysSame, positive } = clauses(text);
+  const values = positive
+    .map((c) => (attr === "intensity" ? lastNumber(c) : parseSubmodality(modality, attr, c)))
+    .filter((v): v is string | number => v !== null);
+  const changed = values.filter((v) => v !== current);
+  if (changed.length) return { kind: "change", to: changed[changed.length - 1], ...(words ? { words } : {}) };
+  if (values.length || saysSame || (SAME.test(text) && !NOT_SAME.test(text))) return { kind: "same" };
+  return { kind: "unclear" };
 }
 
 // ── the loop ────────────────────────────────────────────────────────────────

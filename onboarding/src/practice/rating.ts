@@ -6,8 +6,9 @@ const WORDS: Record<string, number> = {
   one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
 };
 
-export function parseRating(text: string): number | null {
-  const t = text
+/** The text in lower case with the scale taken out, so "out of 10" or "8/10" never reads as the answer 10. */
+export function stripScale(text: string): string {
+  return text
     .toLowerCase()
     .replace(/[’‘]/g, "'")
     // Drop the scale itself so "out of 10" or "from 0 to 10" is never read as the answer.
@@ -15,6 +16,10 @@ export function parseRating(text: string): number | null {
     .replace(/\b(?:on a|on the)\s+scale\b/g, " ")
     .replace(/\bout of\s+(?:10|ten)\b/g, " ")
     .replace(/\/\s*10\b/g, " ");
+}
+
+export function parseRating(text: string): number | null {
+  const t = stripScale(text);
   // "one hundred", "100%": not a 0 to 10 answer.
   if (/\b(hundred|thousand|percent)\b|%|\b\d{3,}\b/.test(t)) return null;
   const digit = /(?<![\d.])(10|\d)(?:[.,](\d+))?(?![\d])/.exec(t);
