@@ -2,20 +2,20 @@
   "schemaVersion": 1,
   "lane": "coord",
   "health": "green",
-  "phase": "M1",
+  "phase": "review",
   "progress": 100,
-  "summary": "test/ home auth with JSON user store and localStorage session",
+  "summary": "Synthetic calming lab and Oura REST research complete; 31 workflow tests and 14 coordination tests pass.",
   "now": [
-    "Auth UI and API shipped"
+    "Preparing the user-requested PR"
   ],
   "next": [
-    "Integrate onboarding flow when ready"
+    "Review and integrate the isolated lab when ready"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T16:35:40Z",
+  "updatedAt": "2026-10-03T18:07:00Z",
   "session": {
-    "id": "local-vikas",
+    "id": "codex-01a10169-c218-77b3-9532-75e07c5cb774",
     "url": null,
-    "branch": "claude/project-thread-c4ldi5"
+    "branch": "codex/synthetic-calming-workflow"
   }
 }

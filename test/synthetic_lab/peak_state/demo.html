@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peak State · workflow lab</title>
+<style>
+  :root{color-scheme:light;--ink:#193c36;--muted:#586c66;--line:#d9e3dc;--paper:#f5f7f1;--accent:#176653}
+  *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+  main{max-width:1160px;margin:auto;padding:38px 24px}header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+  h1{font-size:38px;letter-spacing:-1.5px;margin:3px 0 12px}h2{font-size:19px;margin:0 0 15px}p{margin:0 0 14px}.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+  .badge{padding:8px 12px;border:1px solid var(--line);border-radius:6px;font-size:12px;white-space:nowrap}.intro{max-width:740px;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:300px 1fr;gap:22px;margin-top:22px}.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:18px}
+  label{display:block;font-size:14px;margin:12px 0 4px}select{padding:10px;background:#fff;border:1px solid #b7cac0;border-radius:6px;color:var(--ink);width:100%;font:inherit;font-size:14px}
+  input[type=range]{width:100%;accent-color:var(--accent)}.check{display:flex;gap:8px;align-items:center}.check input{accent-color:var(--accent)}
+  button,.link{font:inherit;font-size:14px;background:var(--accent);color:#fff;border:0;border-radius:6px;padding:10px 16px;cursor:pointer;display:inline-block;text-decoration:none}button.secondary{background:#eaf0ea;color:var(--ink)}
+  button:disabled{opacity:.5;cursor:wait}.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.muted{color:var(--muted);font-size:13px}.state{font-size:26px;margin:0 0 8px;letter-spacing:-.5px}
+  .chart{width:100%;height:180px;display:block}.legend{display:flex;gap:20px;font-size:12px;color:var(--muted)}.legend span:before{content:'';display:inline-block;width:15px;height:3px;background:#176653;vertical-align:middle;margin-right:5px}.legend span:nth-child(2):before{background:#b26941}
+  .timeline{list-style:none;padding:0;margin:0}.timeline li{display:grid;grid-template-columns:65px 1fr;gap:12px;padding:13px 0;border-top:1px solid var(--line)}.timeline time{font-size:12px;color:var(--muted)}.timeline strong{font-size:13px;text-transform:uppercase;letter-spacing:.6px}.timeline p{font-size:14px;margin:3px 0 0}
+  .nodes{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}.nodes span{border:1px solid var(--line);padding:6px 9px;border-radius:5px;font-size:12px}.swatch{width:100%;height:100px;border-radius:8px;margin-top:12px}#error{color:#9b3425;margin-top:14px}#suggestion{background:#edf4ef}.hidden{display:none!important}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  @media(max-width:760px){main{padding:25px 16px}header{display:block}.badge{display:inline-block;margin-top:8px}.grid{grid-template-columns:1fr}h1{font-size:32px}.panel{padding:18px}}
+</style>
+<main>
+  <header><div><div class="eyebrow">Peak State / workflow lab</div><h1>A signal. A choice. A calmer moment.</h1></div><span class="badge">SYNTHETIC DATA · OFFLINE POLICIES</span></header>
+  <p class="intro">Explore how a change from a personal baseline becomes an offer, a preferred calming suggestion, and a check-in. Simulated time advances instantly. No ring, model, or media playback is connected.</p>
+  <div class="nodes"><span>Input</span><span>Signal detector</span><span>Context analyst</span><span>Preference planner</span><span>Recovery monitor</span><span>Feedback learner</span></div>
+  <div class="grid">
+    <aside>
+      <section class="panel"><h2>Set up a replay</h2>
+        <label for="scenario">Scenario</label><select id="scenario"></select>
+        <label for="hr">Heart-rate increase: <strong id="hr-label">20%</strong></label><input id="hr" type="range" min="11" max="60" value="20">
+        <label for="hrv">HRV decrease: <strong id="hrv-label">25%</strong></label><input id="hrv" type="range" min="16" max="60" value="25">
+        <p class="muted">Two consecutive readings must cross the same threshold. Baselines: 62 bpm and 52 ms. These values are demo settings, not clinical cutoffs.</p>
+        <label>What helps this person?</label>
+        <label class="check"><input type="checkbox" name="preference" value="funny_video" checked> Funny videos</label>
+        <label class="check"><input type="checkbox" name="preference" value="meditation_music" checked> Meditation music</label>
+        <label class="check"><input type="checkbox" name="preference" value="breathing" checked> Comfortable breathing</label>
+        <label class="check"><input type="checkbox" name="preference" value="meditation_video"> Guided meditation</label>
+        <label class="check"><input type="checkbox" name="preference" value="color"> Calming color</label>
+        <div class="actions"><button id="load">Load scenario</button><button id="reset" class="secondary">Reset feedback</button></div>
+        <p id="memory" class="muted" style="margin-top:12px">No helpfulness feedback yet.</p><div id="error" role="alert"></div>
+      </section>
+      <section class="panel"><h2>What the readings mean</h2><p class="muted">Heart rate rises and HRV falls in the simulated signal. Recovery means returning near baseline, sustained for two readings. It does not establish emotional state or prove the suggestion worked.</p><p class="muted">Intraday HRV here is invented for testing. Oura's REST heart-rate feed does not provide it; sleep HRV cannot verify a short daytime intervention.</p></section>
+    </aside>
+    <div>
+      <section class="panel" aria-live="polite"><div class="eyebrow">Workflow state</div><div id="state" class="state">Ready to explore</div><p id="description" class="muted"></p>
+        <div id="offer" class="hidden"><p>Want a short calming break?</p><div class="actions"><button id="accept">Accept & replay next readings</button><button id="decline" class="secondary">Decline</button><button id="expire" class="secondary">Let the offer expire</button></div></div>
+        <div id="feedback" class="hidden"><p>The measurements are only part of the story. How did this break feel?</p><label class="check"><input id="calmer" type="checkbox"> I feel calmer</label><div class="actions"><button id="helpful">It helped</button><button id="unhelpful" class="secondary">It didn’t help</button></div></div>
+      </section>
+      <section id="suggestion" class="panel hidden"></section>
+      <section class="panel"><h2>Change from personal baseline</h2><svg id="chart" class="chart" viewBox="0 0 650 180" role="img" aria-label="Heart-rate and HRV percentage change from baseline"></svg><div class="legend"><span>Heart rate</span><span>HRV</span></div><p class="muted" style="margin-top:10px">Dashed lines show trigger thresholds. Missing measurements appear as gaps.</p></section>
+      <section class="panel"><h2>Workflow trace</h2><ul id="trace" class="timeline"><li>Load a scenario to see the decisions.</li></ul></section>
+      <section class="panel"><h2>Sample input</h2><div class="table-wrap"><table><thead><tr><th>Observed (UTC)</th><th>HR · bpm</th><th>HRV · ms</th><th>Context</th></tr></thead><tbody id="readings"></tbody></table></div><div class="actions"><button id="download" class="secondary" disabled>Download replay JSON</button></div></section>
+    </div>
+  </div>
+</main>
+<script>
+const $=id=>document.getElementById(id);let result=null,request=null,history=[];
+const names={idle:'No sustained signal',offered:'An offer is waiting',monitoring:'Watching subsequent readings',check_in:'Time for a check-in',cooldown:'Episode closed · cooldown'};
+const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function plot(samples){
+ const y=v=>150-(v+70)/150*130,x=i=>55+i*570/Math.max(samples.length-1,1);let svg='';
+ for(const v of [-50,0,50])svg+=`<line x1="55" y1="${y(v)}" x2="630" y2="${y(v)}" stroke="#d9e3dc"/><text x="8" y="${y(v)+4}" fill="#586c66" font-size="11">${v}%</text>`;
+ for(const [v,c] of [[request?.config.hr_rise_pct??20,'#176653'],[-(request?.config.hrv_drop_pct??25),'#b26941']])svg+=`<line x1="55" y1="${y(v)}" x2="630" y2="${y(v)}" stroke="${c}" stroke-dasharray="4 5" opacity=".5"/>`;
+ for(const [key,color] of [['hr_change_pct','#176653'],['hrv_change_pct','#b26941']]){let segment=[];const flush=()=>{if(segment.length)svg+=`<polyline points="${segment.join(' ')}" fill="none" stroke="${color}" stroke-width="2.5"/>`;segment=[];};samples.forEach((s,i)=>{if(s[key]==null){flush();return;}const point=`${x(i)},${y(s[key])}`;segment.push(point);svg+=`<circle cx="${x(i)}" cy="${y(s[key])}" r="3" fill="${color}"/>`;});flush();}
+ samples.forEach((s,i)=>{if(i===0||i===samples.length-1)svg+=`<text x="${x(i)}" y="174" text-anchor="middle" fill="#586c66" font-size="11">${esc(s.observed_at.slice(11,16))} UTC</text>`;});$('chart').innerHTML=svg;
+}
+function render(){
+ $('state').textContent=names[result.state];$('description').textContent=result.description;
+ $('offer').classList.toggle('hidden',result.state!=='offered');$('feedback').classList.toggle('hidden',!['check_in','monitoring'].includes(result.state));
+ const recommendation=result.events.find(e=>e.kind==='recommendation');$('suggestion').classList.toggle('hidden',!recommendation);
+ if(recommendation){const item=recommendation.intervention;let content=`<div class="eyebrow">Accepted suggestion</div><h2>${esc(item.title)}</h2><p class="muted">${esc(item.reason)}</p>`;
+ if(item.url)content+=`<a class="link" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Open YouTube search</a><p class="muted" style="margin-top:10px">Search results only. No specific video is vetted, selected, or automatically played.</p>`;
+ if(item.instructions)content+=`<p>${esc(item.instructions)}</p>`;if(item.color)content+=`<div class="swatch" style="background:${esc(item.color)}"></div>`;$('suggestion').innerHTML=content;}
+ $('trace').innerHTML=result.events.length?result.events.map(e=>`<li><time>${esc(e.at.slice(11,19))}<br>UTC</time><div><strong>${esc(e.component.replaceAll('_',' '))} · ${esc(e.kind.replaceAll('_',' '))}</strong><p>${esc(e.message)}</p>${e.kind==='signal'?`<p class="muted">HR: ${e.hr_change_pct==null?'missing':e.hr_change_pct.toFixed(1)+'%'} · HRV: ${e.hrv_change_pct==null?'missing':e.hrv_change_pct.toFixed(1)+'%'}</p>`:''}</div></li>`).join(''):'<li>No sustained threshold crossing. No offer or suggestion.</li>';
+ $('readings').innerHTML=result.samples.map(s=>`<tr><td>${esc(s.observed_at.slice(11,19))}</td><td>${s.hr_bpm??'missing'}</td><td>${s.hrv_ms??'missing'}</td><td>${esc(s.activity)} / ${esc(s.hrv_context)}</td></tr>`).join('');
+ $('download').disabled=false;$('memory').textContent=`${history.length} feedback record${history.length===1?'':'s'} in this browser session.`;plot(result.samples);
+}
+async function replay(decision='pending',feedback=null){
+ $('error').textContent='';document.querySelectorAll('button').forEach(b=>b.disabled=true);
+ try{const payload={...request,decision,history,...(feedback?{feedback}:{})};const response=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok)throw Error(data.error);result=data;if(feedback)history=result.profile.feedback;render();}
+ catch(e){$('error').textContent=e.message;}
+ finally{document.querySelectorAll('button').forEach(b=>b.disabled=false);$('download').disabled=!result;}
+}
+function load(){request={scenario:$('scenario').value,config:{hr_rise_pct:Number($('hr').value),hrv_drop_pct:Number($('hrv').value)},preferences:[...document.querySelectorAll('input[name=preference]:checked')].map(e=>e.value)};$('calmer').checked=false;replay();}
+$('load').onclick=load;$('accept').onclick=()=>replay('accept');$('decline').onclick=()=>replay('decline');$('expire').onclick=()=>replay('expire');
+$('helpful').onclick=()=>replay('accept',{helpful:true,feels_calmer:$('calmer').checked});$('unhelpful').onclick=()=>replay('accept',{helpful:false,feels_calmer:$('calmer').checked});
+$('reset').onclick=()=>{history=[];load();};for(const id of ['hr','hrv'])$(id).oninput=()=>$(id+'-label').textContent=$(id).value+'%';
+$('download').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='peak-state-replay.json';a.click();URL.revokeObjectURL(url);};
+fetch('/api/options').then(r=>r.json()).then(options=>{$('scenario').innerHTML=Object.keys(options.scenarios).map(name=>`<option value="${esc(name)}">${esc(name.replaceAll('_',' '))}</option>`).join('');load();}).catch(e=>$('error').textContent=e.message);
+</script>
+</html>

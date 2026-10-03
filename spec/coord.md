@@ -278,6 +278,16 @@ Run the protocol: lanes, the decision log, the generated spec, the dashboard, ho
 
 **Produces:** `test/backend/main.py`, `test/backend/users.json`, `test/frontend/index.html`, `test/frontend/app.js`, `test/frontend/styles.css`
 
+### D-coord-018 · Keep the synthetic calming prototype isolated from production lanes
+
+`accepted` · technical · 2026-10-03 · session `codex-01a10169-c218-77b3-9532-75e07c5cb774` · branch `codex/synthetic-calming-workflow` · accepted by OpenAI Codex
+
+**Decision.** Ship a standard-library Python lab under test/synthetic_lab with private synthetic fixtures, configurable HR-rise and HRV-drop rules, acceptance-gated suggestions, recovery check-ins and explicit feedback. The lab does not change production contracts, sensing, reps or onboarding. Document Oura integration separately; no live model or ring connection.
+
+**Context.** The user has no Oura credentials, requested generated inputs and an agentic workflow prototype, selected funny videos, meditation music and breathing, required acceptance, and requested a PR. Main now has coordinated lanes, so the lab belongs under the coord-owned test path.
+
+**Produces:** `test/synthetic_lab/`, `docs/oura-import-plan.md`, `docs/synthetic-workflow.md`, `README.md`, `.gitignore`
+
 ## Proposed, awaiting acceptance
 
 None.
@@ -294,10 +304,10 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 |---|---|---|
 | `.claude/settings.json` | `56f6d70b5f58` | D-coord-002 |
 | `.github/workflows/coord.yml` | `96090a168ffc` | D-coord-002 |
-| `.gitignore` | `d050ddb12035` | D-coord-008, D-coord-014 |
+| `.gitignore` | `7b734bb44610` | D-coord-008, D-coord-014, D-coord-018 |
 | `CLAUDE.md` | `c156fe12fbec` | D-coord-001 |
 | `LICENSE` | `66934fca6625` | D-coord-008 |
-| `README.md` | `009ec0f47d26` | D-coord-008 |
+| `README.md` | `db5afbb4d051` | D-coord-008, D-coord-018 |
 | `coord/README.md` | `6b4acf0bc3df` | D-coord-001 |
 | `coord/lanes.json` | `a231397884d9` | D-coord-004, D-coord-016 |
 | `docs/architecture.md` | `7a8ff3f2a3d2` | D-coord-008 |
@@ -311,7 +321,9 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/hackathon/mvp.md` | `57cfa56c173e` | D-coord-005, D-coord-006, D-coord-007, D-coord-009, D-coord-011 |
 | `docs/on-aim-closed-loop.html` | `63ed5ec933fa` | D-coord-008 |
 | `docs/open-questions.md` | `32ec140a0c57` | D-coord-008 |
+| `docs/oura-import-plan.md` | `eb3166588ff3` | D-coord-018 |
 | `docs/plan.md` | `d6259d0a40d3` | D-coord-008 |
+| `docs/synthetic-workflow.md` | `aa83dde55335` | D-coord-018 |
 | `package.json` | `a453f7213364` | D-coord-010 |
 | `schemas/coord/decision.schema.json` | `3b0135d23761` | D-coord-001 |
 | `schemas/coord/event.schema.json` | `ecf3bcd28523` | D-coord-001 |
@@ -330,6 +342,23 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `test/frontend/index.html` | `d50bac581d0e` | D-coord-015, D-coord-017 |
 | `test/frontend/onboarding.html` | `6152c4cb1f62` | D-coord-015 |
 | `test/frontend/styles.css` | `7ff29ad2a469` | D-coord-015, D-coord-017 |
+| `test/synthetic_lab/examples/calming-profile.json` | `b721a9499870` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/declined.json` | `310d754a5a28` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/hr_only.json` | `036930d834b0` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/hrv_only.json` | `555edb4b98dc` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/missing_data.json` | `cc32bce0d2fb` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/no_recovery.json` | `298f4b0e5092` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/recovery.json` | `c5295293955d` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/sleep_hrv.json` | `3370cf0b261c` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/spike.json` | `d314a3984737` | D-coord-018 |
+| `test/synthetic_lab/examples/synthetic/workout.json` | `9cdd456d240e` | D-coord-018 |
+| `test/synthetic_lab/peak_state/__init__.py` | `002f3858627e` | D-coord-018 |
+| `test/synthetic_lab/peak_state/__main__.py` | `2e311a44ecbd` | D-coord-018 |
+| `test/synthetic_lab/peak_state/demo.html` | `9000579e1008` | D-coord-018 |
+| `test/synthetic_lab/peak_state/scenarios.py` | `20657bae50d5` | D-coord-018 |
+| `test/synthetic_lab/peak_state/server.py` | `678ad2efae52` | D-coord-018 |
+| `test/synthetic_lab/peak_state/workflow.py` | `c21ce8c3315c` | D-coord-018 |
+| `test/synthetic_lab/tests/test_workflow.py` | `8db6fbf96dbe` | D-coord-018 |
 | `tools/coord.py` | `de72727efde0` | D-coord-001 |
 | `tools/test_coord.py` | `809b2fce5d82` | D-coord-001 |
 | `tsconfig.base.json` | `9a0a4c80f350` | D-coord-010 |

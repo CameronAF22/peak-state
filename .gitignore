@@ -10,6 +10,8 @@ __pycache__/
 .venv/
 venv/
 .cursor/
+tmp/
+test/synthetic_lab/tmp-server-*.log
 
 # One root lockfile per gate merge is not worth the conflicts; packages pin exact versions (D-coord-014)
 package-lock.json
