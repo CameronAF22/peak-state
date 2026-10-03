@@ -286,13 +286,17 @@ None.
 
 - D-coord-005 · MVP: three emotions, each with a triad strategy, installed through logged reps · `superseded` (superseded by D-coord-011)
 
+## Decisions from other lanes that cover files here
+
+- D-onboarding-013 · Hooks fail with a clear message when tools/coord.py is missing (`onboarding`)
+
 ## Produced artifacts
 
 Every file this lane owns, the first 12 hex digits of its SHA-256 at build time, and the decisions that cover it.
 
 | File | sha256 | Decisions |
 |---|---|---|
-| `.claude/settings.json` | `56f6d70b5f58` | D-coord-002 |
+| `.claude/settings.json` | `9c3a4e493a58` | D-coord-002, D-onboarding-013 |
 | `.github/workflows/coord.yml` | `96090a168ffc` | D-coord-002 |
 | `.gitignore` | `d050ddb12035` | D-coord-008, D-coord-014 |
 | `CLAUDE.md` | `c156fe12fbec` | D-coord-001 |

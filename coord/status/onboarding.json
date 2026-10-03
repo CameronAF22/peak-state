@@ -4,15 +4,15 @@
   "health": "green",
   "phase": "M0",
   "progress": 85,
-  "summary": "Question harness MVP on PR #23 (CI green): visual test passes for content and destressed; OpenAI key confirmed valid and gpt-live-1 exists",
+  "summary": "Question harness MVP on PR #23 (CI green). Added local setup and GPT live debugging guide; hooks now explain when run outside the repo folder",
   "now": [
-    "Waiting for Cam to allow a session on their device to test GPT live voice"
+    "Waiting for Cam to test GPT live locally"
   ],
   "next": [
-    "Live voice round trip on Cam's device; fix anything it finds"
+    "Fix whatever the live GPT test turns up"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T17:04:50Z",
+  "updatedAt": "2026-10-03T17:30:59Z",
   "session": {
     "id": "session_01AUPD3DWvpWuBX5tGm9JxwU",
     "url": "https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU",

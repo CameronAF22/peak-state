@@ -4,9 +4,10 @@
   "files": [
     {
       "path": ".claude/settings.json",
-      "sha256": "56f6d70b5f580811482db74e7f12948f261eb8dac8dc32218f434147bff1aec8",
+      "sha256": "9c3a4e493a58ad7d5eb16a497eef79cb576c69f564a9e65eff5108c7a8b0a835",
       "decisions": [
-        "D-coord-002"
+        "D-coord-002",
+        "D-onboarding-013"
       ]
     },
     {

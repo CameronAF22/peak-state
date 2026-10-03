@@ -90,6 +90,16 @@ Turn a first conversation into a confirmed profile: find the person's three top 
 **Produces:** `onboarding/package.json`, `onboarding/tsconfig.json`, `onboarding/script/`, `onboarding/src/`, `onboarding/harness/`, `onboarding/test/`, `onboarding/README.md`, `onboarding/playwright.config.ts`, `onboarding/vite.config.ts`  
 **Depends on:** D-contracts-007, D-contracts-008
 
+### D-onboarding-013 · Hooks fail with a clear message when tools/coord.py is missing
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU) · branch `claude/project-thread-c4ldi5` · accepted by claude
+
+**Decision.** Each hook command in .claude/settings.json checks that $CLAUDE_PROJECT_DIR/tools/coord.py exists. If it does, it runs exactly as before. If not, it prints that the hooks cannot run and to start Claude Code with the peak-state folder as its folder; SessionStart only warns (exit 0), the other hooks block (exit 2) so enforcement never silently turns off.
+
+**Context.** Cam's desktop session started in a scratch folder and moved into the repo, so CLAUDE_PROJECT_DIR pointed at the scratch folder and every prompt failed with a bare python 'can't open file' error. The project coordinator asked for a clearer failure.
+
+**Produces:** `.claude/settings.json`
+
 ## Proposed, awaiting acceptance
 
 ### D-onboarding-007 · Voice-first stack for onboarding: speech in and out primary, transcript, typed and scripted fallbacks
