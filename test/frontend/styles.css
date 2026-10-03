@@ -104,3 +104,417 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+/* ---------- Onboarding: one question at a time ---------- */
+
+/* Warm light pink colors, only for the onboarding page.
+   Change a color here and it changes everywhere below. */
+.onboarding-page {
+  --background: #fbe9e4; /* warm light pink */
+  --card: #fff6f2; /* cream, for buttons and pills */
+  --line: #efcfc6; /* soft pink border */
+  --text: #3b2a2b; /* dark warm brown-gray */
+  --muted: #8c6b68; /* softer text */
+  --rose: #c25a6c; /* the accent color */
+  --on-rose: #ffffff; /* text on top of the accent color */
+
+  background: var(--background);
+  color: var(--text);
+}
+.onboarding-page button {
+  background: var(--card);
+  border-color: var(--line);
+}
+.onboarding-page button:hover {
+  background: #ffffff;
+}
+.onboarding-page a {
+  color: var(--rose);
+}
+
+/* Make "hidden" always win, even over display: flex or grid below. */
+[hidden] {
+  display: none !important;
+}
+
+/* Web size: wider than the other pages (.page is 28rem, phone size). */
+.onboarding {
+  max-width: 64rem;
+  min-height: 100vh;
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: left;
+}
+
+/* On small screens, go back to normal side spacing. */
+@media (max-width: 640px) {
+  .onboarding {
+    padding: 2rem 1.25rem;
+  }
+}
+
+/* Progress bar: four parts that light up */
+.progress {
+  display: flex;
+  gap: 6px;
+}
+.progress i {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--line);
+  transition: background 0.4s;
+}
+.progress i.on {
+  background: var(--rose);
+}
+
+/* The steps named so far */
+.path {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  min-height: 2rem;
+  font-size: 0.875rem;
+}
+.path .pill {
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+.path .pill b {
+  color: var(--rose);
+}
+.path .arrow {
+  color: var(--muted);
+}
+
+/* The question in the middle */
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+.stage p {
+  margin: 0;
+}
+.label {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rose);
+  font-weight: 600;
+}
+.question {
+  /* Grows with the window: 1.75rem on a phone, up to 2.75rem on a big screen. */
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+  line-height: 1.25;
+  font-weight: 300;
+  max-width: 24em; /* keeps lines short enough to read easily */
+}
+.heard {
+  font-size: 1.35rem;
+  min-height: 1.5em;
+  max-width: 36em;
+}
+.heard.partial {
+  color: var(--muted);
+  font-style: italic;
+}
+.fade {
+  animation: fadein 0.6s ease-out;
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Answer buttons under the question */
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.choices button {
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+}
+
+/* The bottom area: Begin, the mic, or the typing box */
+.answer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+}
+.answer .start {
+  width: 100%;
+  max-width: 20rem;
+  background: var(--rose);
+  color: var(--on-rose);
+  border-color: var(--rose);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.mic {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+.mic svg {
+  width: 30px;
+  height: 30px;
+}
+.mic.listening {
+  background: var(--rose);
+  color: var(--on-rose);
+  border-color: var(--rose);
+}
+/* Two rings that ripple out while the mic is listening */
+.mic.listening::before,
+.mic.listening::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--rose);
+  opacity: 0;
+  animation: ripple 1.6s ease-out infinite;
+}
+.mic.listening::after {
+  animation-delay: 0.8s;
+}
+@keyframes ripple {
+  from {
+    opacity: 0.8;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+.hint {
+  margin: 0;
+  min-height: 1.5em;
+  color: var(--muted);
+}
+.typed {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 36rem;
+}
+.typed input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.onboarding-page .switch {
+  border: 0;
+  background: none;
+  color: var(--rose);
+  padding: 4px 8px;
+}
+.onboarding-page .switch:hover {
+  background: none;
+  text-decoration: underline;
+}
+.safety {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Part 3 list of differences, and the summary at the end */
+.differences,
+.summary {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  max-width: 40rem;
+}
+.differences h2,
+.summary h2 {
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rose);
+  margin: 0 0 0.5rem;
+}
+.summary h2:not(:first-child) {
+  margin-top: 1rem;
+}
+.differences ul,
+.summary ul,
+.summary ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+}
+.differences li.driver {
+  font-weight: 600;
+}
+.differences li.driver::after {
+  content: " ★ driver";
+  color: var(--rose);
+}
+.summary p {
+  margin: 0.75rem 0 0;
+}
+.summary .note {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* A link that looks like the big rose button (for example "Go to home") */
+a.start {
+  display: block;
+  width: 100%;
+  max-width: 20rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  background: var(--rose);
+  color: var(--on-rose);
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+a.start:hover {
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+/* ---------- Home page ---------- */
+
+.home-view,
+.session-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.home-view .question {
+  margin: 0;
+}
+
+/* The big "I'm feeling stressed" button */
+.onboarding-page .stressed {
+  align-self: flex-start;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background: var(--rose);
+  color: var(--on-rose);
+  border-color: var(--rose);
+}
+.onboarding-page .stressed:hover {
+  background: var(--rose);
+  opacity: 0.9;
+}
+
+.section-title {
+  margin: 1.5rem 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rose);
+}
+
+/* One card per saved state, side by side on a wide screen */
+.state-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1rem;
+}
+.state-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.25rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.state-card h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+.state-card .moment {
+  margin: 0;
+  color: var(--muted);
+  font-style: italic;
+}
+.state-card .last {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.state-card .start {
+  margin-top: auto;
+  align-self: flex-start;
+  width: auto;
+  background: var(--rose);
+  color: var(--on-rose);
+  border-color: var(--rose);
+  font-weight: 600;
+}
+.empty {
+  color: var(--muted);
+}
+
+/* The breathing circle during a session: grows and shrinks over 8 seconds */
+.orb {
+  width: 120px;
+  height: 120px;
+  margin: 1rem auto 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, var(--line) 45%, var(--rose) 120%);
+  animation: breathe 8s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(0.88);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade,
+  .mic.listening::before,
+  .mic.listening::after {
+    animation: none;
+  }
+}

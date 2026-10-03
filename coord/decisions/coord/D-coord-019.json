@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-019",
+  "lane": "coord",
+  "title": "Onboarding UI ElevenLabs TTS and AI Guide sandbox",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Develop a local sandbox environment in test/ containing onboarding and home pages, supporting ElevenLabs voice synthesis and Groq AI guide reflection.",
+  "decision": "Implement the sandbox onboarding and dashboard views, ElevenLabs TTS integration, and local backend scripts for audio test/generation.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "test/backend/ai_guide.py",
+    "test/backend/elevenlabs_listen_test.py",
+    "test/backend/elevenlabs_tts.py",
+    "test/frontend/guide.js",
+    "test/frontend/home.html",
+    "test/frontend/home.js",
+    "test/frontend/onboarding.js"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "local-vikas",
+    "url": null,
+    "branch": "molly-onboardingui"
+  },
+  "createdAt": "2026-10-03T18:49:13Z",
+  "acceptedAt": "2026-10-03T18:49:13Z",
+  "acceptedBy": "claude"
+}
