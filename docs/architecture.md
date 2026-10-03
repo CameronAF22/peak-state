@@ -1,38 +1,40 @@
 # Architecture
 
-Peak State is a thin loop around one saved profile and two voice protocols. This document names the pieces and the boundaries. It does not pick a cloud, a database, or an audio SDK. Those choices depend on the open questions.
+Peak State stores one profile, three strategies, and a voice session that starts only after the person accepts an offer. Oura can create the offer. GPT Live 1 runs the session. This document names those pieces. It does not pick a cloud or an audio SDK.
 
 ## Pieces
 
 ```
-┌─────────────┐     speaks      ┌──────────────────┐
-│   Client    │ ◀─────────────▶ │   Voice guide    │
-│  (unset)    │   audio + cues  │  discovery or    │
-└──────┬──────┘                 │  induction prompt│
-       │ loads / saves          └────────┬─────────┘
-       ▼                                 │ emits
-┌──────────────────┐                     ▼
-│  State profile   │◀────────── structured anchor updates
-│  (JSON document) │
-└──────────────────┘
-       │ references only
-       ▼
-┌──────────────────┐
-│  Media sources   │  song ids, photo refs — not owned bytes
-│  (unset)         │
-└──────────────────┘
+Oura sync ──▶ webhook ──▶ fetch heartrate ──▶ classify
+                                                    │
+                                              candidate and
+                                              person is available
+                                                    ▼
+                                              offer (push)
+                                                    │
+                         accept                     │ decline / expire
+                            ▼                       ▼
+                    GPT Live 1 session         cooldown
+                            │
+                            ▼
+                    three strategies
+                    physiology, focus, language
 ```
 
 | Piece | Responsibility | Status |
 |---|---|---|
 | Client | Opens a session, plays voice, shows the visual cue, starts the audio cue | Platform unset. See open questions. |
-| Voice guide | Runs exactly one protocol: discovery or induction | Specified in `prompts/` |
-| State profile | Stores one peak state and its three anchors | Specified in `schemas/` |
+| Oura connection | OAuth read of daily, heartrate, and workout documents | Specified in `docs/oura-constraints.md` |
+| Offer service | Turns a classifier candidate into a push the person can ignore | Specified in `docs/trigger-flow.md` |
+| Voice guide | Runs one protocol per session | `prompts/strategy-extraction.md`, `prompts/intervention.md`, plus the earlier discovery and induction prompts |
+| Strategies | The three confirmed moves | `schemas/peak-strategies.schema.json` |
+| State profile | One peak state and optional sensory anchors | `schemas/user-state-profile.schema.json` |
 | Media sources | Resolve a song or photo reference at re-entry | Unset. Profiles store references only. |
 
 ## Session rules
 
-- A session is either `discovery` or `induction`. The client chooses from whether a confirmed profile exists.
+- A session is one of `strategy-extraction`, `intervention`, `discovery`, or `induction`. An accepted offer with no confirmed strategies uses extraction. An accepted offer with confirmed strategies uses intervention.
+- Nothing in the Oura path opens a microphone. Acceptance on the client does.
 - The guide does not switch protocols mid-session except for the one allowed handoff: induction with no confirmed profile redirects to discovery.
 - Anchor updates are JSON objects that validate against `schemas/anchor-update.schema.json`. Free-form notes do not change the profile.
 - The profile is the source of truth. Transcripts are optional session logs and are not required to re-enter a state.
@@ -52,7 +54,8 @@ When implementation starts, the first build is done when:
 - Spotify, Apple Music, or any other catalog integration
 - Storing private photos
 - Multiple named states, teams, or sharing a profile
-- Measuring physiology
+- A universal heart-rate or HRV threshold
+- Any voice session that starts without an explicit accept
 
 ## Suggested build order
 

@@ -34,3 +34,25 @@ These three decisions block the client and the media layer. They do not block th
 **Proposal.** 90 seconds for the first confirmed re-entry. The stack itself should be speakable in about 40 seconds. The extra time is silence and one repair question. Discovery may take up to 8 minutes.
 
 **Decide by setting** `induction.targetSeconds` in the product defaults. The field already exists on the profile; `null` means "not chosen yet."
+
+## 4. Can Oura trigger a session in real time?
+
+**Answered.** No. Heart rate is a 5-minute series and is not a webhook type. `daily_stress` is a day tally. HRV on this API is a sleep metric. Webhooks fire after the phone syncs, on the order of half a minute after that sync, not when the body changes. The plan uses webhooks as "new data exists" notices and heart-rate reads as a follow-up fetch. Detail is in [oura-constraints.md](oura-constraints.md).
+
+## 5. What counts as a negative state?
+
+**Question.** Which personal baseline separates a rough stretch from exercise, caffeine, or ordinary effort?
+
+**Why it matters.** A fixed BPM cutoff will offer coaching during workouts and miss people whose "high" heart rate is still moderate.
+
+**Proposal.** No offer ships until the rule is written against that member's own `awake` and `rest` samples, with `workout`, `live`, and `session` samples excluded and a 15-minute buffer after each workout. `day_summary: stressful` is context, not a trigger. Sleep HRV can only create a morning offer.
+
+**Decide by writing** the baseline comparison (window, delta, and how many consecutive 5-minute samples) into the classifier. Until then the fetcher stores snapshots and the classifier emits `ignore`.
+
+## 6. What if the person cannot take the session?
+
+**Question.** How does an offer behave during sleep, meetings, or an explicit pause?
+
+**Why it matters.** A voice session that starts on its own is a failure even when the biometric call is right.
+
+**Proposal.** Offers are push notifications. Quiet hours default to 21:00–08:00 in the member's local time, except a morning-context offer that may appear in the first two hours after the quiet-hours end. One offer per four hours. Pause suppresses everything. No response expires the offer. Decline and expiry start the cooldown. GPT Live 1 is created only on accept.

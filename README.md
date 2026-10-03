@@ -2,10 +2,11 @@
 
 Peak State helps a person find the sensory cues that already put them in their best emotional and mental state, then use those cues to get back there on demand.
 
-The product is a two-phase loop:
+The product is a closed loop with a manual path inside it:
 
-1. **Discovery.** A real-time voice guide asks a short, structured set of questions and extracts the person's strongest anchors: one piece of music, one visual memory or photo, and one physical feeling.
-2. **Re-entry.** The next time they open the app, the same guide fires those anchors in sequence — voice, image, sound, and body — and walks them back into the state.
+1. **Offer.** Oura data can raise an offer when a rough stretch syncs. The offer does not start a call.
+2. **Strategies.** On accept, a GPT Live 1 voice session identifies three moves the person already uses: a body action, a point of focus, and a sentence. That is the required output of the first session.
+3. **Intervention.** Later accepts run those three moves and stop. Song, scene, and body anchors remain optional detail inside the three, not a second protocol.
 
 This repository is the shareable frame for that product: the vision, the user journey, the elicitation strategy, the voice prompts, and the profile schema. It does not yet contain a client or a live voice session. Those wait on three decisions recorded in [docs/open-questions.md](docs/open-questions.md).
 
@@ -14,12 +15,12 @@ This repository is the shareable frame for that product: the vision, the user jo
 | Order | Document | What it settles |
 |---|---|---|
 | 1 | This README | What the product is and how a session feels |
-| 2 | [docs/elicitation.md](docs/elicitation.md) | How anchors are found and stacked |
-| 3 | [prompts/discovery.md](prompts/discovery.md) | The onboarding voice prompt |
-| 4 | [prompts/induction.md](prompts/induction.md) | The re-entry voice prompt |
-| 5 | [schemas/user-state-profile.schema.json](schemas/user-state-profile.schema.json) | What we store about a person's anchors |
-| 6 | [docs/architecture.md](docs/architecture.md) | How the pieces fit, and what is deliberately unset |
-| 7 | [docs/open-questions.md](docs/open-questions.md) | Platform, media, and time-to-state |
+| 2 | [docs/plan.md](docs/plan.md) | Oura trigger, three strategies, and build order |
+| 3 | [docs/oura-constraints.md](docs/oura-constraints.md) | What the Oura API can and cannot detect |
+| 4 | [prompts/strategy-extraction.md](prompts/strategy-extraction.md) | Questions that extract the three strategies |
+| 5 | [docs/trigger-flow.md](docs/trigger-flow.md) | Webhook, classify, offer, then voice |
+| 6 | [docs/elicitation.md](docs/elicitation.md) | How sensory anchors are found and stacked |
+| 7 | [docs/open-questions.md](docs/open-questions.md) | Decisions still open |
 
 A filled example profile lives at [examples/sample-profile.json](examples/sample-profile.json).
 

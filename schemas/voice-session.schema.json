@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/voice-session.schema.json",
+  "title": "Voice session",
+  "description": "Context and outcome for one GPT Live 1 session. The context object is what the voice agent is allowed to see.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "sessionId", "profileId", "mode", "status", "context"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "sessionId": { "type": "string", "minLength": 1 },
+    "profileId": { "type": "string", "minLength": 1 },
+    "offerId": { "type": ["string", "null"] },
+    "mode": {
+      "enum": ["strategy-extraction", "intervention", "discovery", "induction"]
+    },
+    "status": {
+      "enum": ["ready", "live", "completed", "stopped", "failed"]
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["peakLabel", "reason", "bodyNote", "strategies"],
+      "properties": {
+        "peakLabel": { "type": ["string", "null"] },
+        "reason": {
+          "enum": ["manual", "morning-context", "daytime-candidate", "none"]
+        },
+        "bodyNote": {
+          "type": ["string", "null"],
+          "description": "One spoken-safe line. No raw samples and no diagnosis."
+        },
+        "strategies": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["slot", "action", "cue"],
+            "properties": {
+              "slot": { "enum": ["physiology", "focus", "language"] },
+              "action": { "type": "string" },
+              "cue": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    },
+    "startedAt": { "type": ["string", "null"], "format": "date-time" },
+    "endedAt": { "type": ["string", "null"], "format": "date-time" },
+    "outcome": {
+      "enum": ["strategies-confirmed", "state-entered", "partial", "declined-in-session", "stopped", "none"]
+    }
+  }
+}

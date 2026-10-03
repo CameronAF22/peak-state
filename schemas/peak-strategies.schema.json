@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/peak-strategies.schema.json",
+  "title": "Peak strategies",
+  "description": "The three moves for one peak state: physiology, focus, and language. GPT Live 1 runs an intervention only when confirmedAt is set.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "profileId", "strategies", "confirmedAt"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "profileId": { "type": "string", "minLength": 1 },
+    "strategies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["physiology", "focus", "language"],
+      "properties": {
+        "physiology": { "$ref": "#/$defs/strategy" },
+        "focus": { "$ref": "#/$defs/strategy" },
+        "language": { "$ref": "#/$defs/strategy" }
+      }
+    },
+    "confirmedAt": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "When the stack check was confirmed. Null means draft."
+    },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "strategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "action", "cue"],
+      "properties": {
+        "status": { "enum": ["confirmed", "draft", "empty"] },
+        "action": {
+          "type": ["string", "null"],
+          "description": "The move in the person's words. A body action, a specific focus, or a sentence."
+        },
+        "cue": {
+          "type": ["string", "null"],
+          "description": "The situation in which they use this move."
+        }
+      }
+    }
+  }
+}

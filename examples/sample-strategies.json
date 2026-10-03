@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "profileId": "profile_example_ada",
+  "strategies": {
+    "physiology": {
+      "status": "confirmed",
+      "action": "Crown up, shoulders dropped, exhale longer than the inhale",
+      "cue": "When I feel the tight jaw before the start"
+    },
+    "focus": {
+      "status": "confirmed",
+      "action": "The bright rectangle of daylight at the end of the tunnel",
+      "cue": "When I need the state and I am still in the shade"
+    },
+    "language": {
+      "status": "confirmed",
+      "action": "Tall and easy",
+      "cue": "Said once, on the long exhale"
+    }
+  },
+  "confirmedAt": "2026-10-02T18:12:00Z",
+  "updatedAt": "2026-10-02T18:12:00Z"
+}

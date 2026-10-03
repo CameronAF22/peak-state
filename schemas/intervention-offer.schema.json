@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/intervention-offer.schema.json",
+  "title": "Intervention offer",
+  "description": "A proposal that the person may accept. Creating an offer does not start GPT Live 1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "offerId", "profileId", "reason", "status", "snapshot", "createdAt", "expiresAt"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "offerId": { "type": "string", "minLength": 1 },
+    "profileId": { "type": "string", "minLength": 1 },
+    "reason": { "enum": ["morning-context", "daytime-candidate"] },
+    "status": {
+      "enum": ["pending", "accepted", "declined", "expired", "suppressed"]
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observedAt", "sources"],
+      "description": "Minimal biometric facts used to justify the offer. Not sent to the voice model.",
+      "properties": {
+        "observedAt": { "type": "string", "format": "date-time" },
+        "sources": {
+          "type": "array",
+          "items": {
+            "enum": ["heartrate", "daily_stress", "sleep", "daily_readiness", "workout"]
+          }
+        },
+        "daySummary": {
+          "enum": ["restored", "normal", "stressful", null]
+        },
+        "note": {
+          "type": "string",
+          "description": "Internal note for the classifier. Not spoken."
+        }
+      }
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "resolvedAt": { "type": ["string", "null"], "format": "date-time" }
+  }
+}
