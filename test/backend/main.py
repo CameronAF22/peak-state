@@ -37,7 +37,8 @@ def save_users(users: dict[str, str]) -> None:
 
 @app.get("/")
 async def home() -> FileResponse:
-    return FileResponse(FRONTEND / "index.html")
+    # The first page is the dashboard.
+    return FileResponse(FRONTEND / "home.html")
 
 
 @app.get("/onboarding")
@@ -45,9 +46,9 @@ async def onboarding() -> FileResponse:
     return FileResponse(FRONTEND / "onboarding.html")
 
 
-@app.get("/action")
-async def action() -> FileResponse:
-    return FileResponse(FRONTEND / "action.html")
+@app.get("/home")
+async def home_page() -> FileResponse:
+    return FileResponse(FRONTEND / "home.html")
 
 
 @app.post("/api/auth/register")
@@ -79,3 +80,4 @@ async def me(username: str) -> dict[str, str]:
     if name not in users:
         raise HTTPException(status_code=404, detail="User not found")
     return {"username": name}
+

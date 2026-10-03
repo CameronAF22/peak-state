@@ -25,6 +25,48 @@ h1 {
   margin: 0 0 2rem;
 }
 
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+  margin-bottom: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  color: #a8b8cc;
+}
+
+.field input {
+  padding: 0.65rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #3d4f66;
+  border-radius: 8px;
+  background: #121a26;
+  color: inherit;
+}
+
+.field input:focus {
+  outline: 2px solid #4a7cc9;
+  outline-offset: 1px;
+}
+
+.auth-status {
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
+  color: #8fd4a8;
+}
+
+.auth-error {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: #f5a8a8;
+}
+
 .actions {
   display: flex;
   flex-direction: column;
@@ -43,6 +85,15 @@ button {
 
 button:hover {
   background: #243044;
+}
+
+button.secondary {
+  background: transparent;
+  border-color: #4a5568;
+}
+
+button.secondary:hover {
+  background: #1a2332;
 }
 
 a {
@@ -292,6 +343,172 @@ a:hover {
   margin: 0;
   font-size: 0.8rem;
   color: var(--muted);
+}
+
+/* Part 3 list of differences, and the summary at the end */
+.differences,
+.summary {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  max-width: 40rem;
+}
+.differences h2,
+.summary h2 {
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rose);
+  margin: 0 0 0.5rem;
+}
+.summary h2:not(:first-child) {
+  margin-top: 1rem;
+}
+.differences ul,
+.summary ul,
+.summary ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+}
+.differences li.driver {
+  font-weight: 600;
+}
+.differences li.driver::after {
+  content: " ★ driver";
+  color: var(--rose);
+}
+.summary p {
+  margin: 0.75rem 0 0;
+}
+.summary .note {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* A link that looks like the big rose button (for example "Go to home") */
+a.start {
+  display: block;
+  width: 100%;
+  max-width: 20rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  background: var(--rose);
+  color: var(--on-rose);
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+a.start:hover {
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+/* ---------- Home page ---------- */
+
+.home-view,
+.session-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.home-view .question {
+  margin: 0;
+}
+
+/* The big "I'm feeling stressed" button */
+.onboarding-page .stressed {
+  align-self: flex-start;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background: var(--rose);
+  color: var(--on-rose);
+  border-color: var(--rose);
+}
+.onboarding-page .stressed:hover {
+  background: var(--rose);
+  opacity: 0.9;
+}
+
+.section-title {
+  margin: 1.5rem 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rose);
+}
+
+/* One card per saved state, side by side on a wide screen */
+.state-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1rem;
+}
+.state-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.25rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.state-card h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+.state-card .moment {
+  margin: 0;
+  color: var(--muted);
+  font-style: italic;
+}
+.state-card .last {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.state-card .start {
+  margin-top: auto;
+  align-self: flex-start;
+  width: auto;
+  background: var(--rose);
+  color: var(--on-rose);
+  border-color: var(--rose);
+  font-weight: 600;
+}
+.empty {
+  color: var(--muted);
+}
+
+/* The breathing circle during a session: grows and shrinks over 8 seconds */
+.orb {
+  width: 120px;
+  height: 120px;
+  margin: 1rem auto 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, var(--line) 45%, var(--rose) 120%);
+  animation: breathe 8s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(0.88);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb {
+    animation: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -22,11 +22,22 @@
         </p>
         <p class="heard" id="heard" aria-live="polite"></p>
         <div class="choices" id="choices"></div>
+
+        <!-- Part 3: what is different between the strong time and the stuck time -->
+        <div class="differences" id="differences" hidden>
+          <h2>What's different</h2>
+          <ul></ul>
+        </div>
+
+        <!-- The end: everything we learned -->
+        <div class="summary" id="summary" hidden></div>
       </section>
 
       <!-- Bottom: how the person answers -->
       <section class="answer">
         <button type="button" class="start" id="start">Begin</button>
+        <!-- Shown at the end of onboarding -->
+        <a class="start" id="go-home" href="/home" hidden>Go to home</a>
 
         <button type="button" class="mic" id="mic" aria-label="Answer by voice" hidden>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -43,9 +54,11 @@
         <button type="button" class="switch" id="switch" hidden>Type instead</button>
 
         <p class="safety">Peak State is not therapy. If you're in distress, please reach out to someone you trust.</p>
-        <p><a href="/">Back home</a></p>
+        <p><a href="/home">Back to dashboard</a></p>
       </section>
     </main>
+    <!-- guide.js first: onboarding.js uses its voice and asking tools -->
+    <script src="/assets/guide.js"></script>
     <script src="/assets/onboarding.js"></script>
   </body>
 </html>

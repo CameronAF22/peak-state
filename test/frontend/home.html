@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body class="onboarding-page">
+    <main class="page onboarding home">
+      <!-- View 1: home. Pick a state, or say you're stressed. -->
+      <section class="home-view" id="home-view">
+        <p class="label">Home</p>
+        <h1 class="question">How are you feeling right now?</h1>
+
+        <button type="button" class="stressed" id="stressed">I'm feeling stressed</button>
+        <p class="hint">Soon, your wearable can notice stress for you (from heart-rate variability) and offer this on its own.</p>
+
+        <h2 class="section-title">Return to a state</h2>
+        <div class="state-list" id="state-list"></div>
+        <p class="empty" id="no-states" hidden>
+          You haven't mapped a state yet. <a href="/onboarding">Map your first state</a>
+        </p>
+        <p><a href="/onboarding">+ Map another state</a></p>
+      </section>
+
+      <!-- View 2: the guided session -->
+      <section class="session-view" id="session-view" hidden>
+        <div class="orb" aria-hidden="true"></div>
+
+        <section class="stage">
+          <p class="label" id="label"></p>
+          <p class="question" id="question" aria-live="polite"></p>
+          <p class="heard" id="heard" aria-live="polite"></p>
+          <div class="choices" id="choices"></div>
+        </section>
+
+        <section class="answer">
+          <button type="button" class="mic" id="mic" aria-label="Answer by voice" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="3" width="6" height="11" rx="3" />
+              <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
+            </svg>
+          </button>
+          <p class="hint" id="hint"></p>
+          <form class="typed" id="typed" hidden>
+            <input type="text" id="typed-input" placeholder="Type your answer" autocomplete="off" />
+            <button type="submit">Send</button>
+          </form>
+          <button type="button" class="switch" id="switch" hidden>Type instead</button>
+
+          <button type="button" class="start" id="back-home" hidden>Back to home</button>
+          <button type="button" class="switch" id="end-session">End session</button>
+        </section>
+      </section>
+
+      <p class="safety">Peak State is not therapy. If you're in distress, please reach out to someone you trust.</p>    </main>
+
+    <!-- guide.js first: home.js uses its voice and asking tools -->
+    <script src="/assets/guide.js"></script>
+    <script src="/assets/home.js"></script>
+  </body>
+</html>
