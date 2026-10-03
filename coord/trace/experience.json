@@ -4,7 +4,7 @@
   "files": [
     {
       "path": "app/PLAN.md",
-      "sha256": "9d5e1067b46bd05019d872b161a082a2f0601a77a34a1a60ee97509daa251e59",
+      "sha256": "de8d1626352d482182c5c9cc94b422c820c44cf8cf9a5df7f53338fc2b791454",
       "decisions": [
         "D-experience-001",
         "D-experience-004",
@@ -241,6 +241,14 @@
       "sha256": "46063af0303ccf43c5ac520ecd876b32ec10c61b73f2965e763d1d8f3c50420b",
       "decisions": [
         "D-experience-002",
+        "D-experience-006",
+        "D-onboarding-023"
+      ]
+    },
+    {
+      "path": "app/test/flow.test.ts",
+      "sha256": "f4d9ef79198f19349fbc66950f847b25bf3437dd7b1676b788829abadd6ba43a",
+      "decisions": [
         "D-experience-006",
         "D-onboarding-023"
       ]

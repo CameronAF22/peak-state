@@ -108,7 +108,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 
 | File | sha256 | Decisions |
 |---|---|---|
-| `app/PLAN.md` | `9d5e1067b46b` | D-experience-001, D-experience-004, D-onboarding-023 |
+| `app/PLAN.md` | `de8d1626352d` | D-experience-001, D-experience-004, D-onboarding-023 |
 | `app/index.html` | `a7c639357060` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/package.json` | `52c0b4db163a` | D-experience-002, D-experience-006, D-onboarding-023 |
 | `app/src/App.tsx` | `35ff0dbc55fb` | D-experience-002, D-experience-006, D-onboarding-023 |
@@ -134,6 +134,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `app/src/stubs/onboarding.ts` | `be039b80edb2` | D-experience-002, D-experience-003, D-experience-006, D-onboarding-023 |
 | `app/src/stubs/sensing.ts` | `e2000ffd156c` | D-experience-002, D-experience-003, D-experience-006, D-onboarding-023 |
 | `app/src/styles.css` | `46063af0303c` | D-experience-002, D-experience-006, D-onboarding-023 |
+| `app/test/flow.test.ts` | `f4d9ef79198f` | D-experience-006, D-onboarding-023 |
 | `app/test/real.test.ts` | `bf919aa73628` | D-experience-006, D-onboarding-023 |
 | `app/test/stubs.test.ts` | `ad6670c1bf68` | D-experience-006, D-onboarding-023 |
 | `app/tsconfig.json` | `ab0aef619214` | D-experience-002, D-experience-006, D-onboarding-023 |

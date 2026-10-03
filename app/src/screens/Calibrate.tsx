@@ -7,9 +7,9 @@ function Summary({ title, c }: { title: string; c: CalibrationSummary | null }) 
     <div className="card grid" style={{ gap: 8 }}>
       <h2>{title}</h2>
       <div className="row" style={{ gap: 24 }}>
-        <div className="stat"><span className="v">{c.stats.hr.mean}</span><span className="l">heart rate, bpm (±{c.stats.hr.sd})</span></div>
-        <div className="stat"><span className="v">{c.stats.rmssd}</span><span className="l">RMSSD, ms</span></div>
-        <div className="stat"><span className="v">{c.durationSeconds}s</span><span className="l">{c.source}, quality {Math.round(c.quality * 100)}%</span></div>
+        <div className="stat"><span className="v">{c.hr.mean}</span><span className="l">heart rate, bpm (±{c.hr.sd})</span></div>
+        <div className="stat"><span className="v">{Math.round(Math.exp(c.lnRmssd.mean))}</span><span className="l">RMSSD, ms</span></div>
+        <div className="stat"><span className="v">{c.seconds}s</span><span className="l">{c.source}, {c.windows} windows, quality {c.quality}</span></div>
       </div>
     </div>
   );

@@ -351,7 +351,7 @@ function practiceStep(): number | null {
 function conditioningLine(c: Conditioning): string {
   if (c.installed) return "Installed: the anchor alone brings it back.";
   if (c.nextStep === "anchor-test") return `${c.goodReps} good reps. Next, test the anchor on its own.`;
-  return `${c.goodReps} of ${c.goodRepsNeeded} good reps toward installing it.`;
+  return `${c.goodReps} good ${c.goodReps === 1 ? "rep" : "reps"} so far. ${c.goodRepsNeeded} more before the anchor test.`;
 }
 
 async function run(mode: { trigger?: RepSession["trigger"]; kind?: RepSession["kind"] } = {}): Promise<void> {

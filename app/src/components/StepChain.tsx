@@ -1,12 +1,10 @@
-import type { StrategyStep } from "../contracts";
-import { stepCode } from "../contracts";
+import { stepCode, type StepHead } from "../contracts";
 
-const MODALITY_WORD: Record<string, string> = {
+const MODALITY_WORD: Record<StepHead["modality"], string> = {
   visual: "picture",
   auditory: "sound",
   kinesthetic: "feeling",
-  olfactory: "smell",
-  gustatory: "taste",
+  other: "other sense",
 };
 
 export function StepChain({
@@ -15,7 +13,7 @@ export function StepChain({
   anchorStep,
   placeholder = true,
 }: {
-  steps: StrategyStep[];
+  steps: StepHead[];
   activeIndex?: number | null;
   anchorStep?: number | null;
   placeholder?: boolean;

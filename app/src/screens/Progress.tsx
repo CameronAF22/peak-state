@@ -1,13 +1,6 @@
 import { useState } from "react";
-import type { ProfileV2, RepSession, RepsModule, StateStatus } from "../contracts";
-
-const STATUS_TEXT: Record<StateStatus, string> = {
-  conditioning: "Conditioning",
-  "ready-to-test": "Ready for an anchor-only test",
-  installed: "Installed",
-  "no-anchor": "No anchor step yet",
-};
-
+import type { ProfileV2, RepSession } from "../contracts";
+import { progressFor } from "../real/reps";
 /** Before/after rating per rep: two series, legend plus direct labels on the latest rep. */
 function IntensityChart({ points }: { points: { repIndex: number; before: number | null; after: number | null; arm: string; kind: string }[] }) {
   const [hover, setHover] = useState<number | null>(null);
@@ -68,12 +61,33 @@ function IntensityChart({ points }: { points: { repIndex: number; before: number
   );
 }
 
-export function ProgressScreen({ profile, sessions, reps, onReset }: { profile: ProfileV2; sessions: RepSession[]; reps: RepsModule; onReset(): void }) {
+export function ProgressScreen({
+  profile,
+  sessions,
+  seeded,
+  onImOff,
+}: {
+  profile: ProfileV2;
+  /** Every session shown for this profile, oldest first. */
+  sessions: RepSession[];
+  /** How many of them are the seeded demo history (shown, never stored). */
+  seeded: number;
+  onImOff(): void;
+}) {
   const [table, setTable] = useState(false);
   const state = profile.states[0];
   const mine = sessions.filter((s) => s.stateId === state.id);
-  const prog = reps.progress(mine).find((p) => p.stateId === state.id);
-  const status = reps.status(profile, mine)[state.id] ?? "conditioning";
+  const prog = progressFor(mine, state.id);
+  const cue = prog.recovery.cue;
+  const sham = prog.recovery.sham;
+  const status =
+    prog.nextStep === "installed"
+      ? null
+      : state.anchorStep === null
+        ? "No anchor step yet"
+        : prog.nextStep === "anchor-test"
+          ? "Ready for an anchor-only test"
+          : `Conditioning: ${prog.goodRepsNeeded} more good rep${prog.goodRepsNeeded === 1 ? "" : "s"} before the anchor test`;
 
   return (
     <section className="grid">
@@ -82,18 +96,25 @@ export function ProgressScreen({ profile, sessions, reps, onReset }: { profile: 
           <h1>Progress · {state.label}</h1>
           <p className="lede">We measure it; we don't claim it. Sham trials hold the cue back so the comparison means something.</p>
         </div>
-        {status === "installed" ? (
+        {status === null ? (
           <span className="installed" role="status">✓ Installed: the anchor alone brings it back</span>
         ) : (
-          <span className="status-pill" role="status">○ {STATUS_TEXT[status]}</span>
+          <span className="status-pill" role="status">○ {status}</span>
         )}
       </div>
 
       <div className="row" style={{ gap: 16, alignItems: "stretch" }}>
-        <div className="card stat"><span className="v">{prog?.reps ?? 0}</span><span className="l">reps ({prog?.cueReps ?? 0} cue, {prog?.shamReps ?? 0} sham)</span></div>
-        <div className="card stat"><span className="v">{prog?.meanRecoveryCue ?? "—"}s</span><span className="l">back to your on-state, with the cue</span></div>
-        <div className="card stat"><span className="v">{prog?.meanRecoverySham ?? "—"}s</span><span className="l">back to your on-state, cue held back (sham)</span></div>
+        <div className="card stat"><span className="v">{prog.reps}</span><span className="l">reps ({prog.goodReps} good, {prog.anchorOnlyStreak} anchor-only passes in a row)</span></div>
+        <div className="card stat"><span className="v">{prog.latest ?? "—"}</span><span className="l">latest rating after a rep (best {prog.best ?? "—"})</span></div>
+        <div className="card stat"><span className="v">{cue.medianSeconds ?? "—"}s</span><span className="l">back to your on-state with the cue (median of {cue.n})</span></div>
+        <div className="card stat"><span className="v">{sham.medianSeconds ?? "—"}s</span><span className="l">cue held back, sham (median of {sham.n})</span></div>
         {state.test && <div className="card stat"><span className="v">{state.test.before} → {state.test.after}</span><span className="l">onboarding test after recode</span></div>}
+      </div>
+
+      <div className="card row">
+        <button className="primary big" onClick={onImOff}>I'm off</button>
+        <span className="muted">Drifted from “{state.label}”? Start a rep now.</span>
+        <span className="note">Live sensing comes later: recovery times appear once a heart-rate source can measure them.</span>
       </div>
 
       <div className="card">
@@ -114,10 +135,11 @@ export function ProgressScreen({ profile, sessions, reps, onReset }: { profile: 
           <IntensityChart points={mine.map((s) => ({ repIndex: s.repIndex, before: s.intensityBefore, after: s.intensityAfter, arm: s.arm, kind: s.kind }))} />
         )}
       </div>
-      <div className="row">
-        <button onClick={onReset}>Reset to the demo log</button>
-        <span className="muted">Demo log: seeded history for {state.label}. Your reps from this session are added on top.</span>
-      </div>
+      <p className="muted" style={{ margin: 0 }}>
+        {seeded > 0
+          ? `The first ${seeded} reps are the sample profile's seeded history. Your reps are logged in this browser on top of it.`
+          : "Your reps are logged in this browser, in the same log the voice guide at “/” uses."}
+      </p>
     </section>
   );
 }

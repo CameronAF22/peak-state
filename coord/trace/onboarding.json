@@ -34,7 +34,7 @@
     },
     {
       "path": "onboarding/DEPLOY.md",
-      "sha256": "eab8565b57bda7a1ca8b10d1e931d066f565bb0cc88200f30318f3299060cbf3",
+      "sha256": "d18c66dd8d6334baa48c1add4a22d13e1a451f4b01f6bc2b41c6d13e966e5d17",
       "decisions": [
         "D-onboarding-017",
         "D-onboarding-023"
@@ -257,7 +257,7 @@
     },
     {
       "path": "onboarding/package.json",
-      "sha256": "5e27e7d1378f5647bb5dc23fd1d5c8cb27f8e13cce65e0ebe3cedb68b8ddd0d9",
+      "sha256": "339484a300b445cdde342e3d41a454254c616fa40a73699857e877ef4075088e",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-019",
@@ -327,7 +327,7 @@
     },
     {
       "path": "onboarding/src/harness/main.ts",
-      "sha256": "0761813350170bbc71c03bb05f7101c05a1081d7708d378de3eb53f883a3928b",
+      "sha256": "3aa8854ca1557ff723d879e1908ab836a400b4561c596c6f71d7f22930eb3ed4",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-020",
