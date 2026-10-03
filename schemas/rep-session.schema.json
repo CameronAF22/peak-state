@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/rep-session.schema.json",
+  "title": "Rep session",
+  "description": "One logged rep. A full rep replays the person's own strategy steps in order with their driver submodalities, then the anchor step at the peak (D-reps-005). An anchor-only rep is the installed test. A sham logs only its rate steps. Installed is computed from these, never stored. Step indexes are checked against the profile by validateRepSession(). D-contracts-007.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "profileId", "stateId", "repIndex", "kind", "phase", "trigger", "arm", "startedAt", "endedAt", "steps", "intensityBefore", "intensityAfter", "recoverySeconds", "recoveryCensored", "anchorPaired", "signalSource", "scriptHash", "endedBy"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "profileId": { "type": "string", "minLength": 1 },
+    "stateId": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,31}$" },
+    "repIndex": { "type": "integer", "minimum": 0, "description": "0-based count of reps for this state, in order." },
+    "kind": { "enum": ["full", "anchor-only"] },
+    "phase": { "enum": ["recode", "test", "future-pace", null], "description": "Set on the reps logged from playbook section 4 (D-reps-006). Null otherwise." },
+    "trigger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["detection", "manual", "practice", "onboarding"] },
+        "detectionId": { "type": "string", "minLength": 1, "description": "The DetectionEvent id. Required when kind is detection or manual from the detector." }
+      },
+      "if": { "properties": { "kind": { "const": "detection" } } },
+      "then": { "required": ["kind", "detectionId"] }
+    },
+    "arm": { "enum": ["cue", "sham"], "description": "sham: the cue is withheld; the session still logs rate steps and recovery." },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "endedAt": { "type": ["string", "null"], "format": "date-time" },
+    "steps": { "type": "array", "items": { "$ref": "#/$defs/step" } },
+    "intensityBefore": { "oneOf": [{ "$ref": "#/$defs/rating" }, { "type": "null" }] },
+    "intensityAfter": { "oneOf": [{ "$ref": "#/$defs/rating" }, { "type": "null" }] },
+    "recoverySeconds": { "type": ["number", "null"], "minimum": 0, "description": "Seconds from the trigger until signals return to the peak band. Null when not measured." },
+    "recoveryCensored": { "type": "boolean", "description": "True when the observation window ended before recovery." },
+    "anchorPaired": { "type": "boolean", "description": "True when the anchor step was replayed at the peak of this rep (the conditioning pairing)." },
+    "signalSource": { "enum": ["simulator", "hr-strap", "none"] },
+    "scriptHash": { "type": "string", "minLength": 1, "description": "Hash of the generated rep script, so reps of the same script can be grouped." },
+    "endedBy": { "enum": ["completed", "skipped", "user-stop", "safety-stop", "timeout"] }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "arm": { "const": "sham" } } },
+      "then": { "properties": { "steps": { "items": { "properties": { "kind": { "const": "rate" } } } } } }
+    }
+  ],
+  "$defs": {
+    "rating": { "type": "integer", "minimum": 0, "maximum": 10 },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "plannedMs", "startedAt", "endedAt", "delivered"],
+      "properties": {
+        "kind": { "enum": ["rate", "strategy-step", "leverage", "anchor-peak", "anchor"], "description": "anchor-peak: the anchor step replayed at the end of a full rep. anchor: the anchor step alone, in an anchor-only rep." },
+        "stepIndex": { "type": "integer", "minimum": 0, "description": "Index into the state's strategy.steps. Required for strategy-step, anchor-peak and anchor." },
+        "driversSpoken": { "type": "array", "uniqueItems": true, "items": { "type": "integer", "minimum": 0 }, "description": "Indexes into the state's differences that were spoken as instructions in this step." },
+        "plannedMs": { "type": ["integer", "null"], "minimum": 0, "description": "Null for untimed steps (rate)." },
+        "startedAt": { "type": ["string", "null"], "format": "date-time" },
+        "endedAt": { "type": ["string", "null"], "format": "date-time" },
+        "delivered": { "type": "boolean", "description": "False when skipped or interrupted." }
+      },
+      "if": { "properties": { "kind": { "enum": ["strategy-step", "anchor-peak", "anchor"] } } },
+      "then": { "required": ["stepIndex"] }
+    }
+  }
+}

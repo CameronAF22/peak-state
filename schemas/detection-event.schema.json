@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/detection-event.schema.json",
+  "title": "Detection event",
+  "description": "The detector's gate opened (drift) or the person pressed \"I'm off\" (manual). It reports drift from the person's own calibrated peak, never a mood. D-contracts-007, D-sensing-005.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "t", "kind", "stateId", "confidence", "window", "gate", "calibrationMode"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "t": { "type": "integer", "minimum": 0, "description": "Milliseconds since the Unix epoch." },
+    "kind": { "enum": ["drift", "manual"] },
+    "stateId": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,31}$", "description": "The state the person drifted from." },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "window": {
+      "description": "The window that opened the gate. Null for manual events.",
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["seconds", "hrMean", "rmssd", "hrDelta", "rmssdDelta", "z", "position"],
+          "properties": {
+            "seconds": { "type": "number", "exclusiveMinimum": 0 },
+            "hrMean": { "type": ["number", "null"] },
+            "rmssd": { "type": ["number", "null"], "description": "Milliseconds." },
+            "hrDelta": { "type": ["number", "null"], "description": "hrMean minus the peak calibration mean." },
+            "rmssdDelta": { "type": ["number", "null"], "description": "rmssd minus the peak calibration value." },
+            "z": { "type": ["number", "null"], "description": "Weighted distance from peak in pooled SDs." },
+            "position": { "type": ["number", "null"], "description": "Place on the peak-to-contrast axis: 0 at peak, 1 at contrast. Null unless calibrationMode is contrast." }
+          }
+        }
+      ]
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["consecutiveWindows", "required", "refractorySeconds", "sham"],
+      "properties": {
+        "consecutiveWindows": { "type": "integer", "minimum": 0 },
+        "required": { "type": "integer", "minimum": 1 },
+        "refractorySeconds": { "type": "number", "minimum": 0 },
+        "sham": { "type": "boolean", "description": "True: the cue is withheld on this trial. Manual events are never sham." }
+      }
+    },
+    "calibrationMode": { "enum": ["contrast", "on-only", "generic"], "description": "contrast: peak and contrast separable; on-only: distance from peak only; generic: no calibration, resting prior." }
+  },
+  "if": { "properties": { "kind": { "const": "manual" } } },
+  "then": { "properties": { "gate": { "properties": { "sham": { "const": false } } } } }
+}

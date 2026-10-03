@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "id": "rep_demo_003",
+  "profileId": "profile_demo_ada",
+  "stateId": "calm-before-pitch",
+  "repIndex": 3,
+  "kind": "full",
+  "phase": null,
+  "trigger": {
+    "kind": "detection",
+    "detectionId": "det_demo_001"
+  },
+  "arm": "cue",
+  "startedAt": "2026-10-03T15:10:56Z",
+  "endedAt": "2026-10-03T15:11:36Z",
+  "steps": [
+    {
+      "kind": "rate",
+      "plannedMs": null,
+      "startedAt": "2026-10-03T15:10:56Z",
+      "endedAt": "2026-10-03T15:11:00Z",
+      "delivered": true
+    },
+    {
+      "kind": "strategy-step",
+      "stepIndex": 0,
+      "driversSpoken": [
+        2,
+        3
+      ],
+      "plannedMs": 8000,
+      "startedAt": "2026-10-03T15:11:00Z",
+      "endedAt": "2026-10-03T15:11:08Z",
+      "delivered": true
+    },
+    {
+      "kind": "strategy-step",
+      "stepIndex": 1,
+      "driversSpoken": [
+        5
+      ],
+      "plannedMs": 6000,
+      "startedAt": "2026-10-03T15:11:08Z",
+      "endedAt": "2026-10-03T15:11:14Z",
+      "delivered": true
+    },
+    {
+      "kind": "strategy-step",
+      "stepIndex": 7,
+      "driversSpoken": [],
+      "plannedMs": 7000,
+      "startedAt": "2026-10-03T15:11:14Z",
+      "endedAt": "2026-10-03T15:11:21Z",
+      "delivered": true
+    },
+    {
+      "kind": "leverage",
+      "plannedMs": 4000,
+      "startedAt": "2026-10-03T15:11:21Z",
+      "endedAt": "2026-10-03T15:11:25Z",
+      "delivered": true
+    },
+    {
+      "kind": "anchor-peak",
+      "stepIndex": 0,
+      "driversSpoken": [
+        2,
+        3
+      ],
+      "plannedMs": 7000,
+      "startedAt": "2026-10-03T15:11:25Z",
+      "endedAt": "2026-10-03T15:11:32Z",
+      "delivered": true
+    },
+    {
+      "kind": "rate",
+      "plannedMs": null,
+      "startedAt": "2026-10-03T15:11:32Z",
+      "endedAt": "2026-10-03T15:11:36Z",
+      "delivered": true
+    }
+  ],
+  "intensityBefore": 4,
+  "intensityAfter": 8,
+  "recoverySeconds": 41,
+  "recoveryCensored": false,
+  "anchorPaired": true,
+  "signalSource": "simulator",
+  "scriptHash": "sha256:5f1c0a9e7d3b2a41",
+  "endedBy": "completed"
+}

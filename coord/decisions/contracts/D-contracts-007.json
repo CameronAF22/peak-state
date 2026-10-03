@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "id": "D-contracts-007",
+  "lane": "contracts",
+  "title": "Event shapes and module API frozen for M1, using sensing, reps and experience field names",
+  "status": "accepted",
+  "type": "contract",
+  "context": "Every lane replied after D-contracts-006 with its own names: sensing (D-sensing-005/006: stateId, window stats, calibrationMode, begin/end calibration), reps (D-reps-005/006: phase, anchor-peak, driversSpoken), experience (D-experience-005: ModuleHost, onboarding events). Taking their names avoids a second rename.",
+  "decision": "CalibrationSummary {stateId, phase peak|contrast, source, hr {mean,sd}, lnRmssd {mean,sd}, windows, seconds, quality ok|low, speechExcludedSeconds, recordedAt, separability? {separable, hr, lnRmssd}, rating?}. SignalFrame {t, source, hr, rr[], quality 0-1, label?}. DetectionEvent {schemaVersion, id, t, kind drift|manual, stateId, confidence, window|null {seconds, hrMean, rmssd, hrDelta, rmssdDelta, z, position}, gate {consecutiveWindows, required, refractorySeconds, sham}, calibrationMode contrast|on-only|generic}. RepSession {schemaVersion, id, profileId, stateId, repIndex, kind full|anchor-only, phase recode|test|future-pace|null, trigger {kind detection|manual|practice|onboarding, detectionId?}, arm cue|sham, startedAt, endedAt, steps[] {kind rate|strategy-step|leverage|anchor-peak|anchor, stepIndex?, driversSpoken?, plannedMs, startedAt, endedAt, delivered}, intensityBefore, intensityAfter, recoverySeconds, recoveryCensored, anchorPaired, signalSource, scriptHash, endedBy completed|skipped|user-stop|safety-stop|timeout}. OnboardingEvent union per D-experience-005 plus calibrationCaptured. API (contracts/API.md, contracts/src/api.ts): ModuleHost per D-experience-005; onboarding.run(host, onEvent) -> OnboardingResult; sensing.start, sensing.calibration.begin -> {mark, end}, sensing.record; reps.run -> {session, stop}, reps.fromOnboarding, reps.progress -> ProgressByState.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "schemas/calibration.schema.json",
+    "schemas/signal-frame.schema.json",
+    "schemas/detection-event.schema.json",
+    "schemas/rep-session.schema.json",
+    "schemas/onboarding-event.schema.json",
+    "contracts/src/signals.ts",
+    "contracts/src/reps.ts",
+    "contracts/src/onboarding.ts",
+    "contracts/src/api.ts",
+    "contracts/src/index.ts",
+    "contracts/fixtures/",
+    "contracts/API.md",
+    "contracts/README.md"
+  ],
+  "dependsOn": [
+    "D-contracts-007",
+    "D-sensing-005",
+    "D-sensing-006",
+    "D-reps-005",
+    "D-reps-006",
+    "D-experience-005",
+    "D-onboarding-008"
+  ],
+  "supersedes": [
+    "D-contracts-006"
+  ],
+  "author": "claude",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  },
+  "createdAt": "2026-10-03T14:49:25Z",
+  "acceptedAt": "2026-10-03T14:49:25Z",
+  "acceptedBy": "claude"
+}

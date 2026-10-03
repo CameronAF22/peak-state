@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "det_demo_001",
+  "t": 1791040256000,
+  "kind": "drift",
+  "stateId": "calm-before-pitch",
+  "confidence": 0.83,
+  "window": {
+    "seconds": 20,
+    "hrMean": 77.9,
+    "rmssd": 33.8,
+    "hrDelta": 9.7,
+    "rmssdDelta": -18.1,
+    "z": 3.2,
+    "position": 0.86
+  },
+  "gate": {
+    "consecutiveWindows": 3,
+    "required": 3,
+    "refractorySeconds": 60,
+    "sham": false
+  },
+  "calibrationMode": "contrast"
+}

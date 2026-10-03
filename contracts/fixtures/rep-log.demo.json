@@ -1,0 +1,809 @@
+[
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_000",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 0,
+    "kind": "full",
+    "phase": "recode",
+    "trigger": {
+      "kind": "onboarding"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T15:02:00Z",
+    "endedAt": "2026-10-03T15:02:40Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T15:02:00Z",
+        "endedAt": "2026-10-03T15:02:04Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 8000,
+        "startedAt": "2026-10-03T15:02:04Z",
+        "endedAt": "2026-10-03T15:02:12Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 1,
+        "driversSpoken": [
+          5
+        ],
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T15:02:12Z",
+        "endedAt": "2026-10-03T15:02:18Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 2,
+        "driversSpoken": [],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T15:02:18Z",
+        "endedAt": "2026-10-03T15:02:25Z",
+        "delivered": true
+      },
+      {
+        "kind": "leverage",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T15:02:25Z",
+        "endedAt": "2026-10-03T15:02:29Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor-peak",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T15:02:29Z",
+        "endedAt": "2026-10-03T15:02:36Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T15:02:36Z",
+        "endedAt": "2026-10-03T15:02:40Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 3,
+    "intensityAfter": 6,
+    "recoverySeconds": null,
+    "recoveryCensored": false,
+    "anchorPaired": false,
+    "signalSource": "none",
+    "scriptHash": "sha256:5f1c0a9e7d3b2a41",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_001",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 1,
+    "kind": "full",
+    "phase": "test",
+    "trigger": {
+      "kind": "onboarding"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T15:03:00Z",
+    "endedAt": "2026-10-03T15:03:40Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T15:03:00Z",
+        "endedAt": "2026-10-03T15:03:04Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 8000,
+        "startedAt": "2026-10-03T15:03:04Z",
+        "endedAt": "2026-10-03T15:03:12Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 1,
+        "driversSpoken": [
+          5
+        ],
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T15:03:12Z",
+        "endedAt": "2026-10-03T15:03:18Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 2,
+        "driversSpoken": [],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T15:03:18Z",
+        "endedAt": "2026-10-03T15:03:25Z",
+        "delivered": true
+      },
+      {
+        "kind": "leverage",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T15:03:25Z",
+        "endedAt": "2026-10-03T15:03:29Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor-peak",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T15:03:29Z",
+        "endedAt": "2026-10-03T15:03:36Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T15:03:36Z",
+        "endedAt": "2026-10-03T15:03:40Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 3,
+    "intensityAfter": 7,
+    "recoverySeconds": null,
+    "recoveryCensored": false,
+    "anchorPaired": false,
+    "signalSource": "none",
+    "scriptHash": "sha256:5f1c0a9e7d3b2a41",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_002",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 2,
+    "kind": "full",
+    "phase": "future-pace",
+    "trigger": {
+      "kind": "onboarding"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T15:04:00Z",
+    "endedAt": "2026-10-03T15:04:40Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T15:04:00Z",
+        "endedAt": "2026-10-03T15:04:04Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 8000,
+        "startedAt": "2026-10-03T15:04:04Z",
+        "endedAt": "2026-10-03T15:04:12Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 1,
+        "driversSpoken": [
+          5
+        ],
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T15:04:12Z",
+        "endedAt": "2026-10-03T15:04:18Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 2,
+        "driversSpoken": [],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T15:04:18Z",
+        "endedAt": "2026-10-03T15:04:25Z",
+        "delivered": true
+      },
+      {
+        "kind": "leverage",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T15:04:25Z",
+        "endedAt": "2026-10-03T15:04:29Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor-peak",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T15:04:29Z",
+        "endedAt": "2026-10-03T15:04:36Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T15:04:36Z",
+        "endedAt": "2026-10-03T15:04:40Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 5,
+    "intensityAfter": 8,
+    "recoverySeconds": null,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "none",
+    "scriptHash": "sha256:5f1c0a9e7d3b2a41",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_003",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 3,
+    "kind": "full",
+    "phase": null,
+    "trigger": {
+      "kind": "detection",
+      "detectionId": "det_demo_001"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T15:10:56Z",
+    "endedAt": "2026-10-03T15:11:36Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T15:10:56Z",
+        "endedAt": "2026-10-03T15:11:00Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 8000,
+        "startedAt": "2026-10-03T15:11:00Z",
+        "endedAt": "2026-10-03T15:11:08Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 1,
+        "driversSpoken": [
+          5
+        ],
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T15:11:08Z",
+        "endedAt": "2026-10-03T15:11:14Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 2,
+        "driversSpoken": [],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T15:11:14Z",
+        "endedAt": "2026-10-03T15:11:21Z",
+        "delivered": true
+      },
+      {
+        "kind": "leverage",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T15:11:21Z",
+        "endedAt": "2026-10-03T15:11:25Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor-peak",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T15:11:25Z",
+        "endedAt": "2026-10-03T15:11:32Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T15:11:32Z",
+        "endedAt": "2026-10-03T15:11:36Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 4,
+    "intensityAfter": 8,
+    "recoverySeconds": 41,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "simulator",
+    "scriptHash": "sha256:5f1c0a9e7d3b2a41",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_004",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 4,
+    "kind": "full",
+    "phase": null,
+    "trigger": {
+      "kind": "detection",
+      "detectionId": "det_demo_002"
+    },
+    "arm": "sham",
+    "startedAt": "2026-10-03T18:10:56Z",
+    "endedAt": "2026-10-03T18:11:04Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T18:10:56Z",
+        "endedAt": "2026-10-03T18:11:00Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T18:11:00Z",
+        "endedAt": "2026-10-03T18:11:04Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 4,
+    "intensityAfter": 5,
+    "recoverySeconds": 80,
+    "recoveryCensored": false,
+    "anchorPaired": false,
+    "signalSource": "simulator",
+    "scriptHash": "sha256:5f1c0a9e7d3b2a41",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_005",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 5,
+    "kind": "full",
+    "phase": null,
+    "trigger": {
+      "kind": "manual",
+      "detectionId": "det_demo_manual_001"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T21:10:56Z",
+    "endedAt": "2026-10-03T21:11:36Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T21:10:56Z",
+        "endedAt": "2026-10-03T21:11:00Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 8000,
+        "startedAt": "2026-10-03T21:11:00Z",
+        "endedAt": "2026-10-03T21:11:08Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 1,
+        "driversSpoken": [
+          5
+        ],
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T21:11:08Z",
+        "endedAt": "2026-10-03T21:11:14Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 2,
+        "driversSpoken": [],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T21:11:14Z",
+        "endedAt": "2026-10-03T21:11:21Z",
+        "delivered": true
+      },
+      {
+        "kind": "leverage",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T21:11:21Z",
+        "endedAt": "2026-10-03T21:11:25Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor-peak",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T21:11:25Z",
+        "endedAt": "2026-10-03T21:11:32Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-03T21:11:32Z",
+        "endedAt": "2026-10-03T21:11:36Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 3,
+    "intensityAfter": 7,
+    "recoverySeconds": 38,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "simulator",
+    "scriptHash": "sha256:5f1c0a9e7d3b2a41",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_006",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 6,
+    "kind": "full",
+    "phase": null,
+    "trigger": {
+      "kind": "detection",
+      "detectionId": "det_demo_003"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-04T00:10:56Z",
+    "endedAt": "2026-10-04T00:11:36Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-04T00:10:56Z",
+        "endedAt": "2026-10-04T00:11:00Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 8000,
+        "startedAt": "2026-10-04T00:11:00Z",
+        "endedAt": "2026-10-04T00:11:08Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 1,
+        "driversSpoken": [
+          5
+        ],
+        "plannedMs": 6000,
+        "startedAt": "2026-10-04T00:11:08Z",
+        "endedAt": "2026-10-04T00:11:14Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 2,
+        "driversSpoken": [],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-04T00:11:14Z",
+        "endedAt": "2026-10-04T00:11:21Z",
+        "delivered": true
+      },
+      {
+        "kind": "leverage",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-04T00:11:21Z",
+        "endedAt": "2026-10-04T00:11:25Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor-peak",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-04T00:11:25Z",
+        "endedAt": "2026-10-04T00:11:32Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-04T00:11:32Z",
+        "endedAt": "2026-10-04T00:11:36Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 4,
+    "intensityAfter": 8,
+    "recoverySeconds": 35,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "simulator",
+    "scriptHash": "sha256:5f1c0a9e7d3b2a41",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_007",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 7,
+    "kind": "full",
+    "phase": null,
+    "trigger": {
+      "kind": "detection",
+      "detectionId": "det_demo_004"
+    },
+    "arm": "sham",
+    "startedAt": "2026-10-04T03:10:56Z",
+    "endedAt": "2026-10-04T03:11:04Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-04T03:10:56Z",
+        "endedAt": "2026-10-04T03:11:00Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-04T03:11:00Z",
+        "endedAt": "2026-10-04T03:11:04Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 4,
+    "intensityAfter": 4,
+    "recoverySeconds": null,
+    "recoveryCensored": true,
+    "anchorPaired": false,
+    "signalSource": "simulator",
+    "scriptHash": "sha256:5f1c0a9e7d3b2a41",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_008",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 8,
+    "kind": "full",
+    "phase": null,
+    "trigger": {
+      "kind": "practice"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-04T06:10:56Z",
+    "endedAt": "2026-10-04T06:11:36Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-04T06:10:56Z",
+        "endedAt": "2026-10-04T06:11:00Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 8000,
+        "startedAt": "2026-10-04T06:11:00Z",
+        "endedAt": "2026-10-04T06:11:08Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 1,
+        "driversSpoken": [
+          5
+        ],
+        "plannedMs": 6000,
+        "startedAt": "2026-10-04T06:11:08Z",
+        "endedAt": "2026-10-04T06:11:14Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "stepIndex": 2,
+        "driversSpoken": [],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-04T06:11:14Z",
+        "endedAt": "2026-10-04T06:11:21Z",
+        "delivered": true
+      },
+      {
+        "kind": "leverage",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-04T06:11:21Z",
+        "endedAt": "2026-10-04T06:11:25Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor-peak",
+        "stepIndex": 0,
+        "driversSpoken": [
+          2,
+          3
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-04T06:11:25Z",
+        "endedAt": "2026-10-04T06:11:32Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-04T06:11:32Z",
+        "endedAt": "2026-10-04T06:11:36Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 5,
+    "intensityAfter": 8,
+    "recoverySeconds": null,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "simulator",
+    "scriptHash": "sha256:5f1c0a9e7d3b2a41",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_009",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 9,
+    "kind": "anchor-only",
+    "phase": null,
+    "trigger": {
+      "kind": "practice"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-04T09:10:56Z",
+    "endedAt": "2026-10-04T09:11:10Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-04T09:10:56Z",
+        "endedAt": "2026-10-04T09:11:00Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor",
+        "stepIndex": 0,
+        "plannedMs": 6000,
+        "startedAt": "2026-10-04T09:11:00Z",
+        "endedAt": "2026-10-04T09:11:06Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-04T09:11:06Z",
+        "endedAt": "2026-10-04T09:11:10Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 4,
+    "intensityAfter": 7,
+    "recoverySeconds": null,
+    "recoveryCensored": false,
+    "anchorPaired": false,
+    "signalSource": "simulator",
+    "scriptHash": "sha256:a03be1d47c9f6e22",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_010",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 10,
+    "kind": "anchor-only",
+    "phase": null,
+    "trigger": {
+      "kind": "practice"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-04T12:10:56Z",
+    "endedAt": "2026-10-04T12:11:10Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-04T12:10:56Z",
+        "endedAt": "2026-10-04T12:11:00Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor",
+        "stepIndex": 0,
+        "plannedMs": 6000,
+        "startedAt": "2026-10-04T12:11:00Z",
+        "endedAt": "2026-10-04T12:11:06Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": null,
+        "startedAt": "2026-10-04T12:11:06Z",
+        "endedAt": "2026-10-04T12:11:10Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 4,
+    "intensityAfter": 8,
+    "recoverySeconds": null,
+    "recoveryCensored": false,
+    "anchorPaired": false,
+    "signalSource": "simulator",
+    "scriptHash": "sha256:a03be1d47c9f6e22",
+    "endedBy": "completed"
+  }
+]

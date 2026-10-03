@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "rep_demo_004",
+  "profileId": "profile_demo_ada",
+  "stateId": "calm-before-pitch",
+  "repIndex": 4,
+  "kind": "full",
+  "phase": null,
+  "trigger": {
+    "kind": "detection",
+    "detectionId": "det_demo_002"
+  },
+  "arm": "sham",
+  "startedAt": "2026-10-03T18:10:56Z",
+  "endedAt": "2026-10-03T18:11:04Z",
+  "steps": [
+    {
+      "kind": "rate",
+      "plannedMs": null,
+      "startedAt": "2026-10-03T18:10:56Z",
+      "endedAt": "2026-10-03T18:11:00Z",
+      "delivered": true
+    },
+    {
+      "kind": "rate",
+      "plannedMs": null,
+      "startedAt": "2026-10-03T18:11:00Z",
+      "endedAt": "2026-10-03T18:11:04Z",
+      "delivered": true
+    }
+  ],
+  "intensityBefore": 4,
+  "intensityAfter": 5,
+  "recoverySeconds": 80,
+  "recoveryCensored": false,
+  "anchorPaired": false,
+  "signalSource": "simulator",
+  "scriptHash": "sha256:5f1c0a9e7d3b2a41",
+  "endedBy": "completed"
+}

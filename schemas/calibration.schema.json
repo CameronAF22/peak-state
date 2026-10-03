@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/calibration.schema.json",
+  "title": "Calibration summary",
+  "description": "What one state looks like in the person's own signals, for one playbook phase: peak (recorded during playbook 1.2 to 1.5) or contrast (3.1 to 3.2). sensing returns it; onboarding stores it on the state. Stats only, never raw frames. D-contracts-007, D-sensing-006.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["stateId", "phase", "source", "hr", "lnRmssd", "windows", "seconds", "quality", "speechExcludedSeconds", "recordedAt"],
+  "properties": {
+    "stateId": { "$ref": "#/$defs/stateId" },
+    "phase": { "enum": ["peak", "contrast"] },
+    "source": { "enum": ["simulator", "hr-strap", "manual"] },
+    "hr": { "$ref": "#/$defs/meanSd", "description": "Heart rate, beats per minute." },
+    "lnRmssd": { "$ref": "#/$defs/meanSd", "description": "Natural log of RMSSD in milliseconds, per window." },
+    "windows": { "type": "integer", "minimum": 0, "description": "Usable windows that went into the stats." },
+    "seconds": { "type": "number", "minimum": 0, "description": "Length of the recording." },
+    "quality": { "enum": ["ok", "low"], "description": "low: fewer than 2 usable windows; the summary is a prior only." },
+    "speechExcludedSeconds": { "type": "number", "minimum": 0, "description": "Seconds dropped because someone was speaking." },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "separability": {
+      "description": "Present on the second summary of a pair: how far peak and contrast sit apart, per feature, in pooled SDs.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["separable", "hr", "lnRmssd"],
+      "properties": {
+        "separable": { "type": "boolean", "description": "False when no feature separates by at least 0.5 pooled SD (D-sensing-005)." },
+        "hr": { "type": "number" },
+        "lnRmssd": { "type": "number" }
+      }
+    },
+    "rating": { "type": "integer", "minimum": 0, "maximum": 10, "description": "The person's own 0 to 10 rating of the state during the recording. Added by onboarding." }
+  },
+  "$defs": {
+    "stateId": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,31}$" },
+    "meanSd": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mean", "sd"],
+      "properties": {
+        "mean": { "type": "number" },
+        "sd": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}
