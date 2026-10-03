@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-reps-006",
+  "lane": "reps",
+  "title": "Onboarding's recode, test and future pace are logged as the first reps",
+  "status": "accepted",
+  "type": "product",
+  "context": "Coord's direction under D-coord-012 and the playbook's downstream table: recode, test and future pace are the first reps.",
+  "decision": "reps.fromOnboarding(profile, stateId) turns playbook section 4 into RepSessions with trigger.kind onboarding and phase recode, test or future-pace, arm cue, signalSource none. All three count toward the rep count; test and future pace count as good reps when they meet the D-reps-003 good-rep rule (future pace replays the full chain, so anchorPaired is true; recode works on the contrast memory, so it is not). They never enter the cue-vs-sham recovery comparison.",
+  "alternatives": [
+    "Do not log onboarding as reps",
+    "Count all three as good reps regardless of rating"
+  ],
+  "consequences": "",
+  "produces": [
+    "reps/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-coord-012",
+    "D-reps-003"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  },
+  "createdAt": "2026-10-03T14:35:57Z",
+  "acceptedAt": "2026-10-03T14:35:57Z",
+  "acceptedBy": "claude"
+}

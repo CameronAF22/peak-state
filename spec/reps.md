@@ -34,23 +34,6 @@ Install each state as measurable reps: a short rep script per emotion (anchor, p
 **Produces:** `reps/PLAN.md`  
 **Depends on:** D-coord-005, D-coord-006
 
-### D-reps-002 · Rep script: anchor, physiology, focus, language, peak, rate; 32 s default within 20 to 40 s
-
-`accepted` · product · 2026-10-03 · [session](https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW) · branch `lane/reps` · accepted by claude
-
-**Decision.** A rep is generated from one emotion: rate-before (untimed, skippable on detection), anchor 3 s, physiology 9 s, focus 8 s (with the person's leverage line if present), language 8 s (said once, then a silence to repeat), peak 4 s (stack all three, then the anchor again), rate-after (untimed). Timed budget defaults to 32 s, hard bounds 20 to 40 s, step durations scale with speech length. Only the person's confirmed words are spoken, joined by neutral connectors. The anchor plays at the start as the interrupt and again at the peak as the conditioning pairing.
-
-**Context.** The brief fixes the order anchor, physiology, focus, language, rate and 20 to 40 s. Section 3 of the research page says an anchor must be paired with the peak state before it works as an interrupt; mvp.md says the anchor is paired with the peak of each rep.
-
-**Alternatives considered.**
-
-- Anchor only at the start
-- Anchor only at the peak
-- 60 to 120 s rep as in prompts/intervention.md
-
-**Produces:** `reps/PLAN.md`  
-**Depends on:** D-reps-001
-
 ### D-reps-004 · Sham arm: sensing's gate decides, reps honours it; default rate 0.25, detection triggers only
 
 `accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW) · branch `lane/reps` · accepted by claude
@@ -66,6 +49,40 @@ Install each state as measurable reps: a short rep script per emotion (anchor, p
 
 **Produces:** `reps/PLAN.md`  
 **Depends on:** D-reps-001
+
+### D-reps-005 · Rep replays the person's own step chain with driver submodalities; anchor step at the peak; 32 s within 20 to 40 s
+
+`accepted` · product · 2026-10-03 · [session](https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW) · branch `lane/reps` · accepted by claude
+
+**Decision.** A rep is generated from one state: rate-before (untimed, skippable on detection); then each strategy step in the person's own order up to fullyInAt, speaking the step's content in their words followed by the drivers that belong to that step's modality as instructions (one core submodality if the step has no driver); then the optional leverage line; then anchor-peak, which replays the anchor step with its submodalities as the conditioning pairing; then rate-after. Timed budget 32 s by default, hard bounds 20 to 40 s; per-step time shrinks and only the top driver is spoken on long chains. Driver phrasing uses a tested template per attribute with fallback 'Make it {peakValue}'. The anchor-only test replays the anchor step alone.
+
+**Context.** Product owner scope change D-coord-011 and D-coord-012: one person-chosen state, strategy as ordered steps with submodalities, drivers found by contrast, and reps replay the person's own order and speak the drivers. D-reps-002's fixed anchor, physiology, focus, language order no longer matches the profile.
+
+**Alternatives considered.**
+
+- Keep the fixed triad order using the derived triad view
+- Speak every submodality, not just drivers
+- Anchor step only at the start
+
+**Produces:** `reps/PLAN.md`  
+**Depends on:** D-coord-011, D-coord-012, D-reps-001  
+**Supersedes:** D-reps-002
+
+### D-reps-006 · Onboarding's recode, test and future pace are logged as the first reps
+
+`accepted` · product · 2026-10-03 · [session](https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW) · branch `lane/reps` · accepted by claude
+
+**Decision.** reps.fromOnboarding(profile, stateId) turns playbook section 4 into RepSessions with trigger.kind onboarding and phase recode, test or future-pace, arm cue, signalSource none. All three count toward the rep count; test and future pace count as good reps when they meet the D-reps-003 good-rep rule (future pace replays the full chain, so anchorPaired is true; recode works on the contrast memory, so it is not). They never enter the cue-vs-sham recovery comparison.
+
+**Context.** Coord's direction under D-coord-012 and the playbook's downstream table: recode, test and future pace are the first reps.
+
+**Alternatives considered.**
+
+- Do not log onboarding as reps
+- Count all three as good reps regardless of rating
+
+**Produces:** `reps/PLAN.md`  
+**Depends on:** D-coord-012, D-reps-003
 
 ## Proposed, awaiting acceptance
 
@@ -88,7 +105,7 @@ Install each state as measurable reps: a short rep script per emotion (anchor, p
 
 ## Superseded and rejected
 
-None.
+- D-reps-002 · Rep script: anchor, physiology, focus, language, peak, rate; 32 s default within 20 to 40 s · `superseded` (superseded by D-reps-005)
 
 ## Produced artifacts
 
@@ -96,4 +113,4 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 
 | File | sha256 | Decisions |
 |---|---|---|
-| `reps/PLAN.md` | `33b22050e4b4` | D-reps-001, D-reps-002, D-reps-003, D-reps-004 |
+| `reps/PLAN.md` | `7745d8a5269b` | D-reps-001, D-reps-002, D-reps-003, D-reps-004, D-reps-005, D-reps-006 |
