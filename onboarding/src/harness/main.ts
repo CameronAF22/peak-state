@@ -2,7 +2,8 @@
 // appear after the hint delay), save the strategy, then run it back with one click.
 // After the first session, Practice runs the recall → rate → one question → try again loop (D-onboarding-015), and
 // a signed-in account keeps the strategy and every run on the server (D-onboarding-017).
-// URL options: ?hint=<ms> hint delay · ?speed=fast short playback pauses · ?voice=typed|browser|gpt-live.
+// URL options: ?hint=<ms> hint delay · ?speed=fast short playback pauses · ?voice=typed|browser|gpt-live
+// · ?debug=live logs every GPT live event to the console.
 
 import type { OnboardingEvent, RepSession } from "@peak-state/contracts";
 import { createEngine } from "../engine/index.ts";
@@ -37,6 +38,7 @@ export interface HarnessApi {
 const params = new URLSearchParams(location.search);
 const hintDelay = hintDelayFromUrl(location.search);
 const fast = params.get("speed") === "fast";
+const debugLive = params.get("debug") === "live";
 const pauseMs = fast ? 150 : DEFAULT_PAUSE_MS;
 const KINDS: VoiceKind[] = ["typed", "browser", "gpt-live"];
 
@@ -87,7 +89,9 @@ async function switchVoice(start: boolean): Promise<void> {
   }
   voice = createVoice(
     settings.kind,
-    settings.kind === "gpt-live" ? { apiKey: settings.apiKey ?? "", model: settings.model, getApiKey: serverVoice() ? () => api.realtimeKey(settings.model) : undefined } : undefined,
+    settings.kind === "gpt-live"
+      ? { apiKey: settings.apiKey ?? "", model: settings.model, debug: debugLive, headers: serverVoice() ? () => api.authHeaders() : undefined }
+      : undefined,
   );
   voiceUnsubs.push(voice.onStatus(setStatus), voice.onTranscript(onTranscript));
   voiceStarted = false;
@@ -103,7 +107,7 @@ async function switchVoice(start: boolean): Promise<void> {
     setStatus({ kind: settings.kind, state: "error", detail: err instanceof Error ? err.message : String(err) });
     if (settings.kind === "gpt-live" && !settings.apiKey) {
       if (server?.voice && !api.account()) account?.open();
-      else controls.openSettings();
+      else if (/API key/.test(String(err))) controls.openSettings();
     }
     return;
   }

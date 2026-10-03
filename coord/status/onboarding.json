@@ -3,19 +3,19 @@
   "lane": "onboarding",
   "health": "green",
   "phase": "M0",
-  "progress": 85,
-  "summary": "Three light-and-text design prototypes (orb, horizon, constellation) built on branch claude/project-thread-r75yty; visual tests pass for all three",
+  "progress": 90,
+  "summary": "integration/all: merged PR #23, #24, #26, #25 and lane branches; GPT live on gpt-live-1 via /api/live/session (Vite proxy locally, Worker on Cloudflare, D-onboarding-020). 91 onboarding tests and typecheck green.",
   "now": [
-    "Presenting the three designs to Cam"
+    "Deploying integration/all to Cloudflare for testing"
   ],
   "next": [
-    "Port the chosen design into the harness once Cam picks"
+    "Cameron tests GPT live on the deployed Worker; then merge PRs into main"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T18:29:38Z",
+  "updatedAt": "2026-10-03T19:11:11Z",
   "session": {
-    "id": "session_01FpUSvVKQswepdzRd8iGswL",
-    "url": "https://claude.ai/code/session_01FpUSvVKQswepdzRd8iGswL",
-    "branch": "claude/project-thread-r75yty"
+    "id": "32d60a9b-b6fa-430d-8874-8454b73678f3",
+    "url": null,
+    "branch": "integration/all"
   }
 }

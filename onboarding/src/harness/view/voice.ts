@@ -43,9 +43,13 @@ export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, o
     { class: "popover", "data-testid": "voice-settings", role: "dialog", "aria-label": "GPT live settings", hidden: true },
     h("h2", {}, "GPT live settings"),
     h("label", { class: "field", for: "gpt-model" }, "Model id", model),
-    h("label", { class: "field", for: "gpt-key" }, "API key", key),
+    h("label", { class: "field", for: "gpt-key" }, "API key (optional)", key),
     h("label", { class: "check", for: "gpt-remember" }, remember, "Remember the key in this browser"),
-    h("p", { class: "note" }, "The key is sent only to the realtime endpoint. Unless you tick remember, it is kept for this page only."),
+    h(
+      "p",
+      { class: "note" },
+      "Best: leave this empty and start the harness with OPENAI_API_KEY set, so the key never reaches the page. A key pasted here goes only to this harness's local server, which uses it when OPENAI_API_KEY is not set.",
+    ),
     h(
       "div",
       { class: "row" },
@@ -85,10 +89,6 @@ export function createVoiceControls(root: HTMLElement, initial: VoiceSettings, o
 
   select.addEventListener("change", () => {
     settings = { ...settings, kind: select.value as VoiceKind };
-    if (settings.kind === "gpt-live" && !settings.apiKey) {
-      popover.hidden = false;
-      key.focus();
-    }
     onChange(settings);
   });
 

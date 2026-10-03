@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 import type { ProfileV2, RepSession } from "@peak-state/contracts";
-import { createApi, MAX_CODE_ATTEMPTS_PER_DAY, MAX_SIGN_INS_PER_EMAIL_PER_DAY, REALTIME_SECRETS_URL } from "../../worker/api.ts";
+import { createApi, MAX_CODE_ATTEMPTS_PER_DAY, MAX_SIGN_INS_PER_EMAIL_PER_DAY, LIVE_SESSIONS_URL } from "../../worker/api.ts";
 import { applyChange, newRecord } from "../../src/store/index.ts";
 import { fakeD1 } from "./d1.ts";
 
@@ -139,27 +139,45 @@ test("reps: owned by the account, idempotent by id, with progress", async () => 
   assert.equal((await call("POST", "/api/reps", { reps: "nope" }, a)).status, 400);
 });
 
-test("realtime token: needs an account and the server key, and returns only the short-lived key", async () => {
+test("live session: needs an account and the server key, forwards a sanitized session, never returns the key", async () => {
   const seen: { url: string; auth: string | null; body: any }[] = [];
+  let reply: { status: number; body: unknown } = {
+    status: 201,
+    body: { session: { id: "live_1" }, transport: { type: "webrtc", sdp: "v=0 answer" } },
+  };
   const fakeFetch = (async (url: string, init: RequestInit) => {
     seen.push({ url, auth: new Headers(init.headers).get("authorization"), body: JSON.parse(String(init.body)) });
-    return new Response(JSON.stringify({ value: "ek_short", expires_at: 1790000000 }), { status: 200 });
+    return new Response(JSON.stringify(reply.body), { status: reply.status });
   }) as unknown as typeof fetch;
+  const offer = { sdp: "v=0 offer", session: { model: "gpt-live-1", instructions: "Say lines.", audio: { output: { voice: "marin" } }, delegation: { type: "responses" }, tools: ["x"] } };
+
   const off = server();
   const tOff = (await off.call("POST", "/api/accounts", { email: "a@example.com", code: CODE })).body.token;
-  assert.equal((await off.call("POST", "/api/realtime/token", {}, tOff)).status, 503);
+  assert.equal((await off.call("POST", "/api/live/session", offer, tOff)).status, 503);
 
   const { call } = server({ openai: "sk-real-secret", fetch: fakeFetch });
-  assert.equal((await call("POST", "/api/realtime/token", {})).status, 401);
+  assert.equal((await call("POST", "/api/live/session", offer)).status, 401);
   const t = (await call("POST", "/api/accounts", { email: "a@example.com", code: CODE })).body.token;
-  const res = await call("POST", "/api/realtime/token", { model: "gpt-live-1" }, t);
-  assert.equal(res.status, 200);
-  assert.deepEqual(res.body, { value: "ek_short", expiresAt: 1790000000, model: "gpt-live-1" });
+  assert.equal((await call("POST", "/api/live/session", { session: {} }, t)).status, 400);
+
+  const res = await call("POST", "/api/live/session", offer, t);
+  assert.equal(res.status, 201);
+  assert.deepEqual(res.body, { session: { id: "live_1", model: "gpt-live-1" }, transport: { type: "webrtc", sdp: "v=0 answer" } });
   assert.ok(!JSON.stringify(res.body).includes("sk-real-secret"));
-  assert.equal(seen[0].url, REALTIME_SECRETS_URL);
+  assert.equal(seen[0].url, LIVE_SESSIONS_URL);
   assert.equal(seen[0].auth, "Bearer sk-real-secret");
-  assert.equal(seen[0].body.session.model, "gpt-live-1");
-  assert.equal((await call("POST", "/api/realtime/token", { model: "../../evil" }, t)).body.model, "gpt-realtime");
+  assert.deepEqual(seen[0].body, {
+    session: { model: "gpt-live-1", delegation: { type: "client" }, instructions: "Say lines.", audio: { output: { voice: "marin" } } },
+    transport: { type: "webrtc", sdp: "v=0 offer" },
+  });
+
+  await call("POST", "/api/live/session", { ...offer, session: { model: "../../evil" } }, t);
+  assert.equal(seen.at(-1)!.body.session.model, "gpt-live-1");
+
+  reply = { status: 403, body: { error: { message: "Project does not have access to model gpt-live-1" } } };
+  const refused = await call("POST", "/api/live/session", offer, t);
+  assert.equal(refused.status, 502);
+  assert.match(refused.body.error, /\(403\): Project does not have access/);
 });
 
 test("unknown routes and bad bodies answer as JSON", async () => {

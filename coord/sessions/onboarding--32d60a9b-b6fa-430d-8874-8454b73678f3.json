@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "sessionId": "32d60a9b-b6fa-430d-8874-8454b73678f3",
+  "url": null,
+  "lane": "onboarding",
+  "branch": "integration/all",
+  "purpose": "Rewrite the harness GPT live voice for the gpt-live-1 GPT-Live API with a dev-server key proxy",
+  "startedAt": "2026-10-03T17:49:34Z",
+  "lastSeenAt": "2026-10-03T19:11:11Z"
+}

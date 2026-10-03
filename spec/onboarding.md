@@ -182,6 +182,22 @@ Turn a first conversation into a confirmed profile: find the person's three top 
 
 **Produces:** `onboarding/design/`, `onboarding/package.json`, `onboarding/tsconfig.json`
 
+### D-onboarding-020 · GPT live targets gpt-live-1 via the GPT-Live API, through the local dev proxy or the Worker's /api/live/session
+
+`accepted` · technical · 2026-10-03 · session `32d60a9b-b6fa-430d-8874-8454b73678f3` · branch `integration/all` · accepted by claude
+
+**Decision.** Rewrite onboarding/src/voice/gpt-live.ts for OpenAI's GPT-Live API: the page posts { session, sdp } to /api/live/session and waits for session.started on the oai-events channel. Locally the Vite dev server serves that route (harness/live-proxy.ts, key from OPENAI_API_KEY or a gear key sent only to localhost). On Cloudflare the Worker serves it (worker/api.ts liveSession): signed-in accounts only, 40 sessions per account per day, only model/instructions/voice taken from the page, delegation forced to client, and it calls POST https://api.openai.com/v1/live/sessions with the OPENAI_API_KEY secret. This replaces the Worker's /api/realtime/token (Realtime client secrets cannot start gpt-live-1). Lines are spoken with session.commentary.append while the mic is muted; remote audio is muted outside speak(); answers come from session.input_transcript.delta fragments plus a 1.8 s silence gap.
+
+**Context.** gpt-live-1 is not served by the Realtime API (/v1/realtime/calls, client_secrets, session.update with turn_detection, response.create) that D-onboarding-012 and D-onboarding-017 used, so GPT live could never connect. GPT-Live sessions must be created server-side with the project key. Cameron chose gpt-live-1 over gpt-realtime-2.1 and a server-held key over a browser-held key. First written locally as D-onboarding-014 and renumbered when merging into integration/all.
+
+**Alternatives considered.**
+
+- Keep the Realtime adapter and default to gpt-realtime-2.1 (verbatim speech, create_response:false)
+- Support both APIs selected by model id
+
+**Produces:** `onboarding/src/voice/gpt-live.ts`, `onboarding/harness/live-proxy.ts`, `onboarding/vite.config.ts`, `onboarding/worker/api.ts`, `onboarding/src/sync/index.ts`, `onboarding/test/unit/voice.test.ts`, `onboarding/test/unit/live-proxy.test.ts`, `onboarding/test/unit/worker.test.ts`, `onboarding/README.md`, `onboarding/DEPLOY.md`  
+**Depends on:** D-onboarding-012, D-onboarding-017
+
 ## Proposed, awaiting acceptance
 
 ### D-onboarding-007 · Voice-first stack for onboarding: speech in and out primary, transcript, typed and scripted fallbacks
@@ -240,9 +256,9 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/state-change.md` | `6fb6b1df03c0` | D-coord-008 |
 | `onboarding/.dev.vars.example` | `9972ceaf7419` | D-onboarding-017 |
 | `onboarding/.gitignore` | `e080f460d184` | D-onboarding-018 |
-| `onboarding/DEPLOY.md` | `eab8565b57bd` | D-onboarding-017 |
+| `onboarding/DEPLOY.md` | `34ac1f2f2552` | D-onboarding-017, D-onboarding-020 |
 | `onboarding/PLAN.md` | `7913904371a4` | D-onboarding-001, D-onboarding-011 |
-| `onboarding/README.md` | `375a56d82a77` | D-onboarding-012 |
+| `onboarding/README.md` | `eadee7e955ee` | D-onboarding-012, D-onboarding-020 |
 | `onboarding/design/constellation/index.html` | `cd5706cb048d` | D-onboarding-019 |
 | `onboarding/design/constellation/main.ts` | `1e429cbdb9bb` | D-onboarding-019 |
 | `onboarding/design/constellation/sky.ts` | `e8c46e4cd649` | D-onboarding-019 |
@@ -264,6 +280,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/design/playwright.config.ts` | `8d16fb7f4d1e` | D-onboarding-019 |
 | `onboarding/design/vite.config.ts` | `466fefeb1bab` | D-onboarding-019 |
 | `onboarding/harness/index.html` | `43399b706f07` | D-onboarding-012 |
+| `onboarding/harness/live-proxy.ts` | `d1b6c414ca7a` | D-onboarding-012, D-onboarding-020 |
 | `onboarding/harness/main.ts` | `684ae88ae42e` | D-onboarding-012 |
 | `onboarding/harness/styles.css` | `8b27393249b6` | D-onboarding-012 |
 | `onboarding/migrations/0001_init.sql` | `e3bddb9834f0` | D-onboarding-017 |
@@ -275,14 +292,14 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/src/engine/parse.ts` | `c59f4d5ae33b` | D-onboarding-012 |
 | `onboarding/src/engine/safety.ts` | `8f4aafe9b9fa` | D-onboarding-012 |
 | `onboarding/src/harness/hints.ts` | `39a5fcdb4929` | D-onboarding-012 |
-| `onboarding/src/harness/main.ts` | `ff13a7408062` | D-onboarding-012 |
+| `onboarding/src/harness/main.ts` | `93033c96f4a9` | D-onboarding-012 |
 | `onboarding/src/harness/view/account.ts` | `8e7c64aa400c` | D-onboarding-012, D-onboarding-017 |
 | `onboarding/src/harness/view/dom.ts` | `9f8bddc8c0f4` | D-onboarding-012 |
 | `onboarding/src/harness/view/practice.ts` | `b4026f32c3ff` | D-onboarding-012, D-onboarding-015 |
 | `onboarding/src/harness/view/question.ts` | `0ea364f616ed` | D-onboarding-012 |
 | `onboarding/src/harness/view/saved.ts` | `e3d2a9054bc1` | D-onboarding-012 |
 | `onboarding/src/harness/view/steps.ts` | `a35116374f96` | D-onboarding-012 |
-| `onboarding/src/harness/view/voice.ts` | `a46fb2d3912b` | D-onboarding-012 |
+| `onboarding/src/harness/view/voice.ts` | `fc9453cbc358` | D-onboarding-012 |
 | `onboarding/src/index.ts` | `36e7de5bbe64` | D-onboarding-012 |
 | `onboarding/src/playback/index.ts` | `8c0aeb675e21` | D-onboarding-012 |
 | `onboarding/src/playback/runner.ts` | `df12e2c1a815` | D-onboarding-012 |
@@ -292,12 +309,12 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/src/practice/rating.ts` | `21d6d4c873b7` | D-onboarding-012, D-onboarding-015 |
 | `onboarding/src/progress/index.ts` | `888798d27668` | D-onboarding-012, D-onboarding-016 |
 | `onboarding/src/store/index.ts` | `d52dc190cf91` | D-onboarding-012, D-onboarding-014 |
-| `onboarding/src/sync/index.ts` | `37df9200483d` | D-onboarding-012, D-onboarding-017 |
-| `onboarding/src/types.ts` | `f227fc9cc173` | D-onboarding-012 |
+| `onboarding/src/sync/index.ts` | `cb67ecab42d9` | D-onboarding-012, D-onboarding-017, D-onboarding-020 |
+| `onboarding/src/types.ts` | `9d4438df54ef` | D-onboarding-012 |
 | `onboarding/src/voice/browser.ts` | `61d7d92e0b70` | D-onboarding-012 |
 | `onboarding/src/voice/emitter.ts` | `df88e51d4d0e` | D-onboarding-012 |
-| `onboarding/src/voice/gpt-live.ts` | `25fc290509c2` | D-onboarding-012 |
-| `onboarding/src/voice/index.ts` | `a636f6bd0ca2` | D-onboarding-012 |
+| `onboarding/src/voice/gpt-live.ts` | `65ec6c768a21` | D-onboarding-012, D-onboarding-020 |
+| `onboarding/src/voice/index.ts` | `02e846bcc28e` | D-onboarding-012 |
 | `onboarding/src/voice/typed.ts` | `bee9740bc611` | D-onboarding-012 |
 | `onboarding/test/e2e/.gitignore` | `83394a0aff29` | D-onboarding-012 |
 | `onboarding/test/e2e/harness.spec.ts` | `a6de1a68e7dc` | D-onboarding-012 |
@@ -305,17 +322,18 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/test/e2e/screens-reporter.ts` | `dd1e91a8a298` | D-onboarding-012 |
 | `onboarding/test/unit/d1.ts` | `f2e83d0bc302` | D-onboarding-012, D-onboarding-018 |
 | `onboarding/test/unit/engine.test.ts` | `9674be98ccc0` | D-onboarding-012 |
+| `onboarding/test/unit/live-proxy.test.ts` | `6d1457845362` | D-onboarding-012, D-onboarding-020 |
 | `onboarding/test/unit/playback.test.ts` | `c76b8b12f289` | D-onboarding-012 |
 | `onboarding/test/unit/practice.test.ts` | `60f6b512c408` | D-onboarding-012, D-onboarding-015 |
 | `onboarding/test/unit/progress.test.ts` | `6f70bc761af5` | D-onboarding-012, D-onboarding-016 |
 | `onboarding/test/unit/script.test.ts` | `473cf39343e8` | D-onboarding-012 |
 | `onboarding/test/unit/store.test.ts` | `bc8f3258f70d` | D-onboarding-012, D-onboarding-014 |
 | `onboarding/test/unit/sync.test.ts` | `3b08f234eaa4` | D-onboarding-012, D-onboarding-017 |
-| `onboarding/test/unit/voice.test.ts` | `9440dc4b6e29` | D-onboarding-012 |
-| `onboarding/test/unit/worker.test.ts` | `43f3ec45db3e` | D-onboarding-012, D-onboarding-017 |
-| `onboarding/tsconfig.json` | `e07bebe8e17b` | D-onboarding-012, D-onboarding-019 |
-| `onboarding/vite.config.ts` | `f5643cec1115` | D-onboarding-012 |
-| `onboarding/worker/api.ts` | `cb8e26325a10` | D-onboarding-017 |
+| `onboarding/test/unit/voice.test.ts` | `65d510178d10` | D-onboarding-012, D-onboarding-020 |
+| `onboarding/test/unit/worker.test.ts` | `04d9b409c611` | D-onboarding-012, D-onboarding-017, D-onboarding-020 |
+| `onboarding/tsconfig.json` | `669742d19454` | D-onboarding-012, D-onboarding-019 |
+| `onboarding/vite.config.ts` | `cd936d009c9a` | D-onboarding-012, D-onboarding-020 |
+| `onboarding/worker/api.ts` | `206d35f2c64c` | D-onboarding-017, D-onboarding-020 |
 | `onboarding/worker/index.ts` | `a9411ea26eb2` | D-onboarding-017 |
 | `onboarding/wrangler.jsonc` | `283e44ae8885` | D-onboarding-017 |
 | `prompts/discovery.md` | `915c158676a3` | D-coord-008 |

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-020",
+  "lane": "onboarding",
+  "title": "GPT live targets gpt-live-1 via the GPT-Live API, through the local dev proxy or the Worker's /api/live/session",
+  "status": "accepted",
+  "type": "technical",
+  "context": "gpt-live-1 is not served by the Realtime API (/v1/realtime/calls, client_secrets, session.update with turn_detection, response.create) that D-onboarding-012 and D-onboarding-017 used, so GPT live could never connect. GPT-Live sessions must be created server-side with the project key. Cameron chose gpt-live-1 over gpt-realtime-2.1 and a server-held key over a browser-held key. First written locally as D-onboarding-014 and renumbered when merging into integration/all.",
+  "decision": "Rewrite onboarding/src/voice/gpt-live.ts for OpenAI's GPT-Live API: the page posts { session, sdp } to /api/live/session and waits for session.started on the oai-events channel. Locally the Vite dev server serves that route (harness/live-proxy.ts, key from OPENAI_API_KEY or a gear key sent only to localhost). On Cloudflare the Worker serves it (worker/api.ts liveSession): signed-in accounts only, 40 sessions per account per day, only model/instructions/voice taken from the page, delegation forced to client, and it calls POST https://api.openai.com/v1/live/sessions with the OPENAI_API_KEY secret. This replaces the Worker's /api/realtime/token (Realtime client secrets cannot start gpt-live-1). Lines are spoken with session.commentary.append while the mic is muted; remote audio is muted outside speak(); answers come from session.input_transcript.delta fragments plus a 1.8 s silence gap.",
+  "alternatives": [
+    "Keep the Realtime adapter and default to gpt-realtime-2.1 (verbatim speech, create_response:false)",
+    "Support both APIs selected by model id"
+  ],
+  "consequences": "",
+  "produces": [
+    "onboarding/src/voice/gpt-live.ts",
+    "onboarding/harness/live-proxy.ts",
+    "onboarding/vite.config.ts",
+    "onboarding/worker/api.ts",
+    "onboarding/src/sync/index.ts",
+    "onboarding/test/unit/voice.test.ts",
+    "onboarding/test/unit/live-proxy.test.ts",
+    "onboarding/test/unit/worker.test.ts",
+    "onboarding/README.md",
+    "onboarding/DEPLOY.md"
+  ],
+  "dependsOn": [
+    "D-onboarding-012",
+    "D-onboarding-017"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "32d60a9b-b6fa-430d-8874-8454b73678f3",
+    "url": null,
+    "branch": "integration/all"
+  },
+  "createdAt": "2026-10-03T19:10:48Z",
+  "acceptedAt": "2026-10-03T19:10:48Z",
+  "acceptedBy": "claude"
+}
