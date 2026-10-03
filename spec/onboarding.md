@@ -173,9 +173,25 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/state-change.md` | `6fb6b1df03c0` | D-coord-008 |
 | `onboarding/PLAN.md` | `7913904371a4` | D-onboarding-001, D-onboarding-011 |
 | `onboarding/README.md` | `406602332f4f` | D-onboarding-012 |
-| `onboarding/design/e2e/.gitignore` | `bdf22dd7031b` | D-onboarding-014 |
+| `onboarding/design/constellation/index.html` | `cd5706cb048d` | D-onboarding-014 |
+| `onboarding/design/constellation/main.ts` | `1e429cbdb9bb` | D-onboarding-014 |
+| `onboarding/design/constellation/sky.ts` | `e8c46e4cd649` | D-onboarding-014 |
+| `onboarding/design/constellation/styles.css` | `515506a0cced` | D-onboarding-014 |
+| `onboarding/design/e2e/.gitignore` | `5fbb93ecf8e0` | D-onboarding-014 |
+| `onboarding/design/e2e/constellation.spec.ts` | `488b06295e04` | D-onboarding-014 |
+| `onboarding/design/e2e/horizon.spec.ts` | `aa8b40273e8c` | D-onboarding-014 |
+| `onboarding/design/e2e/orb.spec.ts` | `c9a7424cd2f4` | D-onboarding-014 |
+| `onboarding/design/horizon/index.html` | `fa3f29ecf5d5` | D-onboarding-014 |
+| `onboarding/design/horizon/main.ts` | `3efe8be72dc0` | D-onboarding-014 |
+| `onboarding/design/horizon/sky.ts` | `8bcc8c712283` | D-onboarding-014 |
+| `onboarding/design/horizon/styles.css` | `86041e84ab33` | D-onboarding-014 |
+| `onboarding/design/horizon/voice.ts` | `899a94c0864f` | D-onboarding-014 |
 | `onboarding/design/index.html` | `4c0759a872e4` | D-onboarding-014 |
-| `onboarding/design/playwright.config.ts` | `18e99dd7e629` | D-onboarding-014 |
+| `onboarding/design/orb/index.html` | `56e3afc03222` | D-onboarding-014 |
+| `onboarding/design/orb/main.ts` | `3e3e993ffe20` | D-onboarding-014 |
+| `onboarding/design/orb/sky.ts` | `a85393e3e7b4` | D-onboarding-014 |
+| `onboarding/design/orb/styles.css` | `b6e13b088176` | D-onboarding-014 |
+| `onboarding/design/playwright.config.ts` | `8d16fb7f4d1e` | D-onboarding-014 |
 | `onboarding/design/vite.config.ts` | `981855c3f3b3` | D-onboarding-014 |
 | `onboarding/harness/index.html` | `cc518dcc3b32` | D-onboarding-012 |
 | `onboarding/harness/main.ts` | `684ae88ae42e` | D-onboarding-012 |

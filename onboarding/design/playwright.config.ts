@@ -2,9 +2,11 @@
 // Run: cd onboarding && npx playwright test -c design/playwright.config.ts [e2e/<variant>.spec.ts]
 // DESIGN_PORT picks the port so several runs can go at once. Screenshots land in design/e2e/screens/<variant>/.
 
+import { fileURLToPath } from "node:url";
 import { defineConfig, devices } from "@playwright/test";
 
 const PORT = Number(process.env.DESIGN_PORT ?? 5175);
+const here = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
   testDir: "e2e",
@@ -22,8 +24,8 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 860 } } }],
   webServer: {
-    command: `npx vite --config vite.config.ts --host 127.0.0.1 --port ${PORT} --strictPort`,
-    cwd: ".",
+    command: `npx vite --config ${here}vite.config.ts --host 127.0.0.1 --port ${PORT} --strictPort`,
+    cwd: here,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: true,
     timeout: 60_000,

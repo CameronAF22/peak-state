@@ -32,8 +32,92 @@
       ]
     },
     {
+      "path": "onboarding/design/constellation/index.html",
+      "sha256": "cd5706cb048dc87b93cffb296cbacfc4d8e45d88b566fe2e8b584d845bc79785",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/constellation/main.ts",
+      "sha256": "1e429cbdb9bb675e292810ef85a798f1da3a2968b65651682f96f5a24abd55ac",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/constellation/sky.ts",
+      "sha256": "e8c46e4cd649b500b326194558092ecbb4d19c7e63aca7abaef13dbb3a1c7b6a",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/constellation/styles.css",
+      "sha256": "515506a0ccedfcff1257992ad671f9aee0edf9ea43aa36e1fec9880259eaa49b",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
       "path": "onboarding/design/e2e/.gitignore",
-      "sha256": "bdf22dd7031b509eefe2f5e47e97e72e18dda07f533186c58dca6225474e02d9",
+      "sha256": "5fbb93ecf8e043729c1476d313f766b4ddbb4223ffae71c63bc32f3992b8a336",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/e2e/constellation.spec.ts",
+      "sha256": "488b06295e04cd75e9bbacc97ce1df8083824bdecd103c89ef9934c4a84ab250",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/e2e/horizon.spec.ts",
+      "sha256": "aa8b40273e8c9d11718ba342eb412cdf75c796d1996c9c3f54468e84a57da4ee",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/e2e/orb.spec.ts",
+      "sha256": "c9a7424cd2f406cfff49a1d4eada6fb12fa6acb21dd5d5756e598e116985fdd6",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/horizon/index.html",
+      "sha256": "fa3f29ecf5d52bd269256d3223f0ec8eee850d85178f4c003a99f8becf64957b",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/horizon/main.ts",
+      "sha256": "3efe8be72dc0b68b433288acf6d1eafae552251da33979c73ddb83ae65703012",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/horizon/sky.ts",
+      "sha256": "8bcc8c71228379207abfcf4950842cdc1b0f9ab2adb0aef0906cbc0448cd0004",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/horizon/styles.css",
+      "sha256": "86041e84ab33b93922047432fc1c08e671d9c5a7aea157c1d59e1f43f399e8d1",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/horizon/voice.ts",
+      "sha256": "899a94c0864f95d979c98ff0819ee841341787ae7d94dfe9621473d3b52a1bf0",
       "decisions": [
         "D-onboarding-014"
       ]
@@ -46,8 +130,36 @@
       ]
     },
     {
+      "path": "onboarding/design/orb/index.html",
+      "sha256": "56e3afc03222d8a57abd3576f8323956670315a9265d132be4f7ede44d842a2b",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/orb/main.ts",
+      "sha256": "3e3e993ffe20ba2480b8b7ab655b4fc5d5336b68692bd1b88ca163b662be6a83",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/orb/sky.ts",
+      "sha256": "a85393e3e7b4980702a19a52143323f02cb8b22a94678df3461b755081c28b2b",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
+      "path": "onboarding/design/orb/styles.css",
+      "sha256": "b6e13b088176f559818f85b698fae28e4dbdbf413116a3e433ebb0706b58ec56",
+      "decisions": [
+        "D-onboarding-014"
+      ]
+    },
+    {
       "path": "onboarding/design/playwright.config.ts",
-      "sha256": "18e99dd7e629912c6420656dc8b532e4d4ddc66339f222a2925efed908d28c31",
+      "sha256": "8d16fb7f4d1e784e34994f5ac968fbd13081490bf65d04c0b08dbe07c354f762",
       "decisions": [
         "D-onboarding-014"
       ]
