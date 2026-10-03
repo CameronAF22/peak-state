@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "det_demo_manual_001",
+  "t": 1791040500000,
+  "kind": "manual",
+  "stateId": "calm-before-pitch",
+  "confidence": 1.0,
+  "window": null,
+  "gate": {
+    "consecutiveWindows": 0,
+    "required": 3,
+    "refractorySeconds": 60,
+    "sham": false
+  },
+  "calibrationMode": "contrast"
+}

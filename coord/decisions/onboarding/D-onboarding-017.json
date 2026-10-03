@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-017",
+  "lane": "onboarding",
+  "title": "Online: one Cloudflare Worker with static assets, D1, invite-code accounts and short-lived GPT live keys",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Cam asked to put the app online on Cloudflare with storage and to add email accounts gated by an invite code. Cloudflare recommends Workers with static assets for new apps.",
+  "decision": "onboarding/worker/ is a Cloudflare Worker (wrangler.jsonc in onboarding/) that serves the built harness (dist-harness) as static assets and runs /api/* first. D1 database peak-state holds accounts, sessions, strategy revisions, strategy changes and reps (migrations in onboarding/migrations/). Accounts are keyed by email; creating one needs the invite code, checked only on the server against the INVITE_CODE secret (never in client code or the repo). Signing in on another device is email plus the same code. A session is a random bearer token kept in localStorage, stored server-side as a SHA-256 hash, 90 days. POST /api/realtime/token asks OpenAI for a short-lived Realtime client secret using the OPENAI_API_KEY secret and returns only that, signed-in accounts only, 40 a day. The page fetches that key when no key is typed, so the real key never reaches the page. The server checks shapes itself (Ajv cannot compile in Workers); the page validates with @peak-state/contracts before sending. Deploy waits for Cam's Cloudflare access.",
+  "alternatives": [
+    "Cloudflare Pages (rejected: Workers static assets is the recommended path for new projects)",
+    "Durable Object per account (rejected: D1 SQL is simpler for revisions and rep queries)",
+    "Email magic links (deferred: needs an email sender and a domain)"
+  ],
+  "consequences": "",
+  "produces": [
+    "onboarding/worker/",
+    "onboarding/wrangler.jsonc",
+    "onboarding/migrations/",
+    "onboarding/src/sync/",
+    "onboarding/src/harness/view/account.ts",
+    "onboarding/test/unit/worker.test.ts",
+    "onboarding/test/unit/sync.test.ts",
+    "onboarding/DEPLOY.md",
+    "onboarding/.dev.vars.example"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "url": "https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD",
+    "branch": "claude/strategy-storage-cloudflare-txlooc"
+  },
+  "createdAt": "2026-10-03T17:52:31Z",
+  "acceptedAt": "2026-10-03T17:52:31Z",
+  "acceptedBy": "claude"
+}

@@ -74,6 +74,97 @@ Turn a first conversation into a confirmed profile: find the person's three top 
 **Depends on:** D-onboarding-006, D-onboarding-007, D-onboarding-008, D-onboarding-009  
 **Supersedes:** D-onboarding-001
 
+### D-onboarding-012 · Question harness MVP: deterministic question engine, swappable voice, one-click playback
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU) · branch `claude/project-thread-c4ldi5` · accepted by claude
+
+**Decision.** Ship @peak-state/onboarding with a question bank as data (onboarding/script/), a deterministic engine that cycles playbook section 1 plus core submodalities and builds a confirmed Profile v2 (onboarding/src/engine/), voice adapters typed, browser speech and an OpenAI realtime adapter with an editable model id (onboarding/src/voice/), a harness page with a 5 s two-suggestion hint (onboarding/harness/, onboarding/src/harness/), a one-click playback logged as a RepSession (onboarding/src/playback/), and a Playwright visual test (onboarding/test/). Contrast and drivers are out of scope for the harness; contrast stays null. The engine, not the model, picks the next question.
+
+**Context.** Cam asked for a working question harness: choose a state (content or destressed in testing), cycle Robbins' strategy questions until the state is fully captured, suggest two phrasings after 5 s of silence, save the strategy, and one click to run it back, with a visual test.
+
+**Alternatives considered.**
+
+- Let the realtime model drive the questions itself (less testable, order not guaranteed)
+- Build the harness inside app/ (experience lane owns it and its contracts mirror is incompatible)
+
+**Produces:** `onboarding/package.json`, `onboarding/tsconfig.json`, `onboarding/script/`, `onboarding/src/`, `onboarding/harness/`, `onboarding/test/`, `onboarding/README.md`, `onboarding/playwright.config.ts`, `onboarding/vite.config.ts`  
+**Depends on:** D-contracts-007, D-contracts-008
+
+### D-onboarding-013 · Hooks fail with a clear message when tools/coord.py is missing
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU) · branch `claude/project-thread-c4ldi5` · accepted by claude
+
+**Decision.** Each hook command in .claude/settings.json checks that $CLAUDE_PROJECT_DIR/tools/coord.py exists. If it does, it runs exactly as before. If not, it prints that the hooks cannot run and to start Claude Code with the peak-state folder as its folder; SessionStart only warns (exit 0), the other hooks block (exit 2) so enforcement never silently turns off.
+
+**Context.** Cam's desktop session started in a scratch folder and moved into the repo, so CLAUDE_PROJECT_DIR pointed at the scratch folder and every prompt failed with a bare python 'can't open file' error. The project coordinator asked for a clearer failure.
+
+**Produces:** `.claude/settings.json`
+
+### D-onboarding-014 · Strategy record: revisioned profile with a change log, stored local first and synced to the account
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD) · branch `claude/strategy-storage-cloudflare-txlooc` · accepted by claude
+
+**Decision.** A saved strategy is a StrategyRecord {profile (contracts Profile v2, unchanged), revision (1, 2, ...), savedAt, changes[]}. Each StrategyChange names stateId, stepIndex, field ('content' or 'core.<attribute>'), from, to, the rating that prompted it, and the new revision. Every change writes a new revision; old revisions are kept on the server. The browser saves first (localStorage, the existing peak-state.harness.strategy key now holds the record, old SavedStrategy values upgrade on read) and pushes to the account when signed in. The server refuses a revision that is not newer than its latest (409 with its copy) and the page then takes the server copy. Runs stay contracts RepSessions in the existing run log and are pushed the same way. StrategyRecord and StrategyChange are onboarding-internal shapes; if another lane needs them they move to contracts.
+
+**Context.** Cam: store the answers that are someone's strategy so the second iteration is only recall, a rating and one question, and update the strategy when an answer changes. Builds on D-onboarding-012 (PR #23).
+
+**Produces:** `onboarding/src/store/`, `onboarding/test/unit/store.test.ts`  
+**Depends on:** D-onboarding-012, D-contracts-008, D-contracts-007
+
+### D-onboarding-015 · Practice loop: recall by questions, voice rating, one strategy question, let's try again
+
+`accepted` · product · 2026-10-03 · [session](https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD) · branch `claude/strategy-storage-cloudflare-txlooc` · accepted by claude
+
+**Decision.** After the first session, 'Practice' runs a deterministic loop (onboarding/src/practice/): (1) recall, one question per saved step in order up to fullyInAt then the anchor, each carrying the person's own saved answer ('What do you see first? Last time: ...'); any answer or Next moves on; (2) 'How close did you get to feeling <state>, from 0 to 10?', answered by voice (digits, number words, 'about a seven', '7 out of 10') or the pad; (3) one strategy question about one saved core detail, anchor step first, then the other steps, cycling attributes per try; keep, a vocabulary choice, or free words parsed with the engine's parseSubmodality; (4) a changed answer writes a new strategy revision, the guide says 'Okay, let's try again.' and the loop restarts at recall; the same answer ends the session. Max 3 tries a session. Each try is logged as a RepSession (kind full, trigger practice, arm cue, intensityBefore null, intensityAfter the rating, anchorPaired true when the anchor line was reached). Every answer passes screenAnswer; a stop ends the session with endedBy safety-stop. The first-session 'Run my strategy' playback is unchanged.
+
+**Context.** Cam's second-iteration flow. Keeps the UI to one button and one panel so the visual design thread's restyle combines.
+
+**Alternatives considered.**
+
+- Re-run the full question harness each time (rejected: Cam wants only recall, rating and one question)
+- Let a model pick the strategy question (rejected: the engine stays deterministic per D-onboarding-012)
+
+**Produces:** `onboarding/src/practice/`, `onboarding/src/harness/view/practice.ts`, `onboarding/test/unit/practice.test.ts`  
+**Depends on:** D-onboarding-012
+
+### D-onboarding-016 · Rep ownership and progress reminders: times chosen, good reps, closeness trend, streak
+
+`accepted` · product · 2026-10-03 · [session](https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD) · branch `claude/strategy-storage-cloudflare-txlooc` · accepted by claude
+
+**Decision.** Every run belongs to the signed-in account (or the browser when signed out) and is counted in onboarding/src/progress/: timesChosen = completed runs of any kind (first-session playback and practice tries), goodReps per D-reps-003 (full, cue, completed, anchorPaired, intensityAfter >= 7), latest and best closeness, the intensityAfter trend, and days practised in a row. The reminder line ('You've chosen to feel content 12 times. 5 of those took you to 7 or higher.') is shown and spoken when practice starts and when it ends. The Worker computes the same summary from synced reps at GET /api/progress. This is a harness view, not a replacement for reps.progress() and its StateProgress; when the reps package merges, the good-rep count should come from it.
+
+**Context.** Cam: track ownership of reps and progress, and remind people how many times they chose to feel good by using the sequence.
+
+**Produces:** `onboarding/src/progress/`, `onboarding/test/unit/progress.test.ts`  
+**Depends on:** D-reps-003, D-contracts-007
+
+### D-onboarding-017 · Online: one Cloudflare Worker with static assets, D1, invite-code accounts and short-lived GPT live keys
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD) · branch `claude/strategy-storage-cloudflare-txlooc` · accepted by claude
+
+**Decision.** onboarding/worker/ is a Cloudflare Worker (wrangler.jsonc in onboarding/) that serves the built harness (dist-harness) as static assets and runs /api/* first. D1 database peak-state holds accounts, sessions, strategy revisions, strategy changes and reps (migrations in onboarding/migrations/). Accounts are keyed by email; creating one needs the invite code, checked only on the server against the INVITE_CODE secret (never in client code or the repo). Signing in on another device is email plus the same code. A session is a random bearer token kept in localStorage, stored server-side as a SHA-256 hash, 90 days. POST /api/realtime/token asks OpenAI for a short-lived Realtime client secret using the OPENAI_API_KEY secret and returns only that, signed-in accounts only, 40 a day. The page fetches that key when no key is typed, so the real key never reaches the page. The server checks shapes itself (Ajv cannot compile in Workers); the page validates with @peak-state/contracts before sending. Deploy waits for Cam's Cloudflare access.
+
+**Context.** Cam asked to put the app online on Cloudflare with storage and to add email accounts gated by an invite code. Cloudflare recommends Workers with static assets for new apps.
+
+**Alternatives considered.**
+
+- Cloudflare Pages (rejected: Workers static assets is the recommended path for new projects)
+- Durable Object per account (rejected: D1 SQL is simpler for revisions and rep queries)
+- Email magic links (deferred: needs an email sender and a domain)
+
+**Produces:** `onboarding/worker/`, `onboarding/wrangler.jsonc`, `onboarding/migrations/`, `onboarding/src/sync/`, `onboarding/src/harness/view/account.ts`, `onboarding/test/unit/worker.test.ts`, `onboarding/test/unit/sync.test.ts`, `onboarding/DEPLOY.md`, `onboarding/.dev.vars.example`
+
+### D-onboarding-018 · Online tests and local Worker files: SQLite D1 fake, online browser test, ignored local state
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01UjPLF5iM3KV4h5gxwZqeJD) · branch `claude/strategy-storage-cloudflare-txlooc` · accepted by claude
+
+**Decision.** The API is unit-tested in Node against a D1-shaped wrapper over node:sqlite with the real migration applied (onboarding/test/unit/d1.ts), and the page client is tested against the real handler in-process. onboarding/test/e2e/online.spec.ts drives the full online flow (account, practice loop, second device) against wrangler dev or a deploy and is skipped unless ONLINE_URL and INVITE_CODE are set, so the default visual test is unchanged. onboarding/.gitignore keeps .wrangler/, .dev.vars and dist-harness/ out of git.
+
+**Context.** Supports D-onboarding-017 without adding a Workers test runner dependency.
+
+**Produces:** `onboarding/test/unit/d1.ts`, `onboarding/test/e2e/online.spec.ts`, `onboarding/.gitignore`  
+**Depends on:** D-onboarding-017
+
 ## Proposed, awaiting acceptance
 
 ### D-onboarding-007 · Voice-first stack for onboarding: speech in and out primary, transcript, typed and scripted fallbacks
@@ -130,7 +221,66 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 |---|---|---|
 | `docs/elicitation.md` | `8c568b386b97` | D-coord-008 |
 | `docs/state-change.md` | `6fb6b1df03c0` | D-coord-008 |
+| `onboarding/.dev.vars.example` | `9972ceaf7419` | D-onboarding-017 |
+| `onboarding/.gitignore` | `e080f460d184` | D-onboarding-018 |
+| `onboarding/DEPLOY.md` | `eab8565b57bd` | D-onboarding-017 |
 | `onboarding/PLAN.md` | `7913904371a4` | D-onboarding-001, D-onboarding-011 |
+| `onboarding/README.md` | `375a56d82a77` | D-onboarding-012 |
+| `onboarding/harness/index.html` | `43399b706f07` | D-onboarding-012 |
+| `onboarding/harness/main.ts` | `684ae88ae42e` | D-onboarding-012 |
+| `onboarding/harness/styles.css` | `8b27393249b6` | D-onboarding-012 |
+| `onboarding/migrations/0001_init.sql` | `e3bddb9834f0` | D-onboarding-017 |
+| `onboarding/package.json` | `0b60c5d2362d` | D-onboarding-012 |
+| `onboarding/playwright.config.ts` | `78cc447f0630` | D-onboarding-012 |
+| `onboarding/script/questions.ts` | `779bd9a43021` | D-onboarding-003, D-onboarding-006, D-onboarding-010, D-onboarding-012 |
+| `onboarding/src/engine/hints.ts` | `d164d4ac154f` | D-onboarding-012 |
+| `onboarding/src/engine/index.ts` | `1acbe7959929` | D-onboarding-012 |
+| `onboarding/src/engine/parse.ts` | `c59f4d5ae33b` | D-onboarding-012 |
+| `onboarding/src/engine/safety.ts` | `8f4aafe9b9fa` | D-onboarding-012 |
+| `onboarding/src/harness/hints.ts` | `39a5fcdb4929` | D-onboarding-012 |
+| `onboarding/src/harness/main.ts` | `ff13a7408062` | D-onboarding-012 |
+| `onboarding/src/harness/view/account.ts` | `8e7c64aa400c` | D-onboarding-012, D-onboarding-017 |
+| `onboarding/src/harness/view/dom.ts` | `9f8bddc8c0f4` | D-onboarding-012 |
+| `onboarding/src/harness/view/practice.ts` | `b4026f32c3ff` | D-onboarding-012, D-onboarding-015 |
+| `onboarding/src/harness/view/question.ts` | `0ea364f616ed` | D-onboarding-012 |
+| `onboarding/src/harness/view/saved.ts` | `e3d2a9054bc1` | D-onboarding-012 |
+| `onboarding/src/harness/view/steps.ts` | `a35116374f96` | D-onboarding-012 |
+| `onboarding/src/harness/view/voice.ts` | `a46fb2d3912b` | D-onboarding-012 |
+| `onboarding/src/index.ts` | `36e7de5bbe64` | D-onboarding-012 |
+| `onboarding/src/playback/index.ts` | `8c0aeb675e21` | D-onboarding-012 |
+| `onboarding/src/playback/runner.ts` | `df12e2c1a815` | D-onboarding-012 |
+| `onboarding/src/playback/script.ts` | `e28d09f1e709` | D-onboarding-012 |
+| `onboarding/src/playback/storage.ts` | `f656486e58d9` | D-onboarding-012 |
+| `onboarding/src/practice/loop.ts` | `92bc212b7780` | D-onboarding-012, D-onboarding-015 |
+| `onboarding/src/practice/rating.ts` | `21d6d4c873b7` | D-onboarding-012, D-onboarding-015 |
+| `onboarding/src/progress/index.ts` | `888798d27668` | D-onboarding-012, D-onboarding-016 |
+| `onboarding/src/store/index.ts` | `d52dc190cf91` | D-onboarding-012, D-onboarding-014 |
+| `onboarding/src/sync/index.ts` | `37df9200483d` | D-onboarding-012, D-onboarding-017 |
+| `onboarding/src/types.ts` | `f227fc9cc173` | D-onboarding-012 |
+| `onboarding/src/voice/browser.ts` | `61d7d92e0b70` | D-onboarding-012 |
+| `onboarding/src/voice/emitter.ts` | `df88e51d4d0e` | D-onboarding-012 |
+| `onboarding/src/voice/gpt-live.ts` | `25fc290509c2` | D-onboarding-012 |
+| `onboarding/src/voice/index.ts` | `a636f6bd0ca2` | D-onboarding-012 |
+| `onboarding/src/voice/typed.ts` | `bee9740bc611` | D-onboarding-012 |
+| `onboarding/test/e2e/.gitignore` | `83394a0aff29` | D-onboarding-012 |
+| `onboarding/test/e2e/harness.spec.ts` | `a6de1a68e7dc` | D-onboarding-012 |
+| `onboarding/test/e2e/online.spec.ts` | `be22d8a0007a` | D-onboarding-012, D-onboarding-018 |
+| `onboarding/test/e2e/screens-reporter.ts` | `dd1e91a8a298` | D-onboarding-012 |
+| `onboarding/test/unit/d1.ts` | `f2e83d0bc302` | D-onboarding-012, D-onboarding-018 |
+| `onboarding/test/unit/engine.test.ts` | `9674be98ccc0` | D-onboarding-012 |
+| `onboarding/test/unit/playback.test.ts` | `c76b8b12f289` | D-onboarding-012 |
+| `onboarding/test/unit/practice.test.ts` | `60f6b512c408` | D-onboarding-012, D-onboarding-015 |
+| `onboarding/test/unit/progress.test.ts` | `6f70bc761af5` | D-onboarding-012, D-onboarding-016 |
+| `onboarding/test/unit/script.test.ts` | `473cf39343e8` | D-onboarding-012 |
+| `onboarding/test/unit/store.test.ts` | `bc8f3258f70d` | D-onboarding-012, D-onboarding-014 |
+| `onboarding/test/unit/sync.test.ts` | `3b08f234eaa4` | D-onboarding-012, D-onboarding-017 |
+| `onboarding/test/unit/voice.test.ts` | `9440dc4b6e29` | D-onboarding-012 |
+| `onboarding/test/unit/worker.test.ts` | `43f3ec45db3e` | D-onboarding-012, D-onboarding-017 |
+| `onboarding/tsconfig.json` | `20b7c5aaec94` | D-onboarding-012 |
+| `onboarding/vite.config.ts` | `f5643cec1115` | D-onboarding-012 |
+| `onboarding/worker/api.ts` | `cb8e26325a10` | D-onboarding-017 |
+| `onboarding/worker/index.ts` | `a9411ea26eb2` | D-onboarding-017 |
+| `onboarding/wrangler.jsonc` | `283e44ae8885` | D-onboarding-017 |
 | `prompts/discovery.md` | `915c158676a3` | D-coord-008 |
 | `prompts/induction.md` | `9eac817f9540` | D-coord-008 |
 | `prompts/intervention.md` | `cafae717f40d` | D-coord-008 |

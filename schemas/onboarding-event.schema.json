@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/onboarding-event.schema.json",
+  "title": "Onboarding event",
+  "description": "What headless onboarding emits while it runs the playbook, so the app can render the transcript, the step chain and the checklists (D-experience-005). A recorded stream of these is also the scripted demo. D-contracts-007.",
+  "type": "object",
+  "required": ["type", "t"],
+  "properties": {
+    "t": { "type": "integer", "minimum": 0, "description": "Milliseconds since the Unix epoch." }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/guideTurn" },
+    { "$ref": "#/$defs/userTurn" },
+    { "$ref": "#/$defs/stateNamed" },
+    { "$ref": "#/$defs/stepCaptured" },
+    { "$ref": "#/$defs/submodalityCaptured" },
+    { "$ref": "#/$defs/anchorStepMarked" },
+    { "$ref": "#/$defs/calibrationCaptured" },
+    { "$ref": "#/$defs/contrastCaptured" },
+    { "$ref": "#/$defs/driverFound" },
+    { "$ref": "#/$defs/testRated" },
+    { "$ref": "#/$defs/confirmed" },
+    { "$ref": "#/$defs/stopped" }
+  ],
+  "$defs": {
+    "t": { "type": "integer", "minimum": 0 },
+    "stateId": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,31}$" },
+    "section": { "type": "string", "pattern": "^[1-4](\\.[0-9])?$", "description": "Playbook section, for example 1.3." },
+    "guideTurn": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "text"],
+      "properties": { "type": { "const": "guideTurn" }, "t": { "$ref": "#/$defs/t" }, "text": { "type": "string" }, "section": { "$ref": "#/$defs/section" } }
+    },
+    "userTurn": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "text", "final", "via"],
+      "properties": { "type": { "const": "userTurn" }, "t": { "$ref": "#/$defs/t" }, "text": { "type": "string" }, "final": { "type": "boolean", "description": "False for interim speech results." }, "via": { "enum": ["voice", "typed", "script"] } }
+    },
+    "stateNamed": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "stateId", "label", "words"],
+      "properties": { "type": { "const": "stateNamed" }, "t": { "$ref": "#/$defs/t" }, "stateId": { "$ref": "#/$defs/stateId" }, "label": { "type": "string" }, "words": { "type": "string" } }
+    },
+    "stepCaptured": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "stateId", "stepIndex", "step"],
+      "properties": { "type": { "const": "stepCaptured" }, "t": { "$ref": "#/$defs/t" }, "stateId": { "$ref": "#/$defs/stateId" }, "stepIndex": { "type": "integer", "minimum": 0 }, "step": { "$ref": "profile.v2.schema.json#/$defs/step" }, "fullyIn": { "type": "boolean", "description": "True when this is the step where they arrived (1.5)." } }
+    },
+    "submodalityCaptured": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "stateId", "target", "modality", "attribute", "value"],
+      "properties": {
+        "type": { "const": "submodalityCaptured" }, "t": { "$ref": "#/$defs/t" }, "stateId": { "$ref": "#/$defs/stateId" },
+        "target": { "enum": ["peak", "contrast"] },
+        "stepIndex": { "type": "integer", "minimum": 0, "description": "Required when target is peak." },
+        "modality": { "enum": ["visual", "auditory", "kinesthetic"] },
+        "attribute": { "type": "string", "minLength": 1 },
+        "value": { "type": ["string", "number"] },
+        "words": { "type": "string" }
+      }
+    },
+    "anchorStepMarked": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "stateId", "stepIndex"],
+      "properties": { "type": { "const": "anchorStepMarked" }, "t": { "$ref": "#/$defs/t" }, "stateId": { "$ref": "#/$defs/stateId" }, "stepIndex": { "type": "integer", "minimum": 0 } }
+    },
+    "calibrationCaptured": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "stateId", "summary"],
+      "properties": { "type": { "const": "calibrationCaptured" }, "t": { "$ref": "#/$defs/t" }, "stateId": { "$ref": "#/$defs/stateId" }, "summary": { "$ref": "calibration.schema.json" } }
+    },
+    "contrastCaptured": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "stateId", "label", "prefilled"],
+      "properties": { "type": { "const": "contrastCaptured" }, "t": { "$ref": "#/$defs/t" }, "stateId": { "$ref": "#/$defs/stateId" }, "label": { "type": "string" }, "prefilled": { "type": "boolean" } }
+    },
+    "driverFound": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "stateId", "differenceIndex", "difference"],
+      "properties": { "type": { "const": "driverFound" }, "t": { "$ref": "#/$defs/t" }, "stateId": { "$ref": "#/$defs/stateId" }, "differenceIndex": { "type": "integer", "minimum": 0 }, "difference": { "$ref": "profile.v2.schema.json#/$defs/difference" } }
+    },
+    "testRated": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "stateId", "before", "after"],
+      "properties": { "type": { "const": "testRated" }, "t": { "$ref": "#/$defs/t" }, "stateId": { "$ref": "#/$defs/stateId" }, "before": { "type": "integer", "minimum": 0, "maximum": 10 }, "after": { "type": "integer", "minimum": 0, "maximum": 10 } }
+    },
+    "confirmed": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "profile"],
+      "properties": { "type": { "const": "confirmed" }, "t": { "$ref": "#/$defs/t" }, "profile": { "$ref": "profile.v2.schema.json" } }
+    },
+    "stopped": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "t", "reason", "draft"],
+      "properties": {
+        "type": { "const": "stopped" }, "t": { "$ref": "#/$defs/t" },
+        "reason": { "enum": ["safety", "cancel", "error"] },
+        "draft": { "oneOf": [{ "type": "null" }, { "$ref": "profile.v2.schema.json" }], "description": "Whatever was captured before the stop. Null when nothing was captured. After a safety stop, nothing from the turn that triggered it is kept (D-onboarding-009)." }
+      }
+    }
+  }
+}

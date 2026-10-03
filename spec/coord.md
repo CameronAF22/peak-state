@@ -296,13 +296,17 @@ None.
 
 - D-coord-005 · MVP: three emotions, each with a triad strategy, installed through logged reps · `superseded` (superseded by D-coord-011)
 
+## Decisions from other lanes that cover files here
+
+- D-onboarding-013 · Hooks fail with a clear message when tools/coord.py is missing (`onboarding`)
+
 ## Produced artifacts
 
 Every file this lane owns, the first 12 hex digits of its SHA-256 at build time, and the decisions that cover it.
 
 | File | sha256 | Decisions |
 |---|---|---|
-| `.claude/settings.json` | `56f6d70b5f58` | D-coord-002 |
+| `.claude/settings.json` | `9c3a4e493a58` | D-coord-002, D-onboarding-013 |
 | `.github/workflows/coord.yml` | `96090a168ffc` | D-coord-002 |
 | `.gitignore` | `d050ddb12035` | D-coord-008, D-coord-014 |
 | `CLAUDE.md` | `c156fe12fbec` | D-coord-001 |
@@ -338,9 +342,12 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `test/backend/main.py` | `017184104218` | D-coord-015, D-coord-017 |
 | `test/backend/requirements.txt` | `9b44749768c3` | D-coord-015 |
 | `test/backend/users.json` | `8cf68f30c0d7` | D-coord-017 |
+| `test/frontend/action.html` | `93d3d6d38678` | D-coord-015 |
+| `test/frontend/app.js` | `953014455dd4` | D-coord-015, D-coord-017 |
 | `test/frontend/guide.js` | `20d75c7c603c` | D-coord-019 |
 | `test/frontend/home.html` | `acbdfd78bb19` | D-coord-019 |
 | `test/frontend/home.js` | `98c7044fddea` | D-coord-019 |
+| `test/frontend/index.html` | `d50bac581d0e` | D-coord-015, D-coord-017 |
 | `test/frontend/onboarding.html` | `137d76f707bd` | D-coord-015 |
 | `test/frontend/onboarding.js` | `4d0e2e4e57d5` | D-coord-019 |
 | `test/frontend/styles.css` | `7211e2285b01` | D-coord-015, D-coord-017 |

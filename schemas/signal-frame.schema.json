@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/signal-frame.schema.json",
+  "title": "Signal frame",
+  "description": "One sample from any input, about 1 Hz. D-contracts-007.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["t", "source", "hr", "rr", "quality"],
+  "properties": {
+    "t": { "type": "integer", "minimum": 0, "description": "Milliseconds since the Unix epoch." },
+    "source": { "enum": ["simulator", "hr-strap", "manual"] },
+    "hr": { "type": ["number", "null"], "minimum": 0, "description": "Beats per minute. Null when the source has no reading." },
+    "rr": { "type": "array", "items": { "type": "number", "exclusiveMinimum": 0 }, "description": "RR intervals in milliseconds received since the previous frame. May be empty." },
+    "quality": { "type": "number", "minimum": 0, "maximum": 1, "description": "0 is unusable, 1 is clean." },
+    "label": { "type": "string", "minLength": 1, "description": "Simulator scenario segment, for example baseline, peak, contrast, drift or recovery. Absent on real inputs." }
+  }
+}

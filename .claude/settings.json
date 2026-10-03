@@ -10,14 +10,14 @@
     "SessionStart": [
       {
         "hooks": [
-          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/coord.py\" hook session-start", "timeout": 60 }
+          { "type": "command", "command": "f=\"$CLAUDE_PROJECT_DIR/tools/coord.py\"; if [ -f \"$f\" ]; then exec python3 \"$f\" hook session-start; fi; echo \"[coord] tools/coord.py was not found in $CLAUDE_PROJECT_DIR, so the Peak State hooks cannot run. Start Claude Code with the peak-state repo folder as its folder (not a scratch folder you then moved into the repo).\" >&2; exit 0", "timeout": 60 }
         ]
       }
     ],
     "UserPromptSubmit": [
       {
         "hooks": [
-          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/coord.py\" hook prompt", "timeout": 40 }
+          { "type": "command", "command": "f=\"$CLAUDE_PROJECT_DIR/tools/coord.py\"; if [ -f \"$f\" ]; then exec python3 \"$f\" hook prompt; fi; echo \"[coord] tools/coord.py was not found in $CLAUDE_PROJECT_DIR, so the Peak State hooks cannot run. Start Claude Code with the peak-state repo folder as its folder (not a scratch folder you then moved into the repo).\" >&2; exit 2", "timeout": 40 }
         ]
       }
     ],
@@ -25,20 +25,20 @@
       {
         "matcher": "Edit|MultiEdit|Write|NotebookEdit",
         "hooks": [
-          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/coord.py\" hook pre-edit", "timeout": 20 }
+          { "type": "command", "command": "f=\"$CLAUDE_PROJECT_DIR/tools/coord.py\"; if [ -f \"$f\" ]; then exec python3 \"$f\" hook pre-edit; fi; echo \"[coord] tools/coord.py was not found in $CLAUDE_PROJECT_DIR, so the Peak State hooks cannot run. Start Claude Code with the peak-state repo folder as its folder (not a scratch folder you then moved into the repo).\" >&2; exit 2", "timeout": 20 }
         ]
       },
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/coord.py\" hook pre-bash", "timeout": 60 }
+          { "type": "command", "command": "f=\"$CLAUDE_PROJECT_DIR/tools/coord.py\"; if [ -f \"$f\" ]; then exec python3 \"$f\" hook pre-bash; fi; echo \"[coord] tools/coord.py was not found in $CLAUDE_PROJECT_DIR, so the Peak State hooks cannot run. Start Claude Code with the peak-state repo folder as its folder (not a scratch folder you then moved into the repo).\" >&2; exit 2", "timeout": 60 }
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/coord.py\" hook stop", "timeout": 40 }
+          { "type": "command", "command": "f=\"$CLAUDE_PROJECT_DIR/tools/coord.py\"; if [ -f \"$f\" ]; then exec python3 \"$f\" hook stop; fi; echo \"[coord] tools/coord.py was not found in $CLAUDE_PROJECT_DIR, so the Peak State hooks cannot run. Start Claude Code with the peak-state repo folder as its folder (not a scratch folder you then moved into the repo).\" >&2; exit 2", "timeout": 40 }
         ]
       }
     ]

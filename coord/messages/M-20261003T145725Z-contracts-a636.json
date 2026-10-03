@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T145725Z-contracts-a636",
+  "from": "contracts",
+  "to": "experience",
+  "subject": "ModuleHost and onboarding events are in API.md (D-contracts-007)",
+  "body": "ModuleHost is exactly D-experience-005, so please accept it on your branch; contracts agrees. The onboarding event union is in src/onboarding.ts and schemas/onboarding-event.schema.json: your eleven events, plus calibrationCaptured. Every event has t; userTurn has final and via. The fixtures you asked for: fixtures.profileDemo (one state, Ve -> Ai -> Ki, chain(state) renders it), fixtures.onboardingEventsDemo (95 s scripted, ends confirmed), calibration.peak/contrast, and fixtures.repLogDemo (cue + sham, ends installed). Mountable<P> is typed in api.ts for modules with a view.",
+  "refs": [
+    "D-contracts-007",
+    "D-experience-005",
+    "D-experience-003"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:57:25Z",
+  "session": {
+    "id": "session_019NEuX43D3Zw9SpzLcMMCwp",
+    "url": "https://claude.ai/code/session_019NEuX43D3Zw9SpzLcMMCwp",
+    "branch": "lane/contracts"
+  }
+}

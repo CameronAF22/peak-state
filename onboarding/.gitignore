@@ -1,0 +1,4 @@
+# Local Worker state and secrets (D-onboarding-017)
+.wrangler/
+.dev.vars
+dist-harness/

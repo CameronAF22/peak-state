@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T173108Z-onboarding-3508",
+  "from": "onboarding",
+  "to": "coord",
+  "subject": "Borrowed .claude/settings.json: hooks explain a wrong CLAUDE_PROJECT_DIR",
+  "body": "On claude/project-thread-c4ldi5 (PR #23) each hook command now checks tools/coord.py exists under CLAUDE_PROJECT_DIR and otherwise prints how to fix it (SessionStart warns, others block). Behaviour is unchanged when the file exists. D-onboarding-013. Cam hit this in a desktop session that started in a scratch folder.",
+  "refs": [
+    "D-onboarding-013"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T17:31:08Z",
+  "session": {
+    "id": "session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "url": "https://claude.ai/code/session_01AUPD3DWvpWuBX5tGm9JxwU",
+    "branch": "claude/project-thread-c4ldi5"
+  }
+}
