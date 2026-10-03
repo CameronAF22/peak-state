@@ -35,7 +35,8 @@
       "sha256": "34ac1f2f2552a645c701cde454e432bad1e73a88405bde32d3879dbabd299c9e",
       "decisions": [
         "D-onboarding-017",
-        "D-onboarding-020"
+        "D-onboarding-020",
+        "D-onboarding-024"
       ]
     },
     {
@@ -120,10 +121,19 @@
     },
     {
       "path": "onboarding/design/horizon/main.ts",
-      "sha256": "df2c2265cfd35e165d1d0fb40bb8c8669ed1602e45694fe0678fc350cc2d4285",
+      "sha256": "342f71695f1ce0da461f90d2edc1e9bda3fd705d90144115bbe44f06359a0ace",
       "decisions": [
         "D-onboarding-019",
-        "D-onboarding-023"
+        "D-onboarding-023",
+        "D-onboarding-024"
+      ]
+    },
+    {
+      "path": "onboarding/design/horizon/signin.ts",
+      "sha256": "15378d5eb38f109781a6ed1ca3dc1a54deae428f0c85175b044252f333cd1ac8",
+      "decisions": [
+        "D-onboarding-019",
+        "D-onboarding-024"
       ]
     },
     {
@@ -135,16 +145,18 @@
     },
     {
       "path": "onboarding/design/horizon/styles.css",
-      "sha256": "86041e84ab33b93922047432fc1c08e671d9c5a7aea157c1d59e1f43f399e8d1",
+      "sha256": "7071701e75c37859d200092c7451655250f05b434c71a49ad173fe213e266990",
       "decisions": [
-        "D-onboarding-019"
+        "D-onboarding-019",
+        "D-onboarding-024"
       ]
     },
     {
       "path": "onboarding/design/horizon/voice.ts",
-      "sha256": "899a94c0864f95d979c98ff0819ee841341787ae7d94dfe9621473d3b52a1bf0",
+      "sha256": "3ecef18281c05bec7b42ab6b49e6e041779ba9b99861314b959ac9bef71a134a",
       "decisions": [
-        "D-onboarding-019"
+        "D-onboarding-019",
+        "D-onboarding-024"
       ]
     },
     {
@@ -235,11 +247,12 @@
     },
     {
       "path": "onboarding/package.json",
-      "sha256": "6f215c299af4b73a751afd7f89166bf6340c43e131b56d49f570562628511c16",
+      "sha256": "8f622200eb93361b4a4a9a77a3400205755db6ec45c50993186625fd6b285235",
       "decisions": [
         "D-onboarding-012",
         "D-onboarding-019",
-        "D-onboarding-023"
+        "D-onboarding-023",
+        "D-onboarding-024"
       ]
     },
     {
@@ -487,10 +500,11 @@
     },
     {
       "path": "onboarding/test/e2e/online.spec.ts",
-      "sha256": "be22d8a0007a2d3bf982225ff4b1dbfe24d58371dceda9a305b6c141f285603b",
+      "sha256": "13f70f108b3275bbc2df07a876a091f8335ba3836a4f281036f9459f2f0ac2ae",
       "decisions": [
         "D-onboarding-012",
-        "D-onboarding-018"
+        "D-onboarding-018",
+        "D-onboarding-024"
       ]
     },
     {

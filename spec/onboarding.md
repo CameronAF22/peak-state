@@ -209,6 +209,17 @@ Turn a first conversation into a confirmed profile: find the person's three top 
 **Produces:** `onboarding/package.json`, `onboarding/design/orb/main.ts`, `onboarding/design/horizon/main.ts`, `onboarding/design/constellation/main.ts`  
 **Depends on:** D-onboarding-019, D-onboarding-020
 
+### D-onboarding-024 · Horizon is the front page of the demo with GPT live as the set voice
+
+`accepted` · technical · 2026-10-03 · session `32d60a9b-b6fa-430d-8874-8454b73678f3` · branch `integration/all` · accepted by claude
+
+**Decision.** The deployed site serves the Horizon design at / (dist-harness/index.html is the built Horizon page), the full harness at /harness/ and the design chooser at /design/. Horizon defaults to GPT live with no voice menu (status only); ?voice=typed|browser restores the full menu for tests and as a fallback. On the Worker, the first tap opens a small sign-in sheet (email + invite code; creates the account or signs in) because /api/live/session needs an account, then the live voice starts.
+
+**Context.** Cameron: make the horizon view the main view and just have GPT live as the set mode for the live demo.
+
+**Produces:** `onboarding/design/horizon/main.ts`, `onboarding/design/horizon/voice.ts`, `onboarding/design/horizon/signin.ts`, `onboarding/design/horizon/styles.css`, `onboarding/package.json`, `onboarding/test/e2e/online.spec.ts`, `onboarding/DEPLOY.md`  
+**Depends on:** D-onboarding-019, D-onboarding-020, D-onboarding-023
+
 ## Proposed, awaiting acceptance
 
 ### D-onboarding-007 · Voice-first stack for onboarding: speech in and out primary, transcript, typed and scripted fallbacks
@@ -267,7 +278,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `docs/state-change.md` | `6fb6b1df03c0` | D-coord-008 |
 | `onboarding/.dev.vars.example` | `9972ceaf7419` | D-onboarding-017 |
 | `onboarding/.gitignore` | `e080f460d184` | D-onboarding-018 |
-| `onboarding/DEPLOY.md` | `34ac1f2f2552` | D-onboarding-017, D-onboarding-020 |
+| `onboarding/DEPLOY.md` | `34ac1f2f2552` | D-onboarding-017, D-onboarding-020, D-onboarding-024 |
 | `onboarding/PLAN.md` | `7913904371a4` | D-onboarding-001, D-onboarding-011 |
 | `onboarding/README.md` | `eadee7e955ee` | D-onboarding-012, D-onboarding-020 |
 | `onboarding/design/constellation/index.html` | `cd5706cb048d` | D-onboarding-019 |
@@ -279,10 +290,11 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/design/e2e/horizon.spec.ts` | `aa8b40273e8c` | D-onboarding-019 |
 | `onboarding/design/e2e/orb.spec.ts` | `c9a7424cd2f4` | D-onboarding-019 |
 | `onboarding/design/horizon/index.html` | `fa3f29ecf5d5` | D-onboarding-019 |
-| `onboarding/design/horizon/main.ts` | `df2c2265cfd3` | D-onboarding-019, D-onboarding-023 |
+| `onboarding/design/horizon/main.ts` | `342f71695f1c` | D-onboarding-019, D-onboarding-023, D-onboarding-024 |
+| `onboarding/design/horizon/signin.ts` | `15378d5eb38f` | D-onboarding-019, D-onboarding-024 |
 | `onboarding/design/horizon/sky.ts` | `8bcc8c712283` | D-onboarding-019 |
-| `onboarding/design/horizon/styles.css` | `86041e84ab33` | D-onboarding-019 |
-| `onboarding/design/horizon/voice.ts` | `899a94c0864f` | D-onboarding-019 |
+| `onboarding/design/horizon/styles.css` | `7071701e75c3` | D-onboarding-019, D-onboarding-024 |
+| `onboarding/design/horizon/voice.ts` | `3ecef18281c0` | D-onboarding-019, D-onboarding-024 |
 | `onboarding/design/index.html` | `4c0759a872e4` | D-onboarding-019 |
 | `onboarding/design/orb/index.html` | `56e3afc03222` | D-onboarding-019 |
 | `onboarding/design/orb/main.ts` | `5930d9e97cde` | D-onboarding-019, D-onboarding-023 |
@@ -295,7 +307,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/harness/main.ts` | `684ae88ae42e` | D-onboarding-012 |
 | `onboarding/harness/styles.css` | `8b27393249b6` | D-onboarding-012 |
 | `onboarding/migrations/0001_init.sql` | `e3bddb9834f0` | D-onboarding-017 |
-| `onboarding/package.json` | `6f215c299af4` | D-onboarding-012, D-onboarding-019, D-onboarding-023 |
+| `onboarding/package.json` | `8f622200eb93` | D-onboarding-012, D-onboarding-019, D-onboarding-023, D-onboarding-024 |
 | `onboarding/playwright.config.ts` | `78cc447f0630` | D-onboarding-012 |
 | `onboarding/script/questions.ts` | `779bd9a43021` | D-onboarding-003, D-onboarding-006, D-onboarding-010, D-onboarding-012 |
 | `onboarding/src/engine/hints.ts` | `d164d4ac154f` | D-onboarding-012 |
@@ -329,7 +341,7 @@ Every file this lane owns, the first 12 hex digits of its SHA-256 at build time,
 | `onboarding/src/voice/typed.ts` | `bee9740bc611` | D-onboarding-012 |
 | `onboarding/test/e2e/.gitignore` | `83394a0aff29` | D-onboarding-012 |
 | `onboarding/test/e2e/harness.spec.ts` | `a6de1a68e7dc` | D-onboarding-012 |
-| `onboarding/test/e2e/online.spec.ts` | `be22d8a0007a` | D-onboarding-012, D-onboarding-018 |
+| `onboarding/test/e2e/online.spec.ts` | `13f70f108b32` | D-onboarding-012, D-onboarding-018, D-onboarding-024 |
 | `onboarding/test/e2e/screens-reporter.ts` | `dd1e91a8a298` | D-onboarding-012 |
 | `onboarding/test/unit/d1.ts` | `f2e83d0bc302` | D-onboarding-012, D-onboarding-018 |
 | `onboarding/test/unit/engine.test.ts` | `9674be98ccc0` | D-onboarding-012 |

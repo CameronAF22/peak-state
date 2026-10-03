@@ -34,6 +34,9 @@ npm run worker:deploy                      # builds, applies migrations remotely
 
 The app is then at `https://peak-state.<your-subdomain>.workers.dev`.
 
+Pages (D-onboarding-024): `/` is the Horizon design with GPT live as the set voice (first tap asks for an email and the
+invite code), `/harness/` is the full harness with practice and accounts, and `/design/` lists the three designs.
+
 ### Or from the Cloudflare dashboard (Workers Builds)
 
 Workers & Pages → Create → Import a repository → `CameronAF22/peak-state`, then:

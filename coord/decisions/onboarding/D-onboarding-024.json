@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "D-onboarding-024",
+  "lane": "onboarding",
+  "title": "Horizon is the front page of the demo with GPT live as the set voice",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Cameron: make the horizon view the main view and just have GPT live as the set mode for the live demo.",
+  "decision": "The deployed site serves the Horizon design at / (dist-harness/index.html is the built Horizon page), the full harness at /harness/ and the design chooser at /design/. Horizon defaults to GPT live with no voice menu (status only); ?voice=typed|browser restores the full menu for tests and as a fallback. On the Worker, the first tap opens a small sign-in sheet (email + invite code; creates the account or signs in) because /api/live/session needs an account, then the live voice starts.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "onboarding/design/horizon/main.ts",
+    "onboarding/design/horizon/voice.ts",
+    "onboarding/design/horizon/signin.ts",
+    "onboarding/design/horizon/styles.css",
+    "onboarding/package.json",
+    "onboarding/test/e2e/online.spec.ts",
+    "onboarding/DEPLOY.md"
+  ],
+  "dependsOn": [
+    "D-onboarding-019",
+    "D-onboarding-020",
+    "D-onboarding-023"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "32d60a9b-b6fa-430d-8874-8454b73678f3",
+    "url": null,
+    "branch": "integration/all"
+  },
+  "createdAt": "2026-10-03T19:34:36Z",
+  "acceptedAt": "2026-10-03T19:34:36Z",
+  "acceptedBy": "claude"
+}
