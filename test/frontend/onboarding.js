@@ -1,3 +1,5 @@
+// Guide voice: ElevenLabs (window.PEAK_TTS in onboarding.html, before guide.js).
+
 // Onboarding: the guide asks a fixed set of questions, one at a time, out loud.
 // The person answers by voice, by tapping an answer, or by typing.
 //
@@ -165,6 +167,19 @@ async function askDetails(label, group) {
 // ---------- 5. The conversation ----------
 
 // Part 1: the strategy, in order.
+// The guide responds to the last answer in its own words (AI), or says `fallback` if the AI is off.
+// final = true: the AI walks the person through their whole path at the end.
+async function guideSays(label, lastQuestion, lastAnswer, fallback, pause, final = false) {
+  const person = { state: answers.state, moment: answers.moment, steps: answers.steps.map((s) => s.text) };
+  const reply = await askGuideAI("/api/ai/reflect", { person, last_question: lastQuestion, last_answer: lastAnswer, final });
+  if (reply?.stop_for_safety) {
+    hideAnswerTools();
+    await say("Let's pause", SAFETY_MESSAGE, 0);
+    throw new Error("stopped for safety");
+  }
+  await say(label, reply?.text || fallback, pause);
+}
+
 async function partStrategy() {
   // In the short version, the person answers in their own words (no type buttons),
   // so there is no extra "What was it?" question.
@@ -172,12 +187,15 @@ async function partStrategy() {
   const next = SHORT_VERSION ? {} : NEXT_CHOICES;
 
   setProgress(SHORT_VERSION ? 1 : 0);
-  answers.moment = await ask("The moment", STRATEGY.moment(answers.state), ["I'm there"]);
-  await say("The moment", "Good. Stay there for a moment. See what you saw. Hear what you heard.", 2500);
+  const momentQuestion = STRATEGY.moment(answers.state);
+  answers.moment = await ask("The moment", momentQuestion, ["I'm there"]);
+  await guideSays("The moment", momentQuestion, answers.moment, "Good. Stay there for a moment. See what you saw. Hear what you heard.", 2500);
 
   if (SHORT_VERSION) setProgress(2);
-  answers.steps.push(await askStep("The first trigger", STRATEGY.firstTrigger(answers.state), first));
+  const firstQuestion = STRATEGY.firstTrigger(answers.state);
+  answers.steps.push(await askStep("The first trigger", firstQuestion, first));
   showPath();
+  await guideSays("The first trigger", firstQuestion, answers.steps[0].text, "Good.", 800);
 
   if (SHORT_VERSION) setProgress(3);
   answers.steps.push(await askStep("The next step", STRATEGY.nextStep, next));
@@ -187,7 +205,8 @@ async function partStrategy() {
   const [a, b] = answers.steps;
   if (SHORT_VERSION) {
     // Read it back as a statement, not a question, to keep it to 4 questions.
-    await say("Your sequence", `So first, ${toYou(a.text)}. Then, ${toYou(b.text)}.`, 1500);
+    // The AI walks through the path in its own words; without AI, the fixed sentence.
+    await guideSays("Your sequence", STRATEGY.nextStep, b.text, `So first, ${toYou(a.text)}. Then, ${toYou(b.text)}.`, 1500, true);
     return;
   }
   const order = await askChoice(
@@ -361,4 +380,5 @@ function showSummary() {
 }
 
 // ---------- 7. Buttons ----------
-$("start").onclick = runOnboarding;
+// If onboarding stops early (for example for safety), just stop listening.
+$("start").onclick = () => runOnboarding().catch(() => hideAnswerTools());

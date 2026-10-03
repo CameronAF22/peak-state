@@ -10,7 +10,11 @@
 const $ = (id) => document.getElementById(id);
 
 // ---------- Speaking (the guide's voice) ----------
+// Set window.PEAK_TTS = "elevenlabs" before this script runs to use the backend TTS API.
+const useElevenLabs = () => window.PEAK_TTS === "elevenlabs";
+
 let voice = null;
+let currentAudio = null;
 
 // Pick a soft English voice if the computer has one.
 function pickVoice() {
@@ -21,8 +25,7 @@ function pickVoice() {
 pickVoice();
 speechSynthesis.onvoiceschanged = pickVoice;
 
-// Say the text slowly and calmly. Finishes when the voice stops talking.
-function speak(text, rate = 0.85) {
+function speakBrowser(text, rate = 0.85) {
   return new Promise((done) => {
     speechSynthesis.cancel();
     const line = new SpeechSynthesisUtterance(text);
@@ -37,8 +40,80 @@ function speak(text, rate = 0.85) {
   });
 }
 
+function ttsErrorHint(message) {
+  const hint = $("hint");
+  if (hint) hint.textContent = message;
+  console.error(message);
+}
+
+async function speakElevenLabs(text) {
+  stopSpeaking();
+  let res;
+  try {
+    res = await fetch("/api/tts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+  } catch (err) {
+    ttsErrorHint(
+      "Could not reach the guide voice server. Run: cd test/backend && uvicorn main:app --reload",
+    );
+    throw err;
+  }
+  if (!res.ok) {
+    let detail = await res.text();
+    try {
+      const parsed = JSON.parse(detail);
+      detail = parsed.detail || detail;
+    } catch {
+      /* plain text */
+    }
+    ttsErrorHint(`ElevenLabs voice failed: ${detail}`);
+    throw new Error(detail);
+  }
+  const blob = await res.blob();
+  if (!blob.size) {
+    ttsErrorHint("ElevenLabs returned empty audio.");
+    throw new Error("empty audio");
+  }
+  const url = URL.createObjectURL(blob);
+  return new Promise((done) => {
+    const audio = new Audio(url);
+    currentAudio = audio;
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      URL.revokeObjectURL(url);
+      if (currentAudio === audio) currentAudio = null;
+      done();
+    };
+    audio.onended = finish;
+    audio.onerror = () => {
+      ttsErrorHint("Could not play ElevenLabs audio in this browser.");
+      finish();
+    };
+    setTimeout(finish, 60000 + text.length * 120);
+    audio.play().catch(() => {
+      ttsErrorHint("Tap Begin again if the guide voice did not start.");
+      finish();
+    });
+  });
+}
+
+// Say the text slowly and calmly. Finishes when the voice stops talking.
+function speak(text, rate = 0.85) {
+  if (useElevenLabs()) return speakElevenLabs(text);
+  return speakBrowser(text, rate);
+}
+
 function stopSpeaking() {
   speechSynthesis.cancel();
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+  }
 }
 
 const wait = (ms) => new Promise((done) => setTimeout(done, ms));
@@ -224,6 +299,29 @@ function toYou(text) {
     .replace(/\bme\b/gi, "you")
     .replace(/\bI\b/g, "you")
     .replace(/[.!]+$/, "");
+}
+
+// ---------- The AI guide (on our server) ----------
+const SAFETY_MESSAGE =
+  "Let's pause here. I'm not the right support for this. Please reach out to someone you trust, or your local emergency services.";
+
+// Ask the server's AI guide. Returns its answer, or null if the AI is not available
+// (no key, an error, or no answer within 25 seconds). Then the page uses its built-in script.
+async function askGuideAI(path, body) {
+  $("hint").textContent = "Your guide is thinking…";
+  try {
+    const reply = await fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(25000),
+    });
+    return reply.ok ? await reply.json() : null;
+  } catch {
+    return null;
+  } finally {
+    $("hint").textContent = "";
+  }
 }
 
 // ---------- Saved states ----------
