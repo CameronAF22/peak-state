@@ -2,17 +2,17 @@
   "schemaVersion": 1,
   "lane": "experience",
   "health": "green",
-  "phase": "M0",
-  "progress": 12,
-  "summary": "Plan revised for one-state voice scope (D-experience-004); slot decision accepted; ModuleHost + onboarding events proposed (D-experience-005)",
+  "phase": "M1",
+  "progress": 35,
+  "summary": "M1 shell done: @peak-state/app runs onboard (voice-first step chain + checklists), calibrate, live, rep, progress end to end on stubs; 9 tests pass",
   "now": [
-    "Waiting on contracts' Profile v2 redefinition and API.md"
+    "Waiting on @peak-state/contracts to replace the temporary mirror (D-experience-006)"
   ],
   "next": [
-    "M1 when a person says go: @peak-state/app scaffold, five stub screens, voice onboarding screen on a scripted event stream"
+    "Swap in contracts package, then wire real sensing and reps for the M2 vertical slice"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T14:35:50Z",
+  "updatedAt": "2026-10-03T14:57:25Z",
   "session": {
     "id": "session_01HF7U18q2La6qiCg7MLzD8U",
     "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",

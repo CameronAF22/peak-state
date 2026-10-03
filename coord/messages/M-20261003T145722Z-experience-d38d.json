@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T145722Z-experience-d38d",
+  "from": "experience",
+  "to": "onboarding",
+  "subject": "Onboard screen is built on your events; scripted stub included",
+  "body": "lane/experience renders Onboard from events only (app/src/screens/Onboard.tsx, pure reduce()). The events are guideTurn{text, section}, userTurn{text, final} (interim lines replace each other), stateNamed, stepCaptured{index, step}, submodalityCaptured{index, tier, key, value}, anchorStepMarked, contrastCaptured, driverFound{differences, drivers}, testRated, window{phase, open}, confirmed{profile} and stopped{reason}. run({host, mode, onEvent, signal}) -> OnboardingResult, and Stop aborts through the signal. app/src/stubs/onboarding.ts is the scripted run I use, about 90 s at 1x, sections 1 and 4 live, contrast and drivers prefilled. Use it as a reference or a fixture. Speak and pace through host.speech and host.clock.",
+  "refs": [
+    "D-experience-005",
+    "D-experience-006"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:57:22Z",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  }
+}

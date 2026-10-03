@@ -1,0 +1,543 @@
+[
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_01",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 0,
+    "kind": "full",
+    "trigger": {
+      "kind": "practice"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T10:00:00.000Z",
+    "endedAt": "2026-10-03T10:00:32.000Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T10:00:00.000Z",
+        "endedAt": "2026-10-03T10:00:03.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor",
+        "strategyStepIndex": 0,
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T10:00:03.000Z",
+        "endedAt": "2026-10-03T10:00:07.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 0,
+        "driverIndexes": [
+          0,
+          1
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T10:00:07.000Z",
+        "endedAt": "2026-10-03T10:00:14.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 1,
+        "plannedMs": 5000,
+        "startedAt": "2026-10-03T10:00:14.000Z",
+        "endedAt": "2026-10-03T10:00:19.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 2,
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T10:00:19.000Z",
+        "endedAt": "2026-10-03T10:00:25.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "peak",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T10:00:25.000Z",
+        "endedAt": "2026-10-03T10:00:29.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T10:00:29.000Z",
+        "endedAt": "2026-10-03T10:00:32.000Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 4,
+    "intensityAfter": 7,
+    "recoverySeconds": 42,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "simulator",
+    "scriptHash": "demo-v1",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_02",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 1,
+    "kind": "full",
+    "trigger": {
+      "kind": "practice"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T11:00:00.000Z",
+    "endedAt": "2026-10-03T11:00:32.000Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T11:00:00.000Z",
+        "endedAt": "2026-10-03T11:00:03.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor",
+        "strategyStepIndex": 0,
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T11:00:03.000Z",
+        "endedAt": "2026-10-03T11:00:07.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 0,
+        "driverIndexes": [
+          0,
+          1
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T11:00:07.000Z",
+        "endedAt": "2026-10-03T11:00:14.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 1,
+        "plannedMs": 5000,
+        "startedAt": "2026-10-03T11:00:14.000Z",
+        "endedAt": "2026-10-03T11:00:19.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 2,
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T11:00:19.000Z",
+        "endedAt": "2026-10-03T11:00:25.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "peak",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T11:00:25.000Z",
+        "endedAt": "2026-10-03T11:00:29.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T11:00:29.000Z",
+        "endedAt": "2026-10-03T11:00:32.000Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 3,
+    "intensityAfter": 7,
+    "recoverySeconds": 38,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "simulator",
+    "scriptHash": "demo-v1",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_03",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 2,
+    "kind": "full",
+    "trigger": {
+      "kind": "detection",
+      "detectionId": "det_demo_3"
+    },
+    "arm": "sham",
+    "startedAt": "2026-10-03T12:00:00.000Z",
+    "endedAt": "2026-10-03T12:00:06.000Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T12:00:00.000Z",
+        "endedAt": "2026-10-03T12:00:03.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T12:00:03.000Z",
+        "endedAt": "2026-10-03T12:00:06.000Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 4,
+    "intensityAfter": 5,
+    "recoverySeconds": 95,
+    "recoveryCensored": false,
+    "anchorPaired": false,
+    "signalSource": "simulator",
+    "scriptHash": "demo-v1",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_04",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 3,
+    "kind": "full",
+    "trigger": {
+      "kind": "detection",
+      "detectionId": "det_demo_4"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T13:00:00.000Z",
+    "endedAt": "2026-10-03T13:00:32.000Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T13:00:00.000Z",
+        "endedAt": "2026-10-03T13:00:03.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor",
+        "strategyStepIndex": 0,
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T13:00:03.000Z",
+        "endedAt": "2026-10-03T13:00:07.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 0,
+        "driverIndexes": [
+          0,
+          1
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T13:00:07.000Z",
+        "endedAt": "2026-10-03T13:00:14.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 1,
+        "plannedMs": 5000,
+        "startedAt": "2026-10-03T13:00:14.000Z",
+        "endedAt": "2026-10-03T13:00:19.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 2,
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T13:00:19.000Z",
+        "endedAt": "2026-10-03T13:00:25.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "peak",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T13:00:25.000Z",
+        "endedAt": "2026-10-03T13:00:29.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T13:00:29.000Z",
+        "endedAt": "2026-10-03T13:00:32.000Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 4,
+    "intensityAfter": 8,
+    "recoverySeconds": 31,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "simulator",
+    "scriptHash": "demo-v1",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_05",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 4,
+    "kind": "full",
+    "trigger": {
+      "kind": "detection",
+      "detectionId": "det_demo_5"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T14:00:00.000Z",
+    "endedAt": "2026-10-03T14:00:32.000Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T14:00:00.000Z",
+        "endedAt": "2026-10-03T14:00:03.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor",
+        "strategyStepIndex": 0,
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T14:00:03.000Z",
+        "endedAt": "2026-10-03T14:00:07.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 0,
+        "driverIndexes": [
+          0,
+          1
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T14:00:07.000Z",
+        "endedAt": "2026-10-03T14:00:14.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 1,
+        "plannedMs": 5000,
+        "startedAt": "2026-10-03T14:00:14.000Z",
+        "endedAt": "2026-10-03T14:00:19.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 2,
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T14:00:19.000Z",
+        "endedAt": "2026-10-03T14:00:25.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "peak",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T14:00:25.000Z",
+        "endedAt": "2026-10-03T14:00:29.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T14:00:29.000Z",
+        "endedAt": "2026-10-03T14:00:32.000Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 5,
+    "intensityAfter": 8,
+    "recoverySeconds": 27,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "simulator",
+    "scriptHash": "demo-v1",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_06",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 5,
+    "kind": "full",
+    "trigger": {
+      "kind": "detection",
+      "detectionId": "det_demo_6"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T15:00:00.000Z",
+    "endedAt": "2026-10-03T15:00:32.000Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T15:00:00.000Z",
+        "endedAt": "2026-10-03T15:00:03.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor",
+        "strategyStepIndex": 0,
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T15:00:03.000Z",
+        "endedAt": "2026-10-03T15:00:07.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 0,
+        "driverIndexes": [
+          0,
+          1
+        ],
+        "plannedMs": 7000,
+        "startedAt": "2026-10-03T15:00:07.000Z",
+        "endedAt": "2026-10-03T15:00:14.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 1,
+        "plannedMs": 5000,
+        "startedAt": "2026-10-03T15:00:14.000Z",
+        "endedAt": "2026-10-03T15:00:19.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "strategy-step",
+        "strategyStepIndex": 2,
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T15:00:19.000Z",
+        "endedAt": "2026-10-03T15:00:25.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "peak",
+        "plannedMs": 4000,
+        "startedAt": "2026-10-03T15:00:25.000Z",
+        "endedAt": "2026-10-03T15:00:29.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T15:00:29.000Z",
+        "endedAt": "2026-10-03T15:00:32.000Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 4,
+    "intensityAfter": 8,
+    "recoverySeconds": 24,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "simulator",
+    "scriptHash": "demo-v1",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_07",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 6,
+    "kind": "anchor-only",
+    "trigger": {
+      "kind": "detection",
+      "detectionId": "det_demo_7"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T16:00:00.000Z",
+    "endedAt": "2026-10-03T16:00:12.000Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T16:00:00.000Z",
+        "endedAt": "2026-10-03T16:00:03.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor",
+        "strategyStepIndex": 0,
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T16:00:03.000Z",
+        "endedAt": "2026-10-03T16:00:09.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T16:00:09.000Z",
+        "endedAt": "2026-10-03T16:00:12.000Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 4,
+    "intensityAfter": 7,
+    "recoverySeconds": 22,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "simulator",
+    "scriptHash": "demo-v1",
+    "endedBy": "completed"
+  },
+  {
+    "schemaVersion": 1,
+    "id": "rep_demo_08",
+    "profileId": "profile_demo_ada",
+    "stateId": "calm-before-pitch",
+    "repIndex": 7,
+    "kind": "anchor-only",
+    "trigger": {
+      "kind": "detection",
+      "detectionId": "det_demo_8"
+    },
+    "arm": "cue",
+    "startedAt": "2026-10-03T17:00:00.000Z",
+    "endedAt": "2026-10-03T17:00:12.000Z",
+    "steps": [
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T17:00:00.000Z",
+        "endedAt": "2026-10-03T17:00:03.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "anchor",
+        "strategyStepIndex": 0,
+        "plannedMs": 6000,
+        "startedAt": "2026-10-03T17:00:03.000Z",
+        "endedAt": "2026-10-03T17:00:09.000Z",
+        "delivered": true
+      },
+      {
+        "kind": "rate",
+        "plannedMs": 3000,
+        "startedAt": "2026-10-03T17:00:09.000Z",
+        "endedAt": "2026-10-03T17:00:12.000Z",
+        "delivered": true
+      }
+    ],
+    "intensityBefore": 5,
+    "intensityAfter": 8,
+    "recoverySeconds": 19,
+    "recoveryCensored": false,
+    "anchorPaired": true,
+    "signalSource": "simulator",
+    "scriptHash": "demo-v1",
+    "endedBy": "completed"
+  }
+]

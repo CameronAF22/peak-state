@@ -68,6 +68,19 @@ The app owns the speech adapter (browser speech for now, and whatever D-onboardi
 | **M3** | Real voice onboarding through the playbook, calibration from the playbook windows, the strap when present (simulator fallback), and the profile and log in `localStorage`. |
 | **M4** | `demo/`: the script, the pinned scenario timed with sensing, prefilled contrast and driver results from a rehearsal, a fallback recording, pitch notes, and safety copy on screen. |
 
+## M1 status: how to run it
+
+```bash
+npm install            # from the repo root (workspaces); no lockfile is committed
+npm run dev -w app     # http://localhost:5173
+npm test -w app        # Vitest: onboarding script + reducer, simulator gate timing, rep order, sham, installed
+npm run build -w app   # static dist/, no external URLs
+```
+
+- Every module runs on its fixture stub today. The top bar shows `onboarding: stub`, `sensing: stub` and `reps: stub`. `?<module>=real` switches as each lane's package is wired into `src/modules.ts`.
+- `?screen=live` (or `calibrate`, `rep`, `progress`) jumps straight to a screen with the demo profile. The top bar also has Speed (1×, 2×, 4×, 10×) and a Voice toggle, which is off by default.
+- Shared shapes come from `src/contracts.ts`, a temporary mirror of D-contracts-005/006 (D-experience-006). It becomes a re-export of `@peak-state/contracts` when that package merges.
+
 ## Three-minute demo outline
 
 Onboarding grows to about 90 s. Sections 1 and 4 of the playbook run live with core submodalities only. The contrast and driver results come prefilled from a rehearsal (the playbook's default; it is still an open question for a person).
