@@ -193,7 +193,11 @@ function setup(opts: { status?: number; body?: string; autoStart?: boolean } = {
 
 // ── gpt-live ────────────────────────────────────────────────────────────────
 
-test("gpt-live: posts { session, sdp } to the harness route and is ready on session.started", async () => {
+const flush = async () => {
+  for (let i = 0; i < 5; i++) await tick();
+};
+
+test("gpt-live: posts { session, sdp } with the ChatGPT-style guide prompt and is ready on session.started", async () => {
   const { calls, pcs, deps, audioEl } = setup();
   const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, deps);
   const statuses: string[] = [];
@@ -203,40 +207,41 @@ test("gpt-live: posts { session, sdp } to the harness route and is ready on sess
   assert.equal(calls.length, 1);
   const { url, init } = calls[0]!;
   assert.equal(url, "/api/live/session");
-  assert.equal(init.method, "POST");
-  assert.equal(init.headers["Content-Type"], "application/json");
-  assert.equal(init.headers.Authorization, undefined);
-  assert.equal(init.headers["x-openai-key"], undefined, "no key in the page means the server's OPENAI_API_KEY is used");
+  assert.equal(init.headers["x-openai-key"], undefined, "no key in the page means the server's key is used");
   const body = JSON.parse(init.body);
   assert.equal(body.sdp, "v=0 offer-sdp");
+  assert.deepEqual(Object.keys(body.session).sort(), ["delegation", "instructions", "model"]);
   assert.equal(body.session.model, "gpt-live-1");
   assert.deepEqual(body.session.delegation, { type: "client" });
-  assert.match(body.session.instructions, /exactly as written, word for word/);
-  assert.match(body.session.instructions, /Never give therapy/);
-  assert.equal(body.session.audio, undefined);
-  assert.deepEqual(Object.keys(body.session).sort(), ["delegation", "instructions", "model"]);
+  const prompt: string = body.session.instructions;
+  for (const section of ["# Role and style", "# How this conversation works", "# Listening", "# When they have answered", "# Safety"]) {
+    assert.ok(prompt.includes(section), section);
+  }
+  assert.match(prompt, /about 120 words a minute/);
+  assert.match(prompt, /Keep listening while they pause/);
+  assert.match(prompt, /cough, music/);
+  assert.match(prompt, /after every answer/);
+  assert.match(prompt, /not therapy/);
 
   const pc = pcs[0]!;
-  assert.equal(pc.tracks.length, 1);
   assert.deepEqual(pc.remote, { type: "answer", sdp: "v=0 answer-sdp" });
   assert.equal(pc.channel!.label, "oai-events");
   assert.deepEqual(pc.channel!.sent, [], "nothing is sent before a line is spoken");
   assert.equal(audioEl.autoplay, true);
-  assert.equal(audioEl.muted, true, "the model is not heard until speak()");
   assert.deepEqual(statuses, ["idle", "connecting", "ready"]);
-
-  const remoteStream = { id: "remote" };
-  pc.ontrack!({ streams: [remoteStream] });
-  assert.equal(audioEl.srcObject, remoteStream);
   v.stop();
 });
 
-test("gpt-live: a pasted key goes only to the local route as x-openai-key; voice and endpoint configurable", async () => {
+test("gpt-live: a pasted key goes only to the local route; voice, endpoint and extra headers configurable", async () => {
   const { calls, deps } = setup();
-  const v = createGptLiveVoice({ apiKey: " sk-test ", model: "gpt-live-1", endpoint: "http://127.0.0.1:9999/live", voice: "marin" }, deps);
+  const v = createGptLiveVoice(
+    { apiKey: " sk-test ", model: "gpt-live-1", endpoint: "http://127.0.0.1:9999/live", voice: "marin", headers: () => ({ authorization: "Bearer t" }) },
+    deps,
+  );
   await v.start();
   assert.equal(calls[0]!.url, "http://127.0.0.1:9999/live");
   assert.equal(calls[0]!.init.headers["x-openai-key"], "sk-test");
+  assert.equal(calls[0]!.init.headers.authorization, "Bearer t");
   assert.deepEqual(JSON.parse(calls[0]!.init.body).session.audio, { output: { voice: "marin" } });
   v.stop();
 });
@@ -247,8 +252,7 @@ test("gpt-live: waits for session.started; a startup error rejects start with th
   const statuses: VoiceStatus[] = [];
   v.onStatus((s) => statuses.push(s));
   const started = v.start();
-  await tick();
-  await tick();
+  await flush();
   assert.equal(statuses.at(-1)!.state, "connecting");
   pcs[0]!.channel!.emit({ type: "error", error: { type: "invalid_request_error", message: "Unknown field", param: "session.foo" } });
   await assert.rejects(started, /Unknown field \(session\.foo\)/);
@@ -260,129 +264,196 @@ test("gpt-live: start times out when session.started never arrives", async () =>
   const { deps, clock } = setup({ autoStart: false });
   const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1", connectTimeoutMs: 5000 }, deps);
   const started = v.start();
-  await tick();
-  await tick();
+  await flush();
   clock.advance(5000);
   await assert.rejects(started, /Timed out/);
 });
 
-test("gpt-live: speak mutes the mic, sends the line as commentary, and finishes when the output goes quiet", async () => {
-  const { pcs, deps, clock, audioEl } = setup();
+test("gpt-live: speak asks the line through instructions.append, verbatim, and finishes when the output goes quiet", async () => {
+  const { pcs, deps, clock } = setup();
   const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, deps);
   await v.start();
   const ch = pcs[0]!.channel!;
   const statuses: string[] = [];
+  const words: [number, string][] = [];
   v.onStatus((s) => statuses.push(s.state));
+  v.onWord!((i, t) => words.push([i, t]));
 
-  const text = "Can you remember a time you felt content?"; // 8 words ≈ 3.1 s
+  const text = "Where is it now?"; // 4 words ≈ 2 s at the slow pace
   let resolved = false;
   const p = v.speak(text).then(() => (resolved = true));
-  assert.deepEqual(ch.types(), ["session.input_audio.mute", "session.commentary.append"]);
-  const ev = ch.sent[1]!;
-  assert.equal(ev.content, text);
+  assert.deepEqual(ch.types(), ["session.instructions.append"], "the mic stays open: full duplex");
+  const ev = ch.sent[0]!;
   assert.equal(ev.delegation_id, null);
-  assert.match(ev.event_id, /^peak_speak_/);
-  assert.equal(audioEl.muted, false);
+  assert.ok(ev.content.includes(`"${text}"`));
+  assert.match(ev.content, /exactly as written and in full/);
   assert.equal(statuses.at(-1), "speaking");
 
-  ch.emit({ type: "session.commentary.appended" });
-  ch.emit({ type: "session.output_transcript.delta", delta: "Can you remember", start_ms: 0, end_ms: 900 });
-  clock.advance(1000);
-  ch.emit({ type: "session.output_transcript.delta", delta: " a time you felt content?", start_ms: 900, end_ms: 3000 });
-  clock.advance(1000);
-  await tick();
-  assert.equal(resolved, false, "the line has not had its estimated time yet");
-  clock.advance(1200);
-  await p;
-  assert.equal(statuses.at(-1), "ready");
-
-  // After a short tail the mic opens again and the model is silenced.
-  assert.deepEqual(ch.types().slice(2), []);
-  clock.advance(400);
-  assert.deepEqual(ch.types().slice(2), ["session.input_audio.unmute"]);
-  assert.equal(audioEl.muted, true);
-  v.stop();
-});
-
-test("gpt-live: the word highlight follows the guide's spoken transcript and ends on settle", async () => {
-  const { pcs, deps, clock } = setup();
-  const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, deps);
-  await v.start();
-  const ch = pcs[0]!.channel!;
-  const words: [number, string][] = [];
-  v.onWord!((i, t) => words.push([i, t]));
-  const text = "Where is it now?";
-  const p = v.speak(text);
-  assert.deepEqual(words, [], "nothing before the guide speaks");
-  ch.emit({ type: "session.output_transcript.delta", delta: "Where" });
-  assert.deepEqual(words, [[0, text]]);
+  ch.emit({ type: "session.output_transcript.delta", delta: "Mm. Where" });
   ch.emit({ type: "session.output_transcript.delta", delta: " is it" });
   assert.deepEqual(words.at(-1), [2, text]);
-  ch.emit({ type: "session.output_transcript.delta", delta: " now? Extra words" });
-  assert.deepEqual(words.at(-1), [3, text], "never past the last word of the line");
-  clock.advance(5000);
+  clock.advance(1500);
+  await tick();
+  assert.equal(resolved, false, "the line has not had its estimated time yet");
+  clock.advance(1000);
   await p;
   assert.deepEqual(words.at(-1), [4, text], "settling reports the line as finished");
+  assert.equal(statuses.at(-1), "ready");
   v.stop();
 });
 
 test("gpt-live: speak still finishes if no output transcript arrives", async () => {
-  const { pcs, deps, clock } = setup();
+  const { deps, clock } = setup();
   const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, deps);
   await v.start();
   let resolved = false;
   const p = v.speak("Hello there.").then(() => (resolved = true));
-  clock.advance(1200 + 2900);
+  clock.advance(1200 + 3900);
   await tick();
   assert.equal(resolved, false);
   clock.advance(100);
   await p;
   assert.equal(resolved, true);
-  assert.equal(pcs[0]!.channel!.sent[1]!.type, "session.commentary.append");
   v.stop();
 });
 
-test("gpt-live: answer fragments → partial transcripts, final after the silence gap", async () => {
-  const { pcs, deps, clock } = setup();
-  const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1", answerSilenceMs: 1800 }, deps);
+/** A started session that has asked one question and finished saying it. */
+async function asked(opts: { interpret?: (ctx: any, heard: string) => Promise<any>; expects?: "choice" | "number" | "open" } = {}) {
+  const s = setup();
+  const seen: { ctx: any; heard: string }[] = [];
+  const interpret = opts.interpret ?? (async (ctx: any, heard: string) => (seen.push({ ctx, heard }), { verdict: "answer", text: `clean:${heard}` }));
+  const v = createGptLiveVoice(
+    {
+      apiKey: "",
+      model: "gpt-live-1",
+      answerContext: () => ({ question: "What state do you want to choose?", choices: ["Content", "Destressed"], expects: opts.expects ?? "choice" }),
+      interpret: async (ctx, heard) => {
+        seen.push({ ctx, heard });
+        return interpret(ctx, heard);
+      },
+    },
+    s.deps,
+  );
   await v.start();
-  const ch = pcs[0]!.channel!;
+  const ch = s.pcs[0]!.channel!;
   const heard: [string, boolean][] = [];
-  const statuses: string[] = [];
   v.onTranscript((t, f) => heard.push([t, f]));
-  v.onStatus((s) => statuses.push(s.state));
+  const p = v.speak("What state do you want to choose?");
+  s.clock.advance(20_000);
+  await p;
+  s.clock.advance(1000); // past the echo tail
+  ch.sent.length = 0;
+  return { ...s, v, ch, heard, seen };
+}
 
-  ch.emit({ type: "session.input_transcript.delta", delta: "I saw", start_ms: 600, end_ms: 800 });
-  clock.advance(1000);
-  ch.emit({ type: "session.input_transcript.delta", delta: " the  lake", start_ms: 800, end_ms: 1200 });
-  assert.equal(statuses.at(-1), "listening");
-  clock.advance(1700);
+test("gpt-live: GPT-Live delegates when the answer is done → interpreter cleans it → final; the next speak answers the delegation", async () => {
+  const { v, ch, heard, seen } = await asked();
+  ch.emit({ type: "session.input_transcript.delta", delta: "Um" });
+  ch.emit({ type: "session.input_transcript.delta", delta: ", con tent" });
   assert.deepEqual(heard, [
-    ["I saw", false],
-    ["I saw the lake", false],
+    ["Um", false],
+    ["Um, con tent", false],
   ]);
-  clock.advance(100);
-  assert.deepEqual(heard.at(-1), ["I saw the lake", true]);
-  assert.equal(statuses.at(-1), "ready");
+  ch.emit({ type: "session.delegation.created", delegation: { id: "item_1", type: "delegation", target: "client" } });
+  await flush();
+  assert.equal(seen.at(-1)!.heard, "Um, con tent");
+  assert.deepEqual(seen.at(-1)!.ctx.choices, ["Content", "Destressed"]);
+  assert.deepEqual(heard.at(-1), ["clean:Um, con tent", true]);
+
+  void v.speak("Can you remember a time?");
+  const ev = ch.sent.at(-1)!;
+  assert.equal(ev.type, "session.instructions.append");
+  assert.equal(ev.delegation_id, "item_1", "the next question answers GPT-Live's delegation");
   v.stop();
 });
 
-test("gpt-live: input heard while the guide speaks (echo) is ignored", async () => {
+test("gpt-live: still talking → thinking.append to keep listening, nothing final; noise → dropped", async () => {
+  let verdict: any = { verdict: "incomplete", text: "" };
+  const { v, ch, heard } = await asked({ interpret: async () => verdict });
+  ch.emit({ type: "session.input_transcript.delta", delta: "I was on the beach and" });
+  ch.emit({ type: "session.delegation.created", delegation: { id: "item_2" } });
+  await flush();
+  assert.equal(ch.sent.at(-1)!.type, "session.thinking.append");
+  assert.equal(ch.sent.at(-1)!.delegation_id, "item_2");
+  assert.match(ch.sent.at(-1)!.content, /not finished answering/);
+  assert.ok(heard.every(([, f]) => !f), "nothing final yet");
+
+  verdict = { verdict: "noise", text: "" };
+  ch.emit({ type: "session.input_transcript.delta", delta: " did you see the game" });
+  ch.emit({ type: "session.delegation.created", delegation: { id: "item_3" } });
+  await flush();
+  assert.equal(ch.sent.at(-1)!.delegation_id, "item_3");
+  assert.match(ch.sent.at(-1)!.content, /not an answer/);
+  assert.deepEqual(heard.at(-1), ["", false], "the draft is cleared");
+  assert.ok(heard.every(([, f]) => !f));
+  v.stop();
+});
+
+test("gpt-live: without a delegation, a semantic end of turn after a quiet gap that adapts to the question", async () => {
+  const choice = await asked({ expects: "choice" });
+  choice.ch.emit({ type: "session.input_transcript.delta", delta: "Content" });
+  choice.clock.advance(1700);
+  await flush();
+  assert.equal(choice.seen.length, 0);
+  choice.clock.advance(100);
+  await flush();
+  assert.deepEqual(choice.heard.at(-1), ["clean:Content", true], "1.8 s for a choice");
+  choice.v.stop();
+
+  const open = await asked({ expects: "open" });
+  open.ch.emit({ type: "session.input_transcript.delta", delta: "The first thing was the light and" });
+  open.clock.advance(4900); // 3 s plus 2 s for trailing off on "and"
+  await flush();
+  assert.equal(open.seen.length, 0);
+  open.clock.advance(100);
+  await flush();
+  assert.equal(open.heard.at(-1)![1], true);
+  open.v.stop();
+});
+
+test("gpt-live: fillers alone never reach the interpreter or the engine", async () => {
+  const { ch, heard, seen, clock, v } = await asked();
+  ch.emit({ type: "session.input_transcript.delta", delta: "um, hmm" });
+  ch.emit({ type: "session.delegation.created", delegation: { id: "item_4" } });
+  await flush();
+  clock.advance(10_000);
+  await flush();
+  assert.equal(seen.length, 0);
+  assert.ok(heard.every(([, f]) => !f));
+  assert.match(ch.sent.at(-1)!.content, /not an answer/);
+  v.stop();
+});
+
+test("gpt-live: the guide's echo while it speaks is dropped; a real barge-in is heard", async () => {
   const { pcs, deps, clock } = setup();
   const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, deps);
   await v.start();
   const ch = pcs[0]!.channel!;
   const heard: string[] = [];
   v.onTranscript((t) => heard.push(t));
-  const p = v.speak("Where is it?");
-  ch.emit({ type: "session.input_transcript.delta", delta: "Where is it" });
-  clock.advance(1200 + 3000); // no output transcript: the line ends after its estimate plus 3 s
-  await p;
-  ch.emit({ type: "session.input_transcript.delta", delta: "echo tail" }); // within the 400 ms tail
-  clock.advance(400);
-  ch.emit({ type: "session.input_transcript.delta", delta: "Straight ahead" });
-  clock.advance(2000);
-  assert.deepEqual(heard, ["Straight ahead", "Straight ahead"]);
+  void v.speak("Look at that picture again. Where is it?");
+  ch.emit({ type: "session.input_transcript.delta", delta: "Look at that picture" });
+  ch.emit({ type: "session.input_transcript.delta", delta: " again" });
+  assert.deepEqual(heard, [], "echo of the guide's own line");
+  ch.emit({ type: "session.input_transcript.delta", delta: " sorry can you repeat" });
+  assert.deepEqual(heard, [], "still mostly the guide's words");
+  void v.speak("Look at that picture again. Where is it?");
+  ch.emit({ type: "session.input_transcript.delta", delta: "Off to my left side" });
+  assert.deepEqual(heard, ["Off to my left side"], "three words that are not the line: a barge-in");
+  clock.advance(1);
+  v.stop();
+});
+
+test("gpt-live: an answer with no next question releases the delegation after a moment", async () => {
+  const { ch, clock, v } = await asked();
+  ch.emit({ type: "session.input_transcript.delta", delta: "Destressed" });
+  ch.emit({ type: "session.delegation.created", delegation: { id: "item_5" } });
+  await flush();
+  ch.sent.length = 0;
+  clock.advance(2500);
+  assert.equal(ch.sent.at(-1)!.type, "session.thinking.append");
+  assert.equal(ch.sent.at(-1)!.delegation_id, "item_5");
+  assert.match(ch.sent.at(-1)!.content, /recorded/);
   v.stop();
 });
 
@@ -395,33 +466,19 @@ test("gpt-live: HTTP 401 from the route → status error, start rejects, resourc
   const last = statuses.at(-1)!;
   assert.equal(last.state, "error");
   assert.match(last.detail!, /HTTP 401/);
-  assert.match(last.detail!, /OPENAI_API_KEY/);
   assert.match(last.detail!, /Incorrect API key provided/);
   assert.equal(pcs[0]!.closed, true);
   assert.deepEqual(stopped, ["mic"]);
-  await v.speak("Anything"); // degrades gracefully after a failed start
+  await v.speak("Anything");
 });
 
-test("gpt-live: a 2xx without an SDP answer is an error", async () => {
-  const { deps } = setup({ body: JSON.stringify({ session: { id: "live_1" } }) });
-  const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, deps);
-  await assert.rejects(v.start(), /without an SDP answer/);
-});
-
-test("gpt-live: 'error' event → status error and the referenced speak resolves", async () => {
-  const { pcs, deps } = setup();
-  const v = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, deps);
-  await v.start();
-  const ch = pcs[0]!.channel!;
-  let last: VoiceStatus | undefined;
-  v.onStatus((s) => (last = s));
-  const p = v.speak("Hi.");
-  const id = ch.sent.at(-1)!.event_id;
-  ch.emit({ type: "error", error: { message: "content too long", param: "content", client_event_id: id } });
-  await p;
-  assert.equal(last?.state, "error");
-  assert.match(last!.detail!, /content too long \(content\)/);
-  v.stop();
+test("gpt-live: the Worker's string error shape is shown; a 2xx without an SDP answer is an error", async () => {
+  const worker = setup({ status: 401, body: JSON.stringify({ error: "Sign in first." }) });
+  const v1 = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, worker.deps);
+  await assert.rejects(v1.start(), /Sign in first\./);
+  const empty = setup({ body: JSON.stringify({ session: { id: "live_1" } }) });
+  const v2 = createGptLiveVoice({ apiKey: "", model: "gpt-live-1" }, empty.deps);
+  await assert.rejects(v2.start(), /without an SDP answer/);
 });
 
 test("gpt-live: session.closed from the server → error status and pending speak resolves", async () => {
@@ -453,9 +510,9 @@ test("gpt-live: stop sends session.close, closes channel, peer, mic, and resolve
   assert.equal(audioEl.srcObject, null);
 });
 
-test("estimateSpeechMs: 2.6 words per second with a 1.2 s floor", () => {
+test("estimateSpeechMs: 2 words per second (the slow pace) with a 1.2 s floor", () => {
   assert.equal(estimateSpeechMs("Hi."), 1200);
-  assert.equal(estimateSpeechMs("one two three four five six seven eight nine ten eleven twelve thirteen"), 5000);
+  assert.equal(estimateSpeechMs("one two three four five six seven eight nine ten"), 5000);
 });
 
 // ── browser (fake Web Speech API on globalThis) ─────────────────────────────

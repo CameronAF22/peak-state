@@ -180,6 +180,32 @@ test("live session: needs an account and the server key, forwards a sanitized se
   assert.match(refused.body.error, /\(403\): Project does not have access/);
 });
 
+test("answer interpret: needs an account and the server key, sends the Responses request, returns only the verdict", async () => {
+  const seen: { url: string; auth: string | null; body: any }[] = [];
+  const fakeFetch = (async (url: string, init: RequestInit) => {
+    seen.push({ url, auth: new Headers(init.headers).get("authorization"), body: JSON.parse(String(init.body)) });
+    const out = { output: [{ type: "message", content: [{ type: "output_text", text: '{"verdict":"answer","text":"Content"}' }] }] };
+    return new Response(JSON.stringify(out), { status: 200 });
+  }) as unknown as typeof fetch;
+  const asked = { question: "What state do you want to choose?", choices: ["Content", "Destressed"], expects: "choice", heard: "uh con tent" };
+
+  const off = server();
+  const tOff = (await off.call("POST", "/api/accounts", { email: "a@example.com", code: CODE })).body.token;
+  assert.equal((await off.call("POST", "/api/answer/interpret", asked, tOff)).status, 503);
+
+  const { call } = server({ openai: "sk-real-secret", fetch: fakeFetch });
+  assert.equal((await call("POST", "/api/answer/interpret", asked)).status, 401);
+  const t = (await call("POST", "/api/accounts", { email: "a@example.com", code: CODE })).body.token;
+  assert.equal((await call("POST", "/api/answer/interpret", { question: "Q" }, t)).status, 400);
+  const res = await call("POST", "/api/answer/interpret", asked, t);
+  assert.equal(res.status, 200);
+  assert.deepEqual(res.body, { verdict: "answer", text: "Content" });
+  assert.equal(seen[0].url, "https://api.openai.com/v1/responses");
+  assert.equal(seen[0].auth, "Bearer sk-real-secret");
+  assert.equal(seen[0].body.model, "gpt-5.4-mini");
+  assert.equal(JSON.parse(seen[0].body.input).heard, "uh con tent");
+});
+
 test("unknown routes and bad bodies answer as JSON", async () => {
   const { call } = server();
   assert.equal((await call("GET", "/api/nope")).status, 404);

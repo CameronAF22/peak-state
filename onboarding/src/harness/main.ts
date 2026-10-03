@@ -15,6 +15,7 @@ import { loadRecord, newRecord, saveRecord, type StrategyRecord } from "../store
 import { createApi, pushRecord, syncAll, type ServerInfo } from "../sync/index.ts";
 import type { Answer, EngineSnapshot, VoiceAdapter, VoiceKind, VoiceStatus } from "../types.ts";
 import { createVoice, loadVoiceSettings, saveVoiceSettings, type VoiceSettings } from "../voice/index.ts";
+import { createInterpreter, type AnswerContext } from "../voice/interpret.ts";
 import { splitWords, wordTimeline } from "../voice/words.ts";
 import { createHintTimer, hintDelayFromUrl } from "./hints.ts";
 import { createAccountControls } from "./view/account.ts";
@@ -96,7 +97,14 @@ async function switchVoice(start: boolean): Promise<void> {
   voice = createVoice(
     settings.kind,
     settings.kind === "gpt-live"
-      ? { apiKey: settings.apiKey ?? "", model: settings.model, debug: debugLive, headers: () => api.authHeaders() }
+      ? {
+          apiKey: settings.apiKey ?? "",
+          model: settings.model,
+          debug: debugLive,
+          headers: () => api.authHeaders(),
+          answerContext,
+          interpret,
+        }
       : undefined,
   );
   voiceUnsubs.push(voice.onStatus(setStatus), voice.onTranscript(onTranscript), attachSpokenVoice(voice));
@@ -119,6 +127,21 @@ async function switchVoice(start: boolean): Promise<void> {
   }
   if (mode === "elicit" && snap.question) speak(snap.question.text);
   else if (practice) speakPractice(practice.snapshot());
+}
+
+// What the guide is waiting for, so GPT live waits the right time and the clean-up has context (D-onboarding-028).
+const CHOICE_KINDS = new Set(["choose-state", "modality", "submodality", "fully-in", "anchor", "confirm"]);
+const interpret = createInterpreter({ headers: () => api.authHeaders() });
+
+function answerContext(): AnswerContext | null {
+  if (mode === "saved") {
+    const p = practice?.snapshot().prompt;
+    if (p) return { question: p.text, choices: p.choices.map((c) => c.label), expects: p.kind === "rate" ? "number" : "open" };
+    return { question: "How strongly do you feel it now, from 0 to 10?", choices: [], expects: "number" };
+  }
+  const q = snap.question;
+  if (!q) return null;
+  return { question: q.text, choices: q.choices.map((c) => c.label), expects: CHOICE_KINDS.has(q.kind) ? "choice" : "open" };
 }
 
 /** Speak without blocking the page; typed voice resolves immediately. */
