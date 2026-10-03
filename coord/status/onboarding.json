@@ -3,16 +3,16 @@
   "lane": "onboarding",
   "health": "green",
   "phase": "M0",
-  "progress": 90,
-  "summary": "integration/all: merged PR #23, #24, #26, #25 and lane branches; GPT live on gpt-live-1 via /api/live/session (Vite proxy locally, Worker on Cloudflare, D-onboarding-020). 91 onboarding tests and typecheck green.",
+  "progress": 92,
+  "summary": "Live on Cloudflare: https://peak-state.cameron-982.workers.dev (harness, accounts, practice) plus the redesign at /design/; GPT live on gpt-live-1 verified against OpenAI. integration/all merges PR #23-#26 and lane branches.",
   "now": [
-    "Deploying integration/all to Cloudflare for testing"
+    "Cameron testing the deployment"
   ],
   "next": [
-    "Cameron tests GPT live on the deployed Worker; then merge PRs into main"
+    "Pick the default design; push integration/all and merge the PRs into main"
   ],
   "blockers": [],
-  "updatedAt": "2026-10-03T19:11:11Z",
+  "updatedAt": "2026-10-03T19:25:13Z",
   "session": {
     "id": "32d60a9b-b6fa-430d-8874-8454b73678f3",
     "url": null,
