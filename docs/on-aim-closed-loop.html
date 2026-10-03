@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>On-Aim Closed Loop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: lab-notebook document. Sticky contents rail on wide screens, one reading column, diagrams as full-width plates. */
+:root{
+  --bg:#f2f5f3; --surface:#ffffff; --sunk:#e7ece9; --ink:#14201d; --muted:#55645f; --rule:#cfd8d4;
+  --signal:#0e6a5b; --signal-soft:#d6ebe5; --cue:#a8540f; --cue-soft:#f6e3d0;
+  --ok:#1f7a4d; --warn:#9a6a00; --open:#a03a3a;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1715; --surface:#172220; --sunk:#1d2a27; --ink:#e4ece8; --muted:#9aaaa4; --rule:#2c3b37;
+    --signal:#5fcdb4; --signal-soft:#173a33; --cue:#e9a566; --cue-soft:#3b2a18;
+    --ok:#6fd09a; --warn:#e3bd5a; --open:#f09090; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1715; --surface:#172220; --sunk:#1d2a27; --ink:#e4ece8; --muted:#9aaaa4; --rule:#2c3b37;
+  --signal:#5fcdb4; --signal-soft:#173a33; --cue:#e9a566; --cue-soft:#3b2a18;
+  --ok:#6fd09a; --warn:#e3bd5a; --open:#f09090; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px;padding-block:36px 80px;display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
+@media (min-width:1000px){.wrap{grid-template-columns:200px minmax(0,1fr);gap:56px}}
+a{color:var(--signal);text-underline-offset:2px}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--cue);outline-offset:2px}
+
+/* contents rail */
+nav.toc{font-family:var(--mono);font-size:12.5px}
+nav.toc .label{color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:11px;margin-bottom:8px}
+nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px}
+nav.toc a{color:var(--ink);text-decoration:none}
+nav.toc a:hover{color:var(--signal);text-decoration:underline}
+@media (min-width:1000px){
+  nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start}
+  nav.toc ol{flex-direction:column;gap:9px}
+}
+
+main{min-width:0;display:flex;flex-direction:column;gap:64px}
+section{display:flex;flex-direction:column;gap:18px;min-width:0}
+.prose{max-width:68ch;display:flex;flex-direction:column;gap:14px}
+p{margin:0}
+h1,h2,h3,h4{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.15}
+h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.015em;max-width:20ch}
+h2{font-size:clamp(23px,3.2vw,30px);font-weight:700;letter-spacing:-.01em}
+h3{font-size:19px;font-weight:700}
+h4{font-size:15.5px;font-weight:500;font-family:var(--body);font-weight:600}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--signal)}
+.lede{font-size:18.5px;line-height:1.5;max-width:62ch}
+.muted{color:var(--muted)}
+.small{font-size:13.5px}
+code,.mono{font-family:var(--mono);font-size:.9em}
+hr{border:0;border-top:1px solid var(--rule);margin:0}
+
+header.top{display:flex;flex-direction:column;gap:16px}
+.thesis{border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);padding-block:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px 40px}
+.thesis div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.thesis dt,.thesis .k{font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.thesis .v{font-size:15px}
+
+/* plates (diagrams) */
+figure{margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.plate{background:var(--surface);border:1px solid var(--rule);border-radius:4px;overflow-x:auto;padding:14px}
+.plate svg{display:block;width:100%;height:auto}
+.plate.wide svg{min-width:720px}
+.plate.mid svg{min-width:560px}
+figcaption{font-size:13.5px;color:var(--muted);max-width:72ch}
+svg text{font-family:var(--body);fill:var(--ink)}
+svg .t-mono{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+svg .t-lab{font-size:13px;font-weight:600}
+svg .t-sub{font-size:11.5px;fill:var(--muted)}
+svg .box{fill:var(--sunk);stroke:var(--rule)}
+svg .box-sig{fill:var(--signal-soft);stroke:var(--signal)}
+svg .box-cue{fill:var(--cue-soft);stroke:var(--cue)}
+svg .ln{stroke:var(--ink);stroke-width:1.4;fill:none}
+svg .ln-cue{stroke:var(--cue);stroke-width:1.6;fill:none;stroke-dasharray:5 4}
+svg .grid{stroke:var(--rule);stroke-width:1}
+svg .bar{fill:var(--signal)}
+svg .bar-slow{fill:var(--cue)}
+svg .arrowhead{fill:var(--ink)}
+svg .arrowhead-cue{fill:var(--cue)}
+
+/* compare block */
+.versus{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0;border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.versus>div{padding:18px;display:flex;flex-direction:column;gap:8px;min-width:0;background:var(--surface)}
+.versus>div.yes{background:var(--signal-soft)}
+.versus .k{font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.versus .big{font-family:var(--display);font-size:20px;font-weight:700;line-height:1.2}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:4px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:640px}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--rule)}
+tr:last-child td{border-bottom:0}
+th{font-family:var(--mono);font-size:11.5px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:var(--sunk)}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+td strong{font-weight:600}
+
+/* state cards */
+.states{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.state{border:1px solid var(--rule);border-radius:4px;padding:14px;background:var(--surface);display:flex;flex-direction:column;gap:6px;min-width:0}
+.state.target{border-color:var(--cue);background:var(--cue-soft)}
+.state .tag{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.state h4{font-family:var(--display);font-size:17px;font-weight:700}
+.state p{font-size:14px}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11.5px;padding:2px 8px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.chip::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.chip.ok{color:var(--ok)} .chip.warn{color:var(--warn)} .chip.open{color:var(--open)}
+.chip.open::before{background:transparent;border:1.5px solid currentColor}
+.chip.warn::before{border-radius:1px}
+
+/* plan */
+.gantt{display:grid;gap:6px;min-width:600px}
+.gantt .row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:center;font-size:13px}
+.gantt .track{display:grid;grid-template-columns:repeat(10,1fr);background:var(--sunk);border-radius:3px;height:22px}
+.gantt .bar{background:var(--signal);border-radius:3px}
+.gantt .bar.cue{background:var(--cue)}
+.gantt .axis{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.gantt .axis .track{background:none;height:auto}
+.gantt .axis span{text-align:left}
+
+.phases{display:flex;flex-direction:column;gap:0;border-top:2px solid var(--ink)}
+.phase{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding-block:26px;border-bottom:1px solid var(--rule)}
+@media (min-width:760px){.phase{grid-template-columns:150px minmax(0,1fr);gap:28px}}
+.phase .meta{display:flex;flex-direction:column;gap:4px}
+.phase .n{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--signal)}
+.phase .when{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.phase .body{display:flex;flex-direction:column;gap:14px;min-width:0}
+.phase .goal{max-width:66ch}
+ol.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;counter-reset:s}
+ol.steps>li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:4px;counter-increment:s}
+ol.steps>li::before{content:attr(data-p) "." counter(s);font-family:var(--mono);font-size:12.5px;color:var(--muted);padding-top:3px}
+ol.steps>li>div{display:flex;flex-direction:column;gap:6px;min-width:0;max-width:66ch}
+ol.steps ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:14.5px;color:var(--muted)}
+ol.steps ul li::marker{color:var(--rule)}
+.gate{border:1px solid var(--cue);background:var(--cue-soft);border-radius:4px;padding:12px 14px;font-size:14.5px;max-width:70ch}
+.gate b{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--cue);display:block;margin-bottom:2px;font-weight:500}
+.robbins{border-left:3px solid var(--cue);padding:2px 0 2px 12px;font-size:14.5px;max-width:68ch}
+.robbins b{color:var(--cue);font-weight:600}
+
+details{border:1px solid var(--rule);border-radius:4px;background:var(--surface);max-width:760px}
+summary{cursor:pointer;padding:10px 14px;font-family:var(--mono);font-size:12.5px;list-style:none;display:flex;gap:10px;align-items:baseline}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";color:var(--signal);font-weight:500;width:10px;flex:none}
+details[open]>summary::before{content:"–"}
+details[open]>summary{border-bottom:1px solid var(--rule)}
+details .in{padding:14px;display:flex;flex-direction:column;gap:10px;font-size:14.5px;min-width:0}
+details ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
+pre{margin:0;background:var(--sunk);border-radius:3px;padding:12px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--ink)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button.btn{font-family:var(--mono);font-size:12.5px;background:var(--surface);color:var(--ink);border:1px solid var(--ink);border-radius:3px;padding:7px 12px;cursor:pointer}
+button.btn:hover{background:var(--ink);color:var(--bg)}
+
+.pairs{display:flex;flex-direction:column;border:1px solid var(--rule);border-radius:4px;overflow:hidden;background:var(--surface)}
+.pair{display:grid;grid-template-columns:minmax(0,1fr);gap:4px 20px;padding:12px 14px;border-bottom:1px solid var(--rule);font-size:14.5px}
+.pair:last-child{border-bottom:0}
+@media (min-width:700px){.pair{grid-template-columns:28px minmax(0,1fr) minmax(0,1.25fr)}}
+.pair .i{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.pair .a{font-weight:600;color:var(--cue)}
+.pair .a span{display:block;font-weight:400;color:var(--muted);font-size:13.5px}
+
+ul.plain{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;max-width:68ch}
+ol.src{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px;font-size:14px;max-width:78ch}
+ol.src li{overflow-wrap:anywhere}
+footer{font-size:13px;color:var(--muted);max-width:70ch}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <div class="label">Contents</div>
+  <ol>
+    <li><a href="#thesis">Thesis</a></li>
+    <li><a href="#reframe">The reframe</a></li>
+    <li><a href="#signals">Signals</a></li>
+    <li><a href="#robbins">Robbins layer</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#plan">Build plan</a></li>
+    <li><a href="#hardware">Hardware</a></li>
+    <li><a href="#evidence">Evidence ledger</a></li>
+    <li><a href="#risks">Risks</a></li>
+    <li><a href="#sources">Sources</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<header class="top" id="thesis">
+  <div class="eyebrow">Plan and research · N-of-1 prototype · October 2026</div>
+  <h1>A closed loop that catches the off-aim state and interrupts it</h1>
+  <p class="lede">The system does not read thoughts. It learns the body-and-brain signature that shows up when one person leaves a state they chose, detects that signature when it recurs, fires a short conditioned cue, and measures whether the cue worked.</p>
+  <div class="thesis">
+    <div><span class="k">What is measured</span><span class="v">EEG, skin conductance, heart rhythm and motion, fused into one probability of an off-aim loop.</span></div>
+    <div><span class="k">What is new</span><span class="v">Personal calibration, plus a second model that learns which interruption works for this person.</span></div>
+    <div><span class="k">Where Robbins fits</span><span class="v">His live-event frameworks supply the aim, the cue design and the intervention library. The sensors grade them.</span></div>
+    <div><span class="k">First proof</span><span class="v">Train on four days, predict the fifth. If that fails, nothing downstream matters.</span></div>
+  </div>
+</header>
+
+<section id="reframe">
+  <div class="eyebrow">Section 1</div>
+  <h2>Detect the state, leave the thought alone</h2>
+  <div class="prose">
+    <p>No biosignal carries a channel for positive or negative thought. Skin conductance rises with fear, excitement, concentration and exercise alike. Frontal alpha asymmetry, long read as a positive-versus-negative index, tracks approach versus withdrawal: anger is negative in valence and still looks like approach.</p>
+    <p>What sensors can register is that a recurring pattern of attention and arousal has started again. For one person, with their own labels, that is a tractable classification problem.</p>
+  </div>
+  <div class="versus">
+    <div>
+      <span class="k">Weak claim</span>
+      <span class="big">Positive thought vs. negative thought</span>
+      <span class="small muted">Universal, semantic, unsupported. Fails across people and across days.</span>
+    </div>
+    <div class="yes">
+      <span class="k">Buildable claim</span>
+      <span class="big">On-aim state vs. off-aim recurring state, for one person</span>
+      <span class="small">Operational, personal, testable on held-out days.</span>
+    </div>
+  </div>
+</section>
+
+<section id="signals">
+  <div class="eyebrow">Section 2</div>
+  <h2>What the “vibrations” physically are</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Signal</th><th>Physically measured</th><th>What it can tell you</th><th>Role here</th></tr></thead>
+      <tbody>
+        <tr><td><strong>EEG</strong></td><td>Microvolt differences at the scalp from synchronized neural activity</td><td>Attention, workload, sleepiness, mind-wandering, some approach states</td><td>Attention channel</td></tr>
+        <tr><td><strong>EDA / GSR</strong></td><td>Skin conductance change driven by sympathetic sweat-gland activity</td><td>Arousal and activation, with no sign attached</td><td>Activation channel</td></tr>
+        <tr><td><strong>Skin potential</strong></td><td>Naturally occurring voltage between two skin sites, no current applied</td><td>Same sympathetic activity as EDA</td><td>Alternative to EDA</td></tr>
+        <tr><td><strong>ECG / HRV</strong></td><td>Heart electrical activity and beat-to-beat intervals</td><td>Autonomic regulation, stress and recovery</td><td>Slow context</td></tr>
+        <tr><td><strong>PPG</strong></td><td>Optical blood-volume pulse</td><td>Heart rate, approximate pulse-rate variability</td><td>Cheap ECG substitute</td></tr>
+        <tr><td><strong>fNIRS</strong></td><td>Oxygenated and deoxygenated blood in superficial cortex</td><td>Sustained workload; slower than EEG</td><td>Later, optional</td></tr>
+        <tr><td><strong>EMG</strong></td><td>Muscle electrical activity</td><td>Jaw clench, brow tension</td><td>Tension channel and artifact flag</td></tr>
+        <tr><td><strong>Accelerometer</strong></td><td>Movement</td><td>Walking, fidgeting, exercise</td><td>Vetoes false alarms</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure>
+    <div class="plate mid">
+      <svg viewBox="0 0 700 262" role="img" aria-label="Chart of how quickly each signal registers a state change, on a logarithmic time axis from 10 milliseconds to 1000 seconds">
+        <g>
+          <line class="grid" x1="150" y1="30" x2="150" y2="214"/><line class="grid" x1="254" y1="30" x2="254" y2="214"/>
+          <line class="grid" x1="358" y1="30" x2="358" y2="214"/><line class="grid" x1="462" y1="30" x2="462" y2="214"/>
+          <line class="grid" x1="566" y1="30" x2="566" y2="214"/><line class="grid" x1="670" y1="30" x2="670" y2="214"/>
+        </g>
+        <g class="t-mono" text-anchor="middle">
+          <text x="150" y="232" class="t-mono">10 ms</text><text x="254" y="232" class="t-mono">100 ms</text>
+          <text x="358" y="232" class="t-mono">1 s</text><text x="462" y="232" class="t-mono">10 s</text>
+          <text x="566" y="232" class="t-mono">100 s</text><text x="670" y="232" class="t-mono">1000 s</text>
+        </g>
+        <text x="410" y="254" text-anchor="middle" class="t-mono">time for the signal to register a change (log scale)</text>
+        <g text-anchor="end">
+          <text x="138" y="50" class="t-lab">EMG</text>
+          <text x="138" y="80" class="t-lab">EEG band power</text>
+          <text x="138" y="110" class="t-lab">Heart rate</text>
+          <text x="138" y="140" class="t-lab">EDA response</text>
+          <text x="138" y="170" class="t-lab">fNIRS</text>
+          <text x="138" y="200" class="t-lab">HRV (RMSSD)</text>
+        </g>
+        <rect class="bar" x="150" y="38" width="208" height="16" rx="2"/>
+        <rect class="bar" x="254" y="68" width="167" height="16" rx="2"/>
+        <rect class="bar" x="358" y="98" width="104" height="16" rx="2"/>
+        <rect class="bar" x="358" y="128" width="122" height="16" rx="2"/>
+        <rect class="bar" x="431" y="158" width="49" height="16" rx="2"/>
+        <rect class="bar-slow" x="512" y="188" width="104" height="16" rx="2"/>
+      </svg>
+    </div>
+    <figcaption>Typical ranges from the psychophysiology literature, added here as a design aid; they are my working estimates and were not in the source research. HRV is the slow one: it needs 30 seconds to 5 minutes of beats, so it sets context and cannot trigger a cue by itself.</figcaption>
+  </figure>
+
+  <details>
+    <summary>Technical expansion: why the sign of arousal is missing</summary>
+    <div class="in">
+      <ul>
+        <li><strong>EDA</strong> has two parts. The tonic level (SCL) drifts over minutes. Phasic responses (SCRs) begin roughly 1 to 3 seconds after an event and take several more seconds to recover. Both rise with any sympathetic activation.</li>
+        <li><strong>Endosomatic vs. exosomatic.</strong> Skin potential records the body's own voltage. Most consumer devices are exosomatic: they apply a tiny controlled voltage and read conductance. Either works for this project.</li>
+        <li><strong>Frontal alpha asymmetry</strong> is computed as ln(right alpha power) minus ln(left alpha power) at paired frontal sites such as F4 and F3. Use it as one feature among many, labelled approach versus withdrawal.</li>
+        <li><strong>Consequence for the design.</strong> Valence has to come from the person's own labels. The sensors contribute "attention moved" and "activation rose", and the pairing of those two is what separates a loop from ordinary drifting.</li>
+      </ul>
+    </div>
+  </details>
+</section>
+
+<section id="robbins">
+  <div class="eyebrow">Section 3</div>
+  <h2>The Robbins layer: a state model and an intervention library</h2>
+  <div class="prose">
+    <p>Tony Robbins' live events, <em>Unleash the Power Within</em> and <em>Date With Destiny</em>, teach a working model of state change. It has the same shape as the engineering loop: notice the pattern, interrupt it, install a replacement, repeat until it holds. Two things make it useful here.</p>
+    <p>First, his Triad says state is produced by three levers. Two of them line up with what the sensors measure. Second, his six-step conditioning method is already a closed loop, run by a coach in a room. This project swaps the coach's eyes for a classifier.</p>
+  </div>
+
+  <figure>
+    <div class="plate mid">
+      <svg viewBox="0 0 640 372" role="img" aria-label="The Triad drawn as a triangle. Physiology is measured by skin conductance, heart rhythm, muscle and motion sensors. Focus is measured by EEG attention features. Language and meaning cannot be sensed and come from self-report labels.">
+        <polygon class="box" points="320,78 120,292 520,292"/>
+        <text x="320" y="214" text-anchor="middle" style="font-family:var(--display);font-size:24px;font-weight:700">STATE</text>
+        <text x="320" y="236" text-anchor="middle" class="t-sub">what the classifier estimates</text>
+        <circle cx="320" cy="78" r="7" class="box-sig"/><circle cx="120" cy="292" r="7" class="box-sig"/><circle cx="520" cy="292" r="7" class="box-cue"/>
+        <text x="320" y="30" text-anchor="middle" class="t-lab">PHYSIOLOGY</text>
+        <text x="320" y="48" text-anchor="middle" class="t-sub">EDA · HRV · EMG · breathing · motion</text>
+        <text x="320" y="64" text-anchor="middle" class="t-mono">sensed directly</text>
+        <text x="20" y="322" class="t-lab">FOCUS</text>
+        <text x="20" y="340" class="t-sub">EEG attention and mind-wandering features</text>
+        <text x="20" y="356" class="t-mono">sensed, per person</text>
+        <text x="620" y="322" text-anchor="end" class="t-lab">LANGUAGE AND MEANING</text>
+        <text x="620" y="340" text-anchor="end" class="t-sub">the story being told</text>
+        <text x="620" y="356" text-anchor="end" class="t-mono" style="fill:var(--cue)">not sensed: self-report labels only</text>
+      </svg>
+    </div>
+    <figcaption>The Triad mapped onto the sensor stack. The third corner is the reason labels are needed: the meaning of the loop lives in the person's own words.</figcaption>
+  </figure>
+
+  <h3>Neuro-Associative Conditioning, step for step against the loop</h3>
+  <div class="pairs">
+    <div class="pair"><span class="i">1</span><span class="a">Decide what you want and what stops you<span>Identify the block</span></span><span>Define the aim and name the recurring loop. These become the labels <code>ON_AIM</code> and <code>LOOP</code>.</span></div>
+    <div class="pair"><span class="i">2</span><span class="a">Get leverage<span>Link pain to the old pattern, pleasure to the new</span></span><span>Write down why the aim matters. Used at setup and inside the visualization step of the cue. Not sensed.</span></div>
+    <div class="pair"><span class="i">3</span><span class="a">Interrupt the pattern<span>Break the state abruptly</span></span><span>The detector fires the cue the moment the gate opens. The machine does the noticing the person fails to do mid-loop.</span></div>
+    <div class="pair"><span class="i">4</span><span class="a">Create an empowering alternative<span>Give the need a better route</span></span><span>The replacement routine: breath, aim image, phrase, back to the task.</span></div>
+    <div class="pair"><span class="i">5</span><span class="a">Condition it until it holds<span>Repetition with emotional intensity</span></span><span>Every detection is one rep. The efficacy model reinforces whichever cue produced the fastest recovery.</span></div>
+    <div class="pair"><span class="i">6</span><span class="a">Test it<span>Check it under pressure</span></span><span>Held-out days, sham trials, and the count of loops per day over weeks.</span></div>
+  </div>
+
+  <h3>Other event concepts and where each one lands</h3>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Concept</th><th>What Robbins teaches</th><th>Use in this system</th><th>Can sensors check it?</th></tr></thead>
+      <tbody>
+        <tr><td><strong>State, story, strategy</strong></td><td>Change state first; the story and the strategy follow</td><td>Order of the cue: body first, meaning second, task third</td><td>State yes, story no</td></tr>
+        <tr><td><strong>“Emotion is created by motion”</strong></td><td>Posture, breath and movement shift state fastest</td><td>Physiology-first interventions: sigh, stand, move</td><td>Yes: EDA, HRV, motion</td></tr>
+        <tr><td><strong>Anchoring</strong></td><td>Pair a unique stimulus with a peak state until the stimulus recalls it</td><td>The 3-second chord. It has to be conditioned in the on-aim state before it is used as an interrupt</td><td>Yes: recovery after the chord vs. sham</td></tr>
+        <tr><td><strong>Incantations</strong></td><td>A phrase spoken with full body and voice</td><td>The verbal step of the cue</td><td>Partly: arousal shift only</td></tr>
+        <tr><td><strong>Priming</strong></td><td>Morning routine: breathwork, three gratitudes, three wins visualized</td><td>Daily calibration window that produces clean on-aim baseline data and reconditions the anchor</td><td>Yes: baseline quality</td></tr>
+        <tr><td><strong>Six human needs</strong></td><td>Certainty, variety, significance, connection, growth, contribution</td><td>Tag which need the loop is serving so the alternative serves the same need</td><td>No: label only</td></tr>
+        <tr><td><strong>Primary question</strong></td><td>The habitual question that steers focus (Date With Destiny)</td><td>The focus-lever intervention: replace the loop's question with a chosen one</td><td>Partly: EEG attention return</td></tr>
+        <tr><td><strong>RPM</strong></td><td>Result, purpose, massive action plan</td><td>Structure of Phase 0 and of each daily aim</td><td>No: defines the target</td></tr>
+        <tr><td><strong>Constant and never-ending improvement</strong></td><td>Small daily gains compound</td><td>The learning layer that updates cue selection every trial</td><td>Yes: it is the metric</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose">
+    <p class="small muted"><strong>How to read this section.</strong> These are coaching frameworks. They have not been validated in controlled trials, and one published analysis of Neuro-Associative Conditioning questions its scientific grounding. Here they are treated as a well-organized set of hypotheses about what interrupts a loop. The project's value is that each one gets measured.</p>
+  </div>
+</section>
+
+<section id="architecture">
+  <div class="eyebrow">Section 4</div>
+  <h2>Architecture: two learning problems in one loop</h2>
+  <figure>
+    <div class="plate wide">
+      <svg viewBox="0 0 880 300" role="img" aria-label="Loop diagram. Sensors feed features, then a personal classifier, then a confidence gate, then a cue, then a recovery measurement. A dashed return path sends the recovery result back to choose the next cue.">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrowhead" d="M0,0 L10,5 L0,10 z"/></marker>
+          <marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrowhead-cue" d="M0,0 L10,5 L0,10 z"/></marker>
+        </defs>
+        <text x="20" y="28" class="t-mono">PROBLEM 1 · DETECTION</text>
+        <text x="596" y="28" class="t-mono" style="fill:var(--cue)">PROBLEM 2 · INTERVENTION EFFICACY</text>
+        <g>
+          <rect class="box" x="20" y="44" width="124" height="92" rx="3"/>
+          <text x="82" y="72" text-anchor="middle" class="t-lab">Sense</text>
+          <text x="82" y="92" text-anchor="middle" class="t-sub">EEG · EDA</text>
+          <text x="82" y="108" text-anchor="middle" class="t-sub">HRV · motion</text>
+          <rect class="box" x="164" y="44" width="124" height="92" rx="3"/>
+          <text x="226" y="72" text-anchor="middle" class="t-lab">Featurize</text>
+          <text x="226" y="92" text-anchor="middle" class="t-sub">10–30 s windows</text>
+          <text x="226" y="108" text-anchor="middle" class="t-sub">artifact rejection</text>
+          <rect class="box-sig" x="308" y="44" width="124" height="92" rx="3"/>
+          <text x="370" y="72" text-anchor="middle" class="t-lab">Classify</text>
+          <text x="370" y="92" text-anchor="middle" class="t-sub">personal model</text>
+          <text x="370" y="108" text-anchor="middle" class="t-sub">P(off-aim loop)</text>
+          <rect class="box-sig" x="452" y="44" width="124" height="92" rx="3"/>
+          <text x="514" y="72" text-anchor="middle" class="t-lab">Gate</text>
+          <text x="514" y="92" text-anchor="middle" class="t-sub">P &gt; 0.80 × 3</text>
+          <text x="514" y="108" text-anchor="middle" class="t-sub">still · not refractory</text>
+          <rect class="box-cue" x="596" y="44" width="124" height="92" rx="3"/>
+          <text x="658" y="72" text-anchor="middle" class="t-lab">Cue</text>
+          <text x="658" y="92" text-anchor="middle" class="t-sub">chord · breath</text>
+          <text x="658" y="108" text-anchor="middle" class="t-sub">phrase · aim image</text>
+          <rect class="box-cue" x="740" y="44" width="124" height="92" rx="3"/>
+          <text x="802" y="72" text-anchor="middle" class="t-lab">Measure</text>
+          <text x="802" y="92" text-anchor="middle" class="t-sub">recovery time</text>
+          <text x="802" y="108" text-anchor="middle" class="t-sub">vs. sham trials</text>
+        </g>
+        <g>
+          <line class="ln" x1="144" y1="90" x2="162" y2="90" marker-end="url(#ah)"/>
+          <line class="ln" x1="288" y1="90" x2="306" y2="90" marker-end="url(#ah)"/>
+          <line class="ln" x1="432" y1="90" x2="450" y2="90" marker-end="url(#ah)"/>
+          <line class="ln" x1="576" y1="90" x2="594" y2="90" marker-end="url(#ah)"/>
+          <line class="ln" x1="720" y1="90" x2="738" y2="90" marker-end="url(#ah)"/>
+        </g>
+        <path class="ln-cue" d="M802,136 L802,206 L658,206 L658,140" marker-end="url(#ahc)"/>
+        <text x="730" y="226" text-anchor="middle" class="t-sub" style="fill:var(--cue)">learn which cue works in which state</text>
+        <path class="ln" d="M802,136 L802,262 L82,262 L82,140" marker-end="url(#ah)" style="stroke-dasharray:2 4"/>
+        <text x="370" y="282" text-anchor="middle" class="t-sub">the person's state changes, and sensing continues</text>
+        <rect class="box" x="164" y="170" width="268" height="52" rx="3"/>
+        <text x="298" y="192" text-anchor="middle" class="t-lab">Labels</text>
+        <text x="298" y="210" text-anchor="middle" class="t-sub">loop button · random 15-second prompts</text>
+        <line class="ln" x1="370" y1="170" x2="370" y2="140" marker-end="url(#ah)"/>
+      </svg>
+    </div>
+    <figcaption>Detection asks whether the unwanted state is happening. Efficacy asks whether the signals moved back toward this person's on-aim state after the cue. The second question is the more interesting one, scientifically and commercially.</figcaption>
+  </figure>
+
+  <h3>The four states the classifier separates</h3>
+  <div class="states">
+    <div class="state"><span class="tag">ON_AIM</span><h4>Focused</h4><p>Working toward the chosen goal. This is the reference state every recovery is measured against.</p></div>
+    <div class="state"><span class="tag">NEUTRAL</span><h4>Neutral</h4><p>Relaxed, no goal-directed work. Low activation. Must not trigger a cue.</p></div>
+    <div class="state"><span class="tag">DISTRACTED</span><h4>Mind-wandering</h4><p>Attention drifted, little emotional charge. EEG shifts, EDA stays flat.</p></div>
+    <div class="state target"><span class="tag">LOOP · the target</span><h4>Activated off-aim loop</h4><p>Repetitive thought with rising autonomic activation. EEG and EDA move together, with the body still.</p></div>
+  </div>
+
+  <details>
+    <summary>Technical expansion: the gate, in code</summary>
+    <div class="in">
+      <p>The gate exists to keep false alarms rare. Three consecutive windows at a 5-second hop puts detection 15 to 30 seconds behind onset, which fits the EDA timescale above.</p>
+<pre>WINDOW      = 20 s      # feature window
+HOP         = 5 s       # new estimate every 5 s
+THRESHOLD   = 0.80      # P(loop), tuned per person
+CONSECUTIVE = 3
+REFRACTORY  = 10 min    # no second cue inside this
+SHAM_RATE   = 0.25      # detections where the cue is withheld
+
+if all(p &gt; THRESHOLD for p in last(CONSECUTIVE)) \
+   and motion_rms &lt; MOTION_LIMIT \
+   and signal_quality_ok \
+   and now - last_cue &gt; REFRACTORY:
+       arm = "sham" if random() &lt; SHAM_RATE else policy.choose(state)
+       deliver(arm); log(trial); last_cue = now</pre>
+      <p>The sham arm is the piece people leave out. Loops end by themselves, so without withheld-cue trials every intervention looks effective.</p>
+    </div>
+  </details>
+</section>
+
+<section id="plan">
+  <div class="eyebrow">Section 5</div>
+  <h2>Build plan</h2>
+  <div class="prose">
+    <p>Six phases for one person over about ten weeks. Each phase ends with a gate. The timeline and the numeric thresholds are my proposal, sized to the evidence in Section 8; the experiment design is from the research.</p>
+  </div>
+  <div class="plate">
+    <div class="gantt" role="img" aria-label="Timeline of the six phases across ten weeks">
+      <div class="row axis"><span></span><div class="track"><span>wk 1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div></div>
+      <div class="row"><span>0 · Define the aim</span><div class="track"><div class="bar cue" style="grid-column:1/2;width:22%"></div></div></div>
+      <div class="row"><span>1 · Public datasets</span><div class="track"><div class="bar" style="grid-column:1/2"></div></div></div>
+      <div class="row"><span>2 · Instrument, record</span><div class="track"><div class="bar" style="grid-column:2/4"></div></div></div>
+      <div class="row"><span>3 · Personal model</span><div class="track"><div class="bar" style="grid-column:4/5"></div></div></div>
+      <div class="row"><span>4 · Close the loop</span><div class="track"><div class="bar cue" style="grid-column:5/7"></div></div></div>
+      <div class="row"><span>5 · Learn the best cue</span><div class="track"><div class="bar cue" style="grid-column:7/11"></div></div></div>
+    </div>
+  </div>
+  <div class="toolbar">
+    <button class="btn" id="expand-all" type="button">Open all technical expansions</button>
+    <span class="small muted">Amber bars are the phases where the Robbins material does the work.</span>
+  </div>
+
+  <div class="phases">
+
+    <div class="phase">
+      <div class="meta"><span class="n">Phase 0</span><h3>Define the aim</h3><span class="when">1 day</span></div>
+      <div class="body">
+        <p class="goal">Decide what on-aim means for this person before any sensor goes on. The classifier can only learn a target someone has named.</p>
+        <ol class="steps">
+          <li data-p="0"><div><h4>Write the aim as RPM</h4><ul><li>Result: the specific outcome the work sessions serve</li><li>Purpose: why it matters, in the person's words</li><li>Action: the task that counts as being on-aim</li></ul></div></li>
+          <li data-p="0"><div><h4>Name the loop</h4><ul><li>One recurring thought pattern, described in a sentence</li><li>The primary question it keeps asking</li><li>Which of the six needs it is serving</li></ul></div></li>
+          <li data-p="0"><div><h4>Fix the label set</h4><ul><li><code>ON_AIM</code>, <code>NEUTRAL</code>, <code>DISTRACTED</code>, <code>LOOP</code></li><li>One-line definition for each, written down and not changed mid-study</li></ul></div></li>
+          <li data-p="0"><div><h4>Design and condition the anchor</h4><ul><li>Pick one distinctive 3-second sound used for nothing else</li><li>Pair it with the peak on-aim state during daily priming, starting now</li></ul></div></li>
+        </ol>
+        <p class="robbins"><b>Robbins tie-in.</b> RPM, the primary question and the six needs come from Date With Destiny. Anchoring only works if the stimulus was first paired with the state, so conditioning starts weeks before the cue is used as an interrupt.</p>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="meta"><span class="n">Phase 1</span><h3>Rehearse on public data</h3><span class="when">Week 1 · no hardware</span></div>
+      <div class="body">
+        <p class="goal">Build the feature pipeline and the validation harness on data that already exists, so the first personal recording goes into working code.</p>
+        <ol class="steps">
+          <li data-p="1"><div><h4>Autonomic classifier on WESAD</h4><ul><li>Chest ECG, EDA, EMG, respiration, temperature and wrist BVP, with neutral, stress and amusement labels</li><li>Build EDA and HRV features; classify stress vs. neutral</li></ul></div></li>
+          <li data-p="1"><div><h4>EEG classifier on SEED</h4><ul><li>62-channel EEG during emotion-inducing film clips</li><li>Then repeat using only the 4 to 8 channels the chosen headset has</li></ul></div></li>
+          <li data-p="1"><div><h4>Measure the generalization gap</h4><ul><li>Same-session accuracy vs. leave-one-subject-out vs. leave-one-session-out</li><li>This gap is the number the personal study has to beat</li></ul></div></li>
+        </ol>
+        <details>
+          <summary>Technical expansion: features and tooling</summary>
+          <div class="in">
+            <ul>
+              <li><strong>EEG:</strong> log band power in theta (4–8 Hz), alpha (8–13 Hz), beta (13–30 Hz) per channel; theta/beta and alpha/theta ratios; frontal alpha asymmetry; spectral entropy; coherence or phase-locking between channel pairs.</li>
+              <li><strong>EDA:</strong> tonic level and its slope; count, amplitude and summed area of phasic responses per window after tonic/phasic decomposition.</li>
+              <li><strong>Cardiac:</strong> mean heart rate; RMSSD and SDNN over 60-second rolling windows.</li>
+              <li><strong>Motion:</strong> RMS acceleration per window, used as a feature and as a veto.</li>
+              <li><strong>Stack:</strong> Python with MNE for EEG, NeuroKit2 for EDA and HRV, scikit-learn or LightGBM for models, BrainFlow or Lab Streaming Layer for acquisition.</li>
+              <li><strong>Models:</strong> gradient-boosted trees and an SVM. Leave deep networks until there are weeks of data.</li>
+            </ul>
+          </div>
+        </details>
+        <div class="gate"><b>Gate</b>Pipeline runs end to end and reproduces a sensible baseline on both datasets. Leave-one-subject-out results are visibly worse than same-session results; if they are not, there is a leak in the split.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="meta"><span class="n">Phase 2</span><h3>Instrument and record</h3><span class="when">Weeks 2–3 · 8+ days of data</span></div>
+      <div class="body">
+        <p class="goal">Collect personal ground truth during real work sessions.</p>
+        <ol class="steps">
+          <li data-p="2"><div><h4>Assemble the rig</h4><ul><li>EEG headset, fingertip EDA, chest-strap ECG, phone or watch for motion</li><li>One clock: every stream timestamped through the same recorder</li></ul></div></li>
+          <li data-p="2"><div><h4>Self-caught labels</h4><ul><li>A single button: “I am in the loop I want interrupted”</li><li>Tap the moment it is noticed</li></ul></div></li>
+          <li data-p="2"><div><h4>Probe-caught labels</h4><ul><li>Random prompts through the day: “What were you thinking about in the previous 15 seconds?”</li><li>Answer with one of the four labels</li></ul></div></li>
+          <li data-p="2"><div><h4>Daily priming block</h4><ul><li>10 minutes before the first session, recorded</li><li>Gives a clean on-aim baseline each day and one more anchor-conditioning rep</li></ul></div></li>
+        </ol>
+        <details>
+          <summary>Technical expansion: label timing and data hygiene</summary>
+          <div class="in">
+            <ul>
+              <li><strong>Label the window before the tap.</strong> The loop was running before it was noticed. Take the 10 to 30 seconds preceding each tap as the positive example and discard the 2 seconds around the tap, which contain the motor act.</li>
+              <li><strong>Probes fix the sampling bias.</strong> Self-caught taps only capture loops the person noticed. Random probes catch the unnoticed ones and supply the negative classes.</li>
+              <li><strong>Target volume:</strong> at least 30 <code>LOOP</code> examples and 100 examples across the other labels, spread over 8 or more separate days.</li>
+              <li><strong>Synchronization:</strong> Lab Streaming Layer with all devices on one host; verify alignment with a shared event such as a hand clap seen in EEG, EMG and accelerometer.</li>
+              <li><strong>Quality flags:</strong> electrode contact, EEG amplitude above about 100 µV, jaw-clench and blink bursts. Flagged windows are excluded from training and block the gate at run time.</li>
+              <li><strong>Session log:</strong> caffeine, sleep, time of day, sitting or standing. These shift baselines more than thoughts do.</li>
+            </ul>
+          </div>
+        </details>
+        <div class="gate"><b>Gate</b>Enough labelled examples on enough separate days, with under roughly 20% of windows lost to artifacts.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="meta"><span class="n">Phase 3</span><h3>Personal model, held-out days</h3><span class="when">Week 4 · the critical test</span></div>
+      <div class="body">
+        <p class="goal">Train on Monday to Thursday. Predict Friday, then Saturday. A model that only recognizes its own training session is a lab artifact.</p>
+        <ol class="steps">
+          <li data-p="3"><div><h4>Baseline-normalize per day</h4><ul><li>Express every feature relative to that morning's priming baseline</li></ul></div></li>
+          <li data-p="3"><div><h4>Train <code>LOOP</code> vs. everything else</h4><ul><li>Leave-one-day-out cross-validation</li><li>Compare fused model against EEG-only and EDA-only</li></ul></div></li>
+          <li data-p="3"><div><h4>Score what a user would feel</h4><ul><li>False cues per hour at the chosen threshold</li><li>Share of real loops caught, and how late</li></ul></div></li>
+        </ol>
+        <details>
+          <summary>Technical expansion: what a good result looks like</summary>
+          <div class="in">
+            <ul>
+              <li><strong>Reference point.</strong> In one published EEG mind-wandering study, within-person classification reached AUC 0.715 and across-person 0.613. Results in that range are normal for this problem. A reported 0.95 almost always means leakage between train and test windows.</li>
+              <li><strong>Proposed pass mark:</strong> held-out-day AUC of 0.70 or better, and no more than 2 false cues per hour at a threshold that still catches at least half the labelled loops.</li>
+              <li><strong>Leakage checks:</strong> never let overlapping windows from the same episode sit on both sides of a split; shuffle labels within day and confirm AUC falls to 0.5.</li>
+              <li><strong>Ablation:</strong> if EDA and motion alone match the fused model, the EEG headset is not earning its place and the product can be a wristband.</li>
+              <li><strong>Drift:</strong> plot AUC by days since training. That curve decides how often recalibration is needed.</li>
+            </ul>
+          </div>
+        </details>
+        <div class="gate"><b>Go / no-go</b>Pass: move to Phase 4. Fail: collect two more weeks, tighten the loop definition, or narrow the target to activation-only detection without EEG.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="meta"><span class="n">Phase 4</span><h3>Close the loop</h3><span class="when">Weeks 5–6</span></div>
+      <div class="body">
+        <p class="goal">Run the detector live and deliver one fixed cue, with a share of detections left untreated as controls.</p>
+        <ol class="steps">
+          <li data-p="4"><div><h4>Real-time inference</h4><ul><li>New probability every 5 seconds; gate as specified in Section 4</li></ul></div></li>
+          <li data-p="4"><div><h4>The cue, under 20 seconds</h4><ul><li>Anchor chord, 3 seconds</li><li>One physiological sigh: double inhale through the nose, long exhale</li><li>The phrase, said aloud or under the breath</li><li>Five seconds seeing the aim as done</li><li>Resume the task</li></ul></div></li>
+          <li data-p="4"><div><h4>Sham trials</h4><ul><li>On about a quarter of detections, log the event and deliver nothing</li></ul></div></li>
+          <li data-p="4"><div><h4>Confirm or reject each cue</h4><ul><li>One tap after each cue: “yes, I was in it” or “no”</li><li>These taps become new training labels</li></ul></div></li>
+        </ol>
+        <p class="robbins"><b>Robbins tie-in.</b> The cue walks the Triad in his order. Chord and breath change physiology, the phrase changes language, the image changes focus. It is state first, then story, then strategy, compressed into twenty seconds.</p>
+        <details>
+          <summary>Technical expansion: measuring recovery</summary>
+          <div class="in">
+            <ul>
+              <li><strong>Primary outcome:</strong> seconds from detection until P(loop) stays below 0.30 for three windows.</li>
+              <li><strong>Secondary:</strong> skin conductance level back within the day's on-aim band; minutes until the next detection; loops per on-task hour, week over week.</li>
+              <li><strong>Comparison:</strong> cue trials against sham trials, within person. With roughly 40 or more of each, a simple difference in median recovery time with a bootstrap interval is enough.</li>
+              <li><strong>Blanking:</strong> skip EEG for the first few seconds after the cue. The sigh and the spoken phrase produce muscle artifacts that would otherwise look like a state change.</li>
+            </ul>
+          </div>
+        </details>
+        <div class="gate"><b>Gate</b>Cue trials recover faster than sham trials, and the person still tolerates the system after two weeks. If the confirm rate is below about 60%, return to Phase 3.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="meta"><span class="n">Phase 5</span><h3>Learn which interruption works</h3><span class="when">Weeks 7–10</span></div>
+      <div class="body">
+        <p class="goal">Turn the fixed cue into a small library and let the recovery data choose among its entries.</p>
+        <ol class="steps">
+          <li data-p="5"><div><h4>Build the intervention arms</h4><ul><li>Physiology: sigh only; stand and move for ten seconds</li><li>Focus: the replacement primary question; the aim image</li><li>Language: the incantation</li><li>Full sequence: the Phase 4 cue</li><li>Sham</li></ul></div></li>
+          <li data-p="5"><div><h4>Assign adaptively</h4><ul><li>Each detection draws an arm; arms with faster recovery are drawn more often</li></ul></div></li>
+          <li data-p="5"><div><h4>Add context</h4><ul><li>Let the choice depend on the state at detection: high vs. low activation, time of day</li></ul></div></li>
+          <li data-p="5"><div><h4>Report</h4><ul><li>Recovery time by arm, loops per hour by week, false cues per hour</li></ul></div></li>
+        </ol>
+        <p class="robbins"><b>Robbins tie-in.</b> Each arm isolates one corner of the Triad. The result answers a question his events assert and never measure: for this person, in this state, which lever moves first?</p>
+        <details>
+          <summary>Technical expansion: the learning rule</summary>
+          <div class="in">
+            <ul>
+              <li><strong>Start with Thompson sampling</strong> over arms, reward equal to negative recovery time, capped at a ceiling. It handles small samples and keeps exploring.</li>
+              <li><strong>Keep the sham arm at a fixed rate</strong> outside the bandit so the control never gets starved.</li>
+              <li><strong>Contextual step:</strong> two or three context bins at most. With a few detections per day, anything richer will not converge within the study.</li>
+              <li><strong>Full reinforcement learning</strong> belongs to a multi-person product with months of data. It is the long-run architecture in the research and is out of reach for one person in ten weeks.</li>
+            </ul>
+          </div>
+        </details>
+        <div class="gate"><b>Decision</b>If one or two arms clearly beat sham and detection held up across days, there is a product hypothesis worth testing on five to ten more people.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="hardware">
+  <div class="eyebrow">Section 6</div>
+  <h2>Hardware, in three tiers</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Tier</th><th>Device</th><th>What it gives</th><th>Listed price</th><th>Watch for</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="3"><strong>Starter</strong><br><span class="small muted">fastest experiment</span></td><td>Muse 2</td><td>Forehead and temporal EEG, PPG, motion; developer SDK</td><td class="num">not checked</td><td>Signal quality below lab gear; commercial use needs an SDK agreement; ignore its processed scores</td></tr>
+        <tr><td>Polar H10</td><td>Chest-strap ECG for HRV</td><td class="num">not checked</td><td></td></tr>
+        <tr><td>Grove GSR sensor</td><td>Two-finger skin resistance as an analog voltage</td><td class="num">not checked</td><td>Hobby grade; fine for exploration</td></tr>
+        <tr><td rowspan="3"><strong>Builder</strong><br><span class="small muted">own the raw signal</span></td><td>OpenBCI Ganglion</td><td>4 channels, EEG / ECG / EMG</td><td class="num">$624.99</td><td>Electrodes and headwear are extra</td></tr>
+        <tr><td>OpenBCI Cyton</td><td>8 channels at 250 Hz, raw data, external event triggers</td><td class="num">$1,249.00</td><td>Best fit for this plan</td></tr>
+        <tr><td>BITalino EDA</td><td>Bluetooth EDA alongside other physiological channels</td><td class="num">not checked</td><td></td></tr>
+        <tr><td rowspan="3"><strong>Research</strong><br><span class="small muted">multi-person study</span></td><td>EMOTIV EPOC X</td><td>14 EEG channels plus built-in attention, stress and engagement metrics</td><td class="num">$1,199</td><td>Raw-data access sits behind a paid software plan</td></tr>
+        <tr><td>Shimmer3R GSR+</td><td>EDA, PPG and 10-axis motion</td><td class="num">$850</td><td>The research note had €650</td></tr>
+        <tr><td>Empatica EmbracePlus</td><td>Wrist EDA, PPG, temperature, motion, raw data</td><td class="num">not checked</td><td>Sold for research programmes</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">Prices read from the vendors' own pages on 3 October 2026. “Not checked” means I did not confirm a current price.</p>
+  <div class="gate"><b>Electrical safety</b>Use commercial, battery-powered, isolated biosensing equipment as instructed. Never connect body electrodes to an improvised amplifier or anything referenced to mains power.</div>
+</section>
+
+<section id="evidence">
+  <div class="eyebrow">Section 7</div>
+  <h2>Evidence ledger</h2>
+  <div class="prose"><p>Each component, how well it is supported, and where I found a difference from the research note.</p></div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Claim</th><th>Status</th><th>Basis</th></tr></thead>
+      <tbody>
+        <tr><td>EDA tracks sympathetic arousal</td><td><span class="chip ok">Established</span></td><td>Decades of psychophysiology. Carries no valence.</td></tr>
+        <tr><td>Frontal asymmetry tracks approach vs. withdrawal</td><td><span class="chip ok">Established</span></td><td>Harmon-Jones and colleagues: anger shows the approach pattern.</td></tr>
+        <tr><td>EEG can detect mind-wandering, best per person</td><td><span class="chip warn">Promising</span></td><td>Dhindsa et al. 2019, live lectures: individual patterns differed from the group pattern. Dong et al. 2021: AUC 0.715 within person, 0.613 across.</td></tr>
+        <tr><td>Closed-loop EEG can drive music that the listener then steers</td><td><span class="chip warn">Promising</span></td><td>Ehrlich et al. 2019, PLOS ONE.</td></tr>
+        <tr><td>EEG neurofeedback plus music lowers anxiety</td><td><span class="chip warn">Promising</span></td><td>2025 study located on PubMed; I could not open the full record to confirm design and sample.</td></tr>
+        <tr><td>Closed-loop alpha training improves sustained attention</td><td><span class="chip warn">Promising</span></td><td>Mishra et al. 2021. Jacques et al. 2026, NeuroImage: double-blind, sham-controlled, five sessions; the abstract reports 101 adults, where the research note said 108. Gains appeared in those who learned to raise alpha frequency.</td></tr>
+        <tr><td>Closed-loop EEG for mental health is an active field</td><td><span class="chip warn">Promising</span></td><td>Zhang et al. 2026 review of 25 studies since 2021. The authors call the evidence preliminary: small pilots, few sham controls, and no study rated low risk of bias.</td></tr>
+        <tr><td>EEG emotion models transfer across people and sessions</td><td><span class="chip open">Open</span></td><td>Reviews report this as the main unsolved problem. It is the reason for personal calibration.</td></tr>
+        <tr><td>A universal signal for positive or negative thought</td><td><span class="chip open">Open</span></td><td>None established.</td></tr>
+        <tr><td>Fused EEG + EDA + HRV detects one person's recurring loop on new days</td><td><span class="chip open">Open</span></td><td>This is Phase 3. Nobody has shown it for this specific target.</td></tr>
+        <tr><td>Robbins' frameworks change state as described</td><td><span class="chip open">Open</span></td><td>Coaching practice, no controlled trials. One published analysis questions the scientific basis of NAC. Phase 5 tests the pieces.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="risks">
+  <div class="eyebrow">Section 8</div>
+  <h2>Risks and guardrails</h2>
+  <ul class="plain">
+    <li><strong>Overclaiming.</strong> Say “detects a personal off-aim state”. Never say “detects negative thoughts”. The second claim is false and invites regulatory trouble.</li>
+    <li><strong>Regression to the mean.</strong> Loops end without help. Without sham trials the system will appear to work whatever it does.</li>
+    <li><strong>Interruption fatigue.</strong> A cue that fires wrongly twice in an hour gets switched off. False cues per hour is the product metric.</li>
+    <li><strong>Leverage through pain.</strong> The Robbins leverage step attaches pain to the old pattern. For a loop that is already anxious, that may raise activation. Use the pull of the aim, and let the recovery data decide.</li>
+    <li><strong>Scope.</strong> This is a focus and self-regulation experiment. It is not treatment for anxiety, depression or obsessive rumination, and a loop that is distressing or persistent belongs with a clinician.</li>
+    <li><strong>Neural data privacy.</strong> Keep raw recordings local and encrypted. Several jurisdictions now treat neural data as a sensitive category.</li>
+    <li><strong>Licensing.</strong> Muse's SDK needs a commercial agreement before anything ships; EMOTIV's raw data needs a paid plan.</li>
+  </ul>
+</section>
+
+<section id="sources">
+  <div class="eyebrow">Sources</div>
+  <h2>What this draws on</h2>
+  <ol class="src">
+    <li>Dhindsa K. et al. (2019). <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0222276">Individualized pattern recognition for detecting mind wandering from EEG during live lectures</a>. PLOS ONE.</li>
+    <li>Dong H.W., Mills C., Knight R.T., Kam J.W.Y. (2021). <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0251490">Detection of mind wandering using EEG: within and across individuals</a>. PLOS ONE.</li>
+    <li>Ehrlich S.K. et al. (2019). <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0213516">A closed-loop, music-based brain-computer interface for emotion mediation</a>. PLOS ONE.</li>
+    <li>Mishra J. et al. (2021). <a href="https://www.researchgate.net/publication/351784748_Closed-loop_Neurofeedback_of_Alpha_Synchrony_during_Goal-directed_Attention">Closed-loop neurofeedback of alpha synchrony during goal-directed attention</a>. Journal of Neuroscience.</li>
+    <li>Jacques et al. (2026). <a href="https://www.sciencedirect.com/science/article/pii/S1053811926002272">Successful closed-loop neurofeedback alpha frequency modulation enhances the temporal dynamics of attention</a>. NeuroImage.</li>
+    <li>Zhang Y., Qian K., Coyle D., Dangana M., Metcalfe B. (2026). <a href="https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2026.1914165/full">Closed-loop EEG-based neurofeedback and brain-computer interface interventions for mental health: a review</a>. Frontiers in Neuroscience.</li>
+    <li><a href="https://pubmed.ncbi.nlm.nih.gov/41016499/">An anxiety regulation framework with a positive emotion-guided strategy: integrating EEG neurofeedback and music intervention</a> (2025). PubMed record; details not confirmed.</li>
+    <li>OpenBCI shop: <a href="https://shop.openbci.com/products/ganglion-board">Ganglion Board</a>, <a href="https://shop.openbci.com/products/cyton-biosensing-board-8-channel">Cyton Biosensing Board</a>.</li>
+    <li>EMOTIV: <a href="https://www.emotiv.com/blog/emotiv-epoc-x-price-guide">EPOC X price guide</a>.</li>
+    <li>Shimmer: <a href="https://www.shimmersensing.com/product/shimmer3-gsr-unit/">Shimmer3R GSR+ Unit</a>.</li>
+    <li>Tony Robbins Europe (event partner site): <a href="https://www.tony-robbins-europe.com/posts/tony-robbins-methods">core frameworks</a>, <a href="https://www.tony-robbins-europe.com/posts/tony-robbins-morning-routine-priming">priming routine</a>.</li>
+    <li><a href="https://www.researchgate.net/publication/247505508_Grounded_in_Science_or_Based_on_Hype_an_Analysis_of_Neuro-Associative_Conditioning">Grounded in Science or Based on Hype? An Analysis of Neuro-Associative Conditioning</a>. Located by title; full text not opened.</li>
+    <li>Datasets named in the research: WESAD (Schmidt et al., 2018) and SEED (Zheng and Lu, 2015).</li>
+  </ol>
+  <footer>Built from the attached research note. Signal table, state definitions, experiment design and hardware list are from that note. The Robbins mapping, phase timeline, numeric pass marks, sham-trial design and timescale chart are added here and marked as proposals where they appear.</footer>
+</section>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var btn=document.getElementById('expand-all');
+  if(!btn)return;
+  btn.addEventListener('click',function(){
+    var all=document.querySelectorAll('details');
+    var open=btn.getAttribute('data-open')==='1';
+    all.forEach(function(d){d.open=!open;});
+    btn.setAttribute('data-open',open?'0':'1');
+    btn.textContent=open?'Open all technical expansions':'Close all technical expansions';
+  });
+})();
+</script>
+</body>
+</html>
