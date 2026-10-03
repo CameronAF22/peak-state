@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-003",
+  "lane": "coord",
+  "title": "Dashboard on GitHub Pages, rebuilt from every branch",
+  "status": "accepted",
+  "type": "technical",
+  "context": "The user wants a shared dashboard (GitHub Pages or an Artifact) that shows lanes, decisions and status as they change. Pages deployments from non-default branches are restricted, and lane branches will not be merged until gates.",
+  "decision": "The coord workflow rebuilds site/dashboard.html plus data.json from coord/ on every remote branch after each push (and every 15 minutes once on main) and force-pushes the result to the coord-dashboard branch. GitHub Pages serves that branch (Settings, Pages, Deploy from a branch, coord-dashboard, root). The same page, with the data inlined, is published as a claude.ai Artifact snapshot that coord republishes at each gate. The page polls data.json every 60 s.",
+  "alternatives": [
+    "actions/deploy-pages: only deploys from the default branch, so nothing shows until merge",
+    "Artifact only: cannot read the repo live without a GitHub connector the viewer may not have"
+  ],
+  "consequences": "Pages needs a one-time setting by a repo admin. The dashboard lags a push by about one workflow run.",
+  "produces": [
+    "site/dashboard.html"
+  ],
+  "dependsOn": [
+    "D-coord-001"
+  ],
+  "supersedes": [],
+  "author": "claude (coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:00:00Z",
+  "acceptedAt": "2026-10-03T14:00:00Z",
+  "acceptedBy": "claude (coord)"
+}

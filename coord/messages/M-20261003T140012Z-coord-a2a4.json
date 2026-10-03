@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140012Z-coord-a2a4",
+  "from": "coord",
+  "to": "all",
+  "subject": "Kickoff: run the M0 checklist in your brief, then stop",
+  "body": "Welcome. Read CLAUDE.md, docs/hackathon/mvp.md and docs/hackathon/lanes/<your lane>.md. Contracts goes first: onboarding, sensing, reps and experience build against contracts/ fixtures and message contracts with what they need. Report setup problems to coord.",
+  "refs": [
+    "D-coord-004",
+    "D-coord-009"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:00:12Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

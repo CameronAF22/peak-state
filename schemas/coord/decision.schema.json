@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/coord/decision.schema.json",
+  "title": "Decision record",
+  "description": "coord/decisions/<lane>/<id>.json. Append-only: after it is written only status, acceptedAt and acceptedBy may change. Change a decision by writing a new one that lists it in `supersedes`. `produces` ties the decision to the files it governs; every lane-owned file must be covered by at least one decision.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "lane", "title", "status", "type", "context", "decision", "alternatives", "consequences", "produces", "dependsOn", "supersedes", "author", "session", "createdAt"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^D-[a-z][a-z0-9-]{1,23}-[0-9]{3}$" },
+    "lane": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,23}$" },
+    "title": { "type": "string", "minLength": 4, "maxLength": 120 },
+    "status": {
+      "enum": ["proposed", "accepted", "rejected"],
+      "description": "Stored status. `superseded` is derived when a later decision lists this one in `supersedes`."
+    },
+    "type": { "enum": ["scope", "product", "technical", "contract", "process", "research"] },
+    "context": { "type": "string", "minLength": 1, "description": "Why the question came up and what constrained it." },
+    "decision": { "type": "string", "minLength": 1, "description": "What was decided, stated so someone can act on it." },
+    "alternatives": { "type": "array", "items": { "type": "string" } },
+    "consequences": { "type": "string" },
+    "produces": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "pattern": "^[^/]" },
+      "description": "Repo paths this decision produced or governs. A trailing / covers a directory; * and ? are globs."
+    },
+    "dependsOn": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^D-[a-z][a-z0-9-]{1,23}-[0-9]{3}$" } },
+    "supersedes": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^D-[a-z][a-z0-9-]{1,23}-[0-9]{3}$" } },
+    "author": { "type": "string", "minLength": 1 },
+    "session": { "$ref": "#/$defs/sessionRef" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "acceptedAt": { "type": ["string", "null"], "format": "date-time" },
+    "acceptedBy": { "type": ["string", "null"] }
+  },
+  "$defs": {
+    "sessionRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "url", "branch"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "url": { "type": ["string", "null"], "pattern": "^https://" },
+        "branch": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

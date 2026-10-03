@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "name": "Peak State",
+    "event": "Hackathon MVP",
+    "repo": "CameronAF22/peak-state",
+    "defaultBranch": "main",
+    "laneBranchPrefix": "lane/",
+    "dashboardBranch": "coord-dashboard",
+    "dashboardUrl": "https://cameronaf22.github.io/peak-state/"
+  },
+  "generated": [
+    "coord/decisions/",
+    "coord/status/",
+    "coord/messages/",
+    "coord/sessions/",
+    "coord/events/",
+    "coord/trace/",
+    "spec/"
+  ],
+  "lanes": [
+    {
+      "id": "coord",
+      "name": "Coordination and spec",
+      "mission": "Run the protocol: lanes, the decision log, the generated spec, the dashboard, hooks and CI. Integrate lane branches into main and keep the board honest.",
+      "owns": ["README.md", "LICENSE", ".gitignore", "CLAUDE.md", ".claude/", ".github/", "coord/", "tools/", "site/", "docs/", "schemas/coord/"],
+      "deliverables": [
+        "Coordination protocol, hooks and CI that make decisions and status mandatory",
+        "Live dashboard on GitHub Pages plus an Artifact snapshot",
+        "MVP plan and one brief per lane",
+        "Integration of lane branches into main before the demo"
+      ],
+      "dependsOn": [],
+      "humanOwner": null
+    },
+    {
+      "id": "contracts",
+      "name": "Data contracts and API",
+      "mission": "Own every shape the lanes exchange: the three-emotion profile, calibration, signal frames, detection events, rep sessions, and the app-to-module API. Ship schemas, fixtures, generated types and contract tests first so every other lane can build against fixtures in parallel.",
+      "owns": ["schemas/", "examples/", "contracts/"],
+      "deliverables": [
+        "Profile v2: exactly three emotions, each with a physiology, focus and language strategy plus an optional anchor",
+        "Schemas for calibration, signal frame, detection event and rep session",
+        "contracts/: fixtures, TypeScript types and validation tests",
+        "contracts/API.md: the module interfaces app, onboarding, sensing and reps call"
+      ],
+      "dependsOn": [],
+      "humanOwner": null
+    },
+    {
+      "id": "onboarding",
+      "name": "Onboarding and strategy elicitation",
+      "mission": "Turn a first conversation into a confirmed profile: find the person's three top emotions and, for each, the strategy they already use to get there. Capture a short calibration of what each state looks like in their signals.",
+      "owns": ["onboarding/", "prompts/", "docs/elicitation.md", "docs/state-change.md"],
+      "deliverables": [
+        "Elicitation flow and prompts that produce a schema-valid three-emotion profile",
+        "Calibration step: recall each emotion for about 60 seconds while signals record",
+        "Playback of each confirmed strategy in the person's own words"
+      ],
+      "dependsOn": ["contracts"],
+      "humanOwner": null
+    },
+    {
+      "id": "sensing",
+      "name": "Sensing and detection",
+      "mission": "Get signals in and decide when to fire a rep: a deterministic simulator for the demo, a Web Bluetooth heart-rate strap as the real sensor, a manual trigger, and a personal-baseline detector with a gate.",
+      "owns": ["sensing/", "docs/oura-constraints.md", "docs/trigger-flow.md"],
+      "deliverables": [
+        "Signal adapters: simulator, Web Bluetooth heart-rate service (HR and RR intervals), manual trigger",
+        "Personal baseline from calibration and a detector that emits detection events",
+        "Gate: consecutive windows, refractory period, optional sham rate"
+      ],
+      "dependsOn": ["contracts"],
+      "humanOwner": null
+    },
+    {
+      "id": "reps",
+      "name": "Repetition and conditioning engine",
+      "mission": "Install each state as measurable reps: a short rep script per emotion (anchor, physiology, focus, language, rate), anchor conditioning, rep counting, an installed test, and recovery measured against sham.",
+      "owns": ["reps/"],
+      "deliverables": [
+        "Rep runner that plays a 20 to 40 second sequence per emotion from the profile",
+        "Rep log: intensity before and after, time to recover, cue or sham",
+        "Installed criterion and the anchor-only test"
+      ],
+      "dependsOn": ["contracts"],
+      "humanOwner": null
+    },
+    {
+      "id": "experience",
+      "name": "App experience and demo",
+      "mission": "Own what a judge touches: the web app that runs onboarding, calibration, live detection, the rep and progress, wired to the other lanes' modules, plus the three-minute demo script.",
+      "owns": ["app/", "demo/"],
+      "deliverables": [
+        "Web app shell with the five screens and a demo mode driven by the simulator",
+        "Integration of onboarding, sensing and reps modules through contracts/",
+        "Demo script, pitch notes and a fallback recording"
+      ],
+      "dependsOn": ["contracts", "onboarding", "sensing", "reps"],
+      "humanOwner": null
+    }
+  ]
+}

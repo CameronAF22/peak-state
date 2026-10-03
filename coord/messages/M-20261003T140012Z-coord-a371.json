@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140012Z-coord-a371",
+  "from": "coord",
+  "to": "human",
+  "subject": "How long is the hackathon, and when is the demo?",
+  "body": "Gates M0 to M4 are ordered but untimed (D-coord-009). Give the end time and demo slot and coord will attach times to each gate.",
+  "refs": [
+    "D-coord-009"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:00:12Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

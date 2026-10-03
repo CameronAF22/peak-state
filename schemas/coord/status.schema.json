@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/coord/status.schema.json",
+  "title": "Lane status",
+  "description": "coord/status/<lane>.json. Overwritten by the lane at every milestone and before a session stops.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "lane", "health", "phase", "progress", "summary", "now", "next", "blockers", "updatedAt", "session"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "lane": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,23}$" },
+    "health": { "enum": ["green", "amber", "red", "idle"] },
+    "phase": { "type": "string", "maxLength": 80 },
+    "progress": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "summary": { "type": "string", "minLength": 1, "maxLength": 240 },
+    "now": { "type": "array", "items": { "type": "string" } },
+    "next": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "session": { "$ref": "#/$defs/sessionRef" }
+  },
+  "$defs": {
+    "sessionRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "url", "branch"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "url": { "type": ["string", "null"], "pattern": "^https://" },
+        "branch": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

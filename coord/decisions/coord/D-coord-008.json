@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-008",
+  "lane": "coord",
+  "title": "Adopt the existing Peak State frame as the baseline",
+  "status": "accepted",
+  "type": "process",
+  "context": "The repo already holds the concept frame, prompts, v1 schemas, examples and the On-Aim research page. Coverage rules require every owned file to trace to a decision.",
+  "decision": "Everything that existed before the hackathon setup is accepted as baseline and owned per coord/lanes.json: README.md, LICENSE, .gitignore, docs/*.md, prompts/, schemas/*.schema.json (v1), examples/. docs/on-aim-closed-loop.html is brought over from the add-on-aim-closed-loop-research branch so every lane can read it. Lanes change these files through their own decisions.",
+  "alternatives": [
+    "Exempt pre-existing files from coverage: leaves a hole that new files could slip through"
+  ],
+  "consequences": "Lane decisions that rewrite these files should name this one in dependsOn or supersede it for their paths.",
+  "produces": [
+    "README.md",
+    "LICENSE",
+    ".gitignore",
+    "docs/architecture.md",
+    "docs/plan.md",
+    "docs/open-questions.md",
+    "docs/elicitation.md",
+    "docs/state-change.md",
+    "docs/oura-constraints.md",
+    "docs/trigger-flow.md",
+    "docs/on-aim-closed-loop.html",
+    "prompts/",
+    "examples/",
+    "schemas/anchor-update.schema.json",
+    "schemas/intervention-offer.schema.json",
+    "schemas/peak-strategies.schema.json",
+    "schemas/user-state-profile.schema.json",
+    "schemas/voice-session.schema.json"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "claude (coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:00:01Z",
+  "acceptedAt": "2026-10-03T14:00:01Z",
+  "acceptedBy": "claude (coord)"
+}

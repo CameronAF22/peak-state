@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-004",
+  "lane": "coord",
+  "title": "Six lanes with exclusive path ownership",
+  "status": "accepted",
+  "type": "scope",
+  "context": "The MVP has four separable capabilities (onboarding, sensing, reps, app) plus shared contracts and coordination. Parallel agents need hard boundaries to avoid editing the same files.",
+  "decision": "Lanes: coord, contracts, onboarding, sensing, reps, experience, as defined in coord/lanes.json. Each path belongs to exactly one lane by longest prefix. Contracts goes first so the other lanes build against fixtures. Each lane has a brief in docs/hackathon/lanes/.",
+  "alternatives": [
+    "Split by layer (frontend/backend): the demo is browser-only, so there is no backend to split off",
+    "Fewer, larger lanes: less parallelism and harder ownership"
+  ],
+  "consequences": "Cross-lane edits go through a message plus coord.py borrow. Human owners per lane are still open (humanOwner is null).",
+  "produces": [
+    "coord/lanes.json",
+    "docs/hackathon/lanes/"
+  ],
+  "dependsOn": [
+    "D-coord-001"
+  ],
+  "supersedes": [],
+  "author": "claude (coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:00:00Z",
+  "acceptedAt": "2026-10-03T14:00:00Z",
+  "acceptedBy": "claude (coord)"
+}

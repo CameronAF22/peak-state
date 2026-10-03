@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-002",
+  "lane": "coord",
+  "title": "Hooks and CI make the loop mandatory",
+  "status": "accepted",
+  "type": "process",
+  "context": "The user asked for the protocol to be required, not advisory, and built into the repo as default hooks.",
+  "decision": "Project hooks in .claude/settings.json: SessionStart prints the board, inbox and loop; UserPromptSubmit fetches and announces new messages and stale status; PreToolUse blocks edits before a lane is claimed, edits to another lane's paths (unless borrowed) and hand edits to generated records; PreToolUse on git push rebuilds the spec and blocks until validation passes; Stop blocks once if the session changed files without its own decision, coverage, or a fresh status. GitHub Actions runs the unit tests and coord.py validate --base origin/main on every push and PR.",
+  "alternatives": [
+    "Instructions in CLAUDE.md only: agents drift under pressure",
+    "Git pre-commit hooks: not installed by a fresh clone and invisible to the agent"
+  ],
+  "consequences": "A coordination bug could block work, so every hook catches its own exceptions and allows the action; PEAK_COORD=off exists for a person debugging the tool.",
+  "produces": [
+    ".claude/settings.json",
+    ".github/workflows/coord.yml"
+  ],
+  "dependsOn": [
+    "D-coord-001"
+  ],
+  "supersedes": [],
+  "author": "claude (coord)",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  },
+  "createdAt": "2026-10-03T14:00:00Z",
+  "acceptedAt": "2026-10-03T14:00:00Z",
+  "acceptedBy": "claude (coord)"
+}

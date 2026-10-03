@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/coord/session.schema.json",
+  "title": "Session claim",
+  "description": "coord/sessions/<lane>--<sessionId>.json. Written by `coord.py claim` and refreshed on every write, so any decision can be traced back to a live or archived conversation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "sessionId", "url", "lane", "branch", "purpose", "startedAt", "lastSeenAt"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "sessionId": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "url": { "type": ["string", "null"], "pattern": "^https://" },
+    "lane": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,23}$" },
+    "branch": { "type": ["string", "null"] },
+    "purpose": { "type": "string" },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "lastSeenAt": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "lane": "coord",
+  "files": [
+    {
+      "path": ".claude/settings.json",
+      "sha256": "56f6d70b5f580811482db74e7f12948f261eb8dac8dc32218f434147bff1aec8",
+      "decisions": [
+        "D-coord-002"
+      ]
+    },
+    {
+      "path": ".github/workflows/coord.yml",
+      "sha256": "96090a168ffc8da6ecbdf843d3b5a8c01a252638f8e3c695029d982ead807726",
+      "decisions": [
+        "D-coord-002"
+      ]
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "f92c900e1857be1d9c87c34ec8281e13a8c43fea83e0963c6897c262f597521c",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "c156fe12fbec9ac4b06e9d8ef62dbfd5f37735b4cf8b7d81573c6c9815bb3937",
+      "decisions": [
+        "D-coord-001"
+      ]
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "66934fca6625b55fe614367046befed8cfa7764bc56f299541e2d704a7ff5676",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "README.md",
+      "sha256": "009ec0f47d26bd007d9460c54cee4ca5b1c29c95903d9789c122079cd0d3e49c",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "coord/README.md",
+      "sha256": "6b4acf0bc3dfd753aead2ad780d5120f95fe23f39dba24ab1f5bb32661bd5b2f",
+      "decisions": [
+        "D-coord-001"
+      ]
+    },
+    {
+      "path": "coord/lanes.json",
+      "sha256": "d9b7965d5e5801e79602d6e4fa03e57b600bc3cc797ab808b70f60ae93376a78",
+      "decisions": [
+        "D-coord-004"
+      ]
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "7a8ff3f2a3d2142acf93d7d465b4c80d2153fc163669631e3390445a4f03e27d",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "docs/hackathon/lanes/contracts.md",
+      "sha256": "e64a79d089f84d7ce75b03d24bd8d6ab1300f6062c706fb3a9c81aecf009c551",
+      "decisions": [
+        "D-coord-004",
+        "D-coord-009"
+      ]
+    },
+    {
+      "path": "docs/hackathon/lanes/coord.md",
+      "sha256": "5caaf5d2750885440dccd8ee0bb299666c015e46187101d79dbdac2c3ad68a1c",
+      "decisions": [
+        "D-coord-004",
+        "D-coord-009"
+      ]
+    },
+    {
+      "path": "docs/hackathon/lanes/experience.md",
+      "sha256": "194b7f5ecd0b42583080e36f19f89d9984e1c728c9db4193e77b9b82d127a0d9",
+      "decisions": [
+        "D-coord-004",
+        "D-coord-009"
+      ]
+    },
+    {
+      "path": "docs/hackathon/lanes/onboarding.md",
+      "sha256": "1b82e15164d6165347285b00b91f3966758ab954fd3a92c939cd3ea0fb360d47",
+      "decisions": [
+        "D-coord-004",
+        "D-coord-009"
+      ]
+    },
+    {
+      "path": "docs/hackathon/lanes/reps.md",
+      "sha256": "ce59e47ed3b57543463a12b059475ff57b0fff9ff88fb1f689caffc38358c13f",
+      "decisions": [
+        "D-coord-004",
+        "D-coord-009"
+      ]
+    },
+    {
+      "path": "docs/hackathon/lanes/sensing.md",
+      "sha256": "ae328a682ccc07fa35d4caf88833a23170d4de85064f14bb11bcd0a38c3efd74",
+      "decisions": [
+        "D-coord-004",
+        "D-coord-009"
+      ]
+    },
+    {
+      "path": "docs/hackathon/mvp.md",
+      "sha256": "ea182fa801fbc4b893c7b3580ce5f065a061c5db552fd3e201997ff05b704015",
+      "decisions": [
+        "D-coord-005",
+        "D-coord-006",
+        "D-coord-007",
+        "D-coord-009"
+      ]
+    },
+    {
+      "path": "docs/on-aim-closed-loop.html",
+      "sha256": "63ed5ec933fafe4668f2f765be081ed7c7ee17648ae56b764a7063283b8cc136",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "docs/open-questions.md",
+      "sha256": "32ec140a0c57de74fb093787c740442cbc5a15e03af9e44aaa3b16ef937abf29",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "docs/plan.md",
+      "sha256": "d6259d0a40d3e6184e3af4fc4ea5fd19f615e114d0bf2d72cdea3bf687eed87d",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "schemas/coord/decision.schema.json",
+      "sha256": "3b0135d237611b1b07d5dfde0466b3f656dc59eb747c9ea1a8a463de9cbf9b9d",
+      "decisions": [
+        "D-coord-001"
+      ]
+    },
+    {
+      "path": "schemas/coord/event.schema.json",
+      "sha256": "ecf3bcd28523aee282f64bc96026a862ad4c8fcc1ad225f5b9d581607bdcd10b",
+      "decisions": [
+        "D-coord-001"
+      ]
+    },
+    {
+      "path": "schemas/coord/lanes.schema.json",
+      "sha256": "7f09c8c89d4bb5507e146fa5585e97d452c2ec4bb3acb4b1a0d1ee69c5d72f53",
+      "decisions": [
+        "D-coord-001"
+      ]
+    },
+    {
+      "path": "schemas/coord/message.schema.json",
+      "sha256": "081648618d10e67bc7bd0cafe399f619ddeddffac11e4d3baa7f76c5596a0f98",
+      "decisions": [
+        "D-coord-001"
+      ]
+    },
+    {
+      "path": "schemas/coord/session-ref.schema.json",
+      "sha256": "872ace2b49e3d56901adb3166952055f77666ff2ec93cd3e69f5a622d61bc239",
+      "decisions": [
+        "D-coord-001"
+      ]
+    },
+    {
+      "path": "schemas/coord/session.schema.json",
+      "sha256": "1d9dd63a3f6e4c147219d8f86ec14c93b872b2237f64853782c4cfa901ece846",
+      "decisions": [
+        "D-coord-001"
+      ]
+    },
+    {
+      "path": "schemas/coord/status.schema.json",
+      "sha256": "4cf17ed9ef8e6446bcee8a02364b47202aba226fd52b6d097754261b9b7d8e54",
+      "decisions": [
+        "D-coord-001"
+      ]
+    },
+    {
+      "path": "schemas/coord/trace.schema.json",
+      "sha256": "414c0dbe867acf3d52afbcb261bae67f0c9138135a1da11601c13235f47b88c3",
+      "decisions": [
+        "D-coord-001"
+      ]
+    },
+    {
+      "path": "site/dashboard.html",
+      "sha256": "a6792cf0268b730ebf15bbebe48a5dde1f1eaaab04075fb69ddbd75113f23eaa",
+      "decisions": [
+        "D-coord-003"
+      ]
+    },
+    {
+      "path": "tools/coord.py",
+      "sha256": "9e4d7f2693e850271db27c472683699c0cd6234175d8a95520c63b00e24eca4f",
+      "decisions": [
+        "D-coord-001"
+      ]
+    },
+    {
+      "path": "tools/test_coord.py",
+      "sha256": "85097658aaa909986ff48bd58d06ee195aa59c910a7da3d0d07f839bbf3d8a69",
+      "decisions": [
+        "D-coord-001"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "lane": "coord",
+  "health": "green",
+  "phase": "M0",
+  "progress": 60,
+  "summary": "Protocol, hooks, CI and dashboard built; spawning lane sessions to verify M0",
+  "now": [
+    "Validate hooks locally",
+    "Open the setup PR"
+  ],
+  "next": [
+    "Start one session per lane",
+    "Publish the dashboard Artifact",
+    "Merge setup to main and turn on Pages"
+  ],
+  "blockers": [],
+  "updatedAt": "2026-10-03T14:00:12Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "lane": "onboarding",
+  "files": [
+    {
+      "path": "docs/elicitation.md",
+      "sha256": "8c568b386b9745397f9f2c7d74822c46e301e5ec235fc0882ff4103d71a1c0e3",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "docs/state-change.md",
+      "sha256": "6fb6b1df03c05b6a72417b8cb07de3586a94073cfde81c3ee75c5e3d32fe0608",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "prompts/discovery.md",
+      "sha256": "915c158676a35f1cc2cc2818875495b64bd86205514c206aa470862c3500ef6e",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "prompts/induction.md",
+      "sha256": "9eac817f9540abd948eb9883d3d96aaabfbcd5b36ab556c28ea81cc1e906c104",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "prompts/intervention.md",
+      "sha256": "cafae717f40de134f33102863cc7b4fa263583e716a1ae3d9cd62fd44d9faf3c",
+      "decisions": [
+        "D-coord-008"
+      ]
+    },
+    {
+      "path": "prompts/strategy-extraction.md",
+      "sha256": "dc04a98bf97e4c4f55972748faa89e2345b9662d3adb44ccef2244c03bee9ee7",
+      "decisions": [
+        "D-coord-008"
+      ]
+    }
+  ]
+}

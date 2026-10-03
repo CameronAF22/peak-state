@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://peak-state.local/schemas/coord/event.schema.json",
+  "title": "Coordination event",
+  "description": "One line of coord/events/<lane>.jsonl. Appended by every coord.py write; the dashboard timeline is built from these.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ts", "lane", "kind", "ref", "summary", "session"],
+  "properties": {
+    "ts": { "type": "string", "format": "date-time" },
+    "lane": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,23}$" },
+    "kind": { "enum": ["claim", "decision", "accept", "reject", "status", "message", "borrow"] },
+    "ref": { "type": "string" },
+    "summary": { "type": "string" },
+    "session": { "type": "string" }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140012Z-coord-afe8",
+  "from": "coord",
+  "to": "human",
+  "subject": "Which conversation and voice stack for onboarding?",
+  "body": "Earlier docs assume GPT Live 1. This build defaults to a text chat with an LLM behind it plus browser speech, with a scripted fallback (D-coord-006). Confirm or name the provider and whether API keys are available for the demo.",
+  "refs": [
+    "D-coord-006"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:00:12Z",
+  "session": {
+    "id": "session_01QVbLwShgFGPq3zbXjnSGBK",
+    "url": "https://claude.ai/code/session_01QVbLwShgFGPq3zbXjnSGBK",
+    "branch": "claude/awesome-wright-ciik1f"
+  }
+}
