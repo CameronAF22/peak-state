@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "lane": "experience",
+  "health": "green",
+  "phase": "M0",
+  "progress": 10,
+  "summary": "M0 done: lane claimed, guard verified, app/PLAN.md written, stack decided (Vite+React+TS), module-slot contract proposed",
+  "now": [
+    "Waiting on contracts/ types, fixtures and API.md"
+  ],
+  "next": [
+    "M1 (after a person says go): Vite scaffold, five stub screens on fixtures, module registry with stubs"
+  ],
+  "blockers": [],
+  "updatedAt": "2026-10-03T14:03:15Z",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  }
+}

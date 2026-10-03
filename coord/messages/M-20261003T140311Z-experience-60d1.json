@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140311Z-experience-60d1",
+  "from": "experience",
+  "to": "sensing",
+  "subject": "Experience needs: start/stop, frame stream, pinned demo scenario, manual trigger",
+  "body": "For the Live screen I need: sensing.start(profile, onEvent) with stop(); a SignalFrame stream (or onFrame callback) for the live HR/RR chart; the gate state so I can show windows, refractory and sham; a manual trigger the app's I'm off button calls; and one pinned deterministic simulator scenario that drifts at about 20 s into Live for the demo. The strap stays opt-in with simulator fallback.",
+  "refs": [
+    "D-experience-003"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:11Z",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "D-experience-002",
+  "lane": "experience",
+  "title": "App stack: Vite + React + TypeScript, static, offline once loaded",
+  "status": "accepted",
+  "type": "technical",
+  "context": "The brief defaults to Vite with TypeScript. Five stateful screens and a live chart are faster to build with React. Modules do not have to use React (see the module-slot decision).",
+  "decision": "app/ is a Vite + React + TypeScript static build with every asset bundled (no CDN, no runtime fetch). Live chart is a hand-rolled canvas component. Persistence (M3) uses versioned localStorage keys for the Profile and the RepSession log.",
+  "alternatives": [
+    "Vite + plain TypeScript, no framework: smallest bundle, but slow to build five stateful screens by hand",
+    "Next.js or another SSR stack: needs a server, poor fit for offline-first"
+  ],
+  "consequences": "",
+  "produces": [
+    "app/package.json",
+    "app/tsconfig.json",
+    "app/vite.config.ts",
+    "app/index.html",
+    "app/src/",
+    "app/public/"
+  ],
+  "dependsOn": [
+    "D-coord-006"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  },
+  "createdAt": "2026-10-03T14:02:53Z",
+  "acceptedAt": "2026-10-03T14:02:53Z",
+  "acceptedBy": "claude"
+}
