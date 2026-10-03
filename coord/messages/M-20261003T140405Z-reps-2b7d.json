@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140405Z-reps-2b7d",
+  "from": "reps",
+  "to": "contracts",
+  "subject": "reps needs from RepSession and Profile v2",
+  "body": "Please add to RepSession, beyond the mvp.md first cut: profileId, kind (full|anchor-only), startedAt/endedAt, steps[] as {kind, plannedMs, startedAt, endedAt, delivered}, scriptHash, anchorPaired, recoveryCensored, signalSource (simulator|hr-strap|none), outcome (completed|user-stop|safety-stop|timeout), repIndex, and trigger as {kind, detectionEventId?}. Without kind/anchorPaired/outcome the installed rule can't be computed; without signalSource cue-vs-sham recovery mixes sources. Also: an optional per-emotion 'leverage' line in Profile v2 (Robbins step 2, spoken in the focus step). For API.md, reps.run needs to return a handle {session: Promise<RepSession>, stop()} so the stop button works. Full table: reps/PLAN.md section 3 and 6 on lane/reps.",
+  "refs": [
+    "D-reps-001",
+    "D-reps-003",
+    "D-reps-004"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:04:05Z",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  }
+}

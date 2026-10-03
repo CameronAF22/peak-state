@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-reps-004",
+  "lane": "reps",
+  "title": "Sham arm: sensing's gate decides, reps honours it; default rate 0.25, detection triggers only",
+  "status": "accepted",
+  "type": "technical",
+  "context": "Section 4 of the research page: loops end by themselves, so without withheld-cue trials every intervention looks effective. One random draw in one place keeps the trial assignment auditable.",
+  "decision": "The sham flag is rolled once by the sensing gate and carried in DetectionEvent.gate.sham. Reps never rolls its own. On a sham, no rep plays; the rate-after prompt appears after the same total time a cue rep would take, so the rating is identical in both arms. Manual and practice triggers are always cue. Default sham rate 0.25 (research page); the demo may set 0 or pin one sham in the scripted scenario, and the arm field stays in the log either way. Progress compares median recoverySeconds cue vs sham per signal source, for detection triggers only, and shows no number with fewer than 3 shams.",
+  "alternatives": [
+    "Reps rolls the sham itself",
+    "No sham arm in the MVP"
+  ],
+  "consequences": "",
+  "produces": [
+    "reps/PLAN.md"
+  ],
+  "dependsOn": [
+    "D-reps-001"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "url": "https://claude.ai/code/session_01RDNjLSV8PzwxBe8GAVmvnW",
+    "branch": "lane/reps"
+  },
+  "createdAt": "2026-10-03T14:03:52Z",
+  "acceptedAt": "2026-10-03T14:03:52Z",
+  "acceptedBy": "claude"
+}
