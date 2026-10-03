@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "D-coord-017",
+  "lane": "coord",
+  "title": "test app JSON auth",
+  "status": "accepted",
+  "type": "technical",
+  "context": "User requested MVP auth on test/ home page.",
+  "decision": "Add username/password login and register against a JSON user store; persist session in localStorage for the hackathon sandbox.",
+  "alternatives": [],
+  "consequences": "",
+  "produces": [
+    "test/backend/main.py",
+    "test/backend/users.json",
+    "test/frontend/index.html",
+    "test/frontend/app.js",
+    "test/frontend/styles.css"
+  ],
+  "dependsOn": [],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "local-vikas",
+    "url": null,
+    "branch": "claude/project-thread-c4ldi5"
+  },
+  "createdAt": "2026-10-03T16:35:26Z",
+  "acceptedAt": "2026-10-03T16:35:26Z",
+  "acceptedBy": "claude"
+}

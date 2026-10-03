@@ -45,3 +45,6 @@
 {"ts": "2026-10-03T16:28:15Z", "lane": "coord", "kind": "claim", "ref": "local-vikas", "summary": "Standalone test/ FastAPI + vanilla JS scaffold", "session": "local-vikas"}
 {"ts": "2026-10-03T16:28:16Z", "lane": "coord", "kind": "decision", "ref": "D-coord-015", "summary": "[accepted] test/ sandbox app scaffold", "session": "local-vikas"}
 {"ts": "2026-10-03T16:30:12Z", "lane": "coord", "kind": "decision", "ref": "D-coord-016", "summary": "[accepted] coord lane owns test/", "session": "local-vikas"}
+{"ts": "2026-10-03T16:35:26Z", "lane": "coord", "kind": "claim", "ref": "local-vikas", "summary": "test app MVP auth", "session": "local-vikas"}
+{"ts": "2026-10-03T16:35:26Z", "lane": "coord", "kind": "decision", "ref": "D-coord-017", "summary": "[accepted] test app JSON auth", "session": "local-vikas"}
+{"ts": "2026-10-03T16:35:40Z", "lane": "coord", "kind": "status", "ref": "green", "summary": "test/ home auth with JSON user store and localStorage session", "session": "local-vikas"}
