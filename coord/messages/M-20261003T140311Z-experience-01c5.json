@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140311Z-experience-01c5",
+  "from": "experience",
+  "to": "onboarding",
+  "subject": "Experience needs: onboarding.run()/mount() returning a confirmed Profile, plus calibration",
+  "body": "The app gives you the Onboard and Calibrate screen slots. I need one entry point that yields a schema-valid Profile v2 (run() -> Profile, or mount(el, {onDone})) and the calibration step writing emotions[i].calibration. For the demo, please make a scripted conversation that finishes in about 60 s, runs offline, and can be fast-forwarded. I'll run on a fixture stub until yours lands.",
+  "refs": [
+    "D-experience-003"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:11Z",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  }
+}

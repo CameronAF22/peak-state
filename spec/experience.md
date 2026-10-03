@@ -16,11 +16,50 @@ Own what a judge touches: the web app that runs onboarding, calibration, live de
 
 ## Decisions in force
 
-None yet.
+### D-experience-001 · Experience lane kickoff: five-screen app on fixture stubs, then real modules
+
+`accepted` · scope · 2026-10-03 · [session](https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U) · branch `lane/experience` · accepted by claude
+
+**Decision.** Build the app as five screens (onboard, calibrate, live, rep, progress) in a linear flow with a demo-mode jump. Run end to end on fixture stubs of every module from M1, then swap in real onboarding, sensing and reps per module behind a stub/real switch. Demo runs from a pinned simulator scenario plus a seeded rep log, offline. Plan in app/PLAN.md.
+
+**Context.** M0 gate. contracts/ does not exist yet; build against mvp.md first-cut shapes behind one adapter and switch when contracts publishes.
+
+**Produces:** `app/PLAN.md`  
+**Depends on:** D-coord-005, D-coord-006, D-coord-009
+
+### D-experience-002 · App stack: Vite + React + TypeScript, static, offline once loaded
+
+`accepted` · technical · 2026-10-03 · [session](https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U) · branch `lane/experience` · accepted by claude
+
+**Decision.** app/ is a Vite + React + TypeScript static build with every asset bundled (no CDN, no runtime fetch). Live chart is a hand-rolled canvas component. Persistence (M3) uses versioned localStorage keys for the Profile and the RepSession log.
+
+**Context.** The brief defaults to Vite with TypeScript. Five stateful screens and a live chart are faster to build with React. Modules do not have to use React (see the module-slot decision).
+
+**Alternatives considered.**
+
+- Vite + plain TypeScript, no framework: smallest bundle, but slow to build five stateful screens by hand
+- Next.js or another SSR stack: needs a server, poor fit for offline-first
+
+**Produces:** `app/package.json`, `app/tsconfig.json`, `app/vite.config.ts`, `app/index.html`, `app/src/`, `app/public/`  
+**Depends on:** D-coord-006
 
 ## Proposed, awaiting acceptance
 
-None.
+### D-experience-003 · Module slots: headless functions or mount(el, props), framework-agnostic, one entry per lane
+
+`proposed` · contract · 2026-10-03 · [session](https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U) · branch `lane/experience`
+
+**Decision.** Each module (onboarding, sensing, reps) exports from one entry point (proposed: <lane>/src/index.ts) the API in contracts/API.md. A module that has UI exposes mount(el: HTMLElement, props) -> unmount(), with no React dependency required. Otherwise it is headless (functions plus callbacks). The app wraps either kind in a slot, and keeps a fixture stub implementing the same interface, chosen per module with ?<module>=stub|real.
+
+**Context.** The app integrates three lanes' modules. It needs one agreed plug-in shape so lanes can build in parallel and the demo can fall back to stubs per module. contracts owns contracts/API.md and must agree.
+
+**Alternatives considered.**
+
+- Every module ships React components: forces React on every lane
+- Every module is headless and the app builds all UI: puts onboarding and rep UX on the experience lane
+
+**Produces:** `app/src/modules.ts`, `app/src/stubs/`  
+**Depends on:** D-experience-001, D-coord-006
 
 ## Superseded and rejected
 
@@ -30,4 +69,6 @@ None.
 
 Every file this lane owns, the first 12 hex digits of its SHA-256 at build time, and the decisions that cover it.
 
-No files yet.
+| File | sha256 | Decisions |
+|---|---|---|
+| `app/PLAN.md` | `900b98a67afb` | D-experience-001 |

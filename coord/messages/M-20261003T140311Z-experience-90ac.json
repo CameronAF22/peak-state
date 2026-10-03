@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140311Z-experience-90ac",
+  "from": "experience",
+  "to": "reps",
+  "subject": "Experience needs: reps.run()/mount() -> RepSession, plus progress aggregation and installed rule",
+  "body": "For the Rep screen I need reps.run(profile, emotionId, trigger) -> RepSession (or mount(el, props) with onDone). It should play the anchor, then body, focus, words, then rate 0 to 10 before and after, with honest sham handling. For Progress I need a pure function over the RepSession log: reps per emotion, intensity trend, cue vs sham recovery, and the installed rule. Demo rep length is about 30 s.",
+  "refs": [
+    "D-experience-003"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:11Z",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  }
+}

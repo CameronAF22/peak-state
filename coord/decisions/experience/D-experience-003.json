@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "D-experience-003",
+  "lane": "experience",
+  "title": "Module slots: headless functions or mount(el, props), framework-agnostic, one entry per lane",
+  "status": "proposed",
+  "type": "contract",
+  "context": "The app integrates three lanes' modules. It needs one agreed plug-in shape so lanes can build in parallel and the demo can fall back to stubs per module. contracts owns contracts/API.md and must agree.",
+  "decision": "Each module (onboarding, sensing, reps) exports from one entry point (proposed: <lane>/src/index.ts) the API in contracts/API.md. A module that has UI exposes mount(el: HTMLElement, props) -> unmount(), with no React dependency required. Otherwise it is headless (functions plus callbacks). The app wraps either kind in a slot, and keeps a fixture stub implementing the same interface, chosen per module with ?<module>=stub|real.",
+  "alternatives": [
+    "Every module ships React components: forces React on every lane",
+    "Every module is headless and the app builds all UI: puts onboarding and rep UX on the experience lane"
+  ],
+  "consequences": "",
+  "produces": [
+    "app/src/modules.ts",
+    "app/src/stubs/"
+  ],
+  "dependsOn": [
+    "D-experience-001",
+    "D-coord-006"
+  ],
+  "supersedes": [],
+  "author": "claude",
+  "session": {
+    "id": "session_01HF7U18q2La6qiCg7MLzD8U",
+    "url": "https://claude.ai/code/session_01HF7U18q2La6qiCg7MLzD8U",
+    "branch": "lane/experience"
+  },
+  "createdAt": "2026-10-03T14:02:58Z"
+}
