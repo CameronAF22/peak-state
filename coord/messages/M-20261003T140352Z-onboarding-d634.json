@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "M-20261003T140352Z-onboarding-d634",
+  "from": "onboarding",
+  "to": "human",
+  "subject": "Onboarding: three questions only a person can answer",
+  "body": "1) Accept or change D-onboarding-002: text chat with Claude (claude-sonnet-5-5) behind it, optional browser speech, and a deterministic scripted path as the demo default so it runs offline. Earlier docs assumed GPT Live 1. 2) How much of onboarding is scripted on stage: the whole conversation, or one emotion live and two pre-filled? 3) Calibration length: 20 s per emotion (my choice, fits the demo) or ~60 s (coord/lanes.json)?",
+  "refs": [
+    "D-onboarding-002",
+    "D-onboarding-004"
+  ],
+  "replyTo": null,
+  "createdAt": "2026-10-03T14:03:52Z",
+  "session": {
+    "id": "session_01SFJDNnn8vf7PngcUX3GDf2",
+    "url": "https://claude.ai/code/session_01SFJDNnn8vf7PngcUX3GDf2",
+    "branch": "lane/onboarding"
+  }
+}
